@@ -1,0 +1,10 @@
+[
+  {
+    "Descripcion": "EN INCIDENTE",
+    "IdGrupoClasificacion": 1
+  },
+  {
+    "Descripcion": "DISPONIBLE",
+    "IdGrupoClasificacion": 3
+  }
+]

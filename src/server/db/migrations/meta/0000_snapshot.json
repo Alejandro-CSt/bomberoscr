@@ -1,0 +1,394 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "prevId": "",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.dispatched_vehicles": {
+      "name": "dispatched_vehicles",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "vehicleInternalNumber": {
+          "name": "vehicleInternalNumber",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "incidentId": {
+          "name": "incidentId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "stationId": {
+          "name": "stationId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dispatchedTime": {
+          "name": "dispatchedTime",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "arrivalTime": {
+          "name": "arrivalTime",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "departureTime": {
+          "name": "departureTime",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "baseReturnTime": {
+          "name": "baseReturnTime",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.incident_types": {
+      "name": "incident_types",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "incidentCode": {
+          "name": "incidentCode",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.incidents": {
+      "name": "incidents",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "incidentType": {
+          "name": "incidentType",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dispatchIncidentType": {
+          "name": "dispatchIncidentType",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "incidentCode": {
+          "name": "incidentCode",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dispatchIncidentCode": {
+          "name": "dispatchIncidentCode",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "specificIncidentCode": {
+          "name": "specificIncidentCode",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "specificDispatchIncidentCode": {
+          "name": "specificDispatchIncidentCode",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "EEConsecutive": {
+          "name": "EEConsecutive",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "address": {
+          "name": "address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "responsibleStation": {
+          "name": "responsibleStation",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "date": {
+          "name": "date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "incidentTime": {
+          "name": "incidentTime",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "importantDetails": {
+          "name": "importantDetails",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "latitude": {
+          "name": "latitude",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "longitude": {
+          "name": "longitude",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "provinceId": {
+          "name": "provinceId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cantonId": {
+          "name": "cantonId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "districtId": {
+          "name": "districtId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "isOpen": {
+          "name": "isOpen",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.stations": {
+      "name": "stations",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "stationKey": {
+          "name": "stationKey",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "radioChannel": {
+          "name": "radioChannel",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "latitude": {
+          "name": "latitude",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "longitude": {
+          "name": "longitude",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "address": {
+          "name": "address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "phoneNumber": {
+          "name": "phoneNumber",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "fax": {
+          "name": "fax",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.vehicle_disponibility": {
+      "name": "vehicle_disponibility",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    },
+    "public.vehicles": {
+      "name": "vehicles",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "internalNumber": {
+          "name": "internalNumber",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "plate": {
+          "name": "plate",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "stationId": {
+          "name": "stationId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "descriptionType": {
+          "name": "descriptionType",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "class": {
+          "name": "class",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "descriptionOperationalStatus": {
+          "name": "descriptionOperationalStatus",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  },
+  "internal": {
+    "tables": {}
+  }
+}
