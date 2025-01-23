@@ -86,3 +86,9 @@ export const incidents = pgTable("incidents", {
 });
 
 export const stationsInsertSchema = createSelectSchema(stations);
+export const vehiclesInsertSchema = createSelectSchema(vehicles);
+export const vehicleDisponibilityInsertSchema = createSelectSchema(vehicleDisponibility);
+export const dispatchedVehiclesInsertSchema = createSelectSchema(dispatchedVehicles);
+export const dispatchedStationsInsertSchema = createSelectSchema(dispatchedStations);
+export const incidentTypesInsertSchema = createSelectSchema(incidentTypes);
+export const incidentsInsertSchema = createSelectSchema(incidents);
