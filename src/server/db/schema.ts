@@ -66,11 +66,9 @@ export const incidentTypes = pgTable("incident_types", {
 
 export const incidents = pgTable("incidents", {
   id: integer().primaryKey(),
-  incidentType: text(),
-  dispatchIncidentType: text(),
   incidentCode: text().references(() => incidentTypes.incidentCode),
-  dispatchIncidentCode: text().references(() => incidentTypes.incidentCode),
   specificIncidentCode: text().references(() => incidentTypes.incidentCode),
+  dispatchIncidentCode: text().references(() => incidentTypes.incidentCode),
   specificDispatchIncidentCode: text().references(() => incidentTypes.incidentCode),
   EEConsecutive: text(),
   address: text(),
