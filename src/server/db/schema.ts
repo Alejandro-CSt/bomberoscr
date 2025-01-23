@@ -1,12 +1,21 @@
-import { boolean, integer, pgTable, text } from "drizzle-orm/pg-core";
+import {
+  type AnyPgColumn,
+  boolean,
+  integer,
+  numeric,
+  pgTable,
+  text,
+  timestamp
+} from "drizzle-orm/pg-core";
+import { createSelectSchema } from "drizzle-zod";
 
 export const stations = pgTable("stations", {
   id: integer().primaryKey(),
   name: text(),
   stationKey: text(),
   radioChannel: text(),
-  latitude: integer(),
-  longitude: integer(),
+  latitude: numeric(),
+  longitude: numeric(),
   address: text(),
   phoneNumber: text(),
   fax: text(),
@@ -33,18 +42,26 @@ export const dispatchedVehicles = pgTable("dispatched_vehicles", {
   vehicleId: integer().references(() => vehicles.id),
   incidentId: integer().references(() => incidents.id),
   stationId: integer().references(() => stations.id),
-  dispatchedTime: text(),
-  arrivalTime: text(),
-  departureTime: text(),
-  baseReturnTime: text(),
+  dispatchedTime: timestamp(),
+  arrivalTime: timestamp(),
+  departureTime: timestamp(),
+  baseReturnTime: timestamp(),
   vehicleInternalNumber: text()
+});
+
+export const dispatchedStations = pgTable("dispatched_stations", {
+  id: integer().primaryKey(),
+  stationId: integer().references(() => stations.id),
+  incidentId: integer().references(() => incidents.id),
+  serviceTypeId: integer(),
+  attentionOnFoot: boolean()
 });
 
 export const incidentTypes = pgTable("incident_types", {
   id: integer().primaryKey(),
   incidentCode: text(),
   name: text(),
-  parentId: integer("id")
+  parentId: integer("id").references((): AnyPgColumn => incidentTypes.id)
 });
 
 export const incidents = pgTable("incidents", {
@@ -58,13 +75,14 @@ export const incidents = pgTable("incidents", {
   EEConsecutive: text(),
   address: text(),
   responsibleStation: integer().references(() => stations.id),
-  date: text(),
-  incidentTime: text(),
+  incidentTimestamp: timestamp(),
   importantDetails: text(),
-  latitude: integer(),
-  longitude: integer(),
+  latitude: numeric(),
+  longitude: numeric(),
   provinceId: integer(),
   cantonId: integer(),
   districtId: integer(),
   isOpen: boolean()
 });
+
+export const stationsInsertSchema = createSelectSchema(stations);
