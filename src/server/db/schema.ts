@@ -1,12 +1,4 @@
-import {
-  type AnyPgColumn,
-  boolean,
-  integer,
-  numeric,
-  pgTable,
-  text,
-  timestamp
-} from "drizzle-orm/pg-core";
+import { boolean, integer, numeric, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
 
 export const stations = pgTable("stations", {
@@ -19,7 +11,8 @@ export const stations = pgTable("stations", {
   address: text(),
   phoneNumber: text(),
   fax: text(),
-  email: text()
+  email: text(),
+  isOperative: boolean()
 });
 
 export const vehicles = pgTable("vehicles", {
@@ -59,9 +52,9 @@ export const dispatchedStations = pgTable("dispatched_stations", {
 
 export const incidentTypes = pgTable("incident_types", {
   id: integer().primaryKey(),
-  incidentCode: text(),
+  incidentCode: text().notNull().unique(),
   name: text(),
-  parentId: integer("id").references((): AnyPgColumn => incidentTypes.id)
+  parentId: integer("parent_id")
 });
 
 export const incidents = pgTable("incidents", {

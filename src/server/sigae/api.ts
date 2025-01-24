@@ -1,10 +1,10 @@
+import env from "@/server/env";
 import type {
   ObtenerBoletaIncidente,
   ObtenerDatosVehiculo,
   ObtenerDetalleEmergencias,
   ObtenerEstacionDetalle,
   ObtenerEstacionLista,
-  ObtenerEstaciones,
   ObtenerEstacionesAtiendeIncidente,
   ObtenerEstacionesOperativas,
   ObtenerListaEmergenciasApp,
@@ -12,7 +12,6 @@ import type {
   ObtenerUnidadesDespachadasIncidente,
   ObtenerVehiculosComboF5
 } from "@/server/sigae/types";
-import env from "./env";
 
 interface BaseRequestBody {
   IP: string;
@@ -63,10 +62,6 @@ export async function getVehiclesDispatchedToIncident(id: number) {
   return await fetcher<ObtenerUnidadesDespachadasIncidente>("ObtenerUnidadesDespachadasIncidente", {
     Id_Boleta_Incidente: id
   });
-}
-
-export async function getStations() {
-  return await fetcher<ObtenerEstaciones>("ObtenerEstaciones");
 }
 
 export async function getStationsList() {

@@ -1,8 +1,8 @@
-import type { DrizzleD1Database } from "drizzle-orm/d1";
-import { vehicleDisponibility } from "../schema";
-import vehicleDisponibilityStates from "./data/ObtenerEstadoDisponibilidadUnidades.json";
+import db from "@/server/db/index";
+import { vehicleDisponibility } from "@/server/db/schema";
+import vehicleDisponibilityStates from "@/server/db/seeds/data/ObtenerEstadoDisponibilidadUnidades.json";
 
-export default async function seedVehicleDisponibility(db: DrizzleD1Database) {
+export default async function seedVehicleDisponibility() {
   await db.insert(vehicleDisponibility).values(
     vehicleDisponibilityStates.map((state) => ({
       id: state.IdGrupoClasificacion,

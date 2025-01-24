@@ -14,7 +14,8 @@ const EnvSchema = z.object({
   SIGAE_IP: z.string(),
   SIGAE_USER: z.string(),
   SIGAE_PASSWORD: z.string(),
-  SIGAE_COD_SYS: z.string()
+  SIGAE_COD_SYS: z.string(),
+  SYNC_TOKEN: z.string()
 });
 
 export type EnvSchema = z.infer<typeof EnvSchema>;

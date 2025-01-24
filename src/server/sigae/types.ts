@@ -1,15 +1,3 @@
-import {
-  getIncidentDetails,
-  getIncidentListApp,
-  getStationsAttendingIncident,
-  getVehiclesDispatchedToIncident
-} from "@/server/api";
-import type { DrizzleD1Database } from "drizzle-orm/d1";
-import {
-  dispatchedVehicles as dispatchedVehiclesSchema,
-  incidents as incidentsSchema
-} from "../schema";
-
 export interface ObtenerDetalleEmergencias {
   Codigo: string;
   Descripcion: string;
@@ -165,52 +153,158 @@ export interface ItemsFechaObtenerListaUltimasEmergenciasApp {
   Fecha: string;
 }
 
-const FROM = "2025-01-01";
-const TO = "2025-12-31";
+export interface ObtenerEstaciones {
+  Codigo: string;
+  Descripcion: string;
+  Items: ItemObtenerEstaciones[];
+}
 
-type IncidentType = typeof incidentsSchema.$inferInsert;
-type DispatchedVehicleType = typeof dispatchedVehiclesSchema.$inferInsert;
+export interface ItemObtenerEstaciones {
+  ClaveEstacion: string;
+  IdEstacion: number;
+  Nombre: string;
+}
 
-export async function seedIncidents(db: DrizzleD1Database) {
-  const incidents = await getIncidentListApp(FROM, TO);
-  const data: IncidentType[] = [];
+export interface ObtenerEstacionLista {
+  Codigo: string;
+  Descripcion: string;
+  Items: ItemObtenerEstacionLista[];
+}
 
-  for (const incident of incidents.items) {
-    const dispatchedVehicles = await getVehiclesDispatchedToIncident(incident.idBoletaIncidente);
-    const detailedIncident = await getIncidentDetails(incident.idBoletaIncidente);
-    const stationsAttending = await getStationsAttendingIncident(incident.idBoletaIncidente);
-    const responsibleStation = stationsAttending.Items.find(
-      (station) => incident.estacionResponsable === station.ClaveEstacion
-    );
-    const vehicles: DispatchedVehicleType[] = dispatchedVehicles.Items.map((vehicle) => ({
-      id: vehicle.IdVehiculo,
-      stationId: vehicle.CodigoEstacion,
-      vehicleInternalNumber: vehicle.NumeroInterno,
-      incidentId: incident.idBoletaIncidente,
-      dispatchedTime: vehicle.HoraDespacho,
-      arrivalTime: vehicle.HoraLLegada,
-      departureTime: vehicle.HoraRetiro,
-      baseReturnTime: vehicle.HoraBase
-    }));
+export interface ItemObtenerEstacionLista {
+  ClaveEstacion: string;
+  IdEstacion: number;
+  Latitud: number;
+  Longitud: number;
+  Nombre: string;
+  Telefono: string;
+}
 
-    const incidentData: IncidentType = {
-      id: incident.idBoletaIncidente,
-      incidentType: detailedIncident.tipo_incidente,
-      dispatchIncidentType: detailedIncident.tipo_incidente_despacho,
-      incidentCode: detailedIncident.Codigo,
-      dispatchIncidentCode: detailedIncident.codigo_tipo_incidente_despacho,
-      specificIncidentCode: detailedIncident.codigo_tipo_incidente_esp,
-      specificDispatchIncidentCode: detailedIncident.codigo_tipo_incidente_despacho_esp,
-      EEConsecutive: detailedIncident.consecutivo_EE,
-      address: detailedIncident.direccion,
-      responsibleStation: responsibleStation?.IdEstacion,
-      date: detailedIncident.fecha,
-      incidentTime: detailedIncident.hora_incidente
-    };
+export interface ObtenerEstacionDetalle {
+  Codigo: string;
+  Descripcion: string;
+  CanalRadio: string;
+  ClaveEstacion: string;
+  Direccion: string;
+  Email: string;
+  Fax: string;
+  IdEstacion: number;
+  Latitud: number;
+  Longitud: number;
+  Nombre: string;
+  Telefono: string;
+}
 
-    db.insert(dispatchedVehiclesSchema).values(vehicles);
-    data.push(incidentData);
-  }
+export interface ObtenerEstacionesOperativas {
+  Codigo: string;
+  Descripcion: string;
+  Items: ItemObtenerEstacionesOperativas[];
+}
 
-  db.insert(incidentsSchema).values(data);
+export interface ItemObtenerEstacionesOperativas {
+  ClaveEstacion: string;
+  IdEstacion: number;
+  Nombre: string;
+}
+
+export interface ObtenerEstacionesAtiendeIncidente {
+  Codigo: string;
+  Descripcion: string;
+  Items: ItemObtenerEstacionesAtiendeIncidente[];
+}
+
+export interface ItemObtenerEstacionesAtiendeIncidente {
+  Codigo: string | null;
+  Descripcion: string | null;
+  AtencionAPie: boolean;
+  ClaveEstacion: string;
+  DestipoServicio: string;
+  HoraAtencionAPie: string;
+  IdBoletaEstacionAtiende: number;
+  IdEstacion: number;
+  IdTipoServicio: number;
+  NombreEstacion: string;
+}
+
+export interface ObtenerEstadoDisponibilidadUnidades {
+  Codigo: string;
+  Descripcion: string;
+  Items: ItemObtenerEstadoDisponibilidadUnidades[];
+}
+
+export interface ItemObtenerEstadoDisponibilidadUnidades {
+  Descripcion: string;
+  IdGrupoClasificacion: number;
+}
+
+export interface ObtenerVehiculosComboF5 {
+  Codigo: string;
+  Descripcion: string;
+  Items: ItemObtenerVehiculosComboF5[];
+}
+
+export interface ItemObtenerVehiculosComboF5 {
+  IdVehiculo: number;
+  NumeroInterno: string;
+}
+
+export interface ObtenerDatosVehiculo {
+  Codigo: string;
+  Descripcion: string;
+  Asignado_a: string;
+  Canton: string;
+  Capacidad: number;
+  Clave_estacion_evolution: string;
+  Des_clase_vehiculo: string;
+  Des_estado_disponibilidad: string;
+  Des_estado_operativo: string;
+  Des_tipo_vehiculo: string;
+  Distrito: string;
+  Id_Estacion_Reporte: number;
+  Id_canton: number;
+  Id_clase_vehiculo: number;
+  Id_distrito: number;
+  Id_estacion: number;
+  Id_estacion_transferido: number;
+  Id_estado_disponibilidad: number;
+  Id_estado_operativo: number;
+  Id_personal: number;
+  Id_personal_transferido: number;
+  Id_provincia: number;
+  Id_tipo_vehiculo: number;
+  Id_veh_evo: string;
+  Id_vehiculo: number;
+  Ind_i_a: number;
+  Numero_interno: string;
+  Observaciones: string;
+  Placa: string;
+  Provincia: string;
+  Transferido_a: string;
+}
+
+export interface ObtenerUnidadesDespachadasIncidente {
+  Codigo: string;
+  Descripcion: string;
+  Items: ItemObtenerUnidadesDespachadasIncidente[];
+}
+
+export interface ItemObtenerUnidadesDespachadasIncidente {
+  Codigo: string | null;
+  Descripcion: string | null;
+  CodigoEstacion: number;
+  CodigoUnidad: number;
+  DespachoAlarma: boolean;
+  HoraBase: string;
+  HoraDespacho: string;
+  HoraDevolverBase: string;
+  HoraLLegada: string;
+  HoraRetiro: string;
+  HoraTraslado: string;
+  IdBoletaServicio: number;
+  IdBoletaUnidadDespachada: number;
+  IdVehiculo: number;
+  NumeroInterno: string | null;
+  Traslado: boolean;
+  Unidad: string;
+  UnidadCompleta: string;
 }

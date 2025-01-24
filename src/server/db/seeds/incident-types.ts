@@ -1,4 +1,4 @@
-import type { DrizzleD1Database } from "drizzle-orm/d1";
+import db from "@/server/db/index";
 import { incidentTypes } from "../schema";
 import incidentTypesJson from "./data/ObtenerTiposIncidente.json";
 
@@ -24,7 +24,7 @@ function getIncidentsRecursively(items: any[], parentId?: number): IncidentType[
   return result;
 }
 
-export default async function seed(db: DrizzleD1Database) {
+export default async function seedIncidentTypes() {
   const incidents: IncidentType[] = getIncidentsRecursively(incidentTypesJson);
   await db.insert(incidentTypes).values(incidents);
 }
