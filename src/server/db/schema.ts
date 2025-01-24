@@ -38,8 +38,7 @@ export const dispatchedVehicles = pgTable("dispatched_vehicles", {
   dispatchedTime: timestamp(),
   arrivalTime: timestamp(),
   departureTime: timestamp(),
-  baseReturnTime: timestamp(),
-  vehicleInternalNumber: text()
+  baseReturnTime: timestamp()
 });
 
 export const dispatchedStations = pgTable("dispatched_stations", {
