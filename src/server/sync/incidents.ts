@@ -1,6 +1,4 @@
-import type { z } from "zod";
-import { getIncidentReport } from "../api";
-import db from "../db";
+import db from "@/server/db/index";
 import {
   type dispatchedStationsInsertSchema,
   dispatchedStations as dispatchedStationsTable,
@@ -8,12 +6,16 @@ import {
   dispatchedVehicles as dispatchedVehiclesTable,
   type incidentsInsertSchema,
   incidents as incidentsTable
-} from "../db/schema";
+} from "@/server/db/schema";
 import {
   getIncidentDetails,
+  getIncidentReport,
   getStationsAttendingIncident,
   getVehiclesDispatchedToIncident
-} from "../sigae/api";
+} from "@/server/sigae/api";
+import { eq } from "drizzle-orm";
+import type { z } from "zod";
+import { conflictUpdateSetAllColumns } from "../db/utils";
 
 export async function upsertIncident(id: number) {
   const [dispatchedStations, dispatchedVehicles, incidentDetails, incidentReport] =
@@ -23,6 +25,8 @@ export async function upsertIncident(id: number) {
       getIncidentDetails(id),
       getIncidentReport(id)
     ]);
+
+  if (incidentDetails.Descripcion === "No se encontraron registros.") return;
 
   const responsibleStation =
     dispatchedStations.Items.find((station) => station.DestipoServicio === "RESPONSABLE") ||
@@ -41,12 +45,12 @@ export async function upsertIncident(id: number) {
     cantonId: incidentReport.Id_Canton,
     provinceId: incidentReport.Id_Provincia,
     importantDetails: incidentDetails.DetallesImportantes,
-    dispatchIncidentCode: sanitizeIncidentCode(incidentDetails.codigo_tipo_incidente_despacho),
-    specificDispatchIncidentCode: sanitizeIncidentCode(
+    dispatchIncidentCode: await getIncidentType(incidentDetails.codigo_tipo_incidente_despacho),
+    specificDispatchIncidentCode: await getIncidentType(
       incidentDetails.codigo_tipo_incidente_despacho_esp
     ),
-    incidentCode: sanitizeIncidentCode(incidentDetails.codigo_tipo_incidente),
-    specificIncidentCode: sanitizeIncidentCode(incidentDetails.codigo_tipo_incidente_esp),
+    incidentCode: await getIncidentType(incidentDetails.codigo_tipo_incidente),
+    specificIncidentCode: await getIncidentType(incidentDetails.codigo_tipo_incidente_esp),
     incidentTimestamp: timestamp,
     responsibleStation: responsibleStation.IdEstacion,
     latitude: incidentDetails.latitud.toString(),
@@ -72,17 +76,44 @@ export async function upsertIncident(id: number) {
       dispatchedTime: new Date(vehicle.HoraDespacho),
       incidentId: id,
       stationId: vehicle.CodigoEstacion,
-      vehicleId: vehicle.IdVehiculo,
-      vehicleInternalNumber: vehicle.NumeroInterno
+      vehicleId: vehicle.Unidad === "ATENCION A PIE" ? null : vehicle.CodigoUnidad,
+      vehicleInternalNumber: vehicle.NumeroInterno,
+      attentionOnFoot: vehicle.Unidad === "ATENCION A PIE"
     }));
 
-  await db.insert(incidentsTable).values(incident);
-  await db.insert(dispatchedStationsTable).values(dispatchedStationsData);
-  await db.insert(dispatchedVehiclesTable).values(dispatchedVehiclesData);
+  await db.insert(incidentsTable).values(incident).onConflictDoUpdate({
+    set: incident,
+    target: incidentsTable.id
+  });
+
+  await db
+    .insert(dispatchedStationsTable)
+    .values(dispatchedStationsData)
+    .onConflictDoUpdate({
+      target: dispatchedStationsTable.id,
+      set: conflictUpdateSetAllColumns(dispatchedStationsTable)
+    });
+
+  await db
+    .insert(dispatchedVehiclesTable)
+    .values(dispatchedVehiclesData)
+    .onConflictDoUpdate({
+      target: dispatchedVehiclesTable.id,
+      set: conflictUpdateSetAllColumns(dispatchedVehiclesTable)
+    });
 }
 
 function sanitizeIncidentCode(code: string) {
   if (code.charAt(code.length - 1) !== ".") return code;
 
   return code.slice(0, code.length - 1);
+}
+
+async function getIncidentType(incidentCode: string) {
+  const sanitized = sanitizeIncidentCode(incidentCode);
+  const type = await db.query.incidentTypes.findFirst({
+    where: eq(incidentsTable.incidentCode, sanitized),
+    columns: { incidentCode: true }
+  });
+  return type?.incidentCode || null;
 }
