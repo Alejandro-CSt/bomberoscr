@@ -1,4 +1,3 @@
-import env from "@/server/env";
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { handle } from "hono/vercel";
@@ -15,8 +14,6 @@ app.post(
     })
   ),
   (c) => {
-    const validated = c.req.valid("form");
-    if (validated.token !== env.SYNC_TOKEN) return c.json({ error: "Invalid token" }, 401);
     return c.newResponse("OK");
   }
 );
