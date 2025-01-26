@@ -7,8 +7,10 @@ import type {
   ObtenerEstaciones,
   ObtenerEstacionesAtiendeIncidente,
   ObtenerEstacionesOperativas,
+  ObtenerEstadoDisponibilidadUnidades,
   ObtenerListaEmergenciasApp,
   ObtenerListaUltimasEmergenciasApp,
+  ObtenerTiposIncidente,
   ObtenerUnidadesDespachadasIncidente,
   ObtenerVehiculosComboF5
 } from "@/server/sigae/types";
@@ -50,6 +52,10 @@ async function fetcher<T, B extends object = object>(path: string, extraBody: B 
   return response.json() as Promise<T>;
 }
 
+export async function getVehicleDisponibilityStates() {
+  return await fetcher<ObtenerEstadoDisponibilidadUnidades>("ObtenerEstadoDisponibilidadUnidades");
+}
+
 export async function getAllVehicles() {
   return await fetcher<ObtenerVehiculosComboF5>("ObtenerVehiculosComboF5");
 }
@@ -86,6 +92,10 @@ export async function getIncidentReport(id: number) {
   return await fetcher<ObtenerBoletaIncidente>("ObtenerBoletaIncidente", {
     Id_Boleta_Incidente: id
   });
+}
+
+export async function getIncidentTypes() {
+  return await fetcher<ObtenerTiposIncidente>("ObtenerTiposIncidente");
 }
 
 export async function getIncidentDetails(id: number) {

@@ -308,3 +308,27 @@ export interface ItemObtenerUnidadesDespachadasIncidente {
   Unidad: string;
   UnidadCompleta: string;
 }
+
+export interface ObtenerEstadoDisponibilidadUnidades {
+  Codigo: string;
+  Descripcion: string;
+  Items: ItemObtenerEstadoDisponibilidadUnidades[];
+}
+
+export interface ItemObtenerEstadoDisponibilidadUnidades {
+  Descripcion: string;
+  IdGrupoClasificacion: number;
+}
+
+export interface ObtenerTiposIncidente {
+  Codigo: string;
+  Descripcion: string;
+  items: ItemObtenerTiposIncidente[];
+}
+
+export interface ItemObtenerTiposIncidente {
+  codigo_tipo_incidente: string;
+  id_tipo_incidente: number;
+  items: ItemObtenerTiposIncidente[];
+  tipo_incidente: string;
+}
