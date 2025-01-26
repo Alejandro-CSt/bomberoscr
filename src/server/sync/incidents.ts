@@ -32,7 +32,6 @@ export async function upsertIncident(id: number) {
     dispatchedStations.Items.find((station) => station.DestipoServicio === "RESPONSABLE") ||
     dispatchedStations.Items[dispatchedStations.Items.length - 1];
 
-  // Create UTC timestamp from the two date fields
   const date = incidentDetails.fecha.split("T")[0];
   const time = incidentDetails.hora_incidente.split("T")[1];
   const timestamp = new Date(`${date}T${time}`);
@@ -86,21 +85,25 @@ export async function upsertIncident(id: number) {
     target: incidentsTable.id
   });
 
-  await db
-    .insert(dispatchedStationsTable)
-    .values(dispatchedStationsData)
-    .onConflictDoUpdate({
-      target: dispatchedStationsTable.id,
-      set: conflictUpdateSetAllColumns(dispatchedStationsTable)
-    });
+  if (dispatchedStationsData.length > 0)
+    await db
+      .insert(dispatchedStationsTable)
+      .values(dispatchedStationsData)
+      .onConflictDoUpdate({
+        target: dispatchedStationsTable.id,
+        set: conflictUpdateSetAllColumns(dispatchedStationsTable)
+      });
 
-  await db
-    .insert(dispatchedVehiclesTable)
-    .values(dispatchedVehiclesData)
-    .onConflictDoUpdate({
-      target: dispatchedVehiclesTable.id,
-      set: conflictUpdateSetAllColumns(dispatchedVehiclesTable)
-    });
+  if (dispatchedVehiclesData.length > 0)
+    await db
+      .insert(dispatchedVehiclesTable)
+      .values(dispatchedVehiclesData)
+      .onConflictDoUpdate({
+        target: dispatchedVehiclesTable.id,
+        set: conflictUpdateSetAllColumns(dispatchedVehiclesTable)
+      });
+
+  return incident;
 }
 
 function sanitizeIncidentCode(code: string) {

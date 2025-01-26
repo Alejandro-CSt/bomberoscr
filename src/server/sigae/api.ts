@@ -4,7 +4,7 @@ import type {
   ObtenerDatosVehiculo,
   ObtenerDetalleEmergencias,
   ObtenerEstacionDetalle,
-  ObtenerEstacionLista,
+  ObtenerEstaciones,
   ObtenerEstacionesAtiendeIncidente,
   ObtenerEstacionesOperativas,
   ObtenerListaEmergenciasApp,
@@ -65,7 +65,7 @@ export async function getVehiclesDispatchedToIncident(id: number) {
 }
 
 export async function getStationsList() {
-  return await fetcher<ObtenerEstacionLista>("ObtenerEstacionLista");
+  return await fetcher<ObtenerEstaciones>("ObtenerEstaciones");
 }
 
 export async function getOperativeStations() {
