@@ -10,6 +10,9 @@ type StationType = z.infer<typeof stationsInsertSchema>;
 export const syncStations = schedules.task({
   id: "sync-stations",
   cron: "0 12 * * *",
+  queue: {
+    concurrencyLimit: 1
+  },
   run: async () => {
     const stationList = await getStationsList();
     const operativeStations = await getOperativeStations();

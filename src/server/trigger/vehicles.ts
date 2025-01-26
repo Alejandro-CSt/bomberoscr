@@ -10,6 +10,9 @@ type VehicleType = z.infer<typeof vehiclesInsertSchema>;
 export const syncVehicles = schedules.task({
   id: "sync-vehicles",
   cron: "0 */5 * * *",
+  queue: {
+    concurrencyLimit: 1
+  },
   run: async () => {
     const vehiclesList = await getAllVehicles();
     const vehicles: VehicleType[] = [];

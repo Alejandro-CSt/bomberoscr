@@ -56,6 +56,9 @@ export const syncIncident = schemaTask({
 export const syncIncidents = schedules.task({
   id: "sync-incidents",
   cron: "*/1 * * * *",
+  queue: {
+    concurrencyLimit: 1
+  },
   run: async () => {
     const response = await getLatestIncidentsListApp(15);
 
