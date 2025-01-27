@@ -25,7 +25,8 @@ export const syncVehicleDisponibility = schedules.task({
       })
     );
 
-    db.insert(vehicleDisponibilityTable)
+    await db
+      .insert(vehicleDisponibilityTable)
       .values(vehicleDisponibility)
       .onConflictDoUpdate({
         target: vehicleDisponibilityTable.id,

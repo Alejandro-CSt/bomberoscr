@@ -32,7 +32,8 @@ export const syncVehicles = schedules.task({
 
     logger.info(`Syncing ${vehicles.length} vehicles`);
 
-    db.insert(vehiclesTable)
+    await db
+      .insert(vehiclesTable)
       .values(vehicles)
       .onConflictDoUpdate({
         target: vehiclesTable.id,

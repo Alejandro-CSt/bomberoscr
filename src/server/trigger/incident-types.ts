@@ -39,14 +39,15 @@ export const syncIncidentTypes = schedules.task({
   run: async () => {
     const incidentTypes = await getIncidentTypes();
     const incidentTypesList: IncidentType[] = getIncidentsRecursively(incidentTypes.items);
-
-    db.insert(incidentTypesTable)
+    const count = await db.$count(incidentTypesTable);
+    await db
+      .insert(incidentTypesTable)
       .values(incidentTypesList)
       .onConflictDoUpdate({
         target: incidentTypesTable.id,
         set: conflictUpdateSetAllColumns(incidentTypesTable)
       });
 
-    return incidentTypesList.length;
+    return count;
   }
 });

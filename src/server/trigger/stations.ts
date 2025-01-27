@@ -38,7 +38,8 @@ export const syncStations = schedules.task({
       });
     }
 
-    db.insert(stationsTable)
+    await db
+      .insert(stationsTable)
       .values(stations)
       .onConflictDoUpdate({
         target: stationsTable.id,
