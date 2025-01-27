@@ -25,6 +25,10 @@ export const syncIncident = schemaTask({
   queue: {
     concurrencyLimit: 3
   },
+  retry: {
+    minTimeoutInMs: 5000,
+    maxAttempts: 10
+  },
   schema: z.object({
     incidentId: z.number().positive()
   }),
