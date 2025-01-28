@@ -4,12 +4,14 @@ import {
   dispatchedVehicles,
   incidentTypes,
   incidents,
-  stations,
+  stations as stationsTable,
   vehicleDisponibility,
   vehicles
 } from "@/server/db/schema";
 import { Hono } from "hono";
 import { handle } from "hono/vercel";
+import incidentsRouter from "./incidents";
+import stationsRouter from "./stations";
 
 const app = new Hono().basePath("/api");
 
@@ -19,7 +21,7 @@ app.get("/healthcheck", async (c) => {
   const vehiclesDispatchedCount = await db.$count(dispatchedVehicles);
   const incidentTypesCount = await db.$count(incidentTypes);
   const incidentsCount = await db.$count(incidents);
-  const stationsCount = await db.$count(stations);
+  const stationsCount = await db.$count(stationsTable);
   const dispatchedStationCount = await db.$count(dispatchedStations);
 
   return c.json({
@@ -33,4 +35,8 @@ app.get("/healthcheck", async (c) => {
   });
 });
 
+const routes = app.route("/stations", stationsRouter).route("/incidents", incidentsRouter);
+
 export const GET = handle(app);
+
+export type AppType = typeof routes;
