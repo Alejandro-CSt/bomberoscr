@@ -19,23 +19,33 @@ export function isUndefinedDate(date: string) {
 
 /**
  * Returns the relative time of a date, in spanish (es-CR) format.
- * @example getRelativeTime(new Date("2025-01-01T00:00:00")) // "hace 1 mes"
+ * @example getRelativeTime("2025-01-31T13:26:48.000Z")) // "hace 6 días"
  * @param date date to evaluate
  */
-export function getRelativeTime(date: Date): string {
-  date.setHours(date.getHours() + 6);
-  const now = new Date();
-  const diffInMs = date.getTime() - now.getTime();
-  const diffInSecs = Math.floor(diffInMs / 1000);
-  const formatter = new Intl.RelativeTimeFormat("es-CR", { numeric: "auto" });
+export function getRelativeTime(date: string): string {
+  const rtf = new Intl.RelativeTimeFormat("es-CR", { numeric: "auto" });
 
-  const seconds = Math.abs(diffInSecs);
-  const minutes = Math.floor(seconds / 60);
-  const hours = Math.floor(minutes / 60);
-  const days = Math.floor(hours / 24);
+  const nowCR = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Costa_Rica" }));
 
-  if (days > 0) return formatter.format(-days, "day");
-  if (hours > 0) return formatter.format(-hours, "hour");
-  if (minutes > 0) return formatter.format(-minutes, "minute");
-  return formatter.format(-seconds, "second");
+  const thenUTC = new Date(date);
+  const thenCR = new Date(thenUTC.getTime() + 6 * 60 * 60000);
+
+  const diffInSeconds = (nowCR.getTime() - thenCR.getTime()) / 1000;
+
+  if (Math.abs(diffInSeconds) < 60) {
+    return rtf.format(-Math.round(diffInSeconds), "second");
+  }
+
+  const diffInMinutes = diffInSeconds / 60;
+  if (Math.abs(diffInMinutes) < 60) {
+    return rtf.format(-Math.round(diffInMinutes), "minute");
+  }
+
+  const diffInHours = diffInMinutes / 60;
+  if (Math.abs(diffInHours) < 24) {
+    return rtf.format(-Math.round(diffInHours), "hour");
+  }
+
+  const diffInDays = diffInHours / 24;
+  return rtf.format(-Math.round(diffInDays), "day");
 }

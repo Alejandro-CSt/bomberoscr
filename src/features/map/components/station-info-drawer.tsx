@@ -127,7 +127,7 @@ const IncidentsTab = ({ incidents }: { incidents: ReturnType<typeof useStationIn
                 ) : (
                   <p className="flex items-center text-muted-foreground text-xs">
                     <Clock className="mr-1 h-3 w-3" />
-                    {getRelativeTime(new Date(incident.incident.incidentTimestamp))}
+                    {getRelativeTime(incident.incident.incidentTimestamp)}
                   </p>
                 )}
               </div>
