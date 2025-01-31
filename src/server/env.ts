@@ -1,7 +1,7 @@
 import { config } from "dotenv";
 import { expand } from "dotenv-expand";
 
-import { ZodError, z } from "zod";
+import { z } from "zod";
 
 const EnvSchema = z.object({
   POSTGRES_HOST: z.string(),
@@ -21,21 +21,12 @@ export type EnvSchema = z.infer<typeof EnvSchema>;
 
 expand(config());
 
-if (!process.env.SKIP_ENV_CHECK) {
-  try {
-    EnvSchema.parse(process.env);
-  } catch (error) {
-    if (error instanceof ZodError) {
-      let message = "Missing required values in .env:\n";
-      for (const issue of error.issues) {
-        message += `${issue.path[0]}\n`;
-      }
-      const e = new Error(message);
-      e.stack = "";
-      throw e;
-    }
-    console.error(error);
+function validateEnv() {
+  if (process.env.SKIP_ENV_CHECK) {
+    return process.env as unknown as EnvSchema;
   }
+
+  return EnvSchema.parse(process.env);
 }
 
-export default EnvSchema.parse(process.env);
+export default validateEnv();
