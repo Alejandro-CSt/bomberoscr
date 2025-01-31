@@ -23,6 +23,7 @@ export function isUndefinedDate(date: string) {
  * @param date date to evaluate
  */
 export function getRelativeTime(date: Date): string {
+  date.setHours(date.getHours() + 6);
   const now = new Date();
   const diffInMs = date.getTime() - now.getTime();
   const diffInSecs = Math.floor(diffInMs / 1000);
