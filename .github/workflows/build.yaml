@@ -17,6 +17,7 @@ jobs:
           registry: ${{ secrets.REGISTRY }}
           username: ${{ secrets.REGISTRY_USER }}
           password: ${{ secrets.REGISTRY_PASSWORD  }}
+
       - name: Build image and push to registry
         uses: docker/build-push-action@v4
         with:
@@ -25,6 +26,14 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: ${{ secrets.REGISTRY }}/${{ secrets.IMAGE_NAME }}:latest
+
       - name: Trigger deploy on Coolify
         run: |
           curl --request GET '${{ secrets.COOLIFY_WEBHOOK }}' --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}'
+
+      - name: Deploy trigger
+        env:
+          TRIGGER_ACCESS_TOKEN: ${{ secrets.TRIGGER_ACCESS_TOKEN }}
+          TRIGGER_API_URL: ${{ secrets.TRIGGER_API_URL }}
+        run: |
+          npx trigger.dev@latest deploy --skip-update-check --self-hosted --push --namespace ${{ secrets.REGISTRY_USER }} --registry ${{ secrets.REGISTRY }}

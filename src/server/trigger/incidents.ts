@@ -2,7 +2,7 @@ import db from "@/server/db";
 import { incidents as incidentsTable } from "@/server/db/schema";
 import { getLatestIncidentsListApp } from "@/server/sigae/api";
 import { upsertIncident } from "@/server/sync/incidents";
-import { schedules, schemaTask } from "@trigger.dev/sdk/v3";
+import { logger, schedules, schemaTask } from "@trigger.dev/sdk/v3";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 
@@ -33,7 +33,9 @@ export const syncIncident = schemaTask({
     incidentId: z.number().positive()
   }),
   run: async (payload) => {
+    logger.info(`Starting sync for incident ${payload.incidentId}`);
     const incident = await upsertIncident(payload.incidentId);
+    logger.info(`Upserted incident ${payload.incidentId}`, { incident });
 
     const incidentAgeMs = incident?.incidentTimestamp
       ? Date.now() - new Date(incident.incidentTimestamp).getTime()
@@ -43,6 +45,7 @@ export const syncIncident = schemaTask({
 
     if ((!noCoordinates && !incident) || incident.isOpen || (!noCoordinates && !incident.isOpen)) {
       const delay = calculateDelay(incidentAgeMs);
+      logger.info(`Scheduling re-sync for incident ${payload.incidentId} with delay ${delay}`);
       await syncIncident.trigger({ incidentId: payload.incidentId }, { delay });
       return `Scheduled sync for incident ${payload.incidentId} in ${delay}`;
     }
@@ -52,6 +55,7 @@ export const syncIncident = schemaTask({
         .update(incidentsTable)
         .set({ isOpen: false })
         .where(eq(incidentsTable.id, payload.incidentId));
+      logger.info(`Closed incident ${payload.incidentId} after 5 days without coordinates`);
       return `Closed incident ${payload.incidentId} after 5 days without coordinates`;
     }
   }
@@ -64,7 +68,9 @@ export const syncIncidents = schedules.task({
     concurrencyLimit: 1
   },
   run: async () => {
+    logger.info("Starting incidents sync");
     const response = await getLatestIncidentsListApp(15);
+    logger.info(`Fetched ${response.items.length} incidents from API`);
 
     const existingIncidents = await Promise.all(
       response.items.map(async (incident) => {
@@ -85,8 +91,10 @@ export const syncIncidents = schedules.task({
       .filter((item) => !item.exists)
       .map((item) => item.incident);
 
+    logger.info(`Identified ${newIncidents.length} new incidents`);
     for (const incident of newIncidents) {
       await upsertIncident(incident.idBoletaIncidente);
+      logger.info(`Upserted new incident ${incident.idBoletaIncidente}, scheduling initial sync`);
       await syncIncident.trigger(
         {
           incidentId: incident.idBoletaIncidente

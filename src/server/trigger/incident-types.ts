@@ -1,10 +1,13 @@
 import db from "@/server/db";
+import {
+  type incidentTypesInsertSchema,
+  incidentTypes as incidentTypesTable
+} from "@/server/db/schema";
 import { conflictUpdateSetAllColumns } from "@/server/db/utils";
-import { schedules } from "@trigger.dev/sdk/v3";
+import { getIncidentTypes } from "@/server/sigae/api";
+import type { ItemObtenerTiposIncidente } from "@/server/sigae/types";
+import { logger, schedules } from "@trigger.dev/sdk/v3";
 import type { z } from "zod";
-import { type incidentTypesInsertSchema, incidentTypes as incidentTypesTable } from "../db/schema";
-import { getIncidentTypes } from "../sigae/api";
-import type { ItemObtenerTiposIncidente } from "../sigae/types";
 
 type IncidentType = z.infer<typeof incidentTypesInsertSchema>;
 
@@ -37,7 +40,9 @@ export const syncIncidentTypes = schedules.task({
     concurrencyLimit: 1
   },
   run: async () => {
+    logger.info("Starting incident types sync");
     const incidentTypes = await getIncidentTypes();
+    logger.info(`Fetched incident types with ${incidentTypes.items.length} top-level items`);
     const incidentTypesList: IncidentType[] = getIncidentsRecursively(incidentTypes.items);
     const count = await db.$count(incidentTypesTable);
     await db
@@ -47,7 +52,9 @@ export const syncIncidentTypes = schedules.task({
         target: incidentTypesTable.id,
         set: conflictUpdateSetAllColumns(incidentTypesTable)
       });
-
+    logger.info(
+      `Incident types upserted. Previous count: ${count}, New total: ${incidentTypesList.length}`
+    );
     return count;
   }
 });

@@ -1,9 +1,9 @@
 import db from "@/server/db";
 import { type stationsInsertSchema, stations as stationsTable } from "@/server/db/schema";
+import { conflictUpdateSetAllColumns } from "@/server/db/utils";
 import { getOperativeStations, getStationDetails, getStationsList } from "@/server/sigae/api";
-import { schedules } from "@trigger.dev/sdk/v3";
+import { logger, schedules } from "@trigger.dev/sdk/v3";
 import type { z } from "zod";
-import { conflictUpdateSetAllColumns } from "../db/utils";
 
 type StationType = z.infer<typeof stationsInsertSchema>;
 
@@ -14,8 +14,11 @@ export const syncStations = schedules.task({
     concurrencyLimit: 1
   },
   run: async () => {
+    logger.info("Starting stations sync");
     const stationList = await getStationsList();
+    logger.info(`Fetched ${stationList.Items.length} stations from listing`);
     const operativeStations = await getOperativeStations();
+    logger.info(`Fetched ${operativeStations.Items.length} operative stations`);
     const stations: StationType[] = [];
 
     for (const station of stationList.Items) {
@@ -38,6 +41,7 @@ export const syncStations = schedules.task({
       });
     }
 
+    logger.info(`Syncing ${stations.length} stations`);
     await db
       .insert(stationsTable)
       .values(stations)
@@ -45,7 +49,7 @@ export const syncStations = schedules.task({
         target: stationsTable.id,
         set: conflictUpdateSetAllColumns(stationsTable)
       });
-
+    logger.info("Stations updated in database");
     return stations.length;
   }
 });

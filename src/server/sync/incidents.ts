@@ -7,6 +7,7 @@ import {
   type incidentsInsertSchema,
   incidents as incidentsTable
 } from "@/server/db/schema";
+import { conflictUpdateSetAllColumns } from "@/server/db/utils";
 import {
   getIncidentDetails,
   getIncidentReport,
@@ -15,7 +16,6 @@ import {
 } from "@/server/sigae/api";
 import { eq } from "drizzle-orm";
 import type { z } from "zod";
-import { conflictUpdateSetAllColumns } from "../db/utils";
 
 export async function upsertIncident(id: number) {
   const [dispatchedStations, dispatchedVehicles, incidentDetails, incidentReport] =

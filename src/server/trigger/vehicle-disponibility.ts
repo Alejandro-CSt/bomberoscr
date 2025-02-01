@@ -4,9 +4,9 @@ import {
   vehicleDisponibility as vehicleDisponibilityTable
 } from "@/server/db/schema";
 import { conflictUpdateSetAllColumns } from "@/server/db/utils";
-import { schedules } from "@trigger.dev/sdk/v3";
+import { getVehicleDisponibilityStates } from "@/server/sigae/api";
+import { logger, schedules } from "@trigger.dev/sdk/v3";
 import type { z } from "zod";
-import { getVehicleDisponibilityStates } from "../sigae/api";
 
 type VehicleDisponibilityType = z.infer<typeof vehicleDisponibilityInsertSchema>;
 
@@ -17,7 +17,9 @@ export const syncVehicleDisponibility = schedules.task({
     concurrencyLimit: 1
   },
   run: async () => {
+    logger.info("Starting vehicle disponibility sync");
     const vehicleDisponibilityStates = await getVehicleDisponibilityStates();
+    logger.info(`Fetched ${vehicleDisponibilityStates.Items.length} vehicle disponibility states`);
     const vehicleDisponibility: VehicleDisponibilityType[] = vehicleDisponibilityStates.Items.map(
       (state) => ({
         id: state.IdGrupoClasificacion,
@@ -32,7 +34,7 @@ export const syncVehicleDisponibility = schedules.task({
         target: vehicleDisponibilityTable.id,
         set: conflictUpdateSetAllColumns(vehicleDisponibilityTable)
       });
-
+    logger.info("Vehicle disponibility updated in database");
     return vehicleDisponibility.length;
   }
 });

@@ -1,9 +1,9 @@
 import db from "@/server/db";
 import { type vehiclesInsertSchema, vehicles as vehiclesTable } from "@/server/db/schema";
+import { conflictUpdateSetAllColumns } from "@/server/db/utils";
 import { getAllVehicles, getVehicleDetails } from "@/server/sigae/api";
 import { logger, schedules } from "@trigger.dev/sdk/v3";
 import type { z } from "zod";
-import { conflictUpdateSetAllColumns } from "../db/utils";
 
 type VehicleType = z.infer<typeof vehiclesInsertSchema>;
 
@@ -14,7 +14,9 @@ export const syncVehicles = schedules.task({
     concurrencyLimit: 1
   },
   run: async () => {
+    logger.info("Starting vehicles sync");
     const vehiclesList = await getAllVehicles();
+    logger.info(`Fetched vehicles list with ${vehiclesList.Items.length} items`);
     const vehicles: VehicleType[] = [];
 
     for (const vehicle of vehiclesList.Items) {
@@ -39,7 +41,7 @@ export const syncVehicles = schedules.task({
         target: vehiclesTable.id,
         set: conflictUpdateSetAllColumns(vehiclesTable)
       });
-
+    logger.info("Vehicles updated in database");
     return vehicles.length;
   }
 });
