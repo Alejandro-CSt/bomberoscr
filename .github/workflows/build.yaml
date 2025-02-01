@@ -29,11 +29,4 @@ jobs:
 
       - name: Trigger deploy on Coolify
         run: |
-          curl --request GET '${{ secrets.COOLIFY_WEBHOOK }}' --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}'
-
-      - name: Deploy trigger
-        env:
-          TRIGGER_ACCESS_TOKEN: ${{ secrets.TRIGGER_ACCESS_TOKEN }}
-          TRIGGER_API_URL: ${{ secrets.TRIGGER_API_URL }}
-        run: |
-          npx trigger.dev@3.3.11 deploy --skip-update-check --self-hosted --push --namespace ${{ secrets.REGISTRY_USER }} --registry ${{ secrets.REGISTRY }}
+          curl --request GET '${{ secrets.COOLIFY_WEBHOOK }}' --header 'Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}'      
