@@ -1,4 +1,4 @@
-import { cn } from "@/features/lib/utils";
+import { cn } from "@/lib/utils";
 import { Geist_Mono } from "next/font/google";
 
 const geist = Geist_Mono({ subsets: ["latin"], weight: ["900"] });

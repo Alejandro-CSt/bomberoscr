@@ -7,9 +7,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/features/components/
 import { useStationIncidents } from "@/features/hooks/use-incidents";
 import { useMediaQuery } from "@/features/hooks/use-media-query";
 import type { Station } from "@/features/hooks/use-stations";
-import { cn, getRelativeTime, isUndefinedDate } from "@/features/lib/utils";
 import { StationKeyDisplay } from "@/features/map/components/station-key-display";
 import { useStationInfo } from "@/features/map/context/station-drawer-context";
+import { cn, getRelativeTime, isUndefinedDate } from "@/lib/utils";
 import { AlertTriangle, Clock, MapPin, XIcon } from "lucide-react";
 import { Azeret_Mono as Geist_Mono } from "next/font/google";
 import { useEffect } from "react";

@@ -7,8 +7,8 @@ import { type MapRef, Marker, Map as ReactMap } from "@vis.gl/react-maplibre";
 import { useRef } from "react";
 
 import { useStations } from "@/features/hooks/use-stations";
-import { isReducedMotion } from "@/features/lib/utils";
 import { useStationInfo } from "@/features/map/context/station-drawer-context";
+import { isReducedMotion } from "@/lib/utils";
 import { ShieldIcon } from "lucide-react";
 import type { Map as MapType } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
