@@ -21,7 +21,7 @@ export function MapControls() {
 
   return (
     <div className="absolute right-4 bottom-12 z-10 hidden rounded-full text-primary-foreground md:block">
-      <div className="flex-col items-center rounded-lg border border-white/20 bg-black/45 lg:flex">
+      <div className="flex flex-col items-center rounded-lg border border-white/20 bg-black/45">
         <Button variant="ghost" onClick={() => map?.zoomIn()}>
           <ZoomInIcon className="size-8 rounded-none" />
           <span className="sr-only">Acercar</span>
@@ -53,7 +53,7 @@ export function MapSettings() {
           </Button>
         </div>
       </PopoverTrigger>
-      <PopoverContent className="absolute top-4 right-0 w-80" align="end">
+      <PopoverContent className="mt-4 mr-4 w-80" align="end" side="left">
         <div className="grid grid-cols-2 gap-2 rounded-xl bg-zinc-50 p-4 shadow-md">
           <div className="col-span-full flex items-center justify-between">
             <h2 className="col-span-2 font-semibold text-lg">Estilo del mapa</h2>
