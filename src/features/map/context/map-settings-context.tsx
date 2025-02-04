@@ -23,6 +23,13 @@ function validateSetting<T>(value: unknown, schema: z.ZodType<T>): T {
   }
 }
 
+function getLocalStorageItem(key: string, fallback: string | undefined): string | undefined {
+  if (typeof window !== "undefined") {
+    return localStorage.getItem(key) || fallback;
+  }
+  return fallback;
+}
+
 type MapSettingsContextType = {
   style: MapStyle;
   setStyle: (newStyle: MapStyle) => void;
@@ -36,31 +43,28 @@ const MapSettingsContext = createContext<MapSettingsContextType | undefined>(und
 
 export function MapSettingsProvider({ children }: { children: ReactNode }) {
   const [style, setStyleState] = useState<MapStyle>(() =>
-    validateSetting(localStorage.getItem("mapStyle") || "light", styleSchema)
+    validateSetting(getLocalStorageItem("mapStyle", "light"), styleSchema)
   );
   const [showStations, setShowStationsState] = useState<ShowStations>(() =>
-    validateSetting(localStorage.getItem("mapStations") || undefined, showStationsSchema)
+    validateSetting(getLocalStorageItem("mapStations", undefined), showStationsSchema)
   );
   const [incidentTimeRange, setIncidentTimeRangeState] = useState<IncidentTimeRange>(() =>
-    validateSetting(
-      localStorage.getItem("mapIncidentTimeRange") || undefined,
-      incidentTimeRangeSchema
-    )
+    validateSetting(getLocalStorageItem("mapIncidentTimeRange", undefined), incidentTimeRangeSchema)
   );
 
   const setStyle = (newStyle: MapStyle) => {
     setStyleState(newStyle);
-    localStorage.setItem("mapStyle", newStyle);
+    if (typeof window !== "undefined") localStorage.setItem("mapStyle", newStyle);
   };
 
   const setShowStations = (value: ShowStations) => {
     setShowStationsState(value);
-    localStorage.setItem("mapStations", value);
+    if (typeof window !== "undefined") localStorage.setItem("mapStations", value);
   };
 
   const setIncidentTimeRange = (value: IncidentTimeRange) => {
     setIncidentTimeRangeState(value);
-    localStorage.setItem("mapIncidentTimeRange", value);
+    if (typeof window !== "undefined") localStorage.setItem("mapIncidentTimeRange", value);
   };
 
   return (
