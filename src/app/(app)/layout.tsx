@@ -8,7 +8,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], weight: "variable" });
 
 export const metadata: Metadata = {
   title: "Mapa en tiempo real",
