@@ -1,11 +1,10 @@
 "use client";
 
-import type { Station } from "@/features/hooks/use-stations";
 import { createContext, useContext, useState } from "react";
 
 type StationInfoContextType = {
-  station: Station | null;
-  setStation: (station: Station | null) => void;
+  stationId: number | undefined;
+  setStationId: (id: number | undefined) => void;
   isDrawerOpen: boolean;
   setIsDrawerOpen: (isOpen: boolean) => void;
 };
@@ -13,11 +12,13 @@ type StationInfoContextType = {
 const StationInfoContext = createContext<StationInfoContextType | null>(null);
 
 export const StationInfoProvider = ({ children }: { children: React.ReactNode }) => {
-  const [station, setStation] = useState<Station | null>(null);
+  const [stationId, setStationId] = useState<number | undefined>();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   return (
-    <StationInfoContext.Provider value={{ station, setStation, isDrawerOpen, setIsDrawerOpen }}>
+    <StationInfoContext.Provider
+      value={{ stationId, setStationId: setStationId, isDrawerOpen, setIsDrawerOpen }}
+    >
       {children}
     </StationInfoContext.Provider>
   );

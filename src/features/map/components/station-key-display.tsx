@@ -9,7 +9,7 @@ export function StationKeyDisplay({ stationKey }: { stationKey: string }) {
   return (
     <div
       className={cn(
-        "flex h-16 min-w-16 items-center justify-center rounded-full bg-red-500 font-black text-2xl text-white",
+        "flex min-h-10 min-w-10 items-center justify-center rounded-full bg-red-500 font-black text-sm text-white",
         geist.className
       )}
     >

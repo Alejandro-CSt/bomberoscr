@@ -2,8 +2,6 @@ import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
-import "@/styles/globals.css";
-
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -12,9 +10,5 @@ export const metadata: Metadata = {
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="es">
-      <body className={cn(inter.className, "max-h-screen overflow-y-hidden")}>{children}</body>
-    </html>
-  );
+  return <div className={cn(inter.className, "max-h-screen overflow-y-hidden")}>{children}</div>;
 }

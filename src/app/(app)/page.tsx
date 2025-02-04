@@ -1,17 +1,18 @@
 "use client";
 
-import { type Station, useStations } from "@/features/hooks/use-stations";
 import { MapControls, MapSettings } from "@/features/map/components/floating-controls";
 import { CR_NE_CORNER, CR_SW_CORNER } from "@/features/map/constants";
 import { useMapStyle } from "@/features/map/context/map-style-provider";
 import { useStationInfo } from "@/features/map/context/station-drawer-context";
+import { trpc } from "@/lib/trpc/client";
 import { isReducedMotion } from "@/lib/utils";
+import type { OperativeStation } from "@/server/trpc";
 import { ShieldIcon } from "lucide-react";
 import { MapProvider, Marker, Map as ReactMap, useMap } from "react-map-gl/maplibre";
 
 export default function Home() {
-  const { setStation, setIsDrawerOpen } = useStationInfo();
-  const stations = useStations();
+  const { setStationId: setStation, setIsDrawerOpen, isDrawerOpen } = useStationInfo();
+  const stations = trpc.getOperativeStations.useQuery();
 
   return (
     <div className="h-dvh">
@@ -33,16 +34,16 @@ export default function Home() {
           }}
           mapStyle={useMapStyle().style}
         >
-          {stations.map((station) => {
-            if (station.isOperative)
-              return (
-                <StationMarker
-                  key={station.id}
-                  station={station}
-                  setStation={setStation}
-                  setIsDrawerOpen={setIsDrawerOpen}
-                />
-              );
+          {stations.data?.map((station) => {
+            return (
+              <StationMarker
+                key={station.id}
+                station={station}
+                setStation={setStation}
+                isDrawerOpen={isDrawerOpen}
+                setIsDrawerOpen={setIsDrawerOpen}
+              />
+            );
           })}
           <MapSettings />
           <MapControls />
@@ -55,10 +56,12 @@ export default function Home() {
 function StationMarker({
   station,
   setStation,
+  isDrawerOpen,
   setIsDrawerOpen
 }: {
-  station: Station;
-  setStation: (station: Station) => void;
+  station: OperativeStation;
+  setStation: (id: number) => void;
+  isDrawerOpen: boolean;
   setIsDrawerOpen: (isOpen: boolean) => void;
 }) {
   const { current: map } = useMap();
@@ -79,8 +82,8 @@ function StationMarker({
           zoom: map.getZoom() < 14 ? 14 : undefined,
           animate: !isReducedMotion()
         });
-        setStation(station);
-        setIsDrawerOpen(true);
+        if (!isDrawerOpen) setIsDrawerOpen(true);
+        setStation(station.id);
       }}
     >
       <ShieldIcon className="size-6 rounded-xl bg-[#facd01] p-1 text-black lg:size-8" />

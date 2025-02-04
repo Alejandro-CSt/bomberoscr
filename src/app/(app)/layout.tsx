@@ -1,8 +1,9 @@
-import StationInfoDrawer from "@/features/map/components/station-info-drawer";
+import IncidentInfoDrawer from "@/features/map/components/incident-drawer";
+import StationInfoDrawer from "@/features/map/components/station-drawer";
+import { IncidentInfoProvider } from "@/features/map/context/incident-drawer-context";
 import { MapStyleProvider } from "@/features/map/context/map-style-provider";
 import { StationInfoProvider } from "@/features/map/context/station-drawer-context";
 import { cn } from "@/lib/utils";
-import "@/styles/globals.css";
 import "maplibre-gl/dist/maplibre-gl.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -16,15 +17,16 @@ export const metadata: Metadata = {
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es">
-      <body className={cn(inter.className, "max-h-screen")}>
-        <MapStyleProvider>
-          <StationInfoProvider>
+    <div className={cn(inter.className, "max-h-screen")}>
+      <MapStyleProvider>
+        <StationInfoProvider>
+          <IncidentInfoProvider>
             <StationInfoDrawer />
+            <IncidentInfoDrawer />
             {children}
-          </StationInfoProvider>
-        </MapStyleProvider>
-      </body>
-    </html>
+          </IncidentInfoProvider>
+        </StationInfoProvider>
+      </MapStyleProvider>
+    </div>
   );
 }
