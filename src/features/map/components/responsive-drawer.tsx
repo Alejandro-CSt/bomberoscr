@@ -25,17 +25,11 @@ export function ResponsiveDrawer(props: ResponsiveDrawerProps) {
 
   if (isDesktop)
     return (
-      <Vaul.Root
-        modal={false}
-        open={isOpen}
-        onOpenChange={setIsOpen}
-        direction="left"
-        shouldScaleBackground
-      >
+      <Vaul.Root modal={false} open={isOpen} onOpenChange={setIsOpen} direction="left">
         <Vaul.Portal>
           <Vaul.Content
             className={cn(
-              "fixed bottom-4 left-2 z-10 flex h-full max-h-[50dvh] w-[310px] flex-col overflow-hidden rounded-lg bg-background outline-none"
+              "fixed bottom-2 left-2 z-10 flex h-full max-h-[50dvh] w-[310px] flex-col overflow-hidden rounded-lg bg-background outline-none"
             )}
             style={{ "--initial-transform": "calc(100% + 8px)" } as React.CSSProperties}
           >
@@ -54,7 +48,7 @@ export function ResponsiveDrawer(props: ResponsiveDrawerProps) {
       preventScrollRestoration={false}
       noBodyStyles
     >
-      <DrawerContent className="h-full max-h-[35vh]">{children}</DrawerContent>
+      <DrawerContent className="h-full max-h-[35vh] outline-none">{children}</DrawerContent>
     </Drawer>
   );
 }

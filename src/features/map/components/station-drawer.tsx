@@ -2,12 +2,14 @@
 
 import { Badge } from "@/features/components/ui/badge";
 import { ScrollArea } from "@/features/components/ui/scroll-area";
+import { Skeleton } from "@/features/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/features/components/ui/tabs";
 import { useStationInfo } from "@/features/map/context/station-drawer-context";
 import { trpc } from "@/lib/trpc/client";
 import { cn, getRelativeTime, isUndefinedDate } from "@/lib/utils";
 import type { StationDetailsWithIncidents } from "@/server/trpc";
-import { AlertTriangle, AxeIcon, Clock, MapPin, XIcon } from "lucide-react";
+import { DialogTitle } from "@radix-ui/react-dialog";
+import { AlertTriangle, Clock, MapPin, XIcon } from "lucide-react";
 import { Azeret_Mono as Geist_Mono } from "next/font/google";
 import { Drawer } from "vaul";
 import { ResponsiveDrawer } from "./responsive-drawer";
@@ -18,14 +20,34 @@ const geist = Geist_Mono({ subsets: ["latin"], weight: ["400", "700"] });
 export default function StationInfoDrawer() {
   const { stationId, isDrawerOpen, setIsDrawerOpen } = useStationInfo();
 
-  const station = trpc.getStationDetailsWithIncidents.useQuery({ id: stationId });
-
-  if (!station || !station.data) return null;
+  const { data: station, isPending } = trpc.getStationDetailsWithIncidents.useQuery({
+    id: stationId
+  });
 
   return (
     <ResponsiveDrawer isOpen={isDrawerOpen} setIsOpen={setIsDrawerOpen}>
-      <Header station={station.data} />
-      <DrawerBody station={station.data} setIsDrawerOpen={setIsDrawerOpen} />
+      {isPending ? (
+        <div className="flex flex-col gap-2 px-4">
+          <DialogTitle className="sr-only">Cargando</DialogTitle>
+          <div className="flex items-center gap-2 py-2">
+            <Skeleton className="h-10 w-10 rounded-full" />
+            <Skeleton className="h-6 w-40" />
+          </div>
+          <div className="grid grid-cols-3 gap-2">
+            <Skeleton className="h-8" /> <Skeleton className="h-8" /> <Skeleton className="h-8" />
+          </div>
+          <div className="mt-4 flex flex-col gap-4">
+            <Skeleton className="h-8 w-1/2" />
+            <Skeleton className="h-4" />
+            <Skeleton className="h-4 w-1/2" />
+          </div>
+        </div>
+      ) : (
+        <>
+          <Header station={station} />
+          <DrawerBody station={station} />
+        </>
+      )}
     </ResponsiveDrawer>
   );
 }
@@ -48,11 +70,9 @@ const Header = ({ station }: { station: StationDetailsWithIncidents }) => {
 };
 
 const DrawerBody = ({
-  station,
-  setIsDrawerOpen
+  station
 }: {
   station: StationDetailsWithIncidents;
-  setIsDrawerOpen: (isOpen: boolean) => void;
 }) => {
   return (
     <Tabs defaultValue="statistics" className="flex min-h-0 flex-col">
@@ -82,7 +102,7 @@ const DrawerBody = ({
   );
 };
 
-const StatisticsTab = ({ station }: { station: StationDetailsWithIncidents }) => {
+const StatisticsTab = ({ station: _ }: { station: StationDetailsWithIncidents }) => {
   return (
     <div className="space-y-4">
       <h3 className="font-semibold text-lg">Estadísticas de la Estación</h3>
@@ -125,10 +145,6 @@ const IncidentsTab = ({ station }: { station: StationDetailsWithIncidents }) => 
                 {dispatchedStation.incident.importantDetails}
               </p>
             )}
-            <p className="mt-2 flex items-start text-xs">
-              <AxeIcon className="mr-1 h-3 w-3 shrink-0 translate-y-0.5 text-red-500" />
-              {dispatchedStation.incident.description || "Descripción no disponible"}
-            </p>
           </div>
         ))
       )}
