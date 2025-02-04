@@ -48,7 +48,7 @@ export function ResponsiveDrawer(props: ResponsiveDrawerProps) {
       preventScrollRestoration={false}
       noBodyStyles
     >
-      <DrawerContent className="h-full max-h-[35vh] outline-none">{children}</DrawerContent>
+      <DrawerContent className="h-full max-h-[45vh] outline-none">{children}</DrawerContent>
     </Drawer>
   );
 }

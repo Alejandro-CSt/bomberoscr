@@ -1,16 +1,24 @@
 import {
-  getOperativeStations,
+  getIncidentsCoordinates,
+  getLatestIncidentsCoordinates,
   getStationDetails,
-  getStationDetailsWithIncidents
+  getStationDetailsWithIncidents,
+  getStations
 } from "@/server/db/queries";
 import { publicProcedure, router } from "@/server/trpc/init";
 import type { inferRouterOutputs } from "@trpc/server";
 import { z } from "zod";
 
 export const appRouter = router({
-  getOperativeStations: publicProcedure.query(async () => {
-    return await getOperativeStations();
-  }),
+  getStations: publicProcedure
+    .input(
+      z.object({
+        filter: z.enum(["all", "operative"]).optional().default("operative")
+      })
+    )
+    .query(async (opts) => {
+      return await getStations(opts.input.filter === "all");
+    }),
   getStationDetails: publicProcedure
     .input(
       z.object({
@@ -30,12 +38,24 @@ export const appRouter = router({
     .query(async (opts) => {
       if (!opts.input.id) return null;
       return await getStationDetailsWithIncidents(opts.input.id);
+    }),
+  getLatestIncidentsCoordinates: publicProcedure.query(async () => {
+    return await getLatestIncidentsCoordinates();
+  }),
+  getIncidentsCoordinates: publicProcedure
+    .input(
+      z.object({
+        timeRange: z.enum(["24h", "48h", "disabled"]).default("24h")
+      })
+    )
+    .query(async (opts) => {
+      return await getIncidentsCoordinates(opts.input.timeRange);
     })
 });
 
 export type AppRouter = typeof appRouter;
 
-export type OperativeStation = inferRouterOutputs<typeof appRouter>["getOperativeStations"][number];
+export type OperativeStation = inferRouterOutputs<typeof appRouter>["getStations"][number];
 export type StationDetails = inferRouterOutputs<typeof appRouter>["getStationDetails"];
 export type StationDetailsWithIncidents = inferRouterOutputs<
   typeof appRouter

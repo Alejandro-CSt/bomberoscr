@@ -1,7 +1,7 @@
 import IncidentInfoDrawer from "@/features/map/components/incident-drawer";
 import StationInfoDrawer from "@/features/map/components/station-drawer";
 import { IncidentInfoProvider } from "@/features/map/context/incident-drawer-context";
-import { MapStyleProvider } from "@/features/map/context/map-style-provider";
+import { MapSettingsProvider } from "@/features/map/context/map-settings-context";
 import { StationInfoProvider } from "@/features/map/context/station-drawer-context";
 import { cn } from "@/lib/utils";
 import "maplibre-gl/dist/maplibre-gl.css";
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className={cn(inter.className, "max-h-screen")}>
-      <MapStyleProvider>
+      <MapSettingsProvider>
         <StationInfoProvider>
           <IncidentInfoProvider>
             <StationInfoDrawer />
@@ -26,7 +26,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             {children}
           </IncidentInfoProvider>
         </StationInfoProvider>
-      </MapStyleProvider>
+      </MapSettingsProvider>
     </div>
   );
 }

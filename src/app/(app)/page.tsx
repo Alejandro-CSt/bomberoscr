@@ -1,8 +1,13 @@
 "use client";
 
 import { MapControls, MapSettings } from "@/features/map/components/floating-controls";
-import { CR_NE_CORNER, CR_SW_CORNER } from "@/features/map/constants";
-import { useMapStyle } from "@/features/map/context/map-style-provider";
+import {
+  CR_NE_CORNER,
+  CR_SW_CORNER,
+  DARK_MAP_STYLE,
+  LIGHT_MAP_STYLE
+} from "@/features/map/constants";
+import { useMapSettings } from "@/features/map/context/map-settings-context";
 import { useStationInfo } from "@/features/map/context/station-drawer-context";
 import { trpc } from "@/lib/trpc/client";
 import { isReducedMotion } from "@/lib/utils";
@@ -12,7 +17,19 @@ import { MapProvider, Marker, Map as ReactMap, useMap } from "react-map-gl/mapli
 
 export default function Home() {
   const { setStationId: setStation, setIsDrawerOpen, isDrawerOpen } = useStationInfo();
-  const stations = trpc.getOperativeStations.useQuery();
+  const { style, showStations, incidentTimeRange } = useMapSettings();
+  const allStationsQuery = trpc.getStations.useQuery({ filter: "all" });
+  const operativeStationsQuery = trpc.getStations.useQuery({ filter: "operative" });
+  const incidentsQuery = trpc.getIncidentsCoordinates.useQuery({
+    timeRange: incidentTimeRange
+  });
+  const stationsData =
+    showStations === "none"
+      ? []
+      : showStations === "operative"
+        ? operativeStationsQuery.data
+        : allStationsQuery.data;
+  const mapStyleUrl = style === "light" ? LIGHT_MAP_STYLE : DARK_MAP_STYLE;
 
   return (
     <div className="h-dvh">
@@ -32,9 +49,9 @@ export default function Home() {
             bearing: 0,
             pitch: 0
           }}
-          mapStyle={useMapStyle().style}
+          mapStyle={mapStyleUrl}
         >
-          {stations.data?.map((station) => {
+          {stationsData?.map((station) => {
             return (
               <StationMarker
                 key={station.id}
@@ -45,6 +62,16 @@ export default function Home() {
               />
             );
           })}
+          {incidentsQuery.data?.map((incident) => (
+            <Marker
+              key={incident.id}
+              longitude={Number.parseFloat(incident.longitude ?? "0")}
+              latitude={Number.parseFloat(incident.latitude ?? "0")}
+              anchor="bottom"
+            >
+              <div className="size-3 rounded-full border-2 border-white bg-red-600" />
+            </Marker>
+          ))}
           <MapSettings />
           <MapControls />
         </ReactMap>
@@ -86,7 +113,7 @@ function StationMarker({
         setStation(station.id);
       }}
     >
-      <ShieldIcon className="size-6 rounded-xl bg-[#facd01] p-1 text-black lg:size-8" />
+      <ShieldIcon className="size-5 rounded-xl bg-[#facd01] p-1 text-black lg:size-8" />
     </Marker>
   );
 }
