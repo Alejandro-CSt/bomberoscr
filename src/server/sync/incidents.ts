@@ -14,6 +14,7 @@ import {
   getStationsAttendingIncident,
   getVehiclesDispatchedToIncident
 } from "@/server/sigae/api";
+import { logger } from "@trigger.dev/sdk/v3";
 import { eq } from "drizzle-orm";
 import type { z } from "zod";
 
@@ -26,24 +27,29 @@ export async function upsertIncident(id: number) {
       getIncidentReport(id)
     ]);
 
+  if (incidentDetails.Descripcion !== "Proceso realizado satisfactoriamente")
+    logger.error(
+      `Error getting incident details for incident ${id} - ${incidentDetails.Descripcion}`
+    );
+
   if (incidentDetails.Descripcion === "No se encontraron registros.") return;
 
   const responsibleStation =
     dispatchedStations.Items.find((station) => station.DestipoServicio === "RESPONSABLE") ||
     dispatchedStations.Items[dispatchedStations.Items.length - 1];
 
-  const date = incidentDetails.fecha.split("T")[0];
-  const time = incidentDetails.hora_incidente.split("T")[1];
+  const date = incidentReport.Fecha.split("T")[0];
+  const time = incidentReport.Hora_Aviso.split("T")[1];
   const timestamp = new Date(`${date}T${time}`);
 
   const incident: z.infer<typeof incidentsInsertSchema> = {
     id: id,
-    EEConsecutive: incidentDetails.consecutivo_EE,
-    address: incidentDetails.direccion,
+    EEConsecutive: incidentReport.Consecutivo,
+    address: incidentReport.DesUbicacion,
     districtId: incidentReport.Id_Distrito,
     cantonId: incidentReport.Id_Canton,
     provinceId: incidentReport.Id_Provincia,
-    importantDetails: incidentDetails.DetallesImportantes,
+    importantDetails: incidentReport.Direccion,
     dispatchIncidentCode: await getIncidentType(incidentDetails.codigo_tipo_incidente_despacho),
     specificDispatchIncidentCode: await getIncidentType(
       incidentDetails.codigo_tipo_incidente_despacho_esp
@@ -52,8 +58,8 @@ export async function upsertIncident(id: number) {
     specificIncidentCode: await getIncidentType(incidentDetails.codigo_tipo_incidente_esp),
     incidentTimestamp: timestamp,
     responsibleStation: responsibleStation.IdEstacion,
-    latitude: incidentDetails.latitud.toString(),
-    longitude: incidentDetails.longitud.toString(),
+    latitude: incidentDetails.latitud?.toString() || "0",
+    longitude: incidentDetails.longitud?.toString() || "0",
     isOpen: incidentReport.Estado_Abierto === "true"
   };
 
@@ -112,7 +118,8 @@ function sanitizeIncidentCode(code: string) {
   return code.slice(0, code.length - 1);
 }
 
-async function getIncidentType(incidentCode: string) {
+async function getIncidentType(incidentCode: string | null) {
+  if (!incidentCode) return null;
   const sanitized = sanitizeIncidentCode(incidentCode);
   const type = await db.query.incidentTypes.findFirst({
     where: eq(incidentsTable.incidentCode, sanitized),
