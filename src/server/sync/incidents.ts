@@ -40,6 +40,24 @@ export async function upsertIncident(id: number) {
 
     for (let nextId = id + 1; nextId <= id + 15; nextId++) {
       const nextIdIncident = await getIncidentDetails(nextId);
+      const dbNextId = await db.query.incidents.findFirst({
+        where: eq(incidentsTable.id, nextId)
+      });
+
+      if (dbNextId) {
+        if (dbNextId.address === dbIncident.address) {
+          logger.warn(`Deleting incident ${id}, incident was updated to ${nextId}`);
+          await db
+            .delete(dispatchedStationsTable)
+            .where(eq(dispatchedStationsTable.incidentId, id));
+          await db
+            .delete(dispatchedVehiclesTable)
+            .where(eq(dispatchedVehiclesTable.incidentId, id));
+          await db.delete(incidentsTable).where(eq(incidentsTable.id, id));
+          return upsertIncident(nextId);
+        }
+      }
+
       if (nextIdIncident.Descripcion === "No se encontraron registros.") continue;
 
       if (nextIdIncident.direccion === dbIncident.address) {
