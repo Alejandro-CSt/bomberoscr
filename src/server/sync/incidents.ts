@@ -32,7 +32,24 @@ export async function upsertIncident(id: number) {
       `Error getting incident details for incident ${id} - ${incidentDetails.Descripcion}`
     );
 
-  if (incidentDetails.Descripcion === "No se encontraron registros.") return;
+  if (incidentDetails.Descripcion === "No se encontraron registros.") {
+    const dbIncident = await db.query.incidents.findFirst({
+      where: eq(incidentsTable.id, id)
+    });
+    if (!dbIncident) return;
+
+    for (let nextId = id + 1; nextId <= id + 15; nextId++) {
+      const nextIdIncident = await getIncidentDetails(nextId);
+      if (nextIdIncident.Descripcion === "No se encontraron registros.") continue;
+
+      if (nextIdIncident.direccion === dbIncident.address) {
+        logger.warn(`Updating incident ${id} to ${nextId}`);
+        await db.update(incidentsTable).set({ id: nextId }).where(eq(incidentsTable.id, id));
+        return upsertIncident(nextId);
+      }
+    }
+    return;
+  }
 
   const responsibleStation =
     dispatchedStations.Items.find((station) => station.DestipoServicio === "RESPONSABLE") ||
