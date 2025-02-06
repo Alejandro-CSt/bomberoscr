@@ -99,3 +99,31 @@ export async function getIncidentsCoordinates(timeRange: "24h" | "48h" | "disabl
     orderBy: desc(incidents.id)
   });
 }
+
+export async function getIncidentById(id: number) {
+  return await db.query.incidents.findFirst({
+    where: eq(incidents.id, id),
+    with: {
+      dispatchedVehicles: {
+        with: {
+          vehicle: {
+            columns: {
+              internalNumber: true
+            }
+          },
+          station: {
+            columns: {
+              name: true
+            }
+          }
+        }
+      },
+      station: {
+        columns: {
+          name: true,
+          stationKey: true
+        }
+      }
+    }
+  });
+}

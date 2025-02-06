@@ -56,10 +56,10 @@ export const dispatchedVehicles = pgTable("dispatched_vehicles", {
   stationId: integer()
     .notNull()
     .references(() => stations.id),
-  dispatchedTime: timestamp(),
-  arrivalTime: timestamp(),
-  departureTime: timestamp(),
-  baseReturnTime: timestamp(),
+  dispatchedTime: timestamp().notNull(),
+  arrivalTime: timestamp().notNull(),
+  departureTime: timestamp().notNull(),
+  baseReturnTime: timestamp().notNull(),
   attentionOnFoot: boolean().default(false)
 });
 

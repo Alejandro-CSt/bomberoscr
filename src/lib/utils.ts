@@ -14,7 +14,7 @@ export function isReducedMotion() {
  * @param date date to evaluate
  */
 export function isUndefinedDate(date: string) {
-  return date === "0001-01-01T00:00:00";
+  return new Date(date).getFullYear() === 1;
 }
 
 /**

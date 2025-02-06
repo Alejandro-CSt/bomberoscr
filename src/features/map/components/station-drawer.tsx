@@ -4,16 +4,15 @@ import { Badge } from "@/features/components/ui/badge";
 import { ScrollArea } from "@/features/components/ui/scroll-area";
 import { Skeleton } from "@/features/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/features/components/ui/tabs";
+import { ResponsiveDrawer } from "@/features/map/components/responsive-drawer";
+import { StationKeyDisplay } from "@/features/map/components/station-key-display";
 import { useStationInfo } from "@/features/map/context/station-drawer-context";
 import { trpc } from "@/lib/trpc/client";
 import { cn, getRelativeTime, isUndefinedDate } from "@/lib/utils";
 import type { StationDetailsWithIncidents } from "@/server/trpc";
-import { DialogTitle } from "@radix-ui/react-dialog";
 import { AlertTriangle, Clock, MapPin, XIcon } from "lucide-react";
 import { Azeret_Mono as Geist_Mono } from "next/font/google";
 import { Drawer } from "vaul";
-import { ResponsiveDrawer } from "./responsive-drawer";
-import { StationKeyDisplay } from "./station-key-display";
 
 const geist = Geist_Mono({ subsets: ["latin"], weight: ["400", "700"] });
 
@@ -28,7 +27,7 @@ export default function StationInfoDrawer() {
     <ResponsiveDrawer isOpen={isDrawerOpen} setIsOpen={setIsDrawerOpen}>
       {isPending ? (
         <div className="flex flex-col gap-2 px-4">
-          <DialogTitle className="sr-only">Cargando</DialogTitle>
+          <Drawer.Title className="sr-only">Cargando</Drawer.Title>
           <div className="flex items-center gap-2 py-2">
             <Skeleton className="h-10 w-10 rounded-full" />
             <Skeleton className="h-6 w-40" />
@@ -36,7 +35,7 @@ export default function StationInfoDrawer() {
           <div className="grid grid-cols-3 gap-2">
             <Skeleton className="h-8" /> <Skeleton className="h-8" /> <Skeleton className="h-8" />
           </div>
-          <div className="mt-4 flex flex-col gap-4">
+          <div className="mt-4 flex h-min flex-col gap-4">
             <Skeleton className="h-8 w-1/2" />
             <Skeleton className="h-4" />
             <Skeleton className="h-4 w-1/2" />

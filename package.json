@@ -34,6 +34,7 @@
     "@trpc/next": "^11.0.0-rc.730",
     "@trpc/react-query": "^11.0.0-rc.730",
     "@trpc/server": "^11.0.0-rc.730",
+    "babel-plugin-react-compiler": "^19.0.0-beta-714736e-20250131",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dotenv": "^16.4.7",

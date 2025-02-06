@@ -3,6 +3,7 @@
 import { Drawer, DrawerContent } from "@/features/components/ui/drawer";
 import { useMediaQuery } from "@/features/hooks/use-media-query";
 import { cn } from "@/lib/utils";
+import type React from "react";
 import { useEffect } from "react";
 import { Drawer as Vaul } from "vaul";
 
@@ -25,11 +26,20 @@ export function ResponsiveDrawer(props: ResponsiveDrawerProps) {
 
   if (isDesktop)
     return (
-      <Vaul.Root modal={false} open={isOpen} onOpenChange={setIsOpen} direction="left">
+      <Vaul.Root
+        modal={false}
+        open={isOpen}
+        onOpenChange={setIsOpen}
+        direction="bottom"
+        shouldScaleBackground
+        disablePreventScroll
+        preventScrollRestoration={false}
+        noBodyStyles
+      >
         <Vaul.Portal>
           <Vaul.Content
             className={cn(
-              "fixed bottom-2 left-2 z-10 flex h-full max-h-[50dvh] w-[310px] flex-col overflow-hidden rounded-lg bg-background outline-none"
+              "fixed bottom-2 left-2 z-10 flex h-full max-h-[70dvh] w-[310px] animate-none flex-col overflow-hidden rounded-lg bg-background outline-none"
             )}
             style={{ "--initial-transform": "calc(100% + 8px)" } as React.CSSProperties}
           >
@@ -48,7 +58,7 @@ export function ResponsiveDrawer(props: ResponsiveDrawerProps) {
       preventScrollRestoration={false}
       noBodyStyles
     >
-      <DrawerContent className="h-full max-h-[45vh] outline-none">{children}</DrawerContent>
+      <DrawerContent className="h-full max-h-[45dvh] outline-none">{children}</DrawerContent>
     </Drawer>
   );
 }

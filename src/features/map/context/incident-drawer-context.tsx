@@ -3,8 +3,8 @@
 import { createContext, useContext, useState } from "react";
 
 type IncidentInfoContextType = {
-  incidentId: string | undefined;
-  setIncidentId: (id: string | undefined) => void;
+  incidentId: number | undefined;
+  setIncidentId: (id: number | undefined) => void;
   isDrawerOpen: boolean;
   setIsDrawerOpen: (isOpen: boolean) => void;
 };
@@ -12,7 +12,7 @@ type IncidentInfoContextType = {
 const IncidentInfoContext = createContext<IncidentInfoContextType | null>(null);
 
 export const IncidentInfoProvider = ({ children }: { children: React.ReactNode }) => {
-  const [incidentId, setIncidentId] = useState<string | undefined>();
+  const [incidentId, setIncidentId] = useState<number | undefined>();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   return (

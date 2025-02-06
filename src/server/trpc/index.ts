@@ -1,4 +1,5 @@
 import {
+  getIncidentById,
   getIncidentsCoordinates,
   getLatestIncidentsCoordinates,
   getStationDetails,
@@ -16,8 +17,8 @@ export const appRouter = router({
         filter: z.enum(["all", "operative"]).optional().default("operative")
       })
     )
-    .query(async (opts) => {
-      return await getStations(opts.input.filter === "all");
+    .query(async ({ input }) => {
+      return await getStations(input.filter === "all");
     }),
   getStationDetails: publicProcedure
     .input(
@@ -25,9 +26,9 @@ export const appRouter = router({
         id: z.number().nullable()
       })
     )
-    .query(async (opts) => {
-      if (!opts.input.id) return null;
-      return await getStationDetails(opts.input.id);
+    .query(async ({ input }) => {
+      if (!input.id) return null;
+      return await getStationDetails(input.id);
     }),
   getStationDetailsWithIncidents: publicProcedure
     .input(
@@ -35,9 +36,9 @@ export const appRouter = router({
         id: z.number().nullish()
       })
     )
-    .query(async (opts) => {
-      if (!opts.input.id) return null;
-      return await getStationDetailsWithIncidents(opts.input.id);
+    .query(async ({ input }) => {
+      if (!input.id) return null;
+      return await getStationDetailsWithIncidents(input.id);
     }),
   getLatestIncidentsCoordinates: publicProcedure.query(async () => {
     return await getLatestIncidentsCoordinates();
@@ -48,8 +49,14 @@ export const appRouter = router({
         timeRange: z.enum(["24h", "48h", "disabled"]).default("24h")
       })
     )
-    .query(async (opts) => {
-      return await getIncidentsCoordinates(opts.input.timeRange);
+    .query(async ({ input }) => {
+      return await getIncidentsCoordinates(input.timeRange);
+    }),
+  getIncidentById: publicProcedure
+    .input(z.object({ id: z.number().nullish() }))
+    .query(async ({ input }) => {
+      if (!input.id) return null;
+      return await getIncidentById(input.id);
     })
 });
 
@@ -60,3 +67,5 @@ export type StationDetails = inferRouterOutputs<typeof appRouter>["getStationDet
 export type StationDetailsWithIncidents = inferRouterOutputs<
   typeof appRouter
 >["getStationDetailsWithIncidents"];
+export type Incident = inferRouterOutputs<typeof appRouter>["getIncidentsCoordinates"][number];
+export type IncidentDetails = inferRouterOutputs<typeof appRouter>["getIncidentById"];
