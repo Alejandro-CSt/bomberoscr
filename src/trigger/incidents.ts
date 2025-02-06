@@ -3,7 +3,7 @@ import { dispatchedVehicles, incidents as incidentsTable } from "@/server/db/sch
 import { getLatestIncidentsListApp } from "@/server/sigae/api";
 import { upsertIncident } from "@/server/sync/incidents";
 import { logger, schedules } from "@trigger.dev/sdk/v3";
-import { and, eq, or } from "drizzle-orm";
+import { and, between, eq, or } from "drizzle-orm";
 
 const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
 
@@ -15,10 +15,17 @@ export const syncOpenIncidents = schedules.task({
   },
   run: async () => {
     const openIncidents = await db.query.incidents.findMany({
-      where: or(
-        eq(incidentsTable.isOpen, true),
-        eq(incidentsTable.latitude, "0"),
-        eq(incidentsTable.longitude, "0")
+      where: and(
+        or(
+          eq(incidentsTable.isOpen, true),
+          eq(incidentsTable.latitude, "0"),
+          eq(incidentsTable.longitude, "0")
+        ),
+        between(
+          incidentsTable.incidentTimestamp,
+          new Date(Date.now() - 1000 * 60 * 60 * 72),
+          new Date()
+        )
       )
     });
 
