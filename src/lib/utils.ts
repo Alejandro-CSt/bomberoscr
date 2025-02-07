@@ -24,13 +24,10 @@ export function isUndefinedDate(date: string) {
  */
 export function getRelativeTime(date: string): string {
   const rtf = new Intl.RelativeTimeFormat("es-CR", { numeric: "auto" });
+  const now = new Date();
+  const then = new Date(date);
 
-  const nowCR = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Costa_Rica" }));
-
-  const thenUTC = new Date(date);
-  const thenCR = new Date(thenUTC.getTime() + 6 * 60 * 60000);
-
-  const diffInSeconds = (nowCR.getTime() - thenCR.getTime()) / 1000;
+  const diffInSeconds = (now.getTime() - then.getTime()) / 1000;
 
   if (Math.abs(diffInSeconds) < 60) {
     return rtf.format(-Math.round(diffInSeconds), "second");
