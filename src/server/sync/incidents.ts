@@ -1,3 +1,4 @@
+import { compareTwoStrings } from "@/lib/utils";
 import db from "@/server/db/index";
 import {
   type dispatchedStationsInsertSchema,
@@ -45,7 +46,7 @@ export async function upsertIncident(id: number) {
       });
 
       if (dbNextId) {
-        if (dbNextId.address === dbIncident.address) {
+        if (compareTwoStrings(dbNextId.address, dbIncident.address) >= 0.8) {
           logger.warn(`Deleting incident ${id}, incident was updated to ${nextId}`);
           await db
             .delete(dispatchedStationsTable)
