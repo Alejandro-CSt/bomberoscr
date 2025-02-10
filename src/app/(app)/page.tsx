@@ -1,5 +1,6 @@
 "use client";
 
+import { useMediaQuery } from "@/features/hooks/use-media-query";
 import { MapControls, MapSettings } from "@/features/map/components/floating-controls";
 import {
   CR_NE_CORNER,
@@ -9,23 +10,20 @@ import {
 } from "@/features/map/constants";
 import { useIncidentInfo } from "@/features/map/context/incident-drawer-context";
 import { useMapSettings } from "@/features/map/context/map-settings-context";
-import { useStationInfo } from "@/features/map/context/station-drawer-context";
+import { TabName, useActiveStation } from "@/features/map/hooks/use-station";
 import { trpc } from "@/lib/trpc/client";
 import { isReducedMotion } from "@/lib/utils";
-import type { Incident, OperativeStation } from "@/server/trpc";
+import type { Incident, Station } from "@/server/trpc";
 import { ShieldIcon } from "lucide-react";
 import { MapProvider, Marker, Map as ReactMap, useMap } from "react-map-gl/maplibre";
 
 export default function Home() {
-  const {
-    setStationId: setStation,
-    setIsDrawerOpen: setIsStationDrawerOpen,
-    isDrawerOpen: isStationDrawerOpen
-  } = useStationInfo();
+  const [activeStation, setActiveStation] = useActiveStation();
   const { style, showStations, incidentTimeRange } = useMapSettings();
-  const allStationsQuery = trpc.getStations.useQuery({ filter: "all" });
-  const operativeStationsQuery = trpc.getStations.useQuery({ filter: "operative" });
-  const incidentsQuery = trpc.getIncidentsCoordinates.useQuery({
+  const isMobile = useMediaQuery("(max-width: 768px)");
+  const allStationsQuery = trpc.stations.getStations.useQuery({ filter: "all" });
+  const operativeStationsQuery = trpc.stations.getStations.useQuery({ filter: "operative" });
+  const incidentsQuery = trpc.incidents.getIncidentsCoordinates.useQuery({
     timeRange: incidentTimeRange
   });
   const stationsData =
@@ -61,9 +59,14 @@ export default function Home() {
               <StationMarker
                 key={station.id}
                 station={station}
-                setStation={setStation}
-                isDrawerOpen={isStationDrawerOpen}
-                setIsDrawerOpen={setIsStationDrawerOpen}
+                onClick={() => {
+                  setActiveStation({
+                    fullScreen: !isMobile,
+                    stationKey: station.stationKey,
+                    stationName: station.name,
+                    tab: isMobile ? null : (activeStation.tab ?? TabName.Details)
+                  });
+                }}
               />
             );
           })}
@@ -80,16 +83,11 @@ export default function Home() {
 
 function StationMarker({
   station,
-  setStation,
-  isDrawerOpen,
-  setIsDrawerOpen
+  onClick
 }: {
-  station: OperativeStation;
-  setStation: (id: number) => void;
-  isDrawerOpen: boolean;
-  setIsDrawerOpen: (isOpen: boolean) => void;
+  station: Station;
+  onClick: () => void;
 }) {
-  const { setIsDrawerOpen: setIncidentDrawerOpen } = useIncidentInfo();
   const { current: map } = useMap();
 
   return (
@@ -108,9 +106,7 @@ function StationMarker({
           zoom: map.getZoom() < 14 ? 14 : undefined,
           animate: !isReducedMotion()
         });
-        setStation(station.id);
-        if (!isDrawerOpen) setIsDrawerOpen(true);
-        setIncidentDrawerOpen(false);
+        onClick();
       }}
     >
       <ShieldIcon className="size-5 rounded-xl bg-[#facd01] p-1 text-black lg:size-8" />
@@ -119,7 +115,6 @@ function StationMarker({
 }
 
 function IncidentMarker({ incident }: { incident: Incident }) {
-  const { setIsDrawerOpen: setStationDrawerOpen } = useStationInfo();
   const { current: map } = useMap();
   const { setIncidentId, isDrawerOpen, setIsDrawerOpen } = useIncidentInfo();
 
@@ -141,7 +136,6 @@ function IncidentMarker({ incident }: { incident: Incident }) {
         });
         setIncidentId(incident.id);
         if (!isDrawerOpen) setIsDrawerOpen(true);
-        setStationDrawerOpen(false);
       }}
     >
       <div className="size-6 rounded-full border-2 border-white bg-red-600" />

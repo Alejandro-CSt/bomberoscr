@@ -1,11 +1,13 @@
-import Provider from "@/lib/trpc/provider";
+import TRPCProvider from "@/lib/trpc/provider";
 import "@/styles/globals.css";
-
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es">
       <body>
-        <Provider>{children}</Provider>
+        <NuqsAdapter>
+          <TRPCProvider>{children}</TRPCProvider>
+        </NuqsAdapter>
       </body>
     </html>
   );

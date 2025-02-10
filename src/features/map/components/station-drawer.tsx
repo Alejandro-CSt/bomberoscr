@@ -1,201 +1,118 @@
 "use client";
 
-import { Badge } from "@/features/components/ui/badge";
-import { ScrollArea } from "@/features/components/ui/scroll-area";
-import { Skeleton } from "@/features/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/features/components/ui/tabs";
+import { Button } from "@/features/components/ui/button";
+import {
+  DrawerClose,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle
+} from "@/features/components/ui/drawer";
+import { Separator } from "@/features/components/ui/separator";
 import { ResponsiveDrawer } from "@/features/map/components/responsive-drawer";
 import { StationKeyDisplay } from "@/features/map/components/station-key-display";
-import { useStationInfo } from "@/features/map/context/station-drawer-context";
-import { trpc } from "@/lib/trpc/client";
-import { cn, getRelativeTime, isUndefinedDate } from "@/lib/utils";
-import type { StationDetailsWithIncidents } from "@/server/trpc";
-import { AlertTriangle, Clock, MapPin, XIcon } from "lucide-react";
-import { Azeret_Mono as Geist_Mono } from "next/font/google";
-import { Drawer } from "vaul";
+import { cn } from "@/lib/utils";
+import { Building2Icon, ChartSplineIcon, SirenIcon, XIcon } from "lucide-react";
+import { Geist_Mono } from "next/font/google";
+import { TabName, useActiveStation } from "../hooks/use-station";
 
-const geist = Geist_Mono({ subsets: ["latin"], weight: ["400", "700"] });
+const geist = Geist_Mono({ subsets: ["latin"], weight: "variable" });
 
 export default function StationInfoDrawer() {
-  const { stationId, isDrawerOpen, setIsDrawerOpen } = useStationInfo();
+  const [activeStationQuery, setActiveStation] = useActiveStation();
 
-  const { data: station, isPending } = trpc.getStationDetailsWithIncidents.useQuery({
-    id: stationId
-  });
+  const handleClose = () => {
+    setActiveStation(null);
+  };
 
   return (
-    <ResponsiveDrawer isOpen={isDrawerOpen} setIsOpen={setIsDrawerOpen}>
-      {isPending ? (
-        <div className="flex flex-col gap-2 px-4">
-          <Drawer.Title className="sr-only">Cargando</Drawer.Title>
-          <div className="flex items-center gap-2 py-2">
-            <Skeleton className="h-10 w-10 rounded-full" />
-            <Skeleton className="h-6 w-40" />
-          </div>
-          <div className="grid grid-cols-3 gap-2">
-            <Skeleton className="h-8" /> <Skeleton className="h-8" /> <Skeleton className="h-8" />
-          </div>
-          <div className="mt-4 flex h-min flex-col gap-4">
-            <Skeleton className="h-8 w-1/2" />
-            <Skeleton className="h-4" />
-            <Skeleton className="h-4 w-1/2" />
-          </div>
-        </div>
-      ) : (
-        <>
-          <Header station={station} />
-          <DrawerBody station={station} />
-        </>
-      )}
+    <ResponsiveDrawer
+      isOpen={
+        activeStationQuery.stationKey !== null &&
+        activeStationQuery.stationName !== null &&
+        !activeStationQuery.fullScreen
+      }
+      onClose={handleClose}
+    >
+      <div className="flex h-full flex-col justify-between gap-1">
+        <StationDrawerHeader />
+        <Separator />
+        <StationDrawerFooter />
+      </div>
     </ResponsiveDrawer>
   );
 }
 
-const Header = ({ station }: { station: StationDetailsWithIncidents }) => {
+export function StationDrawerHeader() {
+  const [activeStationQuery] = useActiveStation();
+
   return (
-    <div className="flex items-center justify-between px-4 py-2">
+    <DrawerHeader className={cn("flex items-center justify-between px-4 py-2", geist.className)}>
       <div className="flex items-center gap-2">
-        <StationKeyDisplay stationKey={station?.stationKey || "0-0"} />
-        <div>
-          <Drawer.Title className="font-bold text-lg">{station?.name}</Drawer.Title>
-        </div>
+        <StationKeyDisplay stationKey={activeStationQuery.stationKey || "0-0"} />
+        <DrawerTitle>{activeStationQuery.stationName}</DrawerTitle>
       </div>
-      <Drawer.Close>
-        <XIcon className="size-4" />
-        <span className="sr-only">Cerrar</span>
-      </Drawer.Close>
-    </div>
+      <DrawerClose asChild>
+        <Button variant="ghost">
+          <XIcon size={20} />
+        </Button>
+      </DrawerClose>
+    </DrawerHeader>
   );
-};
+}
 
-const DrawerBody = ({
-  station
-}: {
-  station: StationDetailsWithIncidents;
-}) => {
-  return (
-    <Tabs defaultValue="statistics" className="flex min-h-0 flex-col">
-      <TabsList className="mx-2">
-        <TabsTrigger value="statistics">Estadísticas</TabsTrigger>
-        <TabsTrigger value="incidents">Incidentes</TabsTrigger>
-        <TabsTrigger value="information">Información</TabsTrigger>
-      </TabsList>
-      <ScrollArea>
-        <TabsContent
-          value="statistics"
-          className="mb-4 h-full flex-col px-4 data-[state=active]:flex"
-        >
-          <StatisticsTab station={station} />
-        </TabsContent>
-        <TabsContent value="incidents" className="mb-4 px-4">
-          <IncidentsTab station={station} />
-        </TabsContent>
-        <TabsContent
-          value="information"
-          className="mb-4 h-full flex-col px-4 data-[state=active]:flex"
-        >
-          <InformationTab station={station} />
-        </TabsContent>
-      </ScrollArea>
-    </Tabs>
-  );
-};
+export function StationDrawerFooter() {
+  const [activeStation, setActiveStation] = useActiveStation();
 
-const StatisticsTab = ({ station: _ }: { station: StationDetailsWithIncidents }) => {
   return (
-    <div className="space-y-4">
-      <h3 className="font-semibold text-lg">Estadísticas de la Estación</h3>
-      <p>Contenido de estadísticas aquí...</p>
-    </div>
+    <DrawerFooter className="flex flex-row justify-evenly text-sm">
+      <Button
+        onClick={() => {
+          setActiveStation({
+            fullScreen: true,
+            tab: TabName.Details
+          });
+        }}
+        className={cn(
+          "flex basis-0 flex-col items-center gap-1 text-foreground",
+          activeStation.tab === TabName.Details && "text-primary"
+        )}
+        variant="link"
+      >
+        <Building2Icon className="size-4" />
+        General
+      </Button>
+      <Button
+        onClick={() => {
+          setActiveStation({
+            fullScreen: true,
+            tab: TabName.Incidents
+          });
+        }}
+        className={cn(
+          "flex basis-0 flex-col items-center gap-1 text-foreground",
+          activeStation.tab === TabName.Incidents && "text-primary"
+        )}
+        variant="link"
+      >
+        <SirenIcon className="size-4" />
+        Incidentes
+      </Button>
+      <Button
+        onClick={() => {
+          setActiveStation({
+            fullScreen: true,
+            tab: TabName.Stats
+          });
+        }}
+        className={cn(
+          "flex basis-0 flex-col items-center gap-1 text-foreground",
+          activeStation.tab === TabName.Stats && "text-primary"
+        )}
+        variant="link"
+      >
+        <ChartSplineIcon className="size-4" />
+        Estadísticas
+      </Button>
+    </DrawerFooter>
   );
-};
-
-const IncidentsTab = ({ station }: { station: StationDetailsWithIncidents }) => {
-  return (
-    <div className={cn("space-y-4", geist.className)}>
-      {station?.dispatchedStations.length === 0 ? (
-        <p className="text-center text-muted-foreground text-sm">Sin incidentes atendidos.</p>
-      ) : (
-        station?.dispatchedStations.map((dispatchedStation) => (
-          <div
-            key={dispatchedStation.incident.id}
-            className="rounded-lg border p-4 shadow-sm transition-all hover:bg-accent"
-          >
-            <div className="flex items-center justify-between">
-              <Badge variant={dispatchedStation.incident.isOpen ? "destructive" : "secondary"}>
-                {dispatchedStation.incident.isOpen ? "Abierto" : "Cerrado"}
-              </Badge>
-              {isUndefinedDate(dispatchedStation.incident.incidentTimestamp) ? (
-                <p className="text-muted-foreground text-xs">Fecha no disponible</p>
-              ) : (
-                <p className="flex items-center text-muted-foreground text-xs">
-                  <Clock className="mr-1 h-3 w-3" />
-                  {getRelativeTime(dispatchedStation.incident.incidentTimestamp)}
-                </p>
-              )}
-            </div>
-            <p className="mt-1 flex items-start text-muted-foreground text-xs">
-              <MapPin className="mr-1 h-3 w-3 shrink-0 translate-y-0.5" />
-              {dispatchedStation.incident.address || "Dirección no disponible"}
-            </p>
-            {dispatchedStation.incident.importantDetails && (
-              <p className="mt-2 flex items-start text-xs">
-                <AlertTriangle className="mr-1 h-3 w-3 shrink-0 translate-y-0.5 text-yellow-500" />
-                {dispatchedStation.incident.importantDetails}
-              </p>
-            )}
-          </div>
-        ))
-      )}
-    </div>
-  );
-};
-
-const InformationTab = ({ station }: { station: StationDetailsWithIncidents }) => {
-  return (
-    <div className="grid grid-cols-2 gap-4">
-      <div className="col-span-2">
-        <h3 className="mb-1 font-semibold text-sm">Nombre</h3>
-        <p className="text-muted-foreground text-xs">{station?.name || "No disponible"}</p>
-      </div>
-      <div>
-        <h3 className="mb-1 font-semibold text-sm">Clave</h3>
-        <p className="text-muted-foreground text-xs">{station?.stationKey || "No disponible"}</p>
-      </div>
-      <div>
-        <h3 className="mb-1 font-semibold text-sm">Canal de Radio</h3>
-        <p className="text-muted-foreground text-xs">{station?.radioChannel || "No disponible"}</p>
-      </div>
-      <div>
-        <h3 className="mb-1 font-semibold text-sm">Latitud</h3>
-        <p className="text-muted-foreground text-xs">{station?.latitude || "No disponible"}</p>
-      </div>
-      <div>
-        <h3 className="mb-1 font-semibold text-sm">Longitud</h3>
-        <p className="text-muted-foreground text-xs">{station?.longitude || "No disponible"}</p>
-      </div>
-      <div className="col-span-2">
-        <h3 className="mb-1 font-semibold text-sm">Dirección</h3>
-        <p className="text-muted-foreground text-xs">{station?.address || "No disponible"}</p>
-      </div>
-      <div>
-        <h3 className="mb-1 font-semibold text-sm">Teléfono</h3>
-        <p className="text-muted-foreground text-xs">{station?.phoneNumber || "No disponible"}</p>
-      </div>
-      <div>
-        <h3 className="mb-1 font-semibold text-sm">Fax</h3>
-        <p className="text-muted-foreground text-xs">{station?.fax || "No disponible"}</p>
-      </div>
-      <div>
-        <h3 className="mb-1 font-semibold text-sm">Email</h3>
-        <p className="text-muted-foreground text-xs">{station?.email || "No disponible"}</p>
-      </div>
-      <div>
-        <h3 className="mb-1 font-semibold text-sm">Estado Operativo</h3>
-        <p className="text-muted-foreground text-xs">
-          {station?.isOperative ? "Operativa" : "No Operativa"}
-        </p>
-      </div>
-    </div>
-  );
-};
+}

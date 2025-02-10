@@ -1,6 +1,7 @@
 import db from "@/server/db";
-import { dispatchedStations, dispatchedVehicles, incidents, stations } from "@/server/db/schema";
-import { and, between, desc, eq, ne } from "drizzle-orm";
+import { dispatchedStations, incidentTypes, incidents, stations } from "@/server/db/schema";
+import { TRPCError } from "@trpc/server";
+import { and, between, desc, eq, inArray, isNull, ne, not, sql } from "drizzle-orm";
 
 export async function getStations(all: boolean) {
   return await db.query.stations.findMany({
@@ -15,51 +16,94 @@ export async function getStations(all: boolean) {
   });
 }
 
-export async function getStationDetails(id: number) {
-  return await db.query.stations.findFirst({
-    where: eq(stations.id, id)
-  });
+export async function getStationDetails(key: string) {
+  return (
+    (await db.query.stations.findFirst({
+      where: eq(stations.stationKey, key)
+    })) || null
+  );
 }
 
-export async function getStationDetailsWithIncidents(id: number) {
-  return await db.query.stations.findFirst({
-    where: eq(stations.id, id),
-    orderBy: desc(incidents.id),
+export async function getStationIncidents(key: string) {
+  const station = await db.query.stations.findFirst({
+    where: eq(stations.stationKey, key),
+    columns: {
+      id: true
+    }
+  });
+
+  if (!station) throw new TRPCError({ code: "NOT_FOUND" });
+
+  return await db.query.dispatchedStations.findMany({
+    where: eq(dispatchedStations.stationId, station.id),
+    orderBy: desc(dispatchedStations.incidentId),
+    limit: 15,
     with: {
-      dispatchedStations: {
+      incident: {
         columns: {
-          attentionOnFoot: true
+          id: true,
+          address: true,
+          responsibleStation: true,
+          incidentTimestamp: true,
+          isOpen: true,
+          importantDetails: true
         },
-        limit: 10,
-        orderBy: desc(dispatchedStations.incidentId),
         with: {
-          incident: {
+          dispatchedVehicles: {
             columns: {
-              id: true,
-              address: true,
-              isOpen: true,
-              importantDetails: true,
-              incidentTimestamp: true
-            },
-            with: {
-              dispatchedVehicles: {
-                where: eq(dispatchedVehicles.stationId, id),
-                columns: {},
-                with: {
-                  vehicle: {
-                    columns: {
-                      id: true,
-                      internalNumber: true
-                    }
-                  }
-                }
-              }
+              id: true
+            }
+          },
+          dispatchIncidentType: {
+            columns: {
+              name: true
+            }
+          },
+          incidentType: {
+            columns: {
+              name: true
             }
           }
         }
       }
     }
   });
+}
+
+function fillMissingDates(data: { day: string; count: number }[], startDate: Date, endDate: Date) {
+  const filledData: { day: Date; count: number }[] = [];
+  const current = new Date(startDate);
+
+  const existingDates = new Map(
+    data.map((item) => [new Date(item.day).toISOString().split("T")[0], item.count])
+  );
+
+  while (current <= endDate) {
+    const dateKey = current.toISOString().split("T")[0];
+    filledData.push({
+      day: new Date(current),
+      count: existingDates.get(dateKey) || 0
+    });
+    current.setDate(current.getDate() + 1);
+  }
+
+  return filledData;
+}
+
+export async function getStationStats(key: string) {
+  const now = new Date();
+  const [weekIncidents, monthIncidents] = await Promise.all([
+    getStationIncidentsGroupedByDayUTCMinus6(key),
+    getStationIncidentsGroupedByDayUTCMinus6_30Days(key)
+  ]);
+
+  const weekStart = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  const monthStart = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+  return {
+    week: fillMissingDates(weekIncidents as { day: string; count: number }[], weekStart, now),
+    month: fillMissingDates(monthIncidents as { day: string; count: number }[], monthStart, now)
+  };
 }
 
 export async function getLatestIncidentsCoordinates() {
@@ -126,4 +170,390 @@ export async function getIncidentById(id: number) {
       }
     }
   });
+}
+
+export async function getIncidentsComparison() {
+  const now = new Date();
+  const lastWeekStart = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+  const prevWeekStart = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
+
+  const lastWeekRes = await db
+    .select({ count: sql<number>`COUNT(*)` })
+    .from(incidents)
+    .where(between(incidents.incidentTimestamp, lastWeekStart, now));
+
+  const prevWeekRes = await db
+    .select({ count: sql<number>`COUNT(*)` })
+    .from(incidents)
+    .where(between(incidents.incidentTimestamp, prevWeekStart, lastWeekStart));
+
+  return {
+    lastWeek: Number(lastWeekRes[0].count),
+    prevWeek: Number(prevWeekRes[0].count)
+  };
+}
+
+export async function getIncidentsComparison30Days() {
+  const now = new Date();
+  const last30Start = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+  const prev30Start = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
+
+  const last30Res = await db
+    .select({ count: sql<number>`COUNT(*)` })
+    .from(incidents)
+    .where(between(incidents.incidentTimestamp, last30Start, now));
+
+  const prev30Res = await db
+    .select({ count: sql<number>`COUNT(*)` })
+    .from(incidents)
+    .where(between(incidents.incidentTimestamp, prev30Start, last30Start));
+
+  return {
+    last30: Number(last30Res[0].count),
+    prev30: Number(prev30Res[0].count)
+  };
+}
+
+export async function getStationIncidents24h(key: string) {
+  const station = await db.query.stations.findFirst({
+    where: eq(stations.stationKey, key),
+    columns: { id: true }
+  });
+  if (!station) throw new TRPCError({ code: "NOT_FOUND" });
+  const now = new Date();
+  const last24Start = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+
+  const last24Res = await db
+    .select({ count: sql<number>`COUNT(*)` })
+    .from(incidents)
+    .where(
+      and(
+        between(incidents.incidentTimestamp, last24Start, now),
+        eq(incidents.responsibleStation, station.id)
+      )
+    );
+
+  return {
+    last24: Number(last24Res[0].count)
+  };
+}
+
+export async function getStationIncidentsComparison(stationKey: string) {
+  const station = await db.query.stations.findFirst({
+    where: eq(stations.stationKey, stationKey),
+    columns: { id: true }
+  });
+  if (!station) throw new TRPCError({ code: "NOT_FOUND" });
+
+  const now = new Date();
+  const lastWeekStart = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  const prevWeekStart = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
+
+  const lastWeekRes = await db
+    .select({ count: sql<number>`COUNT(*)` })
+    .from(dispatchedStations)
+    .innerJoin(incidents, eq(dispatchedStations.incidentId, incidents.id))
+    .where(
+      and(
+        eq(dispatchedStations.stationId, station.id),
+        between(incidents.incidentTimestamp, lastWeekStart, now)
+      )
+    );
+
+  const prevWeekRes = await db
+    .select({ count: sql<number>`COUNT(*)` })
+    .from(dispatchedStations)
+    .innerJoin(incidents, eq(dispatchedStations.incidentId, incidents.id))
+    .where(
+      and(
+        eq(dispatchedStations.stationId, station.id),
+        between(incidents.incidentTimestamp, prevWeekStart, lastWeekStart)
+      )
+    );
+
+  return {
+    lastWeek: Number(lastWeekRes[0].count),
+    prevWeek: Number(prevWeekRes[0].count)
+  };
+}
+
+export async function getStationIncidentsComparison30Days(stationKey: string) {
+  const station = await db.query.stations.findFirst({
+    where: eq(stations.stationKey, stationKey),
+    columns: { id: true }
+  });
+  if (!station) throw new TRPCError({ code: "NOT_FOUND" });
+
+  const now = new Date();
+  const last30Start = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+  const prev30Start = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
+
+  const last30Res = await db
+    .select({ count: sql<number>`COUNT(*)` })
+    .from(dispatchedStations)
+    .innerJoin(incidents, eq(dispatchedStations.incidentId, incidents.id))
+    .where(
+      and(
+        eq(dispatchedStations.stationId, station.id),
+        between(incidents.incidentTimestamp, last30Start, now)
+      )
+    );
+
+  const prev30Res = await db
+    .select({ count: sql<number>`COUNT(*)` })
+    .from(dispatchedStations)
+    .innerJoin(incidents, eq(dispatchedStations.incidentId, incidents.id))
+    .where(
+      and(
+        eq(dispatchedStations.stationId, station.id),
+        between(incidents.incidentTimestamp, prev30Start, last30Start)
+      )
+    );
+
+  return {
+    last30: Number(last30Res[0].count),
+    prev30: Number(prev30Res[0].count)
+  };
+}
+
+export async function getStationDailyIncidentsComparison(stationKey: string) {
+  const station = await db.query.stations.findFirst({
+    where: eq(stations.stationKey, stationKey),
+    columns: { id: true }
+  });
+  if (!station) throw new TRPCError({ code: "NOT_FOUND" });
+
+  const now = new Date();
+  const currentWeekStart = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  const previousWeekStart = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
+
+  const currentWeek = await db
+    .select({
+      day: sql`DATE(${incidents.incidentTimestamp})`,
+      count: sql<number>`COUNT(*)`
+    })
+    .from(dispatchedStations)
+    .innerJoin(incidents, eq(dispatchedStations.incidentId, incidents.id))
+    .where(
+      and(
+        eq(dispatchedStations.stationId, station.id),
+        between(incidents.incidentTimestamp, currentWeekStart, now)
+      )
+    )
+    .groupBy(sql`DATE(${incidents.incidentTimestamp})`)
+    .orderBy(sql`DATE(${incidents.incidentTimestamp})`);
+
+  const previousWeek = await db
+    .select({
+      day: sql`DATE(${incidents.incidentTimestamp})`,
+      count: sql<number>`COUNT(*)`
+    })
+    .from(dispatchedStations)
+    .innerJoin(incidents, eq(dispatchedStations.incidentId, incidents.id))
+    .where(
+      and(
+        eq(dispatchedStations.stationId, station.id),
+        between(incidents.incidentTimestamp, previousWeekStart, currentWeekStart)
+      )
+    )
+    .groupBy(sql`DATE(${incidents.incidentTimestamp})`)
+    .orderBy(sql`DATE(${incidents.incidentTimestamp})`);
+
+  return {
+    currentWeek,
+    previousWeek
+  };
+}
+
+export async function getStationWeeklyIncidentsComparison30Days(stationKey: string) {
+  const station = await db.query.stations.findFirst({
+    where: eq(stations.stationKey, stationKey),
+    columns: { id: true }
+  });
+  if (!station) throw new TRPCError({ code: "NOT_FOUND" });
+
+  const now = new Date();
+  const last30Start = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+  const prev30Start = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
+
+  const currentPeriod = await db
+    .select({
+      week: sql`DATE_TRUNC('week', ${incidents.incidentTimestamp})`,
+      count: sql<number>`COUNT(*)`
+    })
+    .from(dispatchedStations)
+    .innerJoin(incidents, eq(dispatchedStations.incidentId, incidents.id))
+    .where(
+      and(
+        eq(dispatchedStations.stationId, station.id),
+        between(incidents.incidentTimestamp, last30Start, now)
+      )
+    )
+    .groupBy(sql`DATE_TRUNC('week', ${incidents.incidentTimestamp})`)
+    .orderBy(sql`DATE_TRUNC('week', ${incidents.incidentTimestamp})`);
+
+  const previousPeriod = await db
+    .select({
+      week: sql`DATE_TRUNC('week', ${incidents.incidentTimestamp})`,
+      count: sql<number>`COUNT(*)`
+    })
+    .from(dispatchedStations)
+    .innerJoin(incidents, eq(dispatchedStations.incidentId, incidents.id))
+    .where(
+      and(
+        eq(dispatchedStations.stationId, station.id),
+        between(incidents.incidentTimestamp, prev30Start, last30Start)
+      )
+    )
+    .groupBy(sql`DATE_TRUNC('week', ${incidents.incidentTimestamp})`)
+    .orderBy(sql`DATE_TRUNC('week', ${incidents.incidentTimestamp})`);
+
+  return {
+    currentPeriod,
+    previousPeriod
+  };
+}
+
+export async function getStationIncidentsGroupedByDayUTCMinus6(stationKey: string) {
+  const station = await db.query.stations.findFirst({
+    where: eq(stations.stationKey, stationKey),
+    columns: { id: true }
+  });
+  if (!station) throw new TRPCError({ code: "NOT_FOUND" });
+
+  const now = new Date();
+  const last7Start = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+  const result = await db
+    .select({
+      day: sql`DATE(${incidents.incidentTimestamp} - interval '6 hour')`,
+      count: sql<number>`COUNT(*)`
+    })
+    .from(dispatchedStations)
+    .innerJoin(incidents, eq(dispatchedStations.incidentId, incidents.id))
+    .where(
+      and(
+        eq(dispatchedStations.stationId, station.id),
+        between(incidents.incidentTimestamp, last7Start, now)
+      )
+    )
+    .groupBy(sql`DATE(${incidents.incidentTimestamp} - interval '6 hour')`)
+    .orderBy(sql`DATE(${incidents.incidentTimestamp} - interval '6 hour')`);
+
+  return result;
+}
+
+export async function getStationIncidentsGroupedByDayUTCMinus6_30Days(stationKey: string) {
+  const station = await db.query.stations.findFirst({
+    where: eq(stations.stationKey, stationKey),
+    columns: { id: true }
+  });
+  if (!station) throw new TRPCError({ code: "NOT_FOUND" });
+
+  const now = new Date();
+  const last30Start = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+  const result = await db
+    .select({
+      day: sql`DATE(${incidents.incidentTimestamp} - interval '6 hour')`,
+      count: sql<number>`COUNT(*)`
+    })
+    .from(dispatchedStations)
+    .innerJoin(incidents, eq(dispatchedStations.incidentId, incidents.id))
+    .where(
+      and(
+        eq(dispatchedStations.stationId, station.id),
+        between(incidents.incidentTimestamp, last30Start, now)
+      )
+    )
+    .groupBy(sql`DATE(${incidents.incidentTimestamp} - interval '6 hour')`)
+    .orderBy(sql`DATE(${incidents.incidentTimestamp} - interval '6 hour')`);
+
+  return result;
+}
+
+export async function getStationIncidentsByHour(stationKey: string) {
+  const station = await db.query.stations.findFirst({
+    where: eq(stations.stationKey, stationKey),
+    columns: { id: true }
+  });
+  if (!station) throw new TRPCError({ code: "NOT_FOUND" });
+
+  const now = new Date();
+  const last30Start = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+  const result = await db
+    .select({
+      hour: sql`EXTRACT(HOUR FROM ${incidents.incidentTimestamp} - interval '6 hour')`,
+      count: sql<number>`COUNT(*)`
+    })
+    .from(dispatchedStations)
+    .innerJoin(incidents, eq(dispatchedStations.incidentId, incidents.id))
+    .where(
+      and(
+        eq(dispatchedStations.stationId, station.id),
+        between(incidents.incidentTimestamp, last30Start, now)
+      )
+    )
+    .groupBy(sql`EXTRACT(HOUR FROM ${incidents.incidentTimestamp} - interval '6 hour')`)
+    .orderBy(sql`EXTRACT(HOUR FROM ${incidents.incidentTimestamp} - interval '6 hour')`);
+
+  const hourlyData: { hour: number; count: number }[] = [];
+  for (let i = 0; i < 24; i++) {
+    const hour = result.find((r) => Number(r.hour) === i);
+    hourlyData.push({
+      hour: i,
+      count: hour ? Number(hour.count) : 0
+    });
+  }
+
+  return hourlyData;
+}
+
+export async function getStationIncidentsByTopLevelType(stationKey: string) {
+  const station = await db.query.stations.findFirst({
+    where: eq(stations.stationKey, stationKey),
+    columns: { id: true }
+  });
+  if (!station) throw new TRPCError({ code: "NOT_FOUND" });
+
+  const now = new Date();
+  const last30Start = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+  const recentIncidents = await db
+    .select({
+      incidentCode: incidents.incidentCode
+    })
+    .from(incidents)
+    .innerJoin(dispatchedStations, eq(dispatchedStations.incidentId, incidents.id))
+    .where(
+      and(
+        eq(dispatchedStations.stationId, station.id),
+        between(incidents.incidentTimestamp, last30Start, now),
+        not(isNull(incidents.incidentCode))
+      )
+    );
+
+  const groupedIncidents = recentIncidents.reduce<Record<string, number>>((acc, incident) => {
+    if (!incident.incidentCode) return acc;
+    const parentCode = incident.incidentCode.split(".")[0];
+    acc[parentCode] = (acc[parentCode] || 0) + 1;
+    return acc;
+  }, {});
+
+  const parentTypes = await db.query.incidentTypes.findMany({
+    where: inArray(incidentTypes.incidentCode, Object.keys(groupedIncidents)),
+    columns: {
+      incidentCode: true,
+      name: true
+    }
+  });
+
+  return parentTypes
+    .map((type) => ({
+      name: type.name,
+      incident_code: type.incidentCode,
+      count: groupedIncidents[type.incidentCode] || 0
+    }))
+    .sort((a, b) => b.count - a.count);
 }
