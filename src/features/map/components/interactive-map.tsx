@@ -17,18 +17,19 @@ import type { IncidentWithCoordinates, Station } from "@/server/trpc";
 import { ShieldIcon } from "lucide-react";
 import { MapProvider, Marker, Map as ReactMap, useMap } from "react-map-gl/maplibre";
 
-interface InteractiveMapProps {
-  allStations: Station[];
-  operativeStations: Station[];
-}
-
-export const InteractiveMap = ({ allStations, operativeStations }: InteractiveMapProps) => {
+export const InteractiveMap = () => {
   const { style, showStations, incidentTimeRange } = useMapSettings();
   const incidentsQuery = trpc.incidents.getIncidentsCoordinates.useQuery({
     timeRange: incidentTimeRange
   });
+  const allStations = trpc.stations.getStations.useQuery({ filter: "all" });
+  const operativeStations = trpc.stations.getStations.useQuery({ filter: "operative" });
   const stationsData =
-    showStations === "none" ? [] : showStations === "operative" ? operativeStations : allStations;
+    showStations === "none"
+      ? []
+      : showStations === "operative"
+        ? operativeStations.data
+        : allStations.data;
   const mapStyleUrl = style === "light" ? LIGHT_MAP_STYLE : DARK_MAP_STYLE;
 
   return (
