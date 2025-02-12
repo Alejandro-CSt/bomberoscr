@@ -1,5 +1,11 @@
 import db from "@/server/db";
-import { dispatchedStations, incidentTypes, incidents, stations } from "@/server/db/schema";
+import {
+  dispatchedStations,
+  dispatchedVehicles,
+  incidentTypes,
+  incidents,
+  stations
+} from "@/server/db/schema";
 import { TRPCError } from "@trpc/server";
 import { and, between, desc, eq, inArray, isNull, ne, not, sql } from "drizzle-orm";
 
@@ -145,14 +151,60 @@ export async function getIncidentsCoordinates(timeRange: "24h" | "48h" | "disabl
 }
 
 export async function getIncidentById(id: number) {
+  return await db
+    .select({
+      id: incidents.id,
+      EEConsecutive: incidents.EEConsecutive,
+      isOpen: incidents.isOpen,
+      importantDetails: incidents.importantDetails,
+      incidentTimestamp: incidents.incidentTimestamp,
+      address: incidents.address,
+      responsibleStation: stations.name,
+      dispatchesVehiclesCount: db.$count(
+        dispatchedVehicles,
+        eq(dispatchedVehicles.incidentId, incidents.id)
+      ),
+      dispatchedStationsCount: db.$count(
+        dispatchedStations,
+        eq(dispatchedStations.incidentId, incidents.id)
+      )
+    })
+    .from(incidents)
+    .leftJoin(stations, eq(incidents.responsibleStation, stations.id))
+    .where(eq(incidents.id, id))
+    .limit(1);
+}
+
+export async function getDetailedIncidentById(id: number) {
   return await db.query.incidents.findFirst({
     where: eq(incidents.id, id),
     with: {
+      dispatchedStations: {
+        columns: {
+          id: true,
+          attentionOnFoot: true,
+          serviceTypeId: true
+        },
+        with: {
+          station: {
+            columns: {
+              name: true
+            }
+          }
+        }
+      },
       dispatchedVehicles: {
+        columns: {
+          incidentId: false,
+          stationId: false,
+          vehicleId: false
+        },
         with: {
           vehicle: {
             columns: {
-              internalNumber: true
+              id: true,
+              internalNumber: true,
+              class: true
             }
           },
           station: {
@@ -162,10 +214,24 @@ export async function getIncidentById(id: number) {
           }
         }
       },
-      station: {
+      dispatchIncidentType: {
         columns: {
-          name: true,
-          stationKey: true
+          name: true
+        }
+      },
+      specificDispatchIncidentType: {
+        columns: {
+          name: true
+        }
+      },
+      incidentType: {
+        columns: {
+          name: true
+        }
+      },
+      specificIncidentType: {
+        columns: {
+          name: true
         }
       }
     }

@@ -10,6 +10,7 @@ import { Drawer as Vaul } from "vaul";
 
 type ResponsiveDrawerProps = {
   children: React.ReactNode;
+  className?: string;
   isOpen: boolean;
   onClose: () => void;
   fullscreen?: boolean;
@@ -20,7 +21,7 @@ export const parseIsExpanded = parseAsBoolean.withDefault(false).withOptions({
 });
 
 export function ResponsiveDrawer(props: ResponsiveDrawerProps) {
-  const { children, isOpen, onClose, fullscreen } = props;
+  const { children, isOpen, onClose, fullscreen, className } = props;
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
   useEffect(() => {
@@ -46,7 +47,8 @@ export function ResponsiveDrawer(props: ResponsiveDrawerProps) {
           <Vaul.Content
             className={cn(
               "fixed bottom-2 left-2 z-10 flex h-full max-h-[70dvh] w-[410px] animate-none flex-col overflow-hidden rounded-lg bg-background outline-none",
-              fullscreen && "max-h-[90dvh]"
+              fullscreen && "max-h-[90dvh]",
+              className
             )}
             style={{ "--initial-transform": "calc(100% + 8px)" } as React.CSSProperties}
           >
@@ -67,8 +69,9 @@ export function ResponsiveDrawer(props: ResponsiveDrawerProps) {
     >
       <DrawerContent
         className={cn(
-          "flex h-full max-h-40 flex-col outline-none transition-all duration-300",
-          fullscreen && "max-h-dvh"
+          "flex h-full max-h-60 flex-col outline-none transition-all duration-300",
+          fullscreen && "max-h-dvh",
+          className
         )}
       >
         {children}

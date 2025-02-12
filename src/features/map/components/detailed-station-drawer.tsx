@@ -20,6 +20,8 @@ import { ScrollArea } from "@/features/components/ui/scroll-area";
 import { Separator } from "@/features/components/ui/separator";
 import { Skeleton } from "@/features/components/ui/skeleton";
 import { ResponsiveDrawer } from "@/features/map/components/responsive-drawer";
+import { StationDrawerFooter, StationDrawerHeader } from "@/features/map/components/station-drawer";
+import { useActiveStation } from "@/features/map/hooks/use-active-station";
 import { trpc } from "@/lib/trpc/client";
 import { cn, getRelativeTime } from "@/lib/utils";
 import type { StationDetails } from "@/server/trpc";
@@ -54,8 +56,6 @@ import {
   XAxis,
   YAxis
 } from "recharts";
-import { useActiveStation } from "../hooks/use-station";
-import { StationDrawerFooter, StationDrawerHeader } from "./station-drawer";
 
 const geist = Geist_Mono({ subsets: ["latin"], weight: "variable" });
 

@@ -3,288 +3,203 @@
 import { Badge } from "@/features/components/ui/badge";
 import { Button } from "@/features/components/ui/button";
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger
-} from "@/features/components/ui/collapsible";
-import { ScrollArea } from "@/features/components/ui/scroll-area";
+  DrawerClose,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle
+} from "@/features/components/ui/drawer";
+import { Separator } from "@/features/components/ui/separator";
+import { Skeleton } from "@/features/components/ui/skeleton";
+import { useMediaQuery } from "@/features/hooks/use-media-query";
 import { ResponsiveDrawer } from "@/features/map/components/responsive-drawer";
-import { useIncidentInfo } from "@/features/map/context/incident-drawer-context";
+import { useActiveIncident } from "@/features/map/hooks/use-active-incident";
 import { trpc } from "@/lib/trpc/client";
-import { cn, isUndefinedDate } from "@/lib/utils";
-import type { IncidentDetails } from "@/server/trpc";
-import {
-  AlertTriangle,
-  Building2,
-  ChevronsUpDownIcon,
-  MapPinIcon,
-  SirenIcon,
-  TimerIcon,
-  XIcon
-} from "lucide-react";
+import { cn } from "@/lib/utils";
+import type { Incident } from "@/server/trpc";
+import { BellPlusIcon, LoaderIcon, ShareIcon, SirenIcon, XIcon } from "lucide-react";
 import { Geist_Mono } from "next/font/google";
-import { Drawer } from "vaul";
 
 const geist = Geist_Mono({ weight: "variable", subsets: ["latin"] });
 
 export default function IncidentInfoDrawer() {
-  const { incidentId, isDrawerOpen, setIsDrawerOpen } = useIncidentInfo();
-  const { data: incident, isPending } = trpc.getIncidentById.useQuery({
-    id: incidentId
+  const [activeIncident, setActiveIncident] = useActiveIncident();
+  const isOpen = activeIncident.incidentId !== null && !activeIncident.fullScreen;
+  const { data: incident, isPending } = trpc.incidents.getIncidentById.useQuery({
+    id: activeIncident.incidentId || undefined
   });
+  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const handleClose = () => {
+    setActiveIncident(null);
+  };
 
   return (
-    <ResponsiveDrawer isOpen={isDrawerOpen} setIsOpen={setIsDrawerOpen}>
-      {({ isExpandedOnMobile }) => (
-        <div className="flex h-full flex-col overflow-hidden" style={geist.style}>
-          <Header incident={incident} onClose={() => setIsDrawerOpen(false)} />
-          {isPending ? (
-            <div className="flex h-full items-center justify-center p-4">
-              <p className="text-muted-foreground">Cargando incidente...</p>
-            </div>
-          ) : (
-            <>
-              <div className="flex-1 overflow-hidden md:hidden">
-                {isExpandedOnMobile ? (
-                  <DetailedView incident={incident} />
-                ) : (
-                  <div className="flex flex-col gap-2 p-4">
-                    <CompactView incident={incident} />
-                  </div>
-                )}
-              </div>
-              <div className="hidden flex-1 overflow-hidden md:block">
-                <DetailedView incident={incident} />
-              </div>
-            </>
-          )}
+    <ResponsiveDrawer
+      isOpen={isOpen}
+      onClose={handleClose}
+      fullscreen={false}
+      className={cn(isDesktop ? "max-h-[calc(100dvh-16px)]" : "max-h-72")}
+    >
+      <IncidentDrawerHeader
+        {...createHeaderProps(isPending, incident?.id, incident?.EEConsecutive, incident?.isOpen)}
+      />
+      <Separator />
+      {isPending ? (
+        <div className="flex flex-1 grow items-center justify-center">
+          <LoaderIcon className="size-4 min-w-4 animate-spin" />
         </div>
+      ) : (
+        <IncidentDrawerBody incident={incident} />
       )}
+      <Separator />
+      <IncidentDrawerFooter />
     </ResponsiveDrawer>
   );
 }
 
-const Header = ({
-  incident,
-  onClose
-}: { incident: IncidentDetails | null; onClose: () => void }) => {
-  return (
-    <div className="border-b px-4 py-3">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="font-medium text-muted-foreground text-sm">Incidente</p>
-          <h3 className="font-semibold text-lg">EE {incident?.EEConsecutive}</h3>
-        </div>
-        <div className="flex items-center gap-2">
-          <Badge
-            variant={incident?.isOpen ? "destructive" : "secondary"}
-            className="rounded-full px-3"
-          >
-            #{incident?.id}
-          </Badge>
-          <Drawer.Close onClick={onClose}>
-            <XIcon className="size-4" />
-            <span className="sr-only">Cerrar</span>
-          </Drawer.Close>
-        </div>
-      </div>
-    </div>
-  );
+type IncidentDrawerHeaderProps = {
+  isPending: boolean;
+} & (
+  | {
+      isPending: true;
+      id?: undefined;
+      eeConsecutive?: undefined;
+      isOpen?: undefined;
+    }
+  | {
+      isPending: false;
+      id: number;
+      eeConsecutive: string;
+      isOpen: boolean;
+    }
+);
+
+export const createHeaderProps = (
+  isPending: boolean,
+  id: number | undefined,
+  eeConsecutive: string | undefined,
+  isOpen: boolean | undefined
+): IncidentDrawerHeaderProps => {
+  if (isPending || id === undefined || eeConsecutive === undefined || isOpen === undefined) {
+    return { isPending: true };
+  }
+  return {
+    isPending: false,
+    id: id,
+    eeConsecutive: eeConsecutive,
+    isOpen: isOpen
+  };
 };
 
-const CompactView = ({ incident }: { incident: IncidentDetails | null }) => {
-  const formatCompactDate = (date: string | undefined) => {
-    if (!date) return "N/A";
-    return new Date(date).toLocaleString("es-CR", {
-      hour: "2-digit",
-      minute: "2-digit"
-    });
-  };
-
+export const IncidentDrawerHeader = ({
+  id,
+  eeConsecutive,
+  isOpen,
+  isPending
+}: IncidentDrawerHeaderProps) => {
   return (
-    <>
-      <div className="flex items-start gap-2">
-        <TimerIcon className="mt-0.5 h-4 w-4 text-muted-foreground" />
-        <div>
-          <p className="text-muted-foreground text-xs">Hora de aviso</p>
-          <p className="font-medium">{formatCompactDate(incident?.incidentTimestamp)}</p>
-        </div>
-      </div>
-      <div className="flex items-start gap-2">
-        <MapPinIcon className="mt-0.5 h-4 w-4 text-muted-foreground" />
-        <div>
-          <p className="text-muted-foreground text-xs">Ubicación</p>
-          <p className="line-clamp-2 font-medium leading-tight">{incident?.address}</p>
-        </div>
-      </div>
-      {incident?.importantDetails && (
-        <div className="flex items-start gap-2 rounded-lg border border-yellow-200 bg-yellow-50/50 p-2 text-sm">
-          <AlertTriangle className="h-4 w-4 shrink-0 text-yellow-500" />
-          <p className="line-clamp-2 flex-1 text-yellow-700 leading-tight">
-            {incident.importantDetails}
-          </p>
-        </div>
-      )}
-    </>
-  );
-};
-
-const DetailedView = ({ incident }: { incident: IncidentDetails | null }) => {
-  const formatDateTime = (date: string | undefined) => {
-    if (!date) return "N/A";
-    return new Date(date).toLocaleString("es-CR", {
-      dateStyle: "medium",
-      timeStyle: "short"
-    });
-  };
-
-  const calculateResponseTime = (dispatch: string, arrival: string) => {
-    const diff = new Date(arrival).getTime() - new Date(dispatch).getTime();
-    const minutes = Math.floor(diff / 60000);
-    const seconds = Math.floor((diff % 60000) / 1000);
-    return `${minutes}m ${seconds}s`;
-  };
-
-  return (
-    <ScrollArea className="h-full">
-      <div className="space-y-4 p-4">
-        <div className="space-y-4 rounded-lg p-1">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-muted-foreground text-sm">Hora de aviso</p>
-              <div className="mt-1 flex items-center gap-2">
-                <TimerIcon className="h-4 w-4 text-muted-foreground" />
-                <p className="font-medium">{formatDateTime(incident?.incidentTimestamp)}</p>
-              </div>
-            </div>
+    <DrawerHeader className={cn("flex items-center justify-between px-2 py-1", geist.className)}>
+      <div className="flex w-full items-center justify-between gap-4">
+        {isPending ? (
+          <>
+            <DrawerTitle className="sr-only">Cargando...</DrawerTitle>
+            <Skeleton className="h-6 w-40" />
+            <Skeleton className="h-6 w-20" />
+          </>
+        ) : (
+          <div className="flex flex-col items-start gap-1">
+            <DrawerTitle className="font-semibold text-lg">EE {eeConsecutive}</DrawerTitle>
           </div>
-
-          <div className="space-y-2">
-            <p className="text-muted-foreground text-sm">Ubicación</p>
-            <div className="flex items-start gap-2">
-              <MapPinIcon className="mt-0.5 h-4 min-h-4 w-4 min-w-4 text-muted-foreground" />
-              <p className="font-medium leading-tight">{incident?.address}</p>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <p className="text-muted-foreground text-sm">Estación responsable</p>
-            <div className="flex items-center gap-2">
-              <Building2 className="h-4 w-4 text-muted-foreground" />
-              <p className="font-medium">{incident?.station?.name}</p>
-            </div>
-          </div>
-
-          {incident?.importantDetails && (
-            <div className="flex items-start gap-2 rounded-lg border border-yellow-200 bg-yellow-50/50 p-3 text-sm">
-              <AlertTriangle className="h-4 w-4 text-yellow-500" />
-              <p className="flex-1 text-yellow-700 leading-tight">{incident.importantDetails}</p>
-            </div>
-          )}
-        </div>
-
-        <div className="flex flex-col gap-4">
-          <h4 className="font-semibold">Unidades</h4>
-          {incident?.dispatchedVehicles?.map((dispatch) => (
-            <Collapsible key={dispatch.id} className="rounded-lg border-2 border-primary p-4">
-              <div className="flex-1">
-                <div className="flex items-center justify-between">
-                  <div className="flex flex-col">
-                    <p className="text-muted-foreground text-sm">{dispatch.station.name}</p>
-                    <p className="flex items-center gap-1 font-bold">
-                      <SirenIcon className="size-4 min-w-4" />
-                      {dispatch.attentionOnFoot
-                        ? "Atención a pie"
-                        : dispatch.vehicle?.internalNumber}
-                    </p>
-                  </div>
-                  <CollapsibleTrigger asChild>
-                    <Button variant="ghost" className="w-9 p-0">
-                      <ChevronsUpDownIcon className="size-4" />
-                      <span className="sr-only">Mostrar u ocultar más</span>
-                    </Button>
-                  </CollapsibleTrigger>
-                </div>
-                <CollapsibleContent className="mt-4">
-                  {!isUndefinedDate(dispatch.dispatchedTime) && (
-                    <DispatchedVehicleTimelineEvent
-                      isLast={isUndefinedDate(dispatch.arrivalTime)}
-                      type="Despacho"
-                      value={formatDateTime(dispatch.dispatchedTime)}
-                    />
-                  )}
-                  {!isUndefinedDate(dispatch.arrivalTime) && (
-                    <DispatchedVehicleTimelineEvent
-                      isLast={isUndefinedDate(dispatch.departureTime)}
-                      type="Llegada a incidente"
-                      value={formatDateTime(dispatch.arrivalTime)}
-                    />
-                  )}
-                  {!isUndefinedDate(dispatch.departureTime) && (
-                    <DispatchedVehicleTimelineEvent
-                      isLast={isUndefinedDate(dispatch.baseReturnTime)}
-                      type="Retiro"
-                      value={formatDateTime(dispatch.departureTime)}
-                    />
-                  )}
-                  {!isUndefinedDate(dispatch.baseReturnTime) && (
-                    <DispatchedVehicleTimelineEvent
-                      isLast={true}
-                      type="Llegada a base"
-                      value={formatDateTime(dispatch.baseReturnTime)}
-                    />
-                  )}
-                  <div className="flex flex-col">
-                    <p className="text-muted-foreground text-sm">Tiempo de respuesta</p>
-                    <p className="font-semibold">
-                      {isUndefinedDate(dispatch.dispatchedTime) ||
-                      isUndefinedDate(dispatch.arrivalTime)
-                        ? "N/A"
-                        : calculateResponseTime(dispatch.dispatchedTime, dispatch.arrivalTime)}
-                    </p>
-                  </div>
-                </CollapsibleContent>
-              </div>
-            </Collapsible>
-          ))}
-        </div>
-      </div>
-    </ScrollArea>
-  );
-};
-
-const DispatchedVehicleTimelineEvent = ({
-  type,
-  value,
-  isLast
-}: {
-  type: string;
-  value: string;
-  isLast: boolean;
-}) => {
-  return (
-    <div className="relative flex items-baseline gap-4 pb-2">
-      <div
-        className={cn(
-          !isLast &&
-            "before:absolute before:left-[5px] before:h-full before:w-[2px] before:bg-primary"
         )}
-      >
-        {/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="12"
-          height="12"
-          className="bi bi-circle-fill fill-primary"
-          viewBox="0 0 16 16"
-        >
-          <circle cx="8" cy="8" r="8" />
-        </svg>
+        {!isPending && (
+          <Badge variant={isOpen ? "destructive" : "secondary"} className="rounded-full px-3">
+            #{id}
+          </Badge>
+        )}
       </div>
-      <div className="flex flex-col gap-1">
-        <p className="text-muted-foreground text-sm">{type}</p>
-        <p className="text-sm">{value}</p>
+      <DrawerClose asChild>
+        <Button variant="ghost">
+          <XIcon size={20} />
+        </Button>
+      </DrawerClose>
+    </DrawerHeader>
+  );
+};
+
+const IncidentDrawerBody = ({ incident }: { incident: Incident | null }) => {
+  return (
+    <div className={cn("h-full flex-grow overflow-y-scroll", geist.className)}>
+      <div className="flex flex-col gap-2">
+        <div className="grid grid-cols-8 border-b">
+          <div className="col-span-6 grid grid-cols-2 gap-2 border-r px-2 pt-2 text-xs">
+            <p className="col-span-full flex flex-col gap-1 text-muted-foreground">
+              Detalles
+              <span className="font-semibold text-foreground">{incident?.importantDetails}</span>
+            </p>
+            <p className="flex flex-col gap-1 text-muted-foreground">
+              Aviso
+              <span className="font-semibold text-foreground">
+                {incident?.incidentTimestamp &&
+                  new Date(incident?.incidentTimestamp).toLocaleString()}
+              </span>
+            </p>
+            <p className="flex flex-col gap-1 text-muted-foreground">
+              Estación responsable
+              <span className="font-semibold text-foreground">{incident?.responsibleStation}</span>
+            </p>
+          </div>
+          <div className="col-span-2 flex flex-col gap-4 p-2 text-xs">
+            <h3 className="justify-self-start">Atienden</h3>
+            <div className="flex min-w-full flex-col gap-1">
+              <p className="flex flex-col">
+                <span className="text-muted-foreground">Estaciones</span>
+                {incident?.dispatchedStationsCount}
+              </p>
+              <p className="flex flex-col">
+                <span className="text-muted-foreground">Unidades</span>
+                {incident?.dispatchesVehiclesCount}
+              </p>
+            </div>
+          </div>
+        </div>
+        <span className="px-2 pb-1 text-xs">{incident?.address || "Sin dirección"}</span>
       </div>
     </div>
+  );
+};
+
+export const IncidentDrawerFooter = ({ hideDetailsButton }: { hideDetailsButton?: boolean }) => {
+  const [activeIncident, setActiveIncident] = useActiveIncident();
+
+  return (
+    <DrawerFooter className={cn("mt-0 flex flex-row p-0 text-xs", geist.className)}>
+      {!hideDetailsButton && (
+        <>
+          <button
+            className="flex flex-1 flex-col items-center justify-center gap-1 whitespace-nowrap px-2 py-1"
+            type="button"
+            onClick={() => setActiveIncident({ fullScreen: !activeIncident.fullScreen })}
+          >
+            <SirenIcon className="size-4 min-h-4 min-w-4" />
+            Detalles
+          </button>
+          <Separator orientation="vertical" />
+        </>
+      )}
+      <button
+        type="button"
+        className="flex flex-1 flex-col items-center justify-center gap-1 whitespace-nowrap px-2 py-1"
+      >
+        <BellPlusIcon className="size-4 min-h-4 min-w-4" />
+        Seguir
+      </button>
+      <Separator orientation="vertical" />
+      <button
+        type="button"
+        className="flex flex-1 flex-col items-center justify-center gap-1 whitespace-nowrap px-2 py-1"
+      >
+        <ShareIcon className="size-4 min-w-4" />
+        Compartir
+      </button>
+    </DrawerFooter>
   );
 };

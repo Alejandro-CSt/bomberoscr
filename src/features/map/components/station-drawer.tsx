@@ -8,17 +8,19 @@ import {
   DrawerTitle
 } from "@/features/components/ui/drawer";
 import { Separator } from "@/features/components/ui/separator";
+import { useMediaQuery } from "@/features/hooks/use-media-query";
 import { ResponsiveDrawer } from "@/features/map/components/responsive-drawer";
 import { StationKeyDisplay } from "@/features/map/components/station-key-display";
+import { TabName, useActiveStation } from "@/features/map/hooks/use-active-station";
 import { cn } from "@/lib/utils";
 import { Building2Icon, ChartSplineIcon, SirenIcon, XIcon } from "lucide-react";
 import { Geist_Mono } from "next/font/google";
-import { TabName, useActiveStation } from "../hooks/use-station";
 
 const geist = Geist_Mono({ subsets: ["latin"], weight: "variable" });
 
 export default function StationInfoDrawer() {
   const [activeStationQuery, setActiveStation] = useActiveStation();
+  const isDesktop = useMediaQuery("(min-width: 768px)");
 
   const handleClose = () => {
     setActiveStation(null);
@@ -32,6 +34,7 @@ export default function StationInfoDrawer() {
         !activeStationQuery.fullScreen
       }
       onClose={handleClose}
+      className={cn(isDesktop ? "max-h-[80dvh]" : "max-h-40")}
     >
       <div className="flex h-full flex-col justify-between gap-1">
         <StationDrawerHeader />

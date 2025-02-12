@@ -1,4 +1,5 @@
 import {
+  getDetailedIncidentById,
   getIncidentById,
   getIncidentsCoordinates,
   getLatestIncidentsCoordinates
@@ -23,6 +24,12 @@ export const incidentsRouter = router({
     .input(z.object({ id: z.number().nullish() }))
     .query(async ({ input }) => {
       if (!input.id) return null;
-      return await getIncidentById(input.id);
+      return (await getIncidentById(input.id)).at(0);
+    }),
+  getIncidentDetailsById: publicProcedure
+    .input(z.object({ id: z.number().nullish() }))
+    .query(async ({ input }) => {
+      if (!input.id) return null;
+      return await getDetailedIncidentById(input.id);
     })
 });
