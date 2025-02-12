@@ -10,7 +10,7 @@ import {
 } from "@/features/map/constants";
 import { useMapSettings } from "@/features/map/context/map-settings-context";
 import { useActiveIncident } from "@/features/map/hooks/use-active-incident";
-import { useActiveStation } from "@/features/map/hooks/use-active-station";
+import { TabName, useActiveStation } from "@/features/map/hooks/use-active-station";
 import { trpc } from "@/lib/trpc/client";
 import { isReducedMotion } from "@/lib/utils";
 import type { IncidentWithCoordinates, Station } from "@/server/trpc";
@@ -88,7 +88,8 @@ function StationMarker({
     setActiveStation({
       stationName: station.name,
       stationKey: station.stationKey,
-      fullScreen: isDesktop
+      fullScreen: isDesktop,
+      tab: isDesktop ? TabName.Incidents : null
     });
   };
 
