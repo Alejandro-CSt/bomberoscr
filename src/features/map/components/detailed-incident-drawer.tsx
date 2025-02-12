@@ -86,7 +86,7 @@ const DetailedView = ({ incident }: { incident: IncidentDetails }) => {
         <span className="flex flex-col p-2 text-muted-foreground text-xs">
           Última actualización
           <span className="font-semibold text-foreground first-letter:uppercase">
-            {incident?.incidentTimestamp ? getRelativeTime(incident?.incidentTimestamp) : "N/A"}
+            {incident?.modifiedAt ? getRelativeTime(incident?.modifiedAt) : "N/A"}
           </span>
         </span>
       </section>

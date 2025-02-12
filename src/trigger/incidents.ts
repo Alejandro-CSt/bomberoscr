@@ -51,7 +51,7 @@ export const syncOpenIncidents = schedules.task({
 
       await db
         .update(incidentsTable)
-        .set({ isOpen: false })
+        .set({ isOpen: false, modifiedAt: new Date() })
         .where(eq(incidentsTable.id, incident.id));
 
       logger.info(`Closed incident ${incident.id} after ${(incidentAgeMs / 1000) * 60 * 60} hours`);

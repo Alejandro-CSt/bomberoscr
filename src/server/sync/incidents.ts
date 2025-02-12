@@ -96,7 +96,8 @@ export async function upsertIncident(id: number) {
     responsibleStation: responsibleStation.IdEstacion,
     latitude: incidentDetails.latitud?.toString() || "0",
     longitude: incidentDetails.longitud?.toString() || "0",
-    isOpen: incidentReport.Estado_Abierto === "true"
+    isOpen: incidentReport.Estado_Abierto === "true",
+    modifiedAt: new Date()
   };
 
   const dispatchedStationsData: z.infer<typeof dispatchedStationsInsertSchema>[] =

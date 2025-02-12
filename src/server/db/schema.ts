@@ -98,7 +98,8 @@ export const incidents = pgTable("incidents", {
   provinceId: integer(),
   cantonId: integer(),
   districtId: integer(),
-  isOpen: boolean().notNull()
+  isOpen: boolean().notNull(),
+  modifiedAt: timestamp().notNull().defaultNow()
 });
 
 export const vehiclesRelations = relations(vehicles, ({ one, many }) => ({
