@@ -21,6 +21,7 @@ import { Separator } from "@/features/components/ui/separator";
 import { Skeleton } from "@/features/components/ui/skeleton";
 import { ResponsiveDrawer } from "@/features/map/components/responsive-drawer";
 import { StationDrawerFooter, StationDrawerHeader } from "@/features/map/components/station-drawer";
+import { useActiveIncident } from "@/features/map/hooks/use-active-incident";
 import { useActiveStation } from "@/features/map/hooks/use-active-station";
 import { trpc } from "@/lib/trpc/client";
 import { cn, getRelativeTime } from "@/lib/utils";
@@ -191,6 +192,7 @@ function DetailItem({
 
 function IncidentsTab() {
   const [activeStation] = useActiveStation();
+  const [, setActiveIncident] = useActiveIncident();
   const { data, isLoading, error } = trpc.stations.getStationIncidents.useQuery({
     key: activeStation.stationKey
   });
@@ -247,7 +249,22 @@ function IncidentsTab() {
       )}
       {data.map((stationDispatch) => {
         return (
-          <div key={stationDispatch.id} className="group py-2 text-sm">
+          <div
+            key={stationDispatch.id}
+            className="group py-2 text-sm"
+            onClick={() => {
+              setActiveIncident({
+                incidentId: stationDispatch.incident.id,
+                fullScreen: true
+              });
+            }}
+            onKeyDown={() => {
+              setActiveIncident({
+                incidentId: stationDispatch.incident.id,
+                fullScreen: true
+              });
+            }}
+          >
             <Card className="transition-[background-color] duration-200 group-hover:bg-muted">
               <CardHeader>
                 <div className="flex flex-row items-center justify-between">

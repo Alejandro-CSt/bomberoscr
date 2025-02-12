@@ -25,7 +25,7 @@ export function useActiveStation() {
       urlKeys: {
         stationKey: "claveEstacion",
         stationName: "nombreEstacion",
-        fullScreen: "fs",
+        fullScreen: "stationfs",
         tab: "t"
       }
     }

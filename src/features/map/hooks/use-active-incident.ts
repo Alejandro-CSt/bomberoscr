@@ -11,7 +11,7 @@ export function useActiveIncident() {
     {
       urlKeys: {
         incidentId: "incidente",
-        fullScreen: "fs"
+        fullScreen: "incidentfs"
       }
     }
   );
