@@ -37,22 +37,19 @@ export function ResponsiveDrawer(props: ResponsiveDrawerProps) {
         modal={false}
         open={isOpen}
         onClose={onClose}
-        direction="bottom"
-        shouldScaleBackground
+        direction="left"
         disablePreventScroll
         preventScrollRestoration={false}
-        noBodyStyles
       >
         <Vaul.Portal>
           <Vaul.Content
             className={cn(
-              "fixed bottom-2 left-2 z-10 flex h-full max-h-[70dvh] w-[410px] animate-none flex-col overflow-hidden rounded-lg bg-background outline-none",
-              fullscreen && "max-h-[90dvh]",
+              "fixed top-2 bottom-2 left-2 z-10 flex w-[410px] outline-none",
               className
             )}
             style={{ "--initial-transform": "calc(100% + 8px)" } as React.CSSProperties}
           >
-            {children}
+            <div className="flex grow flex-col rounded-[16px] bg-background">{children}</div>
           </Vaul.Content>
         </Vaul.Portal>
       </Vaul.Root>
