@@ -7,7 +7,19 @@ import {
   stations
 } from "@/server/db/schema";
 import { TRPCError } from "@trpc/server";
-import { and, between, desc, eq, inArray, isNull, ne, not, sql } from "drizzle-orm";
+import {
+  aliasedTable,
+  and,
+  between,
+  desc,
+  eq,
+  inArray,
+  isNull,
+  lt,
+  ne,
+  not,
+  sql
+} from "drizzle-orm";
 
 export async function getStations(all: boolean) {
   return await db.query.stations.findMany({
@@ -110,6 +122,44 @@ export async function getStationStats(key: string) {
     week: fillMissingDates(weekIncidents as { day: string; count: number }[], weekStart, now),
     month: fillMissingDates(monthIncidents as { day: string; count: number }[], monthStart, now)
   };
+}
+
+export async function getLatestIncidents({
+  limit,
+  cursor
+}: { limit: number; cursor: number | null }) {
+  const specificIncidentType = aliasedTable(incidentTypes, "specificIncidentType");
+  return await db
+    .select({
+      id: incidents.id,
+      isOpen: incidents.isOpen,
+      EEConsecutive: incidents.EEConsecutive,
+      address: incidents.address,
+      incidentTimestamp: incidents.incidentTimestamp,
+      importantDetails: incidents.importantDetails,
+      specificIncidentCode: incidents.specificIncidentCode,
+      incidentType: incidentTypes.name,
+      responsibleStation: stations.name,
+      specificIncidentType: specificIncidentType.name,
+      dispatchedVehiclesCount: db.$count(
+        dispatchedVehicles,
+        eq(dispatchedVehicles.incidentId, incidents.id)
+      ),
+      dispatchedStationsCount: db.$count(
+        dispatchedStations,
+        eq(dispatchedStations.incidentId, incidents.id)
+      )
+    })
+    .from(incidents)
+    .where(cursor ? lt(incidents.id, cursor) : undefined)
+    .limit(limit + 1)
+    .leftJoin(incidentTypes, eq(incidents.incidentCode, incidentTypes.incidentCode))
+    .leftJoin(
+      specificIncidentType,
+      eq(incidents.specificIncidentCode, specificIncidentType.incidentCode)
+    )
+    .leftJoin(stations, eq(incidents.responsibleStation, stations.id))
+    .orderBy(desc(incidents.incidentTimestamp));
 }
 
 export async function getLatestIncidentsCoordinates() {

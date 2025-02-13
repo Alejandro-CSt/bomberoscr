@@ -2,6 +2,7 @@ import {
   getDetailedIncidentById,
   getIncidentById,
   getIncidentsCoordinates,
+  getLatestIncidents,
   getLatestIncidentsCoordinates
 } from "@/server/db/queries";
 import { publicProcedure, router } from "@/server/trpc/init";
@@ -11,6 +12,28 @@ export const incidentsRouter = router({
   getLatestIncidentsCoordinates: publicProcedure.query(async () => {
     return await getLatestIncidentsCoordinates();
   }),
+  infiniteIncidents: publicProcedure
+    .input(
+      z.object({
+        limit: z.number().min(10).max(50).optional(),
+        cursor: z.number().nullish()
+      })
+    )
+    .query(async (opts) => {
+      const { input } = opts;
+      const limit = input.limit ?? 15;
+      const { cursor } = input;
+      const items = await getLatestIncidents({
+        cursor: cursor ?? null,
+        limit: limit
+      });
+      let nextCursor: typeof cursor | undefined = undefined;
+      if (items.length > limit) {
+        const nextItem = items.pop();
+        nextCursor = nextItem?.id;
+      }
+      return { items, nextCursor };
+    }),
   getIncidentsCoordinates: publicProcedure
     .input(
       z.object({
@@ -20,6 +43,7 @@ export const incidentsRouter = router({
     .query(async ({ input }) => {
       return await getIncidentsCoordinates(input.timeRange);
     }),
+
   getIncidentById: publicProcedure
     .input(z.object({ id: z.number().nullish() }))
     .query(async ({ input }) => {

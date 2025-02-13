@@ -14,6 +14,9 @@ export type Station = inferRouterOutputs<typeof appRouter>["stations"]["getStati
 export type StationDetails = inferRouterOutputs<typeof appRouter>["stations"]["getStationDetails"];
 
 export type Incident = inferRouterOutputs<typeof appRouter>["incidents"]["getIncidentById"];
+export type LatestIncident = inferRouterOutputs<
+  typeof appRouter
+>["incidents"]["infiniteIncidents"]["items"][number];
 export type IncidentDetails = inferRouterOutputs<
   typeof appRouter
 >["incidents"]["getIncidentDetailsById"];

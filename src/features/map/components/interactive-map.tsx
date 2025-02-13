@@ -1,7 +1,8 @@
 "use client";
 
 import { useMediaQuery } from "@/features/hooks/use-media-query";
-import { MapControls, MapSettings } from "@/features/map/components/floating-controls";
+import { MapControls } from "@/features/map/components/floating-controls";
+import { FloatingMenu } from "@/features/map/components/floating-menu";
 import {
   CR_NE_CORNER,
   CR_SW_CORNER,
@@ -11,6 +12,7 @@ import {
 import { useMapSettings } from "@/features/map/context/map-settings-context";
 import { useActiveIncident } from "@/features/map/hooks/use-active-incident";
 import { TabName, useActiveStation } from "@/features/map/hooks/use-active-station";
+import { useFloatingMenu } from "@/features/map/hooks/use-floating-menu";
 import { trpc } from "@/lib/trpc/client";
 import { isReducedMotion } from "@/lib/utils";
 import type { IncidentWithCoordinates, Station } from "@/server/trpc";
@@ -57,7 +59,7 @@ export const InteractiveMap = () => {
         {incidentsQuery.data?.map((incident) => (
           <IncidentMarker key={incident.id} incident={incident} />
         ))}
-        <MapSettings />
+        <FloatingMenu />
         <MapControls />
       </ReactMap>
     </MapProvider>
@@ -71,6 +73,7 @@ function StationMarker({
 }) {
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const { current: map } = useMap();
+  const [, setFloatingMenu] = useFloatingMenu();
   const [, setActiveStation] = useActiveStation();
   const [, setActiveIncident] = useActiveIncident();
 
@@ -85,6 +88,7 @@ function StationMarker({
       animate: !isReducedMotion()
     });
     setActiveIncident(null);
+    setFloatingMenu(null);
     setActiveStation({
       stationName: station.name,
       stationKey: station.stationKey,
@@ -109,8 +113,27 @@ function StationMarker({
 function IncidentMarker({ incident }: { incident: IncidentWithCoordinates }) {
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const { current: map } = useMap();
+  const [, setFloatingMenu] = useFloatingMenu();
   const [, setActiveIncident] = useActiveIncident();
   const [, setActiveStation] = useActiveStation();
+
+  const handleClick = () => {
+    map?.flyTo({
+      center: [
+        Number.parseFloat(incident.longitude ?? "0"),
+        Number.parseFloat(incident.latitude ?? "0")
+      ],
+      duration: 2000,
+      zoom: map.getZoom() < 14 ? 14 : undefined,
+      animate: !isReducedMotion()
+    });
+    setActiveStation(null);
+    setActiveIncident({
+      incidentId: incident.id,
+      fullScreen: isDesktop
+    });
+    setFloatingMenu(null);
+  };
 
   return (
     <Marker
@@ -118,22 +141,7 @@ function IncidentMarker({ incident }: { incident: IncidentWithCoordinates }) {
       longitude={Number.parseFloat(incident.longitude ?? "0")}
       latitude={Number.parseFloat(incident.latitude ?? "0")}
       anchor="bottom"
-      onClick={() => {
-        map?.flyTo({
-          center: [
-            Number.parseFloat(incident.longitude ?? "0"),
-            Number.parseFloat(incident.latitude ?? "0")
-          ],
-          duration: 2000,
-          zoom: map.getZoom() < 14 ? 14 : undefined,
-          animate: !isReducedMotion()
-        });
-        setActiveStation(null);
-        setActiveIncident({
-          incidentId: incident.id,
-          fullScreen: isDesktop
-        });
-      }}
+      onClick={handleClick}
     >
       <div className="size-4 rounded-full border-2 border-white bg-red-600" />
     </Marker>
