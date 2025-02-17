@@ -16,16 +16,18 @@ export const incidentsRouter = router({
     .input(
       z.object({
         limit: z.number().min(10).max(50).optional(),
-        cursor: z.number().nullish()
+        cursor: z.number().nullish(),
+        stationFilter: z.string().nullish()
       })
     )
     .query(async (opts) => {
       const { input } = opts;
       const limit = input.limit ?? 15;
-      const { cursor } = input;
+      const { cursor, stationFilter } = input;
       const items = await getLatestIncidents({
         cursor: cursor ?? null,
-        limit: limit
+        limit: limit,
+        stationFilter: stationFilter ?? null
       });
       let nextCursor: typeof cursor | undefined = undefined;
       if (items.length > limit) {

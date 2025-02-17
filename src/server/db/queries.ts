@@ -10,9 +10,11 @@ import { TRPCError } from "@trpc/server";
 import {
   aliasedTable,
   and,
+  asc,
   between,
   desc,
   eq,
+  ilike,
   inArray,
   isNull,
   lt,
@@ -30,7 +32,8 @@ export async function getStations(all: boolean) {
       stationKey: true,
       longitude: true,
       latitude: true
-    }
+    },
+    orderBy: asc(stations.id)
   });
 }
 
@@ -126,8 +129,9 @@ export async function getStationStats(key: string) {
 
 export async function getLatestIncidents({
   limit,
-  cursor
-}: { limit: number; cursor: number | null }) {
+  cursor,
+  stationFilter
+}: { limit: number; cursor: number | null; stationFilter?: string | null }) {
   const specificIncidentType = aliasedTable(incidentTypes, "specificIncidentType");
   return await db
     .select({
@@ -151,7 +155,12 @@ export async function getLatestIncidents({
       )
     })
     .from(incidents)
-    .where(cursor ? lt(incidents.id, cursor) : undefined)
+    .where(
+      and(
+        cursor ? lt(incidents.id, cursor) : undefined,
+        stationFilter ? ilike(stations.name, stationFilter) : undefined
+      )
+    )
     .limit(limit + 1)
     .leftJoin(incidentTypes, eq(incidents.incidentCode, incidentTypes.incidentCode))
     .leftJoin(
@@ -159,7 +168,7 @@ export async function getLatestIncidents({
       eq(incidents.specificIncidentCode, specificIncidentType.incidentCode)
     )
     .leftJoin(stations, eq(incidents.responsibleStation, stations.id))
-    .orderBy(desc(incidents.incidentTimestamp));
+    .orderBy(desc(incidents.id));
 }
 
 export async function getLatestIncidentsCoordinates() {

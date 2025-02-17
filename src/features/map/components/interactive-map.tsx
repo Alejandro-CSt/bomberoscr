@@ -1,6 +1,5 @@
 "use client";
 
-import { useMediaQuery } from "@/features/hooks/use-media-query";
 import { MapControls } from "@/features/map/components/floating-controls";
 import { FloatingMenu } from "@/features/map/components/floating-menu";
 import {
@@ -71,10 +70,9 @@ function StationMarker({
 }: {
   station: Station;
 }) {
-  const isDesktop = useMediaQuery("(min-width: 768px)");
   const { current: map } = useMap();
   const [, setFloatingMenu] = useFloatingMenu();
-  const [, setActiveStation] = useActiveStation();
+  const [activeStation, setActiveStation] = useActiveStation();
   const [, setActiveIncident] = useActiveIncident();
 
   const handleClick = () => {
@@ -92,8 +90,7 @@ function StationMarker({
     setActiveStation({
       stationName: station.name,
       stationKey: station.stationKey,
-      fullScreen: isDesktop,
-      tab: isDesktop ? TabName.Incidents : null
+      tab: !activeStation.tab ? TabName.Incidents : activeStation.tab
     });
   };
 
@@ -111,7 +108,6 @@ function StationMarker({
 }
 
 function IncidentMarker({ incident }: { incident: IncidentWithCoordinates }) {
-  const isDesktop = useMediaQuery("(min-width: 768px)");
   const { current: map } = useMap();
   const [, setFloatingMenu] = useFloatingMenu();
   const [, setActiveIncident] = useActiveIncident();
@@ -128,11 +124,10 @@ function IncidentMarker({ incident }: { incident: IncidentWithCoordinates }) {
       animate: !isReducedMotion()
     });
     setActiveStation(null);
-    setActiveIncident({
-      incidentId: incident.id,
-      fullScreen: isDesktop
-    });
     setFloatingMenu(null);
+    setActiveIncident({
+      incidentId: incident.id
+    });
   };
 
   return (

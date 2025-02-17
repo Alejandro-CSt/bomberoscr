@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/features/components/ui/button";
-import { DrawerClose, DrawerHeader, DrawerTitle } from "@/features/components/ui/drawer";
 import { Label } from "@/features/components/ui/label";
 import {
   Select,
@@ -18,7 +17,7 @@ import {
   useMapSettings
 } from "@/features/map/context/map-settings-context";
 import { useFloatingMenu } from "@/features/map/hooks/use-floating-menu";
-import { MoonIcon, SunIcon, XIcon } from "lucide-react";
+import { MoonIcon, SunIcon } from "lucide-react";
 
 interface StationsSettingsProps {
   showStations: ShowStations;
@@ -39,25 +38,11 @@ export function MapSettingsDrawer() {
     incidentTimeRange,
     setIncidentTimeRange
   } = useMapSettings();
-  const [floatingMenu, setFloatingMenu] = useFloatingMenu();
+  const [floatingMenu] = useFloatingMenu();
 
   return (
-    <ResponsiveDrawer
-      isOpen={floatingMenu.options}
-      onClose={() => setFloatingMenu({ options: false })}
-      className="max-h-96"
-    >
-      <DrawerHeader className="flex items-center justify-between">
-        <DrawerTitle className="font-semibold text-lg">Ajustes</DrawerTitle>
-        <DrawerClose asChild>
-          <Button variant="ghost">
-            <XIcon className="h-4 w-4" />
-            <span className="sr-only">Cerrar</span>
-          </Button>
-        </DrawerClose>
-      </DrawerHeader>
-      <Separator />
-      <div className="flex flex-col gap-2">
+    <ResponsiveDrawer isOpen={floatingMenu.options} title="Ajustes">
+      <div className="flex h-full flex-col gap-2 pb-4">
         <div className="px-4">
           <Label className="font-medium text-sm">Estilo del mapa</Label>
           <div className="flex gap-2">
@@ -80,12 +65,12 @@ export function MapSettingsDrawer() {
           </div>
         </div>
         <Separator />
-        <StationsSettings showStations={showStations} setShowStations={setShowStations} />
-        <Separator />
         <IncidentSettings
           incidentTimeRange={incidentTimeRange}
           setIncidentTimeRange={setIncidentTimeRange}
         />
+        <Separator />
+        <StationsSettings showStations={showStations} setShowStations={setShowStations} />
       </div>
     </ResponsiveDrawer>
   );

@@ -1,32 +1,28 @@
 "use client";
 
-import { Button } from "@/features/components/ui/button";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger
 } from "@/features/components/ui/collapsible";
-import { Separator } from "@/features/components/ui/separator";
-import { Table, TableBody, TableCell, TableRow } from "@/features/components/ui/table";
-import { useMediaQuery } from "@/features/hooks/use-media-query";
 import {
-  IncidentDrawerFooter,
-  IncidentDrawerHeader,
-  createHeaderProps
-} from "@/features/map/components/incident-drawer";
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from "@/features/components/ui/table";
 import { ResponsiveDrawer } from "@/features/map/components/responsive-drawer";
 import { useActiveIncident } from "@/features/map/hooks/use-active-incident";
 import { trpc } from "@/lib/trpc/client";
 import { cn, getRelativeTime, isUndefinedDate } from "@/lib/utils";
 import type { IncidentDetails } from "@/server/trpc";
-import { ArrowRight, ChevronsUpDownIcon, LoaderIcon, SirenIcon } from "lucide-react";
-import { Geist_Mono } from "next/font/google";
-
-const geist = Geist_Mono({ weight: "variable", subsets: ["latin"] });
+import { ArrowElbowDownRight, CaretUpDown, FireTruck } from "@phosphor-icons/react";
+import { LoaderIcon } from "lucide-react";
 
 export function DetailedIncidentDrawer() {
   const [activeIncident, setActiveIncident] = useActiveIncident();
-  const isDesktop = useMediaQuery("(min-width: 768px)");
   const { data: incident, isPending } = trpc.incidents.getIncidentDetailsById.useQuery({
     id: activeIncident.incidentId || undefined
   });
@@ -37,14 +33,10 @@ export function DetailedIncidentDrawer() {
 
   return (
     <ResponsiveDrawer
-      fullscreen={true}
-      onClose={handleClose}
-      isOpen={Number.isInteger(activeIncident.incidentId) && activeIncident.fullScreen}
+      isOpen={Number.isInteger(activeIncident.incidentId)}
+      {...(incident && { title: `EE ${incident.EEConsecutive}` })}
+      onCloseAction={handleClose}
     >
-      <IncidentDrawerHeader
-        {...createHeaderProps(isPending, incident?.id, incident?.EEConsecutive, incident?.isOpen)}
-      />
-      <Separator orientation="horizontal" />
       {isPending || !incident ? (
         <div className="flex flex-1 flex-col items-center justify-center">
           <LoaderIcon className="size-4 animate-spin" />
@@ -52,13 +44,11 @@ export function DetailedIncidentDrawer() {
       ) : (
         <DetailedView incident={incident} />
       )}
-      <Separator orientation="horizontal" />
-      <IncidentDrawerFooter hideDetailsButton={isDesktop} />
     </ResponsiveDrawer>
   );
 }
 
-const DetailedView = ({ incident }: { incident: IncidentDetails }) => {
+const DetailedView = ({ incident }: { incident: NonNullable<IncidentDetails> }) => {
   const formatDateTime = (date: string | undefined) => {
     if (!date) return "N/A";
     return new Date(date).toLocaleString("es-CR", {
@@ -75,130 +65,131 @@ const DetailedView = ({ incident }: { incident: IncidentDetails }) => {
   };
 
   return (
-    <div className={cn("h-full flex-1 overflow-y-auto", geist.className)}>
-      <section className="grid grid-cols-2 border-b">
-        <span className="flex flex-col border-r p-2 text-muted-foreground text-xs">
-          Aviso
-          <span className="font-semibold text-foreground">
-            {formatDateTime(incident?.incidentTimestamp)}
-          </span>
-        </span>
-        <span className="flex flex-col p-2 text-muted-foreground text-xs">
-          Última actualización
-          <span className="font-semibold text-foreground first-letter:uppercase">
-            {incident?.modifiedAt ? getRelativeTime(incident?.modifiedAt) : "N/A"}
-          </span>
-        </span>
+    <div className={cn("flex h-dvh flex-col gap-4")}>
+      <section className="flex justify-between">
+        <div className="flex flex-col">
+          <p className="font-semibold text-muted-foreground">Aviso</p>
+          <p className="text-sm">{formatDateTime(incident.incidentTimestamp)}</p>
+        </div>
+        <div className="flex flex-col text-end">
+          <p className="font-semibold text-muted-foreground">Última acutalización</p>
+          <p className="text-sm first-letter:uppercase">
+            {incident.modifiedAt ? getRelativeTime(incident.modifiedAt) : "N/A"}
+          </p>
+        </div>
       </section>
-      <p className="text-pretty p-2 font-semibold text-sm leading-relaxed">{incident?.address}</p>
-      <Separator />
-      <section className="grid grid-cols-2 border-b text-muted-foreground text-xs">
-        <span className="flex flex-col border-r p-2">
-          Se despacha por
-          <span className="flex flex-col font-semibold text-foreground">
-            {incident?.dispatchIncidentType ? incident.dispatchIncidentType.name : "N/A"}
-            {incident?.specificDispatchIncidentType && incident.dispatchIncidentType && (
-              <span className="inline-flex gap-1">
-                <ArrowRight className="size-4 text-muted-foreground/75" />
-                {incident.specificDispatchIncidentType.name}
-              </span>
-            )}
-          </span>
-        </span>
-        <span className="flex flex-col p-2">
-          Bomberos reportan
-          <span className="flex flex-col font-semibold text-foreground">
-            {incident?.incidentType ? incident.incidentType.name : "N/A"}
-            {incident?.incidentType && incident.specificIncidentType && (
-              <span className="inline-flex gap-1">
-                <ArrowRight className="size-4 text-muted-foreground/75" />
-                {incident.specificIncidentType.name}
-              </span>
-            )}
-          </span>
-        </span>
-        <span className="col-span-full flex flex-col border-t p-2">
-          Detalles
-          <span className="font-semibold text-foreground">{incident?.importantDetails}</span>
-        </span>
+
+      <section>
+        <p className="text-muted-foreground text-sm leading-relaxed tracking-wide">
+          {incident.address}
+        </p>
       </section>
-      <section className="font-medium">
-        <h4 className="p-2 font-semibold">Estaciones</h4>
-        <Table className="text-sm">
+
+      <section className="flex flex-col gap-4">
+        <div className="flex justify-between gap-4">
+          <div className="flex flex-col">
+            <p className="font-semibold text-muted-foreground">Se despacha por</p>
+            <div className="flex flex-col gap-0.5 text-xs tracking-wider">
+              <p>{incident.dispatchIncidentType?.name}</p>
+              <div className="inline-flex items-center gap-0.5">
+                <ArrowElbowDownRight />
+                <p>{incident.specificDispatchIncidentType?.name}</p>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col">
+            <p className="font-semibold text-muted-foreground">Bomberos reportan</p>
+            <div className="flex flex-col gap-0.5 text-xs tracking-wider">
+              <p>{incident.dispatchIncidentType?.name}</p>
+              <div className="inline-flex items-center gap-0.5">
+                <ArrowElbowDownRight />
+                <p>{incident.specificDispatchIncidentType?.name}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p className="font-semibold text-sm">{incident.importantDetails}</p>
+      </section>
+
+      <section className="flex flex-col gap-4 rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="border-r">Estación</TableHead>
+              <TableHead>Rol</TableHead>
+            </TableRow>
+          </TableHeader>
           <TableBody>
-            {incident?.dispatchedStations.map((station) => (
-              <TableRow key={station.id} className="border-none">
-                <TableCell className="w-2/3 px-2 py-1">
-                  {station.station.name} {station.attentionOnFoot && " (A PIE)"}
+            {incident.dispatchedStations.map((station) => (
+              <TableRow key={station.id}>
+                <TableCell
+                  className={cn("border-r", station.serviceTypeId === 1 && "font-semibold")}
+                >
+                  {station.station.name}
                 </TableCell>
-                <TableCell className="w-1/3 px-2 py-1">
-                  {station.serviceTypeId === 0 ? "APOYO" : "RESPONSABLE"}
+                <TableCell className={cn(station.serviceTypeId === 1 && "font-semibold")}>
+                  {station.serviceTypeId === 1 ? "RESPONSABLE" : "APOYO"}
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </section>
-      <Separator />
-      <section className="mb-1 flex flex-col">
-        <h4 className="p-2 font-semibold">Unidades</h4>
-        {incident?.dispatchedVehicles.map((vehicle) => (
-          <Collapsible key={vehicle.id} className="mx-4 mt-2 border-x border-t">
-            <div className="flex-1">
-              <div className="flex items-center justify-between border-b px-4 py-2">
-                <div className="flex flex-col">
-                  <p className="text-muted-foreground text-sm">{vehicle.station.name}</p>
-                  <p className="flex items-center gap-1 font-bold">
-                    <SirenIcon className="size-4 min-w-4" />
-                    {vehicle.attentionOnFoot ? "Atención a pie" : vehicle.vehicle?.internalNumber}
-                  </p>
-                </div>
-                <CollapsibleTrigger asChild>
-                  <Button variant="ghost" className="w-9 p-0">
-                    <ChevronsUpDownIcon className="size-4" />
-                    <span className="sr-only">Mostrar u ocultar más</span>
-                  </Button>
-                </CollapsibleTrigger>
+
+      <section className="flex flex-col gap-2 pb-4">
+        <h4 className="font-semibold text-muted-foreground">Unidades</h4>
+        {incident.dispatchedVehicles.map((vehicle) => (
+          <Collapsible key={vehicle.id} defaultOpen={incident.dispatchedVehicles.length <= 2}>
+            <CollapsibleTrigger className="flex w-full items-center justify-between rounded-md border px-4 py-2 data-[state=open]:rounded-b-none">
+              <span className="flex flex-col items-start gap-1">
+                <span className="flex items-center gap-4">
+                  <FireTruck className="size-6" weight="fill" />
+                  {vehicle.vehicle?.internalNumber}
+                </span>
+                <span className="text-muted-foreground text-sm leading-none">
+                  {vehicle.station.name}
+                </span>
+              </span>
+              <CaretUpDown />
+            </CollapsibleTrigger>
+            <CollapsibleContent className="rounded-b-md border-x border-b px-4 py-4">
+              {!isUndefinedDate(vehicle.dispatchedTime) && (
+                <DispatchedVehicleTimelineEvent
+                  isLast={isUndefinedDate(vehicle.arrivalTime)}
+                  type="Despacho"
+                  value={formatDateTime(vehicle.dispatchedTime)}
+                />
+              )}
+              {!isUndefinedDate(vehicle.arrivalTime) && (
+                <DispatchedVehicleTimelineEvent
+                  isLast={isUndefinedDate(vehicle.departureTime)}
+                  type="Llegada a incidente"
+                  value={formatDateTime(vehicle.arrivalTime)}
+                />
+              )}
+              {!isUndefinedDate(vehicle.departureTime) && (
+                <DispatchedVehicleTimelineEvent
+                  isLast={isUndefinedDate(vehicle.baseReturnTime)}
+                  type="Retiro"
+                  value={formatDateTime(vehicle.departureTime)}
+                />
+              )}
+              {!isUndefinedDate(vehicle.baseReturnTime) && (
+                <DispatchedVehicleTimelineEvent
+                  isLast={true}
+                  type="Llegada a base"
+                  value={formatDateTime(vehicle.baseReturnTime)}
+                />
+              )}
+              <div className="flex flex-col">
+                <p className="text-muted-foreground text-sm">Tiempo de respuesta</p>
+                <p className="font-semibold">
+                  {isUndefinedDate(vehicle.dispatchedTime) || isUndefinedDate(vehicle.arrivalTime)
+                    ? "N/A"
+                    : calculateResponseTime(vehicle.dispatchedTime, vehicle.arrivalTime)}
+                </p>
               </div>
-              <CollapsibleContent className="mt-4 border-b px-4">
-                {!isUndefinedDate(vehicle.dispatchedTime) && (
-                  <DispatchedVehicleTimelineEvent
-                    isLast={isUndefinedDate(vehicle.arrivalTime)}
-                    type="Despacho"
-                    value={formatDateTime(vehicle.dispatchedTime)}
-                  />
-                )}
-                {!isUndefinedDate(vehicle.arrivalTime) && (
-                  <DispatchedVehicleTimelineEvent
-                    isLast={isUndefinedDate(vehicle.departureTime)}
-                    type="Llegada a incidente"
-                    value={formatDateTime(vehicle.arrivalTime)}
-                  />
-                )}
-                {!isUndefinedDate(vehicle.departureTime) && (
-                  <DispatchedVehicleTimelineEvent
-                    isLast={isUndefinedDate(vehicle.baseReturnTime)}
-                    type="Retiro"
-                    value={formatDateTime(vehicle.departureTime)}
-                  />
-                )}
-                {!isUndefinedDate(vehicle.baseReturnTime) && (
-                  <DispatchedVehicleTimelineEvent
-                    isLast={true}
-                    type="Llegada a base"
-                    value={formatDateTime(vehicle.baseReturnTime)}
-                  />
-                )}
-                <div className="flex flex-col">
-                  <p className="text-muted-foreground text-sm">Tiempo de respuesta</p>
-                  <p className="font-semibold">
-                    {isUndefinedDate(vehicle.dispatchedTime) || isUndefinedDate(vehicle.arrivalTime)
-                      ? "N/A"
-                      : calculateResponseTime(vehicle.dispatchedTime, vehicle.arrivalTime)}
-                  </p>
-                </div>
-              </CollapsibleContent>
-            </div>
+            </CollapsibleContent>
           </Collapsible>
         ))}
       </section>

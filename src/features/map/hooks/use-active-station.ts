@@ -1,6 +1,6 @@
 "use client";
 
-import { parseAsBoolean, parseAsString, parseAsStringEnum, useQueryStates } from "nuqs";
+import { parseAsString, parseAsStringEnum, useQueryStates } from "nuqs";
 
 export enum TabName {
   Details = "detalles",
@@ -18,14 +18,12 @@ export function useActiveStation() {
     {
       stationKey: parseAsString.withOptions({ shallow: true }),
       stationName: parseAsString.withOptions({ shallow: true }),
-      fullScreen: parseAsBoolean.withDefault(false).withOptions({ shallow: true }),
       tab: tabParser
     },
     {
       urlKeys: {
         stationKey: "claveEstacion",
         stationName: "nombreEstacion",
-        fullScreen: "stationfs",
         tab: "t"
       }
     }

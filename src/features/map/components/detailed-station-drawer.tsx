@@ -2,6 +2,7 @@
 
 import { Alert, AlertDescription, AlertTitle } from "@/features/components/ui/alert";
 import { Badge } from "@/features/components/ui/badge";
+import { Button } from "@/features/components/ui/button";
 import {
   Card,
   CardContent,
@@ -16,11 +17,8 @@ import {
   ChartTooltip,
   ChartTooltipContent
 } from "@/features/components/ui/chart";
-import { ScrollArea } from "@/features/components/ui/scroll-area";
-import { Separator } from "@/features/components/ui/separator";
 import { Skeleton } from "@/features/components/ui/skeleton";
 import { ResponsiveDrawer } from "@/features/map/components/responsive-drawer";
-import { StationDrawerFooter, StationDrawerHeader } from "@/features/map/components/station-drawer";
 import { useActiveIncident } from "@/features/map/hooks/use-active-incident";
 import { useActiveStation } from "@/features/map/hooks/use-active-station";
 import { trpc } from "@/lib/trpc/client";
@@ -29,6 +27,8 @@ import type { StationDetails } from "@/server/trpc";
 import {
   AlertCircleIcon,
   AlertTriangleIcon,
+  Building2Icon,
+  ChartSplineIcon,
   CheckCircleIcon,
   ClockIcon,
   HashIcon,
@@ -38,6 +38,7 @@ import {
   PhoneIcon,
   PrinterIcon,
   RadioIcon,
+  SirenIcon,
   XCircleIcon
 } from "lucide-react";
 import { Geist_Mono } from "next/font/google";
@@ -81,23 +82,71 @@ export default function DetailedStationDrawer() {
 
   return (
     <ResponsiveDrawer
-      isOpen={
-        activeStation.stationKey !== null &&
-        activeStation.stationName !== null &&
-        activeStation.tab !== null &&
-        activeStation.fullScreen === true
-      }
-      fullscreen
-      onClose={handleClose}
+      isOpen={activeStation.stationKey !== null && activeStation.stationName !== null}
+      onCloseAction={handleClose}
+      {...(activeStation.stationName && {
+        title: `${activeStation.stationName} ${activeStation.stationKey}`
+      })}
     >
-      <StationDrawerHeader />
-      <Separator />
+      <Tabs />
       <Body />
-      <StationDrawerFooter />
     </ResponsiveDrawer>
   );
 }
 
+export function Tabs() {
+  const [activeStation, setActiveStation] = useActiveStation();
+
+  return (
+    <div className="-mx-4 -top-4 sticky flex flex-row justify-evenly border-b bg-background py-4 text-sm">
+      <Button
+        onClick={() => {
+          setActiveStation({
+            tab: TabName.Details
+          });
+        }}
+        className={cn(
+          "flex basis-0 flex-col items-center gap-1 text-foreground",
+          activeStation.tab === TabName.Details && "text-primary"
+        )}
+        variant="link"
+      >
+        <Building2Icon className="size-4" />
+        General
+      </Button>
+      <Button
+        onClick={() => {
+          setActiveStation({
+            tab: TabName.Incidents
+          });
+        }}
+        className={cn(
+          "flex basis-0 flex-col items-center gap-1 text-foreground",
+          activeStation.tab === TabName.Incidents && "text-primary"
+        )}
+        variant="link"
+      >
+        <SirenIcon className="size-4" />
+        Incidentes
+      </Button>
+      <Button
+        onClick={() => {
+          setActiveStation({
+            tab: TabName.Stats
+          });
+        }}
+        className={cn(
+          "flex basis-0 flex-col items-center gap-1 text-foreground",
+          activeStation.tab === TabName.Stats && "text-primary"
+        )}
+        variant="link"
+      >
+        <ChartSplineIcon className="size-4" />
+        Estadísticas
+      </Button>
+    </div>
+  );
+}
 function Body() {
   const [activeStationQuery] = useActiveStation();
 
@@ -142,7 +191,7 @@ function DetailsTab() {
 
 function FireStationDetails({ data }: { data: NonNullable<StationDetails> }) {
   return (
-    <Card className={cn("m-4", geist.className)}>
+    <Card className={cn("my-4", geist.className)}>
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <Badge variant={data.isOperative ? "default" : "destructive"}>
@@ -222,12 +271,12 @@ function IncidentsTab() {
 
   if (isLoading)
     return (
-      <ScrollArea className="mb-4 h-full px-4">
+      <div className="mb-4 h-full">
         {Array.from({ length: 10 }).map((_, index) => {
           // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
           return <CardSkeleton key={index} />;
         })}
-      </ScrollArea>
+      </div>
     );
   if (error || !data)
     return (
@@ -243,7 +292,7 @@ function IncidentsTab() {
     );
 
   return (
-    <ScrollArea className={cn("mb-4 h-[calc(100vh-200px)] flex-1 px-4", geist.className)}>
+    <div className={cn("mb-4 h-[calc(100vh-200px)] flex-1", geist.className)}>
       {data.length === 0 && (
         <p className="p-4 text-center text-muted-foreground">No se encontraron incidentes.</p>
       )}
@@ -254,14 +303,12 @@ function IncidentsTab() {
             className="group py-2 text-sm"
             onClick={() => {
               setActiveIncident({
-                incidentId: stationDispatch.incident.id,
-                fullScreen: true
+                incidentId: stationDispatch.incident.id
               });
             }}
             onKeyDown={() => {
               setActiveIncident({
-                incidentId: stationDispatch.incident.id,
-                fullScreen: true
+                incidentId: stationDispatch.incident.id
               });
             }}
           >
@@ -293,7 +340,7 @@ function IncidentsTab() {
           </div>
         );
       })}
-    </ScrollArea>
+    </div>
   );
 }
 
@@ -417,8 +464,8 @@ function StatsTab() {
     })) ?? [];
 
   return (
-    <ScrollArea className={cn("h-full", geist.className)}>
-      <Card className="m-4">
+    <div className={cn("h-full py-2", geist.className)}>
+      <Card>
         <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
           <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
             <CardTitle>Incidentes</CardTitle>
@@ -584,6 +631,6 @@ function StatsTab() {
           </ChartContainer>
         </CardContent>
       </Card>
-    </ScrollArea>
+    </div>
   );
 }
