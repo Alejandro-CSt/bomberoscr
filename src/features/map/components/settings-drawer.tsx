@@ -38,10 +38,14 @@ export function MapSettingsDrawer() {
     incidentTimeRange,
     setIncidentTimeRange
   } = useMapSettings();
-  const [floatingMenu] = useFloatingMenu();
+  const [floatingMenu, setFloatingMenu] = useFloatingMenu();
 
   return (
-    <ResponsiveDrawer isOpen={floatingMenu.options} title="Ajustes">
+    <ResponsiveDrawer
+      isOpen={floatingMenu.options}
+      onCloseAction={() => setFloatingMenu({ options: false })}
+      title="Ajustes"
+    >
       <div className="flex h-full flex-col gap-2 pb-4">
         <div className="px-4">
           <Label className="font-medium text-sm">Estilo del mapa</Label>
