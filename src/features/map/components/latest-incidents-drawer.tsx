@@ -68,7 +68,7 @@ export function LatestIncidentsDrawer() {
               <SelectItem value="all">Todas las estaciones</SelectItem>
               {stations?.map((station) => (
                 <SelectItem key={station.id} value={station.name}>
-                  {station.stationKey} {station.name}
+                  {station.name} {station.stationKey}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -114,11 +114,11 @@ export function LatestIncidentsDrawer() {
   );
 }
 
-const IncidentCard = ({ incident }: { incident: LatestIncident }) => {
+export const IncidentCard = ({ incident }: { incident: LatestIncident }) => {
   const [, setActiveIncident] = useActiveIncident();
 
   const handleClick = () => {
-    setActiveIncident({ incidentId: incident.id, fullScreen: true });
+    setActiveIncident({ incidentId: incident.id });
   };
 
   return (

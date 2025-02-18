@@ -19,19 +19,19 @@ import {
 } from "@/features/components/ui/chart";
 import { Skeleton } from "@/features/components/ui/skeleton";
 import { ResponsiveDrawer } from "@/features/map/components/responsive-drawer";
-import { useActiveIncident } from "@/features/map/hooks/use-active-incident";
 import { useActiveStation } from "@/features/map/hooks/use-active-station";
 import { trpc } from "@/lib/trpc/client";
-import { cn, getRelativeTime } from "@/lib/utils";
-import type { StationDetails } from "@/server/trpc";
+import { cn } from "@/lib/utils";
+import type { LatestIncident, StationDetails } from "@/server/trpc";
 import {
   AlertCircleIcon,
   AlertTriangleIcon,
   Building2Icon,
   ChartSplineIcon,
   CheckCircleIcon,
-  ClockIcon,
   HashIcon,
+  Loader2Icon,
+  LoaderIcon,
   type LucideIcon,
   MailIcon,
   MapPinIcon,
@@ -43,7 +43,7 @@ import {
 } from "lucide-react";
 import { Geist_Mono } from "next/font/google";
 import { parseAsStringEnum } from "nuqs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Bar,
   BarChart,
@@ -58,6 +58,7 @@ import {
   XAxis,
   YAxis
 } from "recharts";
+import { IncidentCard } from "./latest-incidents-drawer";
 
 const geist = Geist_Mono({ subsets: ["latin"], weight: "variable" });
 
@@ -89,7 +90,9 @@ export default function DetailedStationDrawer() {
       })}
     >
       <Tabs />
-      <Body />
+      <div className="mt-4">
+        <Body />
+      </div>
     </ResponsiveDrawer>
   );
 }
@@ -98,7 +101,7 @@ export function Tabs() {
   const [activeStation, setActiveStation] = useActiveStation();
 
   return (
-    <div className="-mx-4 -top-4 sticky flex flex-row justify-evenly border-b bg-background py-4 text-sm">
+    <div className="-mx-4 -top-4 sticky z-30 flex flex-row justify-evenly border-b bg-background py-4 text-sm">
       <Button
         onClick={() => {
           setActiveStation({
@@ -191,7 +194,7 @@ function DetailsTab() {
 
 function FireStationDetails({ data }: { data: NonNullable<StationDetails> }) {
   return (
-    <Card className={cn("my-4", geist.className)}>
+    <Card>
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <Badge variant={data.isOperative ? "default" : "destructive"}>
@@ -241,43 +244,30 @@ function DetailItem({
 
 function IncidentsTab() {
   const [activeStation] = useActiveStation();
-  const [, setActiveIncident] = useActiveIncident();
-  const { data, isLoading, error } = trpc.stations.getStationIncidents.useQuery({
-    key: activeStation.stationKey
-  });
+  const [results, setResults] = useState<LatestIncident[]>([]);
+  const { data, isPending, fetchNextPage, isFetchingNextPage, hasNextPage, error } =
+    trpc.incidents.infiniteIncidents.useInfiniteQuery(
+      {
+        limit: 15,
+        stationFilter: activeStation.stationName
+      },
+      { getNextPageParam: (lastPage) => lastPage.nextCursor }
+    );
 
-  const CardSkeleton = () => {
+  useEffect(() => {
+    if (data) {
+      const newIncidents = data.pages.flatMap((page) => page.items);
+      setResults(newIncidents);
+    }
+  }, [data]);
+
+  if (isPending)
     return (
-      <div className="py-2">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <Skeleton className="h-4 w-1/4 rounded-xl p-2" />
-            <Skeleton className="h-4 w-1/4" />
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-start gap-2 text-muted-foreground">
-              <MapPinIcon className="size-4 min-h-4 min-w-4" />
-              <Skeleton className="h-8 w-full" />
-            </div>
-          </CardContent>
-          <CardFooter className="flex flex-row justify-start gap-2">
-            <AlertTriangleIcon className="mr-1 size-4 min-h-4 min-w-4 text-yellow-500" />
-            <Skeleton className="h-4 w-full" />
-          </CardFooter>
-        </Card>
+      <div className="flex h-16 flex-col items-center justify-center">
+        <LoaderIcon className="size-4 animate-spin" />
       </div>
     );
-  };
 
-  if (isLoading)
-    return (
-      <div className="mb-4 h-full">
-        {Array.from({ length: 10 }).map((_, index) => {
-          // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-          return <CardSkeleton key={index} />;
-        })}
-      </div>
-    );
   if (error || !data)
     return (
       <div className="p-4">
@@ -291,55 +281,28 @@ function IncidentsTab() {
       </div>
     );
 
-  return (
-    <div className={cn("mb-4 h-[calc(100vh-200px)] flex-1", geist.className)}>
-      {data.length === 0 && (
+  if (results.length === 0)
+    return (
+      <div className="flex-1">
         <p className="p-4 text-center text-muted-foreground">No se encontraron incidentes.</p>
+      </div>
+    );
+
+  return (
+    <div className={cn("mb-4 flex flex-1 flex-col gap-4", geist.className)}>
+      {results.map((incident) => (
+        <IncidentCard key={incident.id} incident={incident} />
+      ))}
+      {hasNextPage && (
+        <Button
+          variant="outline"
+          className="mx-auto my-4 flex items-center justify-center"
+          onClick={() => fetchNextPage()}
+          disabled={isFetchingNextPage}
+        >
+          {isFetchingNextPage ? <Loader2Icon className="h-4 w-4 animate-spin" /> : "Cargar más"}
+        </Button>
       )}
-      {data.map((stationDispatch) => {
-        return (
-          <div
-            key={stationDispatch.id}
-            className="group py-2 text-sm"
-            onClick={() => {
-              setActiveIncident({
-                incidentId: stationDispatch.incident.id
-              });
-            }}
-            onKeyDown={() => {
-              setActiveIncident({
-                incidentId: stationDispatch.incident.id
-              });
-            }}
-          >
-            <Card className="transition-[background-color] duration-200 group-hover:bg-muted">
-              <CardHeader>
-                <div className="flex flex-row items-center justify-between">
-                  <Badge variant={stationDispatch.incident.isOpen ? "destructive" : "outline"}>
-                    {stationDispatch.incident.isOpen ? "Atendiendo" : "Controlado"}
-                  </Badge>
-                  <p className="flex items-center gap-2 text-muted-foreground">
-                    <ClockIcon className="size-4 min-h-4 min-w-4" />
-                    {getRelativeTime(stationDispatch.incident.incidentTimestamp)}
-                  </p>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="flex items-start gap-2 text-muted-foreground">
-                  <MapPinIcon className="size-4 min-h-4 min-w-4" />
-                  {stationDispatch.incident.address}
-                </p>
-              </CardContent>
-              <CardFooter>
-                <p className="mt-2 flex items-start text-xs">
-                  <AlertTriangleIcon className="mr-1 size-4 min-h-4 min-w-4 text-yellow-500" />
-                  {stationDispatch.incident.importantDetails}
-                </p>
-              </CardFooter>
-            </Card>
-          </div>
-        );
-      })}
     </div>
   );
 }
@@ -464,7 +427,7 @@ function StatsTab() {
     })) ?? [];
 
   return (
-    <div className={cn("h-full py-2", geist.className)}>
+    <div className={cn("h-full")}>
       <Card>
         <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
           <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
@@ -480,7 +443,7 @@ function StatsTab() {
                   type="button"
                   key={key}
                   data-active={period === key}
-                  className="relative z-30 flex flex-1 flex-col justify-center gap-1 border-t px-4 py-2 text-left even:border-l data-[active=true]:bg-muted/70 sm:border-t-0 sm:border-l sm:px-6 sm:py-4"
+                  className="relative flex flex-1 flex-col justify-center gap-1 border-t px-4 py-2 text-left even:border-l data-[active=true]:bg-muted/70 sm:border-t-0 sm:border-l sm:px-6 sm:py-4"
                   onClick={() => setPeriod(key as "week" | "month")}
                 >
                   <span className="text-muted-foreground text-xs">

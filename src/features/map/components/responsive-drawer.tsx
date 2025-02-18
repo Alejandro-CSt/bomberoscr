@@ -108,7 +108,7 @@ export function ResponsiveDrawer({
                 </Drawer.Title>
                 <div className="flex w-full items-center justify-end">
                   {snapPoints && (
-                    <Button variant="ghost" onClick={handleCycleSnap}>
+                    <Button variant="ghost" onClick={handleCycleSnap} className="md:hidden">
                       <span className="sr-only">Cambiar tamaño</span>
                       {hasNextSnap() ? (
                         <ChevronsUpIcon className="size-5" />
@@ -128,8 +128,8 @@ export function ResponsiveDrawer({
             </Drawer.Handle>
             <div
               className={cn(
-                "flex flex-col px-4 pt-4",
-                snap === 1 ? "overflow-y-auto" : "overflow-hidden"
+                "flex flex-col overflow-hidden px-4 pt-4 md:overflow-y-auto",
+                snap === 1 && "overflow-y-auto"
               )}
             >
               {children}

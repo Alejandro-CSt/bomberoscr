@@ -33,7 +33,7 @@ export async function getStations(all: boolean) {
       longitude: true,
       latitude: true
     },
-    orderBy: asc(stations.id)
+    orderBy: asc(stations.name)
   });
 }
 
