@@ -1,11 +1,11 @@
-import db from "@/server/db";
+import { getIncidentTypes } from "@/server/sigae/api";
+import type { ItemObtenerTiposIncidente } from "@/server/sigae/types";
+import db from "@repo/db/db";
 import {
   type incidentTypesInsertSchema,
   incidentTypes as incidentTypesTable
-} from "@/server/db/schema";
-import { conflictUpdateSetAllColumns } from "@/server/db/utils";
-import { getIncidentTypes } from "@/server/sigae/api";
-import type { ItemObtenerTiposIncidente } from "@/server/sigae/types";
+} from "@repo/db/schema";
+import { conflictUpdateSetAllColumns } from "@repo/db/utils";
 import { logger, schedules } from "@trigger.dev/sdk/v3";
 import type { z } from "zod";
 

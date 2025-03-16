@@ -1,7 +1,7 @@
-import db from "@/server/db";
-import { dispatchedVehicles, incidents as incidentsTable } from "@/server/db/schema";
 import { getLatestIncidentsListApp } from "@/server/sigae/api";
 import { upsertIncident } from "@/server/sync/incidents";
+import db from "@repo/db/db";
+import { dispatchedVehicles, incidents as incidentsTable } from "@repo/db/schema";
 import { logger, schedules } from "@trigger.dev/sdk/v3";
 import { and, between, eq, or } from "drizzle-orm";
 

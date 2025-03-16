@@ -4,7 +4,7 @@ import {
   getIncidentsCoordinates,
   getLatestIncidents,
   getLatestIncidentsCoordinates
-} from "@/server/db/queries";
+} from "@/server/queries";
 import { publicProcedure, router } from "@/server/trpc/init";
 import { z } from "zod";
 

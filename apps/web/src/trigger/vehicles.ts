@@ -1,7 +1,7 @@
-import db from "@/server/db";
-import { type vehiclesInsertSchema, vehicles as vehiclesTable } from "@/server/db/schema";
-import { conflictUpdateSetAllColumns } from "@/server/db/utils";
 import { getAllVehicles, getVehicleDetails } from "@/server/sigae/api";
+import db from "@repo/db/db";
+import { type vehiclesInsertSchema, vehicles as vehiclesTable } from "@repo/db/schema";
+import { conflictUpdateSetAllColumns } from "@repo/db/utils";
 import { logger, schedules } from "@trigger.dev/sdk/v3";
 import type { z } from "zod";
 

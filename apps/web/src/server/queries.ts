@@ -1,12 +1,11 @@
-import db from "@/server/db";
 import {
+  db,
   dispatchedStations,
   dispatchedVehicles,
   incidentTypes,
   incidents,
   stations
-} from "@/server/db/schema";
-import { TRPCError } from "@trpc/server";
+} from "@repo/db";
 import {
   aliasedTable,
   and,
@@ -53,7 +52,7 @@ export async function getStationIncidents(key: string) {
     }
   });
 
-  if (!station) throw new TRPCError({ code: "NOT_FOUND" });
+  if (!station) throw new Error("Station not found");
 
   return await db.query.dispatchedStations.findMany({
     where: eq(dispatchedStations.stationId, station.id),
@@ -131,7 +130,11 @@ export async function getLatestIncidents({
   limit,
   cursor,
   stationFilter
-}: { limit: number; cursor: number | null; stationFilter?: string | null }) {
+}: {
+  limit: number;
+  cursor: number | null;
+  stationFilter?: string | null;
+}) {
   const specificIncidentType = aliasedTable(incidentTypes, "specificIncidentType");
   return await db
     .select({
@@ -344,7 +347,7 @@ export async function getStationIncidents24h(key: string) {
     where: eq(stations.stationKey, key),
     columns: { id: true }
   });
-  if (!station) throw new TRPCError({ code: "NOT_FOUND" });
+  if (!station) throw new Error("Station not found");
   const now = new Date();
   const last24Start = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
@@ -368,7 +371,7 @@ export async function getStationIncidentsComparison(stationKey: string) {
     where: eq(stations.stationKey, stationKey),
     columns: { id: true }
   });
-  if (!station) throw new TRPCError({ code: "NOT_FOUND" });
+  if (!station) throw new Error("Station not found");
 
   const now = new Date();
   const lastWeekStart = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
@@ -407,7 +410,7 @@ export async function getStationIncidentsComparison30Days(stationKey: string) {
     where: eq(stations.stationKey, stationKey),
     columns: { id: true }
   });
-  if (!station) throw new TRPCError({ code: "NOT_FOUND" });
+  if (!station) throw new Error("Station not found");
 
   const now = new Date();
   const last30Start = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
@@ -446,7 +449,7 @@ export async function getStationDailyIncidentsComparison(stationKey: string) {
     where: eq(stations.stationKey, stationKey),
     columns: { id: true }
   });
-  if (!station) throw new TRPCError({ code: "NOT_FOUND" });
+  if (!station) throw new Error("Station not found");
 
   const now = new Date();
   const currentWeekStart = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
@@ -495,7 +498,7 @@ export async function getStationWeeklyIncidentsComparison30Days(stationKey: stri
     where: eq(stations.stationKey, stationKey),
     columns: { id: true }
   });
-  if (!station) throw new TRPCError({ code: "NOT_FOUND" });
+  if (!station) throw new Error("Station not found");
 
   const now = new Date();
   const last30Start = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
@@ -544,7 +547,7 @@ export async function getStationIncidentsGroupedByDayUTCMinus6(stationKey: strin
     where: eq(stations.stationKey, stationKey),
     columns: { id: true }
   });
-  if (!station) throw new TRPCError({ code: "NOT_FOUND" });
+  if (!station) throw new Error("Station not found");
 
   const now = new Date();
   const last7Start = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
@@ -573,7 +576,7 @@ export async function getStationIncidentsGroupedByDayUTCMinus6_30Days(stationKey
     where: eq(stations.stationKey, stationKey),
     columns: { id: true }
   });
-  if (!station) throw new TRPCError({ code: "NOT_FOUND" });
+  if (!station) throw new Error("Station not found");
 
   const now = new Date();
   const last30Start = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
@@ -602,7 +605,7 @@ export async function getStationIncidentsByHour(stationKey: string) {
     where: eq(stations.stationKey, stationKey),
     columns: { id: true }
   });
-  if (!station) throw new TRPCError({ code: "NOT_FOUND" });
+  if (!station) throw new Error("Station not found");
 
   const now = new Date();
   const last30Start = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
@@ -640,7 +643,7 @@ export async function getStationIncidentsByTopLevelType(stationKey: string) {
     where: eq(stations.stationKey, stationKey),
     columns: { id: true }
   });
-  if (!station) throw new TRPCError({ code: "NOT_FOUND" });
+  if (!station) throw new Error("Station not found");
 
   const now = new Date();
   const last30Start = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);

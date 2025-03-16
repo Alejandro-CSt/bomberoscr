@@ -103,25 +103,46 @@ export const incidents = pgTable("incidents", {
 });
 
 export const vehiclesRelations = relations(vehicles, ({ one, many }) => ({
-  station: one(stations, { fields: [vehicles.stationId], references: [stations.id] }),
+  station: one(stations, {
+    fields: [vehicles.stationId],
+    references: [stations.id]
+  }),
   dispatchedVehicles: many(dispatchedVehicles)
 }));
 
 export const vehicleDisponibilityRelations = relations(vehicleDisponibility, () => ({}));
 
 export const dispatchedVehiclesRelations = relations(dispatchedVehicles, ({ one }) => ({
-  vehicle: one(vehicles, { fields: [dispatchedVehicles.vehicleId], references: [vehicles.id] }),
-  incident: one(incidents, { fields: [dispatchedVehicles.incidentId], references: [incidents.id] }),
-  station: one(stations, { fields: [dispatchedVehicles.stationId], references: [stations.id] })
+  vehicle: one(vehicles, {
+    fields: [dispatchedVehicles.vehicleId],
+    references: [vehicles.id]
+  }),
+  incident: one(incidents, {
+    fields: [dispatchedVehicles.incidentId],
+    references: [incidents.id]
+  }),
+  station: one(stations, {
+    fields: [dispatchedVehicles.stationId],
+    references: [stations.id]
+  })
 }));
 
 export const dispatchedStationsRelations = relations(dispatchedStations, ({ one }) => ({
-  station: one(stations, { fields: [dispatchedStations.stationId], references: [stations.id] }),
-  incident: one(incidents, { fields: [dispatchedStations.incidentId], references: [incidents.id] })
+  station: one(stations, {
+    fields: [dispatchedStations.stationId],
+    references: [stations.id]
+  }),
+  incident: one(incidents, {
+    fields: [dispatchedStations.incidentId],
+    references: [incidents.id]
+  })
 }));
 
 export const incidentsRelations = relations(incidents, ({ one, many }) => ({
-  station: one(stations, { fields: [incidents.responsibleStation], references: [stations.id] }),
+  station: one(stations, {
+    fields: [incidents.responsibleStation],
+    references: [stations.id]
+  }),
   dispatchedVehicles: many(dispatchedVehicles),
   dispatchedStations: many(dispatchedStations),
   incidentType: one(incidentTypes, {

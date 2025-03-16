@@ -5,7 +5,7 @@ import {
   getStationIncidentsByTopLevelType,
   getStationStats,
   getStations
-} from "@/server/db/queries";
+} from "@/server/queries";
 import { publicProcedure, router } from "@/server/trpc/init";
 import { TRPCError, type inferRouterOutputs } from "@trpc/server";
 import { z } from "zod";

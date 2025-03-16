@@ -6,7 +6,10 @@
     "useIgnoreFile": true,
     "defaultBranch": "main"
   },
-  "files": { "ignoreUnknown": false, "ignore": [] },
+  "files": {
+    "ignoreUnknown": true,
+    "ignore": [".next", "node_modules/*", "*.config.*", "*.json", "tsconfig.json", ".turbo"]
+  },
   "formatter": {
     "enabled": true,
     "useEditorconfig": true,
@@ -20,8 +23,8 @@
   },
   "organizeImports": { "enabled": true },
   "linter": {
-    "ignore": ["scripts", "components/ui"],
     "enabled": true,
+    "ignore": ["components/ui"],
     "rules": {
       "recommended": true,
       "complexity": { "noUselessTypeConstraint": "error" },

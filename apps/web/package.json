@@ -1,23 +1,14 @@
 {
-  "name": "bomberoscr",
+  "name": "web",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
-    "start": "next start",
-    "lint:check": "biome lint --error-on-warnings .",
-    "lint:safefix": "biome lint --write .",
-    "lint:next": "next lint",
-    "format:check": "biome format .",
-    "format": "biome format --write .",
-    "drizzle:migrate": "drizzle-kit migrate",
-    "drizzle:generate": "drizzle-kit generate",
-    "drizzle:push": "drizzle-kit push",
-    "drizzle:pull": "drizzle-kit pull",
-    "drizzle:studio": "drizzle-kit studio"
+    "start": "next start"
   },
   "dependencies": {
+    "@repo/db": "workspace:*",
     "@phosphor-icons/react": "^2.1.7",
     "@radix-ui/react-collapsible": "^1.1.2",
     "@radix-ui/react-dialog": "^1.1.6",
@@ -59,7 +50,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.9.4",
+    "@repo/typescript-config": "workspace:*",
     "@trigger.dev/build": "3.3.11",
     "@types/node": "^20",
     "@types/pg": "^8.11.10",

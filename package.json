@@ -2,8 +2,11 @@
   "private": true,
   "workspaces": ["apps/*", "packages/*"],
   "scripts": {
-    "format-and-lint": "biome check .",
-    "format-and-lint:fix": "biome check --write ."
+    "lint:check": "biome lint --error-on-warnings .",
+    "lint:safefix": "biome lint --write .",
+    "lint:next": "next lint",
+    "format:check": "biome format .",
+    "format": "biome format --write ."
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",

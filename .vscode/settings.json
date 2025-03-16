@@ -5,5 +5,6 @@
   "editor.codeActionsOnSave": {
     "source.organizeImports": "explicit",
     "source.fixAll.biome": "explicit"
-  }
+  },
+  "turbo.path": "node_modules/.bin/turbo",
 }

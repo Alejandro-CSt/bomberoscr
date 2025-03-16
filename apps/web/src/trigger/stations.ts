@@ -1,7 +1,7 @@
-import db from "@/server/db";
-import { type stationsInsertSchema, stations as stationsTable } from "@/server/db/schema";
-import { conflictUpdateSetAllColumns } from "@/server/db/utils";
 import { getOperativeStations, getStationDetails, getStationsList } from "@/server/sigae/api";
+import db from "@repo/db/db";
+import { type stationsInsertSchema, stations as stationsTable } from "@repo/db/schema";
+import { conflictUpdateSetAllColumns } from "@repo/db/utils";
 import { logger, schedules } from "@trigger.dev/sdk/v3";
 import type { z } from "zod";
 

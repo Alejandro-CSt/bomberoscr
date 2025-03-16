@@ -1,5 +1,11 @@
 import { compareTwoStrings } from "@/lib/utils";
-import db from "@/server/db/index";
+import {
+  getIncidentDetails,
+  getIncidentReport,
+  getStationsAttendingIncident,
+  getVehiclesDispatchedToIncident
+} from "@/server/sigae/api";
+import db from "@repo/db/db";
 import {
   type dispatchedStationsInsertSchema,
   dispatchedStations as dispatchedStationsTable,
@@ -7,14 +13,8 @@ import {
   dispatchedVehicles as dispatchedVehiclesTable,
   type incidentsInsertSchema,
   incidents as incidentsTable
-} from "@/server/db/schema";
-import { conflictUpdateSetAllColumns } from "@/server/db/utils";
-import {
-  getIncidentDetails,
-  getIncidentReport,
-  getStationsAttendingIncident,
-  getVehiclesDispatchedToIncident
-} from "@/server/sigae/api";
+} from "@repo/db/schema";
+import { conflictUpdateSetAllColumns } from "@repo/db/utils";
 import { logger } from "@trigger.dev/sdk/v3";
 import { eq } from "drizzle-orm";
 import type { z } from "zod";

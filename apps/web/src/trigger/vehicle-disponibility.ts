@@ -1,10 +1,10 @@
-import db from "@/server/db";
+import { getVehicleDisponibilityStates } from "@/server/sigae/api";
+import db from "@repo/db/db";
 import {
   type vehicleDisponibilityInsertSchema,
   vehicleDisponibility as vehicleDisponibilityTable
-} from "@/server/db/schema";
-import { conflictUpdateSetAllColumns } from "@/server/db/utils";
-import { getVehicleDisponibilityStates } from "@/server/sigae/api";
+} from "@repo/db/schema";
+import { conflictUpdateSetAllColumns } from "@repo/db/utils";
 import { logger, schedules } from "@trigger.dev/sdk/v3";
 import type { z } from "zod";
 
