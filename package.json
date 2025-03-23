@@ -1,6 +1,9 @@
 {
   "private": true,
-  "workspaces": ["apps/*", "packages/*"],
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "lint:check": "biome lint --error-on-warnings .",
     "lint:safefix": "biome lint --write .",
@@ -10,10 +13,14 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
-    "turbo": "^2.4.4"
+    "turbo": "^2.4.4",
+    "typescript": "^5"
   },
   "packageManager": "pnpm@10.6.3",
   "engines": {
     "node": ">=18"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.40.1"
   }
 }

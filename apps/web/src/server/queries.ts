@@ -1,11 +1,11 @@
+import { db } from "@repo/db/db";
 import {
-  db,
   dispatchedStations,
   dispatchedVehicles,
   incidentTypes,
   incidents,
   stations
-} from "@repo/db";
+} from "@repo/db/schema";
 import {
   aliasedTable,
   and,
@@ -316,8 +316,8 @@ export async function getIncidentsComparison() {
     .where(between(incidents.incidentTimestamp, prevWeekStart, lastWeekStart));
 
   return {
-    lastWeek: Number(lastWeekRes[0].count),
-    prevWeek: Number(prevWeekRes[0].count)
+    lastWeek: Number(lastWeekRes[0]?.count),
+    prevWeek: Number(prevWeekRes[0]?.count)
   };
 }
 
@@ -337,8 +337,8 @@ export async function getIncidentsComparison30Days() {
     .where(between(incidents.incidentTimestamp, prev30Start, last30Start));
 
   return {
-    last30: Number(last30Res[0].count),
-    prev30: Number(prev30Res[0].count)
+    last30: Number(last30Res[0]?.count),
+    prev30: Number(prev30Res[0]?.count)
   };
 }
 
@@ -362,7 +362,7 @@ export async function getStationIncidents24h(key: string) {
     );
 
   return {
-    last24: Number(last24Res[0].count)
+    last24: Number(last24Res[0]?.count)
   };
 }
 
@@ -400,8 +400,8 @@ export async function getStationIncidentsComparison(stationKey: string) {
     );
 
   return {
-    lastWeek: Number(lastWeekRes[0].count),
-    prevWeek: Number(prevWeekRes[0].count)
+    lastWeek: Number(lastWeekRes[0]?.count),
+    prevWeek: Number(prevWeekRes[0]?.count)
   };
 }
 
@@ -439,8 +439,8 @@ export async function getStationIncidentsComparison30Days(stationKey: string) {
     );
 
   return {
-    last30: Number(last30Res[0].count),
-    prev30: Number(prev30Res[0].count)
+    last30: Number(last30Res[0]?.count),
+    prev30: Number(prev30Res[0]?.count)
   };
 }
 
@@ -665,7 +665,9 @@ export async function getStationIncidentsByTopLevelType(stationKey: string) {
   const groupedIncidents = recentIncidents.reduce<Record<string, number>>((acc, incident) => {
     if (!incident.incidentCode) return acc;
     const parentCode = incident.incidentCode.split(".")[0];
-    acc[parentCode] = (acc[parentCode] || 0) + 1;
+    if (parentCode) {
+      acc[parentCode] = (acc[parentCode] || 0) + 1;
+    }
     return acc;
   }, {});
 

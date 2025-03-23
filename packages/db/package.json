@@ -1,6 +1,5 @@
 {
-  "name": "db",
-  "type": "module",
+  "name": "@repo/db",
   "scripts": {
     "build": "tsc",
     "drizzle:migrate": "drizzle-kit migrate",
@@ -13,7 +12,9 @@
     "access": "public"
   },
   "exports": {
-    ".": "./src/index.ts"
+    "./utils": "./src/utils.ts",
+    "./db": "./src/db.ts",
+    "./schema": "./src/schema.ts"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
@@ -23,7 +24,6 @@
   "dependencies": {
     "dotenv": "^16.4.7",
     "dotenv-expand": "^12.0.1",
-    "drizzle-orm": "^0.38.4",
     "drizzle-zod": "^0.6.1",
     "zod": "^3.24.1"
   }

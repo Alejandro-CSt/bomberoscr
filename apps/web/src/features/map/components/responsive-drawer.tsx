@@ -24,9 +24,11 @@ export function ResponsiveDrawer({
   direction,
   snapPoints = ["384px", 1],
   title,
-  isNested = false
+  isNested = false,
 }: ResponsiveDrawerProps) {
-  const [snap, setSnap] = useState<number | string | null>(snapPoints?.[0] || null);
+  const [snap, setSnap] = useState<number | string | null>(
+    snapPoints?.[0] || null
+  );
   const contentRef = useRef<HTMLDivElement>(null);
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
@@ -44,14 +46,19 @@ export function ResponsiveDrawer({
   }, [snap]);
 
   const hasNextSnap = () =>
-    snapPoints && snap ? snapPoints.indexOf(snap) < snapPoints.length - 1 : false;
+    snapPoints && snap
+      ? snapPoints.indexOf(snap) < snapPoints.length - 1
+      : false;
 
   const handleCycleSnap = () => {
     if (!snapPoints || !snap) return;
     if (hasNextSnap()) {
-      setSnap(snapPoints[snapPoints.indexOf(snap) + 1]);
+      const nextSnap = snapPoints[snapPoints.indexOf(snap) + 1];
+      if (nextSnap !== undefined) {
+        setSnap(nextSnap);
+      }
     } else {
-      setSnap(snapPoints[0]);
+      setSnap(snapPoints[0] ?? null);
     }
   };
 
@@ -65,7 +72,7 @@ export function ResponsiveDrawer({
             snapPoints: snapPoints,
             activeSnapPoint: snap,
             setActiveSnapPoint: setSnap,
-            handleOnly: false
+            handleOnly: false,
           }
         : {})}
       modal={false}
@@ -82,7 +89,10 @@ export function ResponsiveDrawer({
             isNested ? (isDesktop ? "max-h-[93dvh]" : "w-[354px]") : ""
           )}
         >
-          <div ref={contentRef} className={cn("mx-auto flex h-full w-full max-w-md flex-col")}>
+          <div
+            ref={contentRef}
+            className={cn("mx-auto flex h-full w-full max-w-md flex-col")}
+          >
             <Drawer.Handle
               style={
                 {
@@ -96,7 +106,7 @@ export function ResponsiveDrawer({
                   position: "sticky",
                   zIndex: 30,
                   backgroundColor: "#FFF",
-                  opacity: 1
+                  opacity: 1,
                 } as React.CSSProperties
               }
               preventCycle
@@ -108,7 +118,11 @@ export function ResponsiveDrawer({
                 </Drawer.Title>
                 <div className="flex w-full items-center justify-end">
                   {snapPoints && (
-                    <Button variant="ghost" onClick={handleCycleSnap} className="md:hidden">
+                    <Button
+                      variant="ghost"
+                      onClick={handleCycleSnap}
+                      className="md:hidden"
+                    >
                       <span className="sr-only">Cambiar tamaño</span>
                       {hasNextSnap() ? (
                         <ChevronsUpIcon className="size-5" />
