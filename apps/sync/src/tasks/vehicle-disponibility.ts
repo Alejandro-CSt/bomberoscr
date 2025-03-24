@@ -5,14 +5,17 @@ import {
 } from "@repo/db/schema";
 import { conflictUpdateSetAllColumns } from "@repo/db/utils";
 import { getVehicleDisponibilityStates } from "@repo/sigae/api";
+import * as Sentry from "@sentry/node";
 import type { z } from "zod";
 
 type VehicleDisponibilityType = z.infer<typeof vehicleDisponibilityInsertSchema>;
 
 export async function syncVehicleDisponibility() {
-  // logger.info("Starting vehicle disponibility sync");
+  Sentry.captureMessage("Starting vehicle disponibility sync");
   const vehicleDisponibilityStates = await getVehicleDisponibilityStates();
-  // logger.info(`Fetched ${vehicleDisponibilityStates.Items.length} vehicle disponibility states`);
+  Sentry.captureMessage(
+    `Fetched ${vehicleDisponibilityStates.Items.length} vehicle disponibility states`
+  );
   const vehicleDisponibility: VehicleDisponibilityType[] = vehicleDisponibilityStates.Items.map(
     (state) => ({
       id: state.IdGrupoClasificacion,
@@ -27,6 +30,6 @@ export async function syncVehicleDisponibility() {
       target: vehicleDisponibilityTable.id,
       set: conflictUpdateSetAllColumns(vehicleDisponibilityTable)
     });
-  // logger.info("Vehicle disponibility updated in database");
+  Sentry.captureMessage("Vehicle disponibility updated in database");
   return vehicleDisponibility.length;
 }

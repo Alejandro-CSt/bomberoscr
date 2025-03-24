@@ -5,6 +5,7 @@ import {
   incidents as incidentsTable
 } from "@repo/db/schema";
 import { getLatestIncidentsListApp } from "@repo/sigae/api";
+import * as Sentry from "@sentry/node";
 import { and, between, eq, or } from "drizzle-orm";
 import type { z } from "zod";
 import { upsertIncident } from "../sync/incidents";
@@ -12,8 +13,9 @@ import { upsertIncident } from "../sync/incidents";
 const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
 
 export async function syncLatestIncidents() {
+  Sentry.captureMessage("Starting latest incidents sync");
   const response = await getLatestIncidentsListApp(15);
-  // let newIncidents = 0;
+  let newIncidents = 0;
   for (const incident of response.items) {
     const exists = await db.$count(
       incidentsTable,
@@ -23,12 +25,13 @@ export async function syncLatestIncidents() {
     if (exists > 0) continue;
 
     await upsertIncident(incident.idBoletaIncidente);
-    // newIncidents++;
+    newIncidents++;
   }
-  // log There were ${newIncidents} new incidents
+  Sentry.captureMessage(`There were ${newIncidents} new incidents`);
 }
 
 export async function syncOpenIncidents() {
+  Sentry.captureMessage("Starting open incidents sync");
   const openIncidents = await db.query.incidents.findMany({
     where: and(
       or(
@@ -48,11 +51,14 @@ export async function syncOpenIncidents() {
   for (const incident of res) {
     if (!incident) continue;
     if (await isIncidentClosed(incident)) {
+      const incidentAgeMs = Date.now() - new Date(incident.incidentTimestamp).getTime();
       await db
         .update(incidentsTable)
         .set({ isOpen: false, modifiedAt: new Date() })
         .where(eq(incidentsTable.id, incident.id));
-      // logger.info(`Closed incident ${incident.id} after ${(incidentAgeMs / 1000) * 60 * 60} hours`);
+      Sentry.captureMessage(
+        `Closed incident ${incident.id} after ${(incidentAgeMs / 1000) * 60 * 60} hours`
+      );
     }
   }
 }

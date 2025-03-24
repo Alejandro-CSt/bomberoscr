@@ -2,16 +2,17 @@ import db from "@repo/db/db";
 import { type stationsInsertSchema, stations as stationsTable } from "@repo/db/schema";
 import { conflictUpdateSetAllColumns } from "@repo/db/utils";
 import { getOperativeStations, getStationDetails, getStationsList } from "@repo/sigae/api";
+import * as Sentry from "@sentry/node";
 import type { z } from "zod";
 
 type StationType = z.infer<typeof stationsInsertSchema>;
 
 export async function syncStations() {
-  //   logger.info("Starting stations sync");
+  Sentry.captureMessage("Starting stations sync");
   const stationList = await getStationsList();
-  //   logger.info(`Fetched ${stationList.Items.length} stations from listing`);
+  Sentry.captureMessage(`Fetched ${stationList.Items.length} stations from listing`);
   const operativeStations = await getOperativeStations();
-  //   logger.info(`Fetched ${operativeStations.Items.length} operative stations`);
+  Sentry.captureMessage(`Fetched ${operativeStations.Items.length} operative stations`);
   const stations: StationType[] = [];
 
   for (const station of stationList.Items) {
@@ -34,7 +35,7 @@ export async function syncStations() {
     });
   }
 
-  //   logger.info(`Syncing ${stations.length} stations`);
+  Sentry.captureMessage(`Syncing ${stations.length} stations`);
   await db
     .insert(stationsTable)
     .values(stations)
@@ -42,6 +43,6 @@ export async function syncStations() {
       target: stationsTable.id,
       set: conflictUpdateSetAllColumns(stationsTable)
     });
-  //   logger.info("Stations updated in database");
+  Sentry.captureMessage("Stations updated in database");
   return stations.length;
 }

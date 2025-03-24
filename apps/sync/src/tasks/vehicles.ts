@@ -2,14 +2,15 @@ import db from "@repo/db/db";
 import { type vehiclesInsertSchema, vehicles as vehiclesTable } from "@repo/db/schema";
 import { conflictUpdateSetAllColumns } from "@repo/db/utils";
 import { getAllVehicles, getVehicleDetails } from "@repo/sigae/api";
+import * as Sentry from "@sentry/node";
 import type { z } from "zod";
 
 type VehicleType = z.infer<typeof vehiclesInsertSchema>;
 
 export async function syncVehicles() {
-  // logger.info("Starting vehicles sync");
+  Sentry.captureMessage("Starting vehicles sync");
   const vehiclesList = await getAllVehicles();
-  // logger.info(`Fetched vehicles list with ${vehiclesList.Items.length} items`);
+  Sentry.captureMessage(`Fetched vehicles list with ${vehiclesList.Items.length} items`);
   const vehicles: VehicleType[] = [];
 
   for (const vehicle of vehiclesList.Items) {
@@ -25,7 +26,7 @@ export async function syncVehicles() {
     });
   }
 
-  // logger.info(`Syncing ${vehicles.length} vehicles`);
+  Sentry.captureMessage(`Syncing ${vehicles.length} vehicles`);
   await db
     .insert(vehiclesTable)
     .values(vehicles)
@@ -33,6 +34,6 @@ export async function syncVehicles() {
       target: vehiclesTable.id,
       set: conflictUpdateSetAllColumns(vehiclesTable)
     });
-  // logger.info("Vehicles updated in database");
+  Sentry.captureMessage("Vehicles updated in database");
   return vehicles.length;
 }

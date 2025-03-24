@@ -1,3 +1,5 @@
+import { rawToDispatchedStations, rawToDispatchedVehicles, rawToIncident } from "@/lib/transform";
+import { compareTwoStrings } from "@/lib/utils";
 import { db } from "@repo/db/db";
 import {
   dispatchedStations as dispatchedStationsTable,
@@ -12,8 +14,6 @@ import {
   getVehiclesDispatchedToIncident
 } from "@repo/sigae/api";
 import { eq } from "drizzle-orm";
-import { rawToDispatchedStations, rawToDispatchedVehicles, rawToIncident } from "../lib/transform";
-import { compareTwoStrings } from "../lib/utils";
 
 export async function upsertIncident(id: number) {
   const [dispatchedStations, dispatchedVehicles, incidentDetails, incidentReport] =
