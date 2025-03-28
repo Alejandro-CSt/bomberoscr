@@ -21,7 +21,8 @@ RUN corepack prepare pnpm@10.6.3 --activate
 RUN pnpm install --frozen-lockfile
 
 COPY --from=builder /app/out/full/ .
-COPY --from=builder /app/apps/sync/.env ./apps/sync/.env
+
+ENV SKIP_ENV_CHECK=true
 RUN pnpm turbo run build --filter=sync
 
 FROM base AS runner
