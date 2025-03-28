@@ -52,6 +52,13 @@ RUN corepack enable
 RUN corepack prepare pnpm@10.6.3 --activate
 RUN pnpm install --prod
 
+# Create logs directory with proper permissions
+RUN mkdir -p /app/apps/sync/logs
+RUN chown -R nodeuser:nodejs /app/apps/sync/logs
+
+# Set correct working directory for the application
+WORKDIR /app/apps/sync
+
 USER nodeuser
 
-CMD ["node", "apps/sync/dist/index.js"]
+CMD ["node", "dist/index.js"]
