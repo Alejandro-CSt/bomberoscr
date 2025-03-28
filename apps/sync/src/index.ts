@@ -1,13 +1,12 @@
+import env from "@/env";
+import logger from "@/lib/logger";
+import { syncIncidentTypes } from "@/tasks/incident-types";
+import { syncLatestIncidents, syncOpenIncidents } from "@/tasks/incidents";
+import { syncStations } from "@/tasks/stations";
+import { syncVehicleDisponibility } from "@/tasks/vehicle-disponibility";
+import { syncVehicles } from "@/tasks/vehicles";
 import * as Sentry from "@sentry/node";
 import * as cron from "node-cron";
-import env from "./env";
-
-import logger from "./lib/logger";
-import { syncIncidentTypes } from "./tasks/incident-types";
-import { syncLatestIncidents, syncOpenIncidents } from "./tasks/incidents";
-import { syncStations } from "./tasks/stations";
-import { syncVehicleDisponibility } from "./tasks/vehicle-disponibility";
-import { syncVehicles } from "./tasks/vehicles";
 
 Sentry.init({
   dsn: env.SENTRY_DSN,

@@ -17,13 +17,7 @@ import {
 import { eq } from "drizzle-orm";
 
 export async function upsertIncident(id: number) {
-  const [dispatchedStations, dispatchedVehicles, incidentDetails, incidentReport] =
-    await Promise.all([
-      getStationsAttendingIncident(id),
-      getVehiclesDispatchedToIncident(id),
-      getIncidentDetails(id),
-      getIncidentReport(id)
-    ]);
+  const incidentDetails = await getIncidentDetails(id);
 
   //   if (incidentDetails.Descripcion !== "Proceso realizado satisfactoriamente")
   // Log error
@@ -43,6 +37,12 @@ export async function upsertIncident(id: number) {
       return;
     }
   }
+
+  const [dispatchedStations, dispatchedVehicles, incidentReport] = await Promise.all([
+    getStationsAttendingIncident(id),
+    getVehiclesDispatchedToIncident(id),
+    getIncidentReport(id)
+  ]);
 
   const responsibleStation =
     dispatchedStations.Items.find((station) => station.DestipoServicio === "RESPONSABLE") ||
@@ -106,7 +106,7 @@ async function getSimilarIncident({
     });
 
     if (dbNextId) {
-      if (compareTwoStrings(dbNextId.address, address) >= 0.8) {
+      if (compareTwoStrings(dbNextId.address, address) >= 0.7) {
         return nextId;
       }
     }

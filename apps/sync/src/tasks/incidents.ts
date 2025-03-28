@@ -1,4 +1,5 @@
 import logger from "@/lib/logger";
+import { upsertIncident } from "@/sync/incidents";
 import { db } from "@repo/db/db";
 import {
   dispatchedVehicles as dispatchedVehiclesTable,
@@ -9,7 +10,6 @@ import { getLatestIncidentsListApp } from "@repo/sigae/api";
 import * as Sentry from "@sentry/node";
 import { and, between, eq, or } from "drizzle-orm";
 import type { z } from "zod";
-import { upsertIncident } from "../sync/incidents";
 
 const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
 
@@ -48,7 +48,10 @@ export async function syncOpenIncidents() {
         new Date(Date.now() - 1000 * 60 * 60 * 72),
         new Date()
       )
-    )
+    ),
+    columns: {
+      id: true
+    }
   });
 
   span?.setAttribute("openIncidents", openIncidents.length);
