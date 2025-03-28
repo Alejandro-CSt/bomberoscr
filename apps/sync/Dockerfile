@@ -22,8 +22,7 @@ RUN pnpm install --frozen-lockfile
 
 COPY --from=builder /app/out/full/ .
 
-ENV SKIP_ENV_CHECK=true
-RUN pnpm turbo run build --filter=sync
+RUN SKIP_ENV_CHECK=true pnpm turbo run build --filter=sync
 
 FROM base AS runner
 WORKDIR /app
@@ -36,7 +35,7 @@ COPY --from=installer /app/apps/sync/package.json ./apps/sync/package.json
 COPY --from=installer /app/apps/sync/node_modules ./apps/sync/node_modules
 
 RUN mkdir -p /app/apps/sync/logs
-RUN chown -R nodeuser:nodejs /app/apps/sync
+RUN chown -R nodeuser:nodejs /app/apps/sync/logs
 
 USER nodeuser
 
