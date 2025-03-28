@@ -1,3 +1,4 @@
+import logger from "@/lib/logger";
 import db from "@repo/db/db";
 import {
   type vehicleDisponibilityInsertSchema,
@@ -11,11 +12,14 @@ import type { z } from "zod";
 type VehicleDisponibilityType = z.infer<typeof vehicleDisponibilityInsertSchema>;
 
 export async function syncVehicleDisponibility() {
-  Sentry.captureMessage("Starting vehicle disponibility sync");
+  const span = Sentry.getActiveSpan();
+  logger.info("Starting vehicle disponibility sync");
   const vehicleDisponibilityStates = await getVehicleDisponibilityStates();
-  Sentry.captureMessage(
-    `Fetched ${vehicleDisponibilityStates.Items.length} vehicle disponibility states`
+  span?.setAttribute("vehicleDisponibilityStates", vehicleDisponibilityStates.Items.length);
+  logger.info(
+    `Retrieved ${vehicleDisponibilityStates.Items.length} vehicle disponibility states from API`
   );
+
   const vehicleDisponibility: VehicleDisponibilityType[] = vehicleDisponibilityStates.Items.map(
     (state) => ({
       id: state.IdGrupoClasificacion,
@@ -30,6 +34,9 @@ export async function syncVehicleDisponibility() {
       target: vehicleDisponibilityTable.id,
       set: conflictUpdateSetAllColumns(vehicleDisponibilityTable)
     });
-  Sentry.captureMessage("Vehicle disponibility updated in database");
+
+  logger.info(
+    `Vehicle disponibility sync completed - States count: ${vehicleDisponibility.length}`
+  );
   return vehicleDisponibility.length;
 }

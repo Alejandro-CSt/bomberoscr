@@ -1,3 +1,4 @@
+import logger from "@/lib/logger";
 import db from "@repo/db/db";
 import {
   type incidentTypesInsertSchema,
@@ -10,6 +11,24 @@ import * as Sentry from "@sentry/node";
 import type { z } from "zod";
 
 type IncidentType = z.infer<typeof incidentTypesInsertSchema>;
+
+export async function syncIncidentTypes() {
+  const span = Sentry.getActiveSpan();
+  const incidentTypes = await getIncidentTypes();
+  span?.setAttribute("incidentTypes", incidentTypes.items.length);
+
+  const incidentTypesList: IncidentType[] = getIncidentsRecursively(incidentTypes.items);
+  const prevCount = await db.$count(incidentTypesTable);
+  await db
+    .insert(incidentTypesTable)
+    .values(incidentTypesList)
+    .onConflictDoUpdate({
+      target: incidentTypesTable.id,
+      set: conflictUpdateSetAllColumns(incidentTypesTable)
+    });
+  const newCount = await db.$count(incidentTypesTable);
+  logger.info(`Incident types synced - Previous: ${prevCount}, New: ${newCount}`);
+}
 
 function getIncidentsRecursively(
   items: ItemObtenerTiposIncidente[],
@@ -31,25 +50,4 @@ function getIncidentsRecursively(
   }
 
   return result;
-}
-
-export async function syncIncidentTypes() {
-  Sentry.captureMessage("Starting incident types sync");
-  const incidentTypes = await getIncidentTypes();
-  Sentry.captureMessage(
-    `Fetched incident types with ${incidentTypes.items.length} top-level items`
-  );
-  const incidentTypesList: IncidentType[] = getIncidentsRecursively(incidentTypes.items);
-  const count = await db.$count(incidentTypesTable);
-  await db
-    .insert(incidentTypesTable)
-    .values(incidentTypesList)
-    .onConflictDoUpdate({
-      target: incidentTypesTable.id,
-      set: conflictUpdateSetAllColumns(incidentTypesTable)
-    });
-  Sentry.captureMessage(
-    `Incident types upserted. Previous count: ${count}, New total: ${incidentTypesList.length}`
-  );
-  return count;
 }

@@ -1,3 +1,4 @@
+import logger from "@/lib/logger";
 import db from "@repo/db/db";
 import { type vehiclesInsertSchema, vehicles as vehiclesTable } from "@repo/db/schema";
 import { conflictUpdateSetAllColumns } from "@repo/db/utils";
@@ -8,9 +9,12 @@ import type { z } from "zod";
 type VehicleType = z.infer<typeof vehiclesInsertSchema>;
 
 export async function syncVehicles() {
-  Sentry.captureMessage("Starting vehicles sync");
+  const span = Sentry.getActiveSpan();
+  logger.info("Starting vehicles sync");
   const vehiclesList = await getAllVehicles();
-  Sentry.captureMessage(`Fetched vehicles list with ${vehiclesList.Items.length} items`);
+  span?.setAttribute("vehiclesList", vehiclesList.Items.length);
+  logger.info(`Retrieved ${vehiclesList.Items.length} vehicles from API`);
+
   const vehicles: VehicleType[] = [];
 
   for (const vehicle of vehiclesList.Items) {
@@ -26,7 +30,7 @@ export async function syncVehicles() {
     });
   }
 
-  Sentry.captureMessage(`Syncing ${vehicles.length} vehicles`);
+  logger.info(`Processing ${vehicles.length} vehicles to database`);
   await db
     .insert(vehiclesTable)
     .values(vehicles)
@@ -34,6 +38,7 @@ export async function syncVehicles() {
       target: vehiclesTable.id,
       set: conflictUpdateSetAllColumns(vehiclesTable)
     });
-  Sentry.captureMessage("Vehicles updated in database");
+
+  logger.info(`Vehicles sync completed - Count: ${vehicles.length}`);
   return vehicles.length;
 }

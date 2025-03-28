@@ -1,3 +1,4 @@
+import logger from "@/lib/logger";
 import db from "@repo/db/db";
 import { type stationsInsertSchema, stations as stationsTable } from "@repo/db/schema";
 import { conflictUpdateSetAllColumns } from "@repo/db/utils";
@@ -8,11 +9,16 @@ import type { z } from "zod";
 type StationType = z.infer<typeof stationsInsertSchema>;
 
 export async function syncStations() {
-  Sentry.captureMessage("Starting stations sync");
+  const span = Sentry.getActiveSpan();
+  logger.info("Starting stations sync");
   const stationList = await getStationsList();
-  Sentry.captureMessage(`Fetched ${stationList.Items.length} stations from listing`);
+  span?.setAttribute("stationList", stationList.Items.length);
+  logger.info(`Retrieved ${stationList.Items.length} stations from API`);
+
   const operativeStations = await getOperativeStations();
-  Sentry.captureMessage(`Fetched ${operativeStations.Items.length} operative stations`);
+  span?.setAttribute("operativeStations", operativeStations.Items.length);
+  logger.info(`Retrieved ${operativeStations.Items.length} operative stations`);
+
   const stations: StationType[] = [];
 
   for (const station of stationList.Items) {
@@ -35,7 +41,7 @@ export async function syncStations() {
     });
   }
 
-  Sentry.captureMessage(`Syncing ${stations.length} stations`);
+  logger.info(`Processing ${stations.length} stations to database`);
   await db
     .insert(stationsTable)
     .values(stations)
@@ -43,6 +49,7 @@ export async function syncStations() {
       target: stationsTable.id,
       set: conflictUpdateSetAllColumns(stationsTable)
     });
-  Sentry.captureMessage("Stations updated in database");
+
+  logger.info(`Stations sync completed - Count: ${stations.length}`);
   return stations.length;
 }

@@ -1,3 +1,4 @@
+import logger from "@/lib/logger";
 import { rawToDispatchedStations, rawToDispatchedVehicles, rawToIncident } from "@/lib/transform";
 import { compareTwoStrings } from "@/lib/utils";
 import { db } from "@repo/db/db";
@@ -113,7 +114,7 @@ async function getSimilarIncident({
     if (nextIdIncident.Descripcion === "No se encontraron registros.") continue;
 
     if (nextIdIncident.direccion === address) {
-      // logger.warn(`Updating incident ${id} to ${nextId}`);
+      logger.warn(`Updating incident ${id} to ${nextId}`);
       await db.update(incidentsTable).set({ id: nextId }).where(eq(incidentsTable.id, id));
       return nextId;
     }

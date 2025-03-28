@@ -1,3 +1,4 @@
+import logger from "@/lib/logger";
 import { db } from "@repo/db/db";
 import {
   dispatchedVehicles as dispatchedVehiclesTable,
@@ -13,9 +14,9 @@ import { upsertIncident } from "../sync/incidents";
 const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
 
 export async function syncLatestIncidents() {
-  Sentry.captureMessage("Starting latest incidents sync");
+  const span = Sentry.getActiveSpan();
   const response = await getLatestIncidentsListApp(15);
-  let newIncidents = 0;
+  let newIncidentsCount = 0;
   for (const incident of response.items) {
     const exists = await db.$count(
       incidentsTable,
@@ -25,13 +26,16 @@ export async function syncLatestIncidents() {
     if (exists > 0) continue;
 
     await upsertIncident(incident.idBoletaIncidente);
-    newIncidents++;
+    newIncidentsCount++;
   }
-  Sentry.captureMessage(`There were ${newIncidents} new incidents`);
+  span?.setAttribute("newIncidents", newIncidentsCount);
+  logger.info(`New incidents synced - Count: ${newIncidentsCount}`);
 }
 
 export async function syncOpenIncidents() {
-  Sentry.captureMessage("Starting open incidents sync");
+  const span = Sentry.getActiveSpan();
+  logger.info("Starting open incidents sync");
+
   const openIncidents = await db.query.incidents.findMany({
     where: and(
       or(
@@ -47,7 +51,13 @@ export async function syncOpenIncidents() {
     )
   });
 
+  span?.setAttribute("openIncidents", openIncidents.length);
+  logger.info(`Open incidents found - Count: ${openIncidents.length}`);
+
+  logger.debug("Updating open incidents status");
   const res = await Promise.all(openIncidents.map((incident) => upsertIncident(incident.id)));
+
+  let closedCount = 0;
   for (const incident of res) {
     if (!incident) continue;
     if (await isIncidentClosed(incident)) {
@@ -56,11 +66,17 @@ export async function syncOpenIncidents() {
         .update(incidentsTable)
         .set({ isOpen: false, modifiedAt: new Date() })
         .where(eq(incidentsTable.id, incident.id));
-      Sentry.captureMessage(
-        `Closed incident ${incident.id} after ${(incidentAgeMs / 1000) * 60 * 60} hours`
+      span?.setAttribute("closedIncident", incident.id);
+      closedCount++;
+      logger.info(
+        `Incident closed - ID: ${incident.id}, Age: ${incidentAgeMs / (1000 * 60 * 60)} hours`
       );
     }
   }
+
+  logger.info(
+    `Open incidents sync completed - Processed: ${openIncidents.length}, Closed: ${closedCount}, Still open: ${openIncidents.length - closedCount}`
+  );
 }
 
 async function isIncidentClosed(incident: z.infer<typeof incidentsInsertSchema>): Promise<boolean> {

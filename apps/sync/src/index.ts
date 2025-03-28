@@ -2,6 +2,7 @@ import * as Sentry from "@sentry/node";
 import * as cron from "node-cron";
 import env from "./env";
 
+import logger from "./lib/logger";
 import { syncIncidentTypes } from "./tasks/incident-types";
 import { syncLatestIncidents, syncOpenIncidents } from "./tasks/incidents";
 import { syncStations } from "./tasks/stations";
@@ -10,35 +11,51 @@ import { syncVehicles } from "./tasks/vehicles";
 
 Sentry.init({
   dsn: env.SENTRY_DSN,
-  tracesSampleRate: 1.0
+  tracesSampleRate: process.env.NODE_ENV === "production" ? 0.25 : 1.0,
+  environment: process.env.NODE_ENV
 });
 
 cron.schedule("* * * * *", async () => {
-  try {
-    await syncLatestIncidents();
-  } catch (error) {
-    Sentry.captureException(error);
-    throw error;
-  }
+  Sentry.startSpan(
+    {
+      name: "sync-latest-incidents",
+      op: "cron.sync-latest-incidents"
+    },
+    async () => {
+      logger.info("Sync latest incidents");
+      await syncLatestIncidents();
+    }
+  );
 });
 
 cron.schedule("*/3 * * * *", async () => {
-  try {
-    await syncOpenIncidents();
-  } catch (error) {
-    Sentry.captureException(error);
-    throw error;
-  }
+  Sentry.startSpan(
+    {
+      name: "sync-open-incidents",
+      op: "cron.sync-open-incidents"
+    },
+    async () => {
+      logger.info("Sync open incidents");
+      await syncOpenIncidents();
+    }
+  );
 });
 
 cron.schedule("0 */12 * * *", async () => {
-  try {
-    await syncStations();
-    await syncIncidentTypes();
-    await syncVehicleDisponibility();
-    await syncVehicles();
-  } catch (error) {
-    Sentry.captureException(error);
-    throw error;
-  }
+  Sentry.startSpan(
+    {
+      name: "sync-metadata",
+      op: "cron.sync-metadata"
+    },
+    async () => {
+      logger.info("Sync metadata");
+      await syncStations();
+      await syncIncidentTypes();
+      await syncVehicleDisponibility();
+      await syncVehicles();
+      Sentry.getActiveSpan()?.end();
+    }
+  );
 });
+
+logger.info(`Sync service started - PID: ${process.pid} - ENV: ${process.env.NODE_ENV}`);
