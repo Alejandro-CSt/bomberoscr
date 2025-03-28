@@ -1,4 +1,5 @@
 import env from "@/env";
+import { initializeData, isFirstRun } from "@/init";
 import logger from "@/lib/logger";
 import { syncIncidentTypes } from "@/tasks/incident-types";
 import { syncLatestIncidents, syncOpenIncidents } from "@/tasks/incidents";
@@ -14,47 +15,63 @@ Sentry.init({
   environment: process.env.NODE_ENV
 });
 
-cron.schedule("* * * * *", async () => {
-  Sentry.startSpan(
-    {
-      name: "sync-latest-incidents",
-      op: "cron.sync-latest-incidents"
-    },
-    async () => {
-      logger.info("Sync latest incidents");
-      await syncLatestIncidents();
-    }
-  );
-});
+async function initializeApp() {
+  if (await isFirstRun()) {
+    await initializeData();
+  }
 
-cron.schedule("*/3 * * * *", async () => {
-  Sentry.startSpan(
-    {
-      name: "sync-open-incidents",
-      op: "cron.sync-open-incidents"
-    },
-    async () => {
-      logger.info("Sync open incidents");
-      await syncOpenIncidents();
-    }
-  );
-});
+  logger.info("Setting up scheduled tasks");
+  setupCronJobs();
+}
 
-cron.schedule("0 */12 * * *", async () => {
-  Sentry.startSpan(
-    {
-      name: "sync-metadata",
-      op: "cron.sync-metadata"
-    },
-    async () => {
-      logger.info("Sync metadata");
-      await syncStations();
-      await syncIncidentTypes();
-      await syncVehicleDisponibility();
-      await syncVehicles();
-      Sentry.getActiveSpan()?.end();
-    }
-  );
-});
+function setupCronJobs() {
+  cron.schedule("* * * * *", async () => {
+    Sentry.startSpan(
+      {
+        name: "sync-latest-incidents",
+        op: "cron.sync-latest-incidents"
+      },
+      async () => {
+        logger.info("Sync latest incidents");
+        await syncLatestIncidents();
+      }
+    );
+  });
+
+  cron.schedule("*/3 * * * *", async () => {
+    Sentry.startSpan(
+      {
+        name: "sync-open-incidents",
+        op: "cron.sync-open-incidents"
+      },
+      async () => {
+        logger.info("Sync open incidents");
+        await syncOpenIncidents();
+      }
+    );
+  });
+
+  cron.schedule("0 */12 * * *", async () => {
+    Sentry.startSpan(
+      {
+        name: "sync-metadata",
+        op: "cron.sync-metadata"
+      },
+      async () => {
+        logger.info("Sync metadata");
+        await syncStations();
+        await syncIncidentTypes();
+        await syncVehicleDisponibility();
+        await syncVehicles();
+        Sentry.getActiveSpan()?.end();
+      }
+    );
+  });
+}
 
 logger.info(`Sync service started - PID: ${process.pid} - ENV: ${process.env.NODE_ENV}`);
+
+initializeApp().catch((error) => {
+  logger.error("Failed to initialize app:", error);
+  Sentry.captureException(error);
+});
