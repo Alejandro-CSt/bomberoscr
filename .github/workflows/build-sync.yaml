@@ -25,8 +25,8 @@ jobs:
           file: ./apps/sync/Dockerfile
           platforms: linux/amd64
           push: true
-          tags: ${{ secrets.REGISTRY }}/${{ secrets.IMAGE_NAME }}:latest
+          tags: ${{ secrets.REGISTRY }}/${{ secrets.SYNC_IMAGE_NAME }}:latest
 
       - name: Trigger deploy
         run: |
-          curl --request GET '${{ secrets.DEPLOY_WEBHOOK_URL }}'
+          curl --request GET '${{ secrets.SYNC_DEPLOY_WEBHOOK_URL }}'
