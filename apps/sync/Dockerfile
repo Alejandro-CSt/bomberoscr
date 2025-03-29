@@ -1,5 +1,5 @@
 # https://turbo.build/repo/docs/guides/tools/docker#example
-FROM node:18-alpine AS base
+FROM oven/bun:alpine AS base
 
 FROM base AS builder
 RUN apk update
@@ -7,7 +7,7 @@ RUN apk add --no-cache libc6-compat
 
 # Set working directory
 WORKDIR /app
-RUN yarn global add turbo@2
+RUN bun install -g turbo@2
 COPY . .
 
 # Generate a partial monorepo with a pruned lockfile for a target workspace.
@@ -20,8 +20,7 @@ WORKDIR /app
 
 # First install the dependencies (as they change less often)
 COPY --from=builder /app/out/json/ .
-RUN corepack enable
-RUN corepack prepare pnpm@10.6.3 --activate
+RUN bun install -g pnpm@10.6.3
 RUN pnpm install --frozen-lockfile
 
 # Build the project
@@ -47,9 +46,8 @@ COPY --from=installer /app/pnpm-workspace.yaml ./
 COPY --from=installer /app/package.json ./
 COPY --from=installer /app/pnpm-lock.yaml ./
 
-WORKDIR /app
-RUN corepack enable
-RUN corepack prepare pnpm@10.6.3 --activate
+# Install pnpm for production install
+RUN bun install -g pnpm@10.6.3
 RUN pnpm install --prod
 
 # Create logs directory with proper permissions
@@ -61,4 +59,5 @@ WORKDIR /app/apps/sync
 
 USER nodeuser
 
-CMD ["node", "dist/index.js"]
+# Using bun instead of node to run the application
+CMD ["bun", "dist/index.js"]
