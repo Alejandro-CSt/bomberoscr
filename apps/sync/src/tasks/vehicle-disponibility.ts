@@ -1,11 +1,11 @@
 import logger from "@/lib/logger";
-import db from "@repo/db/db";
+import db from "@bomberoscr/db/db";
 import {
   type vehicleDisponibilityInsertSchema,
   vehicleDisponibility as vehicleDisponibilityTable
-} from "@repo/db/schema";
-import { conflictUpdateSetAllColumns } from "@repo/db/utils";
-import { getVehicleDisponibilityStates } from "@repo/sigae/api";
+} from "@bomberoscr/db/schema";
+import { conflictUpdateSetAllColumns } from "@bomberoscr/db/utils";
+import { getVehicleDisponibilityStates } from "@bomberoscr/sigae/api";
 import * as Sentry from "@sentry/node";
 import type { z } from "zod";
 

@@ -1,12 +1,12 @@
 import logger from "@/lib/logger";
 import { upsertIncident } from "@/sync/incidents";
-import { db } from "@repo/db/db";
+import { db } from "@bomberoscr/db/db";
 import {
   dispatchedVehicles as dispatchedVehiclesTable,
   type incidentsInsertSchema,
   incidents as incidentsTable
-} from "@repo/db/schema";
-import { getLatestIncidentsListApp } from "@repo/sigae/api";
+} from "@bomberoscr/db/schema";
+import { getLatestIncidentsListApp } from "@bomberoscr/sigae/api";
 import * as Sentry from "@sentry/node";
 import { and, between, eq, or } from "drizzle-orm";
 import type { z } from "zod";

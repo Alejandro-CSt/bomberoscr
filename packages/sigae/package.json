@@ -1,10 +1,10 @@
 {
-  "name": "@repo/sigae",
+  "name": "@bomberoscr/sigae",
   "scripts": {
     "build": "tsc"
   },
   "devDependencies": {
-    "@repo/typescript-config": "workspace:*",
+    "@bomberoscr/typescript-config": "workspace:*",
     "typescript": "^5"
   },
   "exports": {

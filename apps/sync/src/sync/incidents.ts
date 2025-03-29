@@ -1,19 +1,19 @@
 import logger from "@/lib/logger";
 import { rawToDispatchedStations, rawToDispatchedVehicles, rawToIncident } from "@/lib/transform";
 import { compareTwoStrings } from "@/lib/utils";
-import { db } from "@repo/db/db";
+import { db } from "@bomberoscr/db/db";
 import {
   dispatchedStations as dispatchedStationsTable,
   dispatchedVehicles as dispatchedVehiclesTable,
   incidents as incidentsTable
-} from "@repo/db/schema";
-import { conflictUpdateSetAllColumns } from "@repo/db/utils";
+} from "@bomberoscr/db/schema";
+import { conflictUpdateSetAllColumns } from "@bomberoscr/db/utils";
 import {
   getIncidentDetails,
   getIncidentReport,
   getStationsAttendingIncident,
   getVehiclesDispatchedToIncident
-} from "@repo/sigae/api";
+} from "@bomberoscr/sigae/api";
 import { eq } from "drizzle-orm";
 
 export async function upsertIncident(id: number) {

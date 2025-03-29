@@ -1,11 +1,11 @@
-import { db } from "@repo/db/db";
+import { db } from "@bomberoscr/db/db";
 import {
   dispatchedStations,
   dispatchedVehicles,
   incidentTypes,
   incidents,
   stations
-} from "@repo/db/schema";
+} from "@bomberoscr/db/schema";
 import {
   aliasedTable,
   and,

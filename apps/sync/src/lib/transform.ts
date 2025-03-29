@@ -1,16 +1,16 @@
-import db from "@repo/db/db";
+import db from "@bomberoscr/db/db";
 import {
   type dispatchedStationsInsertSchema,
   type dispatchedVehiclesInsertSchema,
   type incidentsInsertSchema,
   incidents as incidentsTable
-} from "@repo/db/schema";
+} from "@bomberoscr/db/schema";
 import type {
   ItemObtenerEstacionesAtiendeIncidente,
   ItemObtenerUnidadesDespachadasIncidente,
   ObtenerBoletaIncidente,
   ObtenerDetalleEmergencias
-} from "@repo/sigae/types";
+} from "@bomberoscr/sigae/types";
 import { eq } from "drizzle-orm";
 import type z from "zod";
 

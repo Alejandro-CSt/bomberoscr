@@ -1,5 +1,5 @@
 {
-  "name": "@repo/db",
+  "name": "@bomberoscr/db",
   "scripts": {
     "build": "tsc",
     "drizzle:migrate": "drizzle-kit migrate",
@@ -17,7 +17,7 @@
     "./schema": "./src/schema.ts"
   },
   "devDependencies": {
-    "@repo/typescript-config": "workspace:*",
+    "@bomberoscr/typescript-config": "workspace:*",
     "drizzle-kit": "^0.30.2",
     "typescript": "^5"
   },
