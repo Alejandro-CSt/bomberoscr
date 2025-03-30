@@ -34,6 +34,7 @@
     "drizzle-zod": "^0.6.1",
     "lucide-react": "^0.475.0",
     "maplibre-gl": "^5.1.0",
+    "motion": "^12.6.2",
     "next": "15.1.5",
     "nuqs": "^2.3.2",
     "pg": "^8.13.1",

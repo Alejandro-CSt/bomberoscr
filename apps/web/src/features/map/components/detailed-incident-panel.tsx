@@ -13,42 +13,19 @@ import {
   TableHeader,
   TableRow
 } from "@/features/components/ui/table";
-import { ResponsiveDrawer } from "@/features/map/components/responsive-drawer";
-import { useActiveIncident } from "@/features/map/hooks/use-active-incident";
+import { useDynamicPanel } from "@/features/map/hooks/use-dynamic-panel";
 import { trpc } from "@/lib/trpc/client";
 import { cn, getRelativeTime, isUndefinedDate } from "@/lib/utils";
-import type { IncidentDetails } from "@/server/trpc";
 import { ArrowElbowDownRight, CaretUpDown, FireTruck } from "@phosphor-icons/react";
-import { LoaderIcon } from "lucide-react";
 
-export function DetailedIncidentDrawer() {
-  const [activeIncident, setActiveIncident] = useActiveIncident();
+export function DetailedIncidentPanel() {
+  const [panelState] = useDynamicPanel();
+  const { incidentId } = panelState;
+
   const { data: incident, isPending } = trpc.incidents.getIncidentDetailsById.useQuery({
-    id: activeIncident.incidentId || undefined
+    id: incidentId || undefined
   });
 
-  const handleClose = () => {
-    setActiveIncident(null);
-  };
-
-  return (
-    <ResponsiveDrawer
-      isOpen={Number.isInteger(activeIncident.incidentId)}
-      {...(incident && { title: `EE ${incident.EEConsecutive}` })}
-      onCloseAction={handleClose}
-    >
-      {isPending || !incident ? (
-        <div className="flex flex-1 flex-col items-center justify-center">
-          <LoaderIcon className="size-4 animate-spin" />
-        </div>
-      ) : (
-        <DetailedView incident={incident} />
-      )}
-    </ResponsiveDrawer>
-  );
-}
-
-const DetailedView = ({ incident }: { incident: NonNullable<IncidentDetails> }) => {
   const formatDateTime = (date: string | undefined) => {
     if (!date) return "N/A";
     return new Date(date).toLocaleString("es-CR", {
@@ -64,8 +41,24 @@ const DetailedView = ({ incident }: { incident: NonNullable<IncidentDetails> }) 
     return `${minutes}m ${seconds}s`;
   };
 
+  if (isPending) {
+    return (
+      <div className="flex items-center justify-center">
+        <p className="text-muted-foreground">Cargando...</p>
+      </div>
+    );
+  }
+
+  if (!incident) {
+    return (
+      <div className="flex items-center justify-center">
+        <p className="text-muted-foreground">No hay información disponible</p>
+      </div>
+    );
+  }
+
   return (
-    <div className={cn("flex h-dvh flex-col gap-4")}>
+    <div className={cn("flex flex-col gap-4")}>
       <section className="flex justify-between">
         <div className="flex flex-col">
           <p className="font-semibold text-muted-foreground">Aviso</p>
@@ -195,7 +188,7 @@ const DetailedView = ({ incident }: { incident: NonNullable<IncidentDetails> }) 
       </section>
     </div>
   );
-};
+}
 
 const DispatchedVehicleTimelineEvent = ({
   type,

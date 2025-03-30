@@ -13,7 +13,6 @@ import {
   between,
   desc,
   eq,
-  ilike,
   inArray,
   isNull,
   lt,
@@ -161,7 +160,7 @@ export async function getLatestIncidents({
     .where(
       and(
         cursor ? lt(incidents.id, cursor) : undefined,
-        stationFilter ? ilike(stations.name, stationFilter) : undefined
+        stationFilter ? eq(stations.stationKey, stationFilter) : undefined
       )
     )
     .limit(limit + 1)
@@ -198,7 +197,8 @@ export async function getIncidentsCoordinates(timeRange: "24h" | "48h" | "disabl
       id: true,
       incidentTimestamp: true,
       latitude: true,
-      longitude: true
+      longitude: true,
+      importantDetails: true
     },
     where: and(
       ne(incidents.latitude, "0"),
@@ -208,6 +208,13 @@ export async function getIncidentsCoordinates(timeRange: "24h" | "48h" | "disabl
         new Date()
       )
     ),
+    with: {
+      incidentType: {
+        columns: {
+          name: true
+        }
+      }
+    },
     orderBy: desc(incidents.id)
   });
 }

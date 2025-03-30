@@ -18,8 +18,8 @@ import {
   ChartTooltipContent
 } from "@/features/components/ui/chart";
 import { Skeleton } from "@/features/components/ui/skeleton";
-import { ResponsiveDrawer } from "@/features/map/components/responsive-drawer";
-import { useActiveStation } from "@/features/map/hooks/use-active-station";
+import { IncidentCard } from "@/features/map/components/latest-incidents-panel";
+import { TabName, useDynamicPanel } from "@/features/map/hooks/use-dynamic-panel";
 import { trpc } from "@/lib/trpc/client";
 import { cn } from "@/lib/utils";
 import type { LatestIncident, StationDetails } from "@/server/trpc";
@@ -58,16 +58,8 @@ import {
   XAxis,
   YAxis
 } from "recharts";
-import { IncidentCard } from "./latest-incidents-drawer";
 
 const geist = Geist_Mono({ subsets: ["latin"], weight: "variable" });
-
-enum TabName {
-  Details = "detalles",
-  Incidents = "incidentes",
-  Stats = "estadisticas",
-  Share = "compartir"
-}
 
 export const searchParamsParsers = {
   tab: parseAsStringEnum<TabName>(Object.values(TabName)).withOptions({
@@ -75,42 +67,20 @@ export const searchParamsParsers = {
   })
 };
 
-export default function DetailedStationDrawer() {
-  const [activeStation, setActiveStation] = useActiveStation();
-  const handleClose = () => {
-    setActiveStation(null);
-  };
-
-  return (
-    <ResponsiveDrawer
-      isOpen={activeStation.stationKey !== null && activeStation.stationName !== null}
-      onCloseAction={handleClose}
-      {...(activeStation.stationName && {
-        title: `${activeStation.stationName} ${activeStation.stationKey}`
-      })}
-    >
-      <Tabs />
-      <div className="mt-4">
-        <Body />
-      </div>
-    </ResponsiveDrawer>
-  );
-}
-
 export function Tabs() {
-  const [activeStation, setActiveStation] = useActiveStation();
+  const [dynamicPanel, setDynamicPanel] = useDynamicPanel();
 
   return (
     <div className="-mx-4 -top-4 sticky z-30 flex flex-row justify-evenly border-b bg-background py-4 text-sm">
       <Button
         onClick={() => {
-          setActiveStation({
-            tab: TabName.Details
+          setDynamicPanel({
+            stationTab: TabName.Details
           });
         }}
         className={cn(
           "flex basis-0 flex-col items-center gap-1 text-foreground",
-          activeStation.tab === TabName.Details && "text-primary"
+          dynamicPanel.stationTab === TabName.Details && "text-primary"
         )}
         variant="link"
       >
@@ -119,13 +89,13 @@ export function Tabs() {
       </Button>
       <Button
         onClick={() => {
-          setActiveStation({
-            tab: TabName.Incidents
+          setDynamicPanel({
+            stationTab: TabName.Incidents
           });
         }}
         className={cn(
           "flex basis-0 flex-col items-center gap-1 text-foreground",
-          activeStation.tab === TabName.Incidents && "text-primary"
+          dynamicPanel.stationTab === TabName.Incidents && "text-primary"
         )}
         variant="link"
       >
@@ -134,13 +104,13 @@ export function Tabs() {
       </Button>
       <Button
         onClick={() => {
-          setActiveStation({
-            tab: TabName.Stats
+          setDynamicPanel({
+            stationTab: TabName.Stats
           });
         }}
         className={cn(
           "flex basis-0 flex-col items-center gap-1 text-foreground",
-          activeStation.tab === TabName.Stats && "text-primary"
+          dynamicPanel.stationTab === TabName.Stats && "text-primary"
         )}
         variant="link"
       >
@@ -150,17 +120,26 @@ export function Tabs() {
     </div>
   );
 }
-function Body() {
-  const [activeStationQuery] = useActiveStation();
+export function DetailedStationPanel() {
+  const [dynamicPanel] = useDynamicPanel();
 
-  switch (activeStationQuery.tab) {
-    case TabName.Details:
-      return <DetailsTab />;
-    case TabName.Incidents:
-      return <IncidentsTab />;
-    default:
-      return <StatsTab />;
-  }
+  const Body = () => {
+    switch (dynamicPanel.stationTab) {
+      case TabName.Details:
+        return <DetailsTab />;
+      case TabName.Incidents:
+        return <IncidentsTab />;
+      default:
+        return <StatsTab />;
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-2">
+      <Tabs />
+      <Body />
+    </div>
+  );
 }
 function LoadingSkeleton() {
   return (
@@ -172,9 +151,9 @@ function LoadingSkeleton() {
 }
 
 function DetailsTab() {
-  const [activeStationQuery] = useActiveStation();
+  const [dynamicPanel] = useDynamicPanel();
   const { data, isLoading, error } = trpc.stations.getStationDetails.useQuery({
-    key: activeStationQuery.stationKey
+    key: dynamicPanel.stationKey
   });
 
   if (isLoading) return <LoadingSkeleton />;
@@ -183,7 +162,7 @@ function DetailsTab() {
       <div className="p-4">
         <Alert variant="destructive">
           <AlertCircleIcon className="h-4 w-4" />
-          <AlertTitle>Error al cargar la estación {activeStationQuery.stationKey}</AlertTitle>
+          <AlertTitle>Error al cargar la estación {dynamicPanel.stationKey}</AlertTitle>
           <AlertDescription>{error?.message}</AlertDescription>
         </Alert>
       </div>
@@ -243,13 +222,14 @@ function DetailItem({
 }
 
 function IncidentsTab() {
-  const [activeStation] = useActiveStation();
+  const [dynamicPanel] = useDynamicPanel();
+
   const [results, setResults] = useState<LatestIncident[]>([]);
   const { data, isPending, fetchNextPage, isFetchingNextPage, hasNextPage, error } =
     trpc.incidents.infiniteIncidents.useInfiniteQuery(
       {
         limit: 15,
-        stationFilter: activeStation.stationName
+        stationFilter: dynamicPanel.stationKey
       },
       { getNextPageParam: (lastPage) => lastPage.nextCursor }
     );
@@ -274,7 +254,7 @@ function IncidentsTab() {
         <Alert variant="destructive">
           <AlertCircleIcon className="h-4 w-4" />
           <AlertTitle>
-            Error al cargar los incidentes de la estación {activeStation.stationKey}
+            Error al cargar los incidentes de la estación {dynamicPanel.stationKey}
           </AlertTitle>
           <AlertDescription>{error?.message}</AlertDescription>
         </Alert>
@@ -308,17 +288,18 @@ function IncidentsTab() {
 }
 
 function StatsTab() {
-  const [activeStation] = useActiveStation();
+  const [dynamicPanel] = useDynamicPanel();
+
   const { data, isLoading, error } = trpc.stations.getStationStats.useQuery({
-    key: activeStation.stationKey
+    key: dynamicPanel.stationKey
   });
   const { data: hourlyData, isLoading: hourlyLoading } =
     trpc.stations.getStationHourlyStats.useQuery({
-      key: activeStation.stationKey
+      key: dynamicPanel.stationKey
     });
   const { data: incidentTypes, isLoading: typesLoading } =
     trpc.stations.getStationIncidentTypes.useQuery({
-      key: activeStation.stationKey
+      key: dynamicPanel.stationKey
     });
   const [period, setPeriod] = useState<"week" | "month">("week");
 
@@ -329,7 +310,7 @@ function StatsTab() {
         <Alert variant="destructive">
           <AlertCircleIcon className="h-4 w-4" />
           <AlertTitle>
-            Error al cargar las estadísticas de la estación {activeStation.stationKey}
+            Error al cargar las estadísticas de la estación {dynamicPanel.stationKey}
           </AlertTitle>
           <AlertDescription>{error?.message}</AlertDescription>
         </Alert>
@@ -401,7 +382,7 @@ function StatsTab() {
         <Alert variant="warning">
           <AlertTriangleIcon className="h-4 w-4" />
           <AlertTitle>
-            No se encontraron incidentes en la estación {activeStation.stationKey} en los últimos 30
+            No se encontraron incidentes en la estación {dynamicPanel.stationKey} en los últimos 30
             días
           </AlertTitle>
         </Alert>
@@ -427,13 +408,13 @@ function StatsTab() {
     })) ?? [];
 
   return (
-    <div className={cn("h-full")}>
+    <div className="flex h-full flex-col gap-4">
       <Card>
         <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
           <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
             <CardTitle>Incidentes</CardTitle>
             <CardDescription className="text-xs">
-              Veces que se despachó a {activeStation.stationName}
+              Veces que se despachó a la estación {dynamicPanel.stationKey}
             </CardDescription>
           </div>
           <div className="flex">
@@ -496,12 +477,12 @@ function StatsTab() {
         </CardFooter>
       </Card>
 
-      <Card className="m-4">
+      <Card>
         <CardHeader>
           <CardTitle>Incidentes por hora</CardTitle>
           <CardDescription className="text-xs">
-            Distribución horaria de incidentes atendidos por {activeStation.stationName} en los
-            últimos 30 días
+            Distribución horaria de incidentes atendidos por la estación {dynamicPanel.stationKey}{" "}
+            en los últimos 30 días
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -532,12 +513,12 @@ function StatsTab() {
         </CardContent>
       </Card>
 
-      <Card className="m-4">
+      <Card>
         <CardHeader>
           <CardTitle>Tipos de incidentes</CardTitle>
           <CardDescription className="text-xs">
-            Distribución por tipo de incidente atendido por {activeStation.stationName} en los
-            últimos 30 días
+            Distribución por tipo de incidente atendido por la estación {dynamicPanel.stationKey} en
+            los últimos 30 días
           </CardDescription>
         </CardHeader>
         <CardContent>
