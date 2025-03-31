@@ -1,12 +1,8 @@
 import { MapSettingsProvider } from "@/features/map/context/map-settings-context";
-import { cn } from "@/lib/utils";
 import { LoaderIcon } from "lucide-react";
 import "maplibre-gl/dist/maplibre-gl.css";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import { Suspense } from "react";
-
-const inter = Inter({ subsets: ["latin"], weight: "variable" });
 
 export const metadata: Metadata = {
   title: "Mapa en tiempo real",
@@ -15,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className={cn(inter.className, "max-h-screen")}>
+    <div className="max-h-screen">
       <MapSettingsProvider>
         <Suspense
           fallback={
