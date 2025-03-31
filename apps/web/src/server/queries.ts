@@ -18,6 +18,7 @@ import {
   lt,
   ne,
   not,
+  or,
   sql
 } from "drizzle-orm";
 
@@ -135,6 +136,33 @@ export async function getLatestIncidents({
   stationFilter?: string | null;
 }) {
   const specificIncidentType = aliasedTable(incidentTypes, "specificIncidentType");
+
+  // If there's a station filter, first get that station's ID
+  let stationId: number | undefined = undefined;
+  if (stationFilter) {
+    const station = await db.query.stations.findFirst({
+      where: eq(stations.stationKey, stationFilter),
+      columns: { id: true }
+    });
+    stationId = station?.id;
+  }
+
+  let whereClause = cursor ? lt(incidents.id, cursor) : undefined;
+
+  if (stationId) {
+    const dispatchedIncidents = await db
+      .select({ incidentId: dispatchedStations.incidentId })
+      .from(dispatchedStations)
+      .where(eq(dispatchedStations.stationId, stationId));
+
+    const dispatchedIncidentIds = dispatchedIncidents.map((d) => d.incidentId);
+
+    whereClause = and(
+      whereClause,
+      or(eq(incidents.responsibleStation, stationId), inArray(incidents.id, dispatchedIncidentIds))
+    );
+  }
+
   return await db
     .select({
       id: incidents.id,
@@ -157,12 +185,7 @@ export async function getLatestIncidents({
       )
     })
     .from(incidents)
-    .where(
-      and(
-        cursor ? lt(incidents.id, cursor) : undefined,
-        stationFilter ? eq(stations.stationKey, stationFilter) : undefined
-      )
-    )
+    .where(whereClause)
     .limit(limit + 1)
     .leftJoin(incidentTypes, eq(incidents.incidentCode, incidentTypes.incidentCode))
     .leftJoin(
