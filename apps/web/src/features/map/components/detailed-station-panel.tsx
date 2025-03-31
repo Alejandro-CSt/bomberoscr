@@ -18,7 +18,7 @@ import {
   ChartTooltipContent
 } from "@/features/components/ui/chart";
 import { Skeleton } from "@/features/components/ui/skeleton";
-import { IncidentCard } from "@/features/map/components/latest-incidents-panel";
+import { IncidentCard } from "@/features/map/components/incident-card";
 import { TabName, useDynamicPanel } from "@/features/map/hooks/use-dynamic-panel";
 import { trpc } from "@/lib/trpc/client";
 import { cn } from "@/lib/utils";
@@ -41,8 +41,6 @@ import {
   SirenIcon,
   XCircleIcon
 } from "lucide-react";
-import { Geist_Mono } from "next/font/google";
-import { parseAsStringEnum } from "nuqs";
 import { useEffect, useState } from "react";
 import {
   Bar,
@@ -59,15 +57,7 @@ import {
   YAxis
 } from "recharts";
 
-const geist = Geist_Mono({ subsets: ["latin"], weight: "variable" });
-
-export const searchParamsParsers = {
-  tab: parseAsStringEnum<TabName>(Object.values(TabName)).withOptions({
-    shallow: true
-  })
-};
-
-export function Tabs() {
+function Tabs() {
   const [dynamicPanel, setDynamicPanel] = useDynamicPanel();
 
   return (
@@ -269,7 +259,7 @@ function IncidentsTab() {
     );
 
   return (
-    <div className={cn("mb-4 flex flex-1 flex-col gap-4", geist.className)}>
+    <div className="mb-4 flex flex-1 flex-col gap-4">
       {results.map((incident) => (
         <IncidentCard key={incident.id} incident={incident} />
       ))}

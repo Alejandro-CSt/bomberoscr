@@ -8,11 +8,10 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/features/components/ui/select";
-import { PanelView, useDynamicPanel } from "@/features/map/hooks/use-dynamic-panel";
+import { IncidentCard } from "@/features/map/components/incident-card";
 import { trpc } from "@/lib/trpc/client";
-import { getRelativeTime } from "@/lib/utils";
 import type { LatestIncident } from "@/server/trpc";
-import { ArrowRightIcon, Loader2Icon } from "lucide-react";
+import { Loader2Icon } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export function LatestIncidentsPanel() {
@@ -52,7 +51,7 @@ export function LatestIncidentsPanel() {
           <SelectContent>
             <SelectItem value="all">Todas las estaciones</SelectItem>
             {stations?.map((station) => (
-              <SelectItem key={station.id} value={station.name}>
+              <SelectItem key={station.id} value={station.stationKey}>
                 {station.name} {station.stationKey}
               </SelectItem>
             ))}
@@ -93,51 +92,3 @@ export function LatestIncidentsPanel() {
     </div>
   );
 }
-
-export const IncidentCard = ({ incident }: { incident: LatestIncident }) => {
-  const [_, setDynamicPanel] = useDynamicPanel();
-
-  const handleClick = () => {
-    setDynamicPanel({
-      view: PanelView.Incidents,
-      incidentId: incident.id,
-      title: incident.specificIncidentType,
-      stationKey: null,
-      stationTab: null
-    });
-  };
-
-  return (
-    <button
-      type="button"
-      className="flex w-full cursor-pointer flex-col gap-2 rounded-lg border p-4 transition-colors hover:bg-accent"
-      onClick={handleClick}
-      onKeyDown={(e) => e.key === "Enter" && handleClick()}
-    >
-      <div className="flex w-full items-baseline justify-between gap-8">
-        <span className="whitespace-nowrap font-medium text-muted-foreground text-sm">
-          {new Date().getTime() - new Date(incident.incidentTimestamp).getTime() <=
-          1000 * 60 * 60 * 24
-            ? getRelativeTime(incident.incidentTimestamp)
-            : new Date(incident.incidentTimestamp).toLocaleString("es-CR", {
-                timeStyle: "short",
-                dateStyle: "medium"
-              })}
-        </span>
-        <span className="whitespace-normal text-end font-semibold text-primary text-sm">
-          {incident.specificIncidentType}
-        </span>
-      </div>
-      <p className="line-clamp-2 w-full text-start text-muted-foreground text-sm">
-        {incident.address}
-      </p>
-      <div className="mt-2 flex w-full items-center justify-between">
-        <span className="font-medium text-sm">{incident.responsibleStation}</span>
-        <span className="group flex h-auto items-center gap-2 underline underline-offset-2">
-          Ver más{" "}
-          <ArrowRightIcon className="size-4 transition-transform group-hover:translate-x-1" />
-        </span>
-      </div>
-    </button>
-  );
-};

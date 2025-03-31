@@ -176,7 +176,7 @@ export function DetailedIncidentPanel() {
               )}
               <div className="flex flex-col">
                 <p className="text-muted-foreground text-sm">Tiempo de respuesta</p>
-                <p className="font-semibold">
+                <p className="font-semibold text-sm">
                   {isUndefinedDate(vehicle.dispatchedTime) || isUndefinedDate(vehicle.arrivalTime)
                     ? "N/A"
                     : calculateResponseTime(vehicle.dispatchedTime, vehicle.arrivalTime)}
