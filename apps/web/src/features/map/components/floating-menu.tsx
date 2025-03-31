@@ -3,7 +3,7 @@
 import { useMediaQuery } from "@/features/hooks/use-media-query";
 import { PanelView, useDynamicPanel } from "@/features/map/hooks/use-dynamic-panel";
 import { cn } from "@/lib/utils";
-import { BarChart2Icon, Settings2Icon, SirenIcon } from "lucide-react";
+import { Settings2Icon, SirenIcon } from "lucide-react";
 import { motion } from "motion/react";
 
 const menuItems = [
@@ -12,11 +12,11 @@ const menuItems = [
     name: "Incidentes",
     icon: SirenIcon
   },
-  {
-    id: PanelView.Statistics,
-    name: "Estadísticas",
-    icon: BarChart2Icon
-  },
+  // {
+  //   id: PanelView.Statistics,
+  //   name: "Estadísticas",
+  //   icon: BarChart2Icon
+  // },
   {
     id: PanelView.Options,
     name: "Opciones",
