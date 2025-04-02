@@ -33,12 +33,12 @@ export const stationsRouter = router({
   getStationIncidents: publicProcedure
     .input(
       z.object({
-        key: z.string().nullable()
+        id: z.number().nullable()
       })
     )
     .query(async ({ input }) => {
-      if (!input.key) throw new TRPCError({ code: "BAD_REQUEST" });
-      const incidents = await getStationIncidents(input.key);
+      if (!input.id) throw new TRPCError({ code: "BAD_REQUEST" });
+      const incidents = await getStationIncidents(input.id);
       if (!incidents) throw new TRPCError({ code: "NOT_FOUND" });
       return incidents;
     }),

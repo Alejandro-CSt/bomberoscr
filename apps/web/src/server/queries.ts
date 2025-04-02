@@ -44,18 +44,9 @@ export async function getStationDetails(key: string) {
   );
 }
 
-export async function getStationIncidents(key: string) {
-  const station = await db.query.stations.findFirst({
-    where: eq(stations.stationKey, key),
-    columns: {
-      id: true
-    }
-  });
-
-  if (!station) throw new Error("Station not found");
-
+export async function getStationIncidents(id: number) {
   return await db.query.dispatchedStations.findMany({
-    where: eq(dispatchedStations.stationId, station.id),
+    where: eq(dispatchedStations.stationId, id),
     orderBy: desc(dispatchedStations.incidentId),
     limit: 15,
     with: {

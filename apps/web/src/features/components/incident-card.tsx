@@ -1,37 +1,26 @@
 "use client";
 
 import { Badge } from "@/features/components/ui/badge";
-import { PanelView, useDynamicPanel } from "@/features/map/hooks/use-dynamic-panel";
 import { getRelativeTime } from "@/lib/utils";
+import type { getLatestIncidents } from "@/server/queries";
 import type { LatestIncident } from "@/server/trpc";
+import Link from "next/link";
 
-export function IncidentCard({ incident }: { incident: LatestIncident }) {
-  const [_, setDynamicPanel] = useDynamicPanel();
-
-  const handleClick = () => {
-    setDynamicPanel({
-      view: PanelView.Incidents,
-      incidentId: incident.id,
-      title: incident.specificIncidentType,
-      stationKey: null,
-      stationTab: null
-    });
-  };
-
+export function IncidentCard({
+  incident
+}: { incident: Awaited<ReturnType<typeof getLatestIncidents>>[number] | LatestIncident }) {
   return (
-    <button
-      type="button"
+    <Link
+      href={`/incidentes/${incident.id}`}
       className="flex w-full cursor-pointer flex-col gap-3 rounded-lg border p-4 text-left transition-colors delay-75 duration-300 hover:bg-accent"
-      onClick={handleClick}
-      onKeyDown={(e) => (e.key === "Enter" || e.key === "space") && handleClick()}
     >
       <div className="flex items-start justify-between">
         <div className="flex flex-col">
           <h3 className="font-semibold">
             {incident.specificIncidentType || incident.incidentType || "Incidente Desconocido"}
           </h3>
-          <p className="text-muted-foreground text-sm">
-            {getRelativeTime(incident.incidentTimestamp)}
+          <p className="text-muted-foreground text-sm first-letter:capitalize">
+            {getRelativeTime(incident.incidentTimestamp.toString())}
           </p>
         </div>
         <div className="flex shrink-0 flex-col items-end gap-1">
@@ -55,12 +44,10 @@ export function IncidentCard({ incident }: { incident: LatestIncident }) {
         {incident.address || "Ubicación no disponible"}
       </div>
 
-      <div className="gap1 flex flex-col">
-        <span className="font-medium text-muted-foreground text-xs">Responsable</span>
-        <span className="font-semibold text-muted-foreground text-sm">
-          {incident.responsibleStation}
-        </span>
+      <div className="flex flex-col">
+        <span className="text-muted-foreground text-xs">Responsable</span>
+        <span className="font-semibold text-sm">{incident.responsibleStation}</span>
       </div>
-    </button>
+    </Link>
   );
 }

@@ -10,6 +10,7 @@ import {
   SelectValue
 } from "@/features/components/ui/select";
 import { Separator } from "@/features/components/ui/separator";
+import { FloatingPanelHeader } from "@/features/layout/components/floating-panel-header";
 import {
   type IncidentTimeRange,
   type ShowStations,
@@ -27,7 +28,7 @@ interface IncidentSettingsProps {
   setIncidentTimeRange: (value: IncidentTimeRange) => void;
 }
 
-export function MapSettingsPanel() {
+export default function MapSettingsPanel() {
   const {
     style,
     setStyle,
@@ -38,35 +39,38 @@ export function MapSettingsPanel() {
   } = useMapSettings();
 
   return (
-    <div className="flex h-full flex-col gap-2 pb-4">
-      <div>
-        <Label className="font-medium text-sm">Estilo del mapa</Label>
-        <div className="flex gap-2">
-          <Button
-            variant={style === "light" ? "default" : "outline"}
-            className="w-full justify-center"
-            onClick={() => setStyle("light")}
-          >
-            <SunIcon className="mr-2 h-4 w-4" />
-            Claro
-          </Button>
-          <Button
-            variant={style === "dark" ? "default" : "outline"}
-            className="w-full justify-center"
-            onClick={() => setStyle("dark")}
-          >
-            <MoonIcon className="mr-2 h-4 w-4" />
-            Oscuro
-          </Button>
+    <div className="flex h-full flex-col overflow-y-auto">
+      <FloatingPanelHeader title="Ajustes" />
+      <div className="flex flex-col gap-2 p-4">
+        <div>
+          <Label className="font-medium text-sm">Estilo del mapa</Label>
+          <div className="flex gap-2">
+            <Button
+              variant={style === "light" ? "default" : "outline"}
+              className="w-full justify-center"
+              onClick={() => setStyle("light")}
+            >
+              <SunIcon className="mr-2 h-4 w-4" />
+              Claro
+            </Button>
+            <Button
+              variant={style === "dark" ? "default" : "outline"}
+              className="w-full justify-center"
+              onClick={() => setStyle("dark")}
+            >
+              <MoonIcon className="mr-2 h-4 w-4" />
+              Oscuro
+            </Button>
+          </div>
         </div>
+        <Separator />
+        <IncidentSettings
+          incidentTimeRange={incidentTimeRange}
+          setIncidentTimeRange={setIncidentTimeRange}
+        />
+        <Separator />
+        <StationsSettings showStations={showStations} setShowStations={setShowStations} />
       </div>
-      <Separator />
-      <IncidentSettings
-        incidentTimeRange={incidentTimeRange}
-        setIncidentTimeRange={setIncidentTimeRange}
-      />
-      <Separator />
-      <StationsSettings showStations={showStations} setShowStations={setShowStations} />
     </div>
   );
 }

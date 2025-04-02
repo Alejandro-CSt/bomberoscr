@@ -1,32 +1,37 @@
 "use client";
 
 import { useMediaQuery } from "@/features/hooks/use-media-query";
-import { PanelView, useDynamicPanel } from "@/features/map/hooks/use-dynamic-panel";
+import { PanelView } from "@/features/map/hooks/use-dynamic-panel";
 import { cn } from "@/lib/utils";
 import { Settings2Icon, SirenIcon } from "lucide-react";
 import { motion } from "motion/react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const menuItems = [
   {
     id: PanelView.Incidents,
     name: "Incidentes",
-    icon: SirenIcon
+    icon: SirenIcon,
+    href: "/incidentes"
   },
   // {
   //   id: PanelView.Statistics,
-  //   name: "Estadísticas",
-  //   icon: BarChart2Icon
+  //   name: "Estaciones",
+  //   icon: Warehouse,
+  //   href: "/estaciones"
   // },
   {
     id: PanelView.Options,
     name: "Opciones",
-    icon: Settings2Icon
+    icon: Settings2Icon,
+    href: "/ajustes"
   }
 ];
 
 export default function FloatingMenu() {
   const isMobile = useMediaQuery("(max-width: 768px)");
-  const [panelState, setPanelState] = useDynamicPanel();
+  const pathname = usePathname();
 
   return (
     <div className="max-md:-translate-x-1/2 absolute top-4 left-1/2 z-10 md:top-6 md:left-8">
@@ -37,30 +42,20 @@ export default function FloatingMenu() {
         className="flex gap-2 rounded-full border bg-background/80 px-2 py-1 opacity-75 shadow-lg backdrop-blur-lg"
       >
         {menuItems.map((item) => (
-          <motion.button
+          <Link
+            prefetch
             key={item.id}
-            type="button"
-            onClick={() => {
-              const newView = panelState.view === item.id ? null : item.id;
-              setPanelState({
-                view: newView,
-                title: newView ? item.name : null
-              });
-            }}
+            href={item.href}
             className={cn(
               "flex items-center justify-center gap-4 rounded-full px-4 py-1 transition-colors duration-300",
-              panelState.view === item.id
+              pathname.startsWith(item.href)
                 ? "bg-primary text-primary-foreground"
                 : "bg-secondary/40 text-secondary-foreground hover:bg-secondary/60"
             )}
-            layout
-            transition={{
-              layout: { duration: 0.4 }
-            }}
           >
             <item.icon className="size-5 md:size-6" />
             <span className="sr-only">{item.name}</span>
-          </motion.button>
+          </Link>
         ))}
       </motion.div>
     </div>

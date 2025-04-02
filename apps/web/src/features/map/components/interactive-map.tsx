@@ -1,7 +1,6 @@
 "use client";
 
-import { DynamicPanel } from "@/features/map/components/dynamic-panel";
-import { MapControls } from "@/features/map/components/floating-controls";
+import { MapControls } from "@/features/map/components/map-controls";
 import {
   CR_NE_CORNER,
   CR_SW_CORNER,
@@ -9,11 +8,11 @@ import {
   LIGHT_MAP_STYLE
 } from "@/features/map/constants";
 import { useMapSettings } from "@/features/map/context/map-settings-context";
-import { PanelView, TabName, useDynamicPanel } from "@/features/map/hooks/use-dynamic-panel";
 import { trpc } from "@/lib/trpc/client";
 import { isReducedMotion } from "@/lib/utils";
 import type { IncidentWithCoordinates, Station } from "@/server/trpc";
 import { ShieldIcon } from "lucide-react";
+import Link from "next/link";
 import { MapProvider, Marker, Map as ReactMap, useMap } from "react-map-gl/maplibre";
 
 export const InteractiveMap = () => {
@@ -61,7 +60,6 @@ export const InteractiveMap = () => {
           <IncidentMarker key={incident.id} incident={incident} />
         ))}
         <MapControls />
-        <DynamicPanel />
       </ReactMap>
     </MapProvider>
   );
@@ -69,7 +67,6 @@ export const InteractiveMap = () => {
 
 function StationMarker({ station }: { station: Station }) {
   const { current: map } = useMap();
-  const [_, setDynamicPanel] = useDynamicPanel();
 
   const handleClick = () => {
     map?.flyTo({
@@ -81,31 +78,25 @@ function StationMarker({ station }: { station: Station }) {
       zoom: map.getZoom() < 14 ? 14 : undefined,
       animate: !isReducedMotion()
     });
-    setDynamicPanel({
-      view: PanelView.Station,
-      stationKey: station.stationKey,
-      stationTab: TabName.Incidents,
-      title: `${station.name} (${station.stationKey})`,
-      incidentId: null
-    });
   };
 
   return (
-    <Marker
-      key={station.id}
-      longitude={Number.parseFloat(station.longitude ?? "")}
-      latitude={Number.parseFloat(station.latitude ?? "")}
-      anchor="bottom"
-      onClick={handleClick}
-    >
-      <ShieldIcon className="size-5 rounded-xl bg-[#facd01] p-1 text-black lg:size-8" />
-    </Marker>
+    <Link href={`/estaciones/${station.name}`} className="cursor-pointer" passHref>
+      <Marker
+        key={station.id}
+        longitude={Number.parseFloat(station.longitude ?? "")}
+        latitude={Number.parseFloat(station.latitude ?? "")}
+        anchor="bottom"
+        onClick={handleClick}
+      >
+        <ShieldIcon className="size-5 rounded-xl bg-[#facd01] p-1 text-black lg:size-8" />
+      </Marker>
+    </Link>
   );
 }
 
 function IncidentMarker({ incident }: { incident: IncidentWithCoordinates }) {
   const { current: map } = useMap();
-  const [_, setDynamicPanel] = useDynamicPanel();
 
   const handleClick = () => {
     map?.flyTo({
@@ -117,24 +108,19 @@ function IncidentMarker({ incident }: { incident: IncidentWithCoordinates }) {
       zoom: map.getZoom() < 14 ? 14 : undefined,
       animate: !isReducedMotion()
     });
-    setDynamicPanel({
-      view: PanelView.Incidents,
-      incidentId: incident.id,
-      title: incident.importantDetails,
-      stationKey: null,
-      stationTab: null
-    });
   };
 
   return (
-    <Marker
-      key={incident.id}
-      longitude={Number.parseFloat(incident.longitude ?? "0")}
-      latitude={Number.parseFloat(incident.latitude ?? "0")}
-      anchor="bottom"
-      onClick={handleClick}
-    >
-      <div className="size-4 rounded-full border-2 border-white bg-red-600" />
-    </Marker>
+    <Link href={`/incidentes/${incident.id}`} className="cursor-pointer" passHref>
+      <Marker
+        key={incident.id}
+        longitude={Number.parseFloat(incident.longitude ?? "0")}
+        latitude={Number.parseFloat(incident.latitude ?? "0")}
+        anchor="bottom"
+        onClick={handleClick}
+      >
+        <div className="size-4 rounded-full border-2 border-white bg-red-600" />
+      </Marker>
+    </Link>
   );
 }
