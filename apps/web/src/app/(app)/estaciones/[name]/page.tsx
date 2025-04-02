@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import { getLatestIncidents } from "@/server/queries";
 import db from "@bomberoscr/db/db";
 import { stations } from "@bomberoscr/db/schema";
-import { eq } from "drizzle-orm";
+import { and, sql } from "drizzle-orm";
 import {
   Building2Icon,
   ChartSplineIcon,
@@ -30,10 +30,10 @@ export default async function DetailedStationPage({
 }: {
   params: Promise<{ name: string }>;
 }) {
-  const decodedName = decodeURIComponent((await params).name);
+  const decodedName = decodeURIComponent((await params).name).trim();
 
   const station = await db.query.stations.findFirst({
-    where: eq(stations.name, decodedName)
+    where: and(sql`LOWER(TRIM(${stations.name})) = LOWER(${decodedName})`)
   });
 
   if (!station)
