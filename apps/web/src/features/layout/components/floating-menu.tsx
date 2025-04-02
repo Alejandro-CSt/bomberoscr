@@ -1,7 +1,6 @@
 "use client";
 
 import { useMediaQuery } from "@/features/hooks/use-media-query";
-import { PanelView } from "@/features/map/hooks/use-dynamic-panel";
 import { cn } from "@/lib/utils";
 import { Settings2Icon, SirenIcon } from "lucide-react";
 import { motion } from "motion/react";
@@ -10,7 +9,7 @@ import { usePathname } from "next/navigation";
 
 const menuItems = [
   {
-    id: PanelView.Incidents,
+    id: "incidentes",
     name: "Incidentes",
     icon: SirenIcon,
     href: "/incidentes"
@@ -22,7 +21,7 @@ const menuItems = [
   //   href: "/estaciones"
   // },
   {
-    id: PanelView.Options,
+    id: "opciones",
     name: "Opciones",
     icon: Settings2Icon,
     href: "/ajustes"
