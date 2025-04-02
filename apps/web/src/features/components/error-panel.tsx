@@ -1,7 +1,7 @@
+import { Button } from "@/features/components/ui/button";
+import { FloatingPanelHeader } from "@/features/layout/components/floating-panel-header";
 import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
-import { FloatingPanelHeader } from "../layout/components/floating-panel-header";
-import { Button } from "./ui/button";
 
 interface ErrorPanelProps {
   title?: string;
