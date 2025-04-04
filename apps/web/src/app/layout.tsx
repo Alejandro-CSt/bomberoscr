@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     url: env.SITE_URL,
     type: "website",
     siteName: title,
-    images: ["/og.png"]
+    images: [`${env.SITE_URL}/og.png`]
   },
   twitter: {
     card: "summary_large_image",
