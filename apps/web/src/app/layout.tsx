@@ -1,4 +1,4 @@
-import { Analytics } from "@/components/Analytics";
+import { Analytics } from "@/features/layout/components/analytics";
 import TRPCProvider from "@/lib/trpc/provider";
 import env from "@/server/env";
 import "@/styles/globals.css";

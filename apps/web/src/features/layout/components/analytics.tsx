@@ -1,6 +1,6 @@
 import env from "@/server/env";
-import Script from "next/script";
 import { unstable_noStore as noStore } from "next/cache";
+import Script from "next/script";
 
 export function Analytics() {
   noStore();
