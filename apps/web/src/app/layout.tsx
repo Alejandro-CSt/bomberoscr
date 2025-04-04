@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Mapa y estadísticas de incidentes atendidos por Bomberos de Costa Rica",
     description: description,
-    images: ["/og.png"]
+    images: [`${env.SITE_URL}/og.png`]
   },
   robots: {
     index: true,
