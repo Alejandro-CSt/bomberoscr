@@ -8,9 +8,9 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 const geist = Geist({ subsets: ["latin"], weight: "variable" });
 
-const title = "Emergencias Costa Rica: Mapa y estadísticas de incidentes atendidos por Bomberos";
+const title = "Mapa de incidentes atendidos por Bomberos de Costa Rica en tiempo real";
 const description =
-  "Mapa interactivo no oficial con incendios, emergencias activas, ubicación de estaciones y detalles de incidentes en tiempo real atendidos por Bomberos de Costa Rica.";
+  "Mapa interactivo no oficial con estadísticas de incendios, emergencias activas, ubicación de estaciones y detalles de incidentes en tiempo real atendidos por Bomberos de Costa Rica.";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
