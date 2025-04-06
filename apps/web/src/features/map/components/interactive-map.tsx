@@ -81,7 +81,11 @@ function StationMarker({ station }: { station: Station }) {
   };
 
   return (
-    <Link href={`/estaciones/${station.name}`} className="cursor-pointer" passHref>
+    <Link
+      href={`/estaciones/${encodeURIComponent(station.name)}`}
+      className="cursor-pointer"
+      passHref
+    >
       <Marker
         key={station.id}
         longitude={Number.parseFloat(station.longitude ?? "")}
