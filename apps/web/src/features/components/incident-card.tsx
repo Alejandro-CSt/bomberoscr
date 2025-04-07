@@ -27,7 +27,7 @@ export function IncidentCard({
           <Badge variant={incident.isOpen ? "destructive" : "default"}>
             {incident.isOpen ? "Atendiendo" : "Atendido"}
           </Badge>
-          <div className="ustify-end flex gap-2">
+          <div className="flex gap-2">
             <Badge variant="outline">
               {incident.dispatchedStationsCount}{" "}
               {incident.dispatchedStationsCount === 1 ? "estación" : "estaciones"}

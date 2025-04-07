@@ -43,7 +43,7 @@ function LoadingSkeleton() {
   );
 }
 
-export function StatsTab({ stationKey }: { stationKey: string }) {
+export function StationStats({ stationKey }: { stationKey: string }) {
   const { data, isLoading, error } = trpc.stations.getStationStats.useQuery({
     key: stationKey
   });
