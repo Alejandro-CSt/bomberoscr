@@ -19,7 +19,9 @@ import { ArrowElbowDownRight, CaretUpDown, FireTruck } from "@phosphor-icons/rea
 import type { Metadata } from "next";
 import { z } from "zod";
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+export async function generateMetadata({
+  params
+}: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const idSchema = z.coerce.number().int().positive();
   const idResult = idSchema.safeParse((await params).id);
 
