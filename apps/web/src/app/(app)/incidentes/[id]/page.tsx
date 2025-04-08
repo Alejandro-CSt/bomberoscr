@@ -16,7 +16,79 @@ import { FloatingPanelHeader } from "@/features/layout/components/floating-panel
 import { cn, getRelativeTime, isUndefinedDate } from "@/lib/utils";
 import { getDetailedIncidentById } from "@/server/queries";
 import { ArrowElbowDownRight, CaretUpDown, FireTruck } from "@phosphor-icons/react/dist/ssr";
+import type { Metadata } from "next";
 import { z } from "zod";
+
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+  const idSchema = z.coerce.number().int().positive();
+  const idResult = idSchema.safeParse((await params).id);
+
+  if (!idResult.success) {
+    return {
+      title: "Incidente no encontrado",
+      description: "No se pudo encontrar el incidente especificado."
+    };
+  }
+
+  const incident = await getDetailedIncidentById(idResult.data);
+
+  if (!incident) {
+    return {
+      title: "Incidente no encontrado",
+      description: "No se pudo encontrar el incidente especificado."
+    };
+  }
+
+  // Determine location: if detailed data is available, use it.
+  // Otherwise, use the reported address with a note.
+  let location: string;
+  if (incident.province && incident.canton && incident.district) {
+    location = `${incident.district.name}, ${incident.canton.name}, ${incident.province.name}`;
+  } else if (incident.address) {
+    location = `${incident.address} (ubicación en proceso de confirmación)`;
+  } else {
+    location = "Ubicación pendiente de confirmación";
+  }
+
+  const formattedDate = new Date(incident.incidentTimestamp.toString()).toLocaleDateString(
+    "es-CR",
+    {
+      day: "2-digit",
+      month: "long",
+      year: "numeric"
+    }
+  );
+
+  const incidentType =
+    incident.specificDispatchIncidentType?.name ||
+    incident.dispatchIncidentType?.name ||
+    "Incidente";
+
+  const titleContent =
+    incident.specificDispatchIncidentType?.name || incident.importantDetails || incidentType;
+
+  let titleWithLocation = titleContent;
+  if (incident.district && incident.canton) {
+    titleWithLocation = `${titleContent} en ${incident.district.name}, ${incident.canton.name}`;
+  } else {
+    titleWithLocation = `${titleContent} (ubicación pendiente)`;
+  }
+
+  return {
+    title: `${titleContent} | EE-${incident.EEConsecutive}`,
+    description: `Incidente reportado el ${formattedDate} en ${location}. ${incident.dispatchedStations.length} estacion(es) y ${incident.dispatchedVehicles.length} unidad(es) despachadas.`,
+    openGraph: {
+      title: `${titleWithLocation}`,
+      description: `Incidente EE-${incident.EEConsecutive} reportado el ${formattedDate} en ${location}.`,
+      type: "article"
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${titleWithLocation}`,
+      description: `Incidente EE-${incident.EEConsecutive} reportado el ${formattedDate} en ${location}.`
+    }
+  };
+}
 
 export default async function DetailedIncidentPanel({
   params

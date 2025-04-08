@@ -262,6 +262,9 @@ export async function getDetailedIncidentById(id: number) {
   return await db.query.incidents.findFirst({
     where: eq(incidents.id, id),
     with: {
+      canton: true,
+      district: true,
+      province: true,
       dispatchedStations: {
         columns: {
           id: true,
