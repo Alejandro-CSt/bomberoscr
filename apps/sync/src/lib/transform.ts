@@ -69,9 +69,9 @@ export async function rawToIncident({
     id: incidentId,
     EEConsecutive: incidentReport.Consecutivo,
     address: incidentReport.DesUbicacion,
-    districtId: incidentReport.Id_Distrito,
-    cantonId: incidentReport.Id_Canton,
-    provinceId: incidentReport.Id_Provincia,
+    districtId: incidentReport.Id_Distrito === 0 ? null : incidentReport.Id_Distrito,
+    cantonId: incidentReport.Id_Canton === 0 ? null : incidentReport.Id_Canton,
+    provinceId: incidentReport.Id_Provincia === 0 ? null : incidentReport.Id_Provincia,
     importantDetails: incidentReport.Direccion,
     dispatchIncidentCode: await getIncidentType(incidentDetails.codigo_tipo_incidente_despacho),
     specificDispatchIncidentCode: await getIncidentType(

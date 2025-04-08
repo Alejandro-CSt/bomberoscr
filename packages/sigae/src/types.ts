@@ -332,3 +332,41 @@ export interface ItemObtenerTiposIncidente {
   items: ItemObtenerTiposIncidente[];
   tipo_incidente: string;
 }
+
+export interface ObtenerDistritosLista {
+  Codigo: string;
+  Descripcion: string;
+  Items: ItemObtenerDistritosLista[];
+}
+
+export interface ItemObtenerDistritosLista {
+  Codigo_Distrito: string;
+  Distrito: string;
+  Id_Canton: number;
+  Id_Distrito: number;
+}
+
+export interface ObtenerCantonesLista {
+  Codigo: string;
+  Descripcion: string;
+  Items: ItemObtenerCantonesLista[];
+}
+
+export interface ItemObtenerCantonesLista {
+  Canton: string;
+  CodigoCanton: string;
+  IdCanton: number;
+  IdProvincia: number;
+}
+
+export interface ObtenerProvinciaLista {
+  Codigo: string;
+  Descripcion: string;
+  Items: ItemObtenerProvinciaLista[];
+}
+
+export interface ItemObtenerProvinciaLista {
+  CodigoProvincia: string;
+  IdProvincia: number;
+  Provincia: string;
+}

@@ -1,6 +1,7 @@
 import env from "@/env";
 import { initializeData, isFirstRun } from "@/init";
 import logger from "@/lib/logger";
+import { syncDistricts } from "@/tasks/districts";
 import { syncIncidentTypes } from "@/tasks/incident-types";
 import { syncLatestIncidents, syncOpenIncidents } from "@/tasks/incidents";
 import { syncStations } from "@/tasks/stations";
@@ -63,6 +64,7 @@ function setupCronJobs() {
         await syncIncidentTypes();
         await syncVehicleDisponibility();
         await syncVehicles();
+        await syncDistricts();
         Sentry.getActiveSpan()?.end();
       }
     );

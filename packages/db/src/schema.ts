@@ -95,12 +95,55 @@ export const incidents = pgTable("incidents", {
   importantDetails: text().notNull(),
   latitude: numeric().notNull(),
   longitude: numeric().notNull(),
-  provinceId: integer(),
-  cantonId: integer(),
-  districtId: integer(),
+  provinceId: integer().references(() => provinces.id),
+  cantonId: integer().references(() => cantons.id),
+  districtId: integer().references(() => districts.id),
   isOpen: boolean().notNull(),
   modifiedAt: timestamp().notNull().defaultNow()
 });
+
+export const provinces = pgTable("provinces", {
+  id: integer().primaryKey(),
+  name: text().notNull(),
+  code: text().notNull()
+});
+
+export const cantons = pgTable("cantons", {
+  id: integer().primaryKey(),
+  name: text().notNull(),
+  code: text().notNull(),
+  provinceId: integer()
+    .notNull()
+    .references(() => provinces.id)
+});
+
+export const districts = pgTable("districts", {
+  id: integer().primaryKey(),
+  name: text().notNull(),
+  code: text().notNull(),
+  cantonId: integer()
+    .notNull()
+    .references(() => cantons.id)
+});
+
+export const provincesRelations = relations(provinces, ({ many }) => ({
+  cantons: many(cantons)
+}));
+
+export const cantonsRelations = relations(cantons, ({ one, many }) => ({
+  districts: many(districts),
+  province: one(provinces, {
+    fields: [cantons.provinceId],
+    references: [provinces.id]
+  })
+}));
+
+export const districtsRelations = relations(districts, ({ one }) => ({
+  canton: one(cantons, {
+    fields: [districts.cantonId],
+    references: [cantons.id]
+  })
+}));
 
 export const vehiclesRelations = relations(vehicles, ({ one, many }) => ({
   station: one(stations, {
@@ -160,6 +203,18 @@ export const incidentsRelations = relations(incidents, ({ one, many }) => ({
   specificDispatchIncidentType: one(incidentTypes, {
     fields: [incidents.specificDispatchIncidentCode],
     references: [incidentTypes.incidentCode]
+  }),
+  province: one(provinces, {
+    fields: [incidents.provinceId],
+    references: [provinces.id]
+  }),
+  canton: one(cantons, {
+    fields: [incidents.cantonId],
+    references: [cantons.id]
+  }),
+  district: one(districts, {
+    fields: [incidents.districtId],
+    references: [districts.id]
   })
 }));
 
@@ -170,3 +225,7 @@ export const dispatchedVehiclesInsertSchema = createSelectSchema(dispatchedVehic
 export const dispatchedStationsInsertSchema = createSelectSchema(dispatchedStations);
 export const incidentTypesInsertSchema = createSelectSchema(incidentTypes);
 export const incidentsInsertSchema = createSelectSchema(incidents);
+
+export const provincesInsertSchema = createSelectSchema(provinces);
+export const cantonsInsertSchema = createSelectSchema(cantons);
+export const districtsInsertSchema = createSelectSchema(districts);

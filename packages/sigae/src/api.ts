@@ -1,8 +1,10 @@
 import env from "./env";
 import type {
   ObtenerBoletaIncidente,
+  ObtenerCantonesLista,
   ObtenerDatosVehiculo,
   ObtenerDetalleEmergencias,
+  ObtenerDistritosLista,
   ObtenerEstacionDetalle,
   ObtenerEstaciones,
   ObtenerEstacionesAtiendeIncidente,
@@ -10,6 +12,7 @@ import type {
   ObtenerEstadoDisponibilidadUnidades,
   ObtenerListaEmergenciasApp,
   ObtenerListaUltimasEmergenciasApp,
+  ObtenerProvinciaLista,
   ObtenerTiposIncidente,
   ObtenerUnidadesDespachadasIncidente,
   ObtenerVehiculosComboF5
@@ -121,4 +124,16 @@ export async function getLatestIncidentsListApp(amount: number) {
     id_tipo_incidentes_despacho: [1, 2, 3, 4, 5, 6, 7, 8, 9],
     id_tipo_incidentes_real: [1, 2, 3, 4, 5, 6, 7, 8, 9]
   });
+}
+
+export async function getDistrictsList() {
+  return await fetcher<ObtenerDistritosLista>("ObtenerDistritosLista");
+}
+
+export async function getCantonsList() {
+  return await fetcher<ObtenerCantonesLista>("ObtenerCantonesLista");
+}
+
+export async function getProvincesList() {
+  return await fetcher<ObtenerProvinciaLista>("ObtenerProvinciaLista");
 }

@@ -1,18 +1,25 @@
 import logger from "@/lib/logger";
+import { syncDistricts } from "@/tasks/districts";
 import { syncIncidentTypes } from "@/tasks/incident-types";
 import { syncStations } from "@/tasks/stations";
 import { syncVehicleDisponibility } from "@/tasks/vehicle-disponibility";
 import { syncVehicles } from "@/tasks/vehicles";
 import db from "@bomberoscr/db/db";
-import { incidentTypes, stations, vehicleDisponibility } from "@bomberoscr/db/schema";
+import { districts, incidentTypes, stations, vehicleDisponibility } from "@bomberoscr/db/schema";
 import * as Sentry from "@sentry/node";
 
 export async function isFirstRun() {
   const vehicleDisponibilityCount = await db.$count(vehicleDisponibility);
   const incidentTypesCount = await db.$count(incidentTypes);
   const stationCount = await db.$count(stations);
+  const districtCount = await db.$count(districts);
 
-  return vehicleDisponibilityCount === 0 || incidentTypesCount === 0 || stationCount === 0;
+  return (
+    vehicleDisponibilityCount === 0 ||
+    incidentTypesCount === 0 ||
+    stationCount === 0 ||
+    districtCount === 0
+  );
 }
 
 export async function initializeData() {
@@ -28,6 +35,7 @@ export async function initializeData() {
       await syncIncidentTypes();
       await syncVehicleDisponibility();
       await syncVehicles();
+      await syncDistricts();
       logger.info("Initial data sync complete");
     }
   );
