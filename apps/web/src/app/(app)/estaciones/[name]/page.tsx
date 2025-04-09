@@ -6,12 +6,47 @@ import { getLatestIncidents } from "@/server/queries";
 import db from "@bomberoscr/db/db";
 import { stations } from "@bomberoscr/db/schema";
 import { and, sql } from "drizzle-orm";
+import type { Metadata, ResolvingMetadata } from "next";
 
-export default async function DetailedStationPage({
-  params
-}: {
+type Props = {
   params: Promise<{ name: string }>;
-}) {
+};
+
+export async function generateMetadata(
+  { params }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const decodedName = decodeURIComponent((await params).name).trim();
+  const titleCaseName = decodedName
+    .split(" ")
+    .map((word) => {
+      if (["de", "del", "la", "las", "los", "y", "e"].includes(word.toLowerCase())) {
+        return word.toLowerCase();
+      }
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    })
+    .join(" ");
+
+  const title = `Incidentes atendidos por la estación de ${titleCaseName} de Bomberos Costa Rica`;
+  const description = `Detalles y estadísticas de incidentes atendidos por la estación de ${titleCaseName} actualizados en tiempo real.`;
+
+  return {
+    title: title,
+    description: description,
+    openGraph: {
+      title: title,
+      description: description,
+      images: (await parent).openGraph?.images,
+      type: "website"
+    },
+    twitter: {
+      title: title,
+      description: description
+    }
+  };
+}
+
+export default async function DetailedStationPage({ params }: Props) {
   const decodedName = decodeURIComponent((await params).name).trim();
 
   const station = await db.query.stations.findFirst({
