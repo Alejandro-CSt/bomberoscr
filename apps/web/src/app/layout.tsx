@@ -67,7 +67,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <Script
           defer
-          src={`${siteUrl}/script.js`}
+          src="https://u.anifz.com/script.js"
           data-website-id="3d28fb97-aefd-4f31-90dd-a609e21d0b22"
         />
       </head>
