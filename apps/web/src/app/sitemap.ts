@@ -4,6 +4,8 @@ import { stations as stationsSchema } from "@bomberoscr/db/schema";
 import { eq } from "drizzle-orm";
 import type { MetadataRoute } from "next";
 
+export const dynamic = "force-dynamic";
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = env.SITE_URL || "https://bomberos.anifz.com";
   const stations = await db.query.stations.findMany({
