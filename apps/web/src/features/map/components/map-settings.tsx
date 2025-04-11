@@ -17,6 +17,7 @@ import {
   useMapSettings
 } from "@/features/map/context/map-settings-context";
 import { MoonIcon, SunIcon } from "lucide-react";
+import { useTheme } from "next-themes";
 
 interface StationsSettingsProps {
   showStations: ShowStations;
@@ -29,6 +30,7 @@ interface IncidentSettingsProps {
 }
 
 export default function MapSettings() {
+  const { setTheme } = useTheme();
   const {
     style,
     setStyle,
@@ -48,7 +50,10 @@ export default function MapSettings() {
             <Button
               variant={style === "light" ? "default" : "outline"}
               className="w-full justify-center"
-              onClick={() => setStyle("light")}
+              onClick={() => {
+                setStyle("light");
+                setTheme("light");
+              }}
             >
               <SunIcon className="mr-2 h-4 w-4" />
               Claro
@@ -56,7 +61,10 @@ export default function MapSettings() {
             <Button
               variant={style === "dark" ? "default" : "outline"}
               className="w-full justify-center"
-              onClick={() => setStyle("dark")}
+              onClick={() => {
+                setStyle("dark");
+                setTheme("dark");
+              }}
             >
               <MoonIcon className="mr-2 h-4 w-4" />
               Oscuro

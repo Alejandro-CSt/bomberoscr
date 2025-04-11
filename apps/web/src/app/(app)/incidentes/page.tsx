@@ -49,7 +49,7 @@ export default function Incidents() {
           <span className="mr-2 text-muted-foreground text-sm">Filtrar</span>
           <Select onValueChange={handleStationChange} defaultValue="all">
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Todas las estaciones" />
+              <SelectValue placeholder="Todas las estacigfones" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todas las estaciones</SelectItem>

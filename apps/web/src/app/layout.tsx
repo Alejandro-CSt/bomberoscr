@@ -1,7 +1,9 @@
+import { ThemeProvider } from "@/features/layout/components/theme-provider";
 import TRPCProvider from "@/lib/trpc/provider";
 import "@/styles/globals.css";
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
+import Head from "next/head";
 import Script from "next/script";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 
@@ -61,20 +63,23 @@ export const metadata: Metadata = {
 
 const geist = Geist({ subsets: ["latin"], weight: "variable" });
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default async function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es">
-      <head>
-        <Script
-          defer
-          src="https://u.anifz.com/script.js"
-          data-website-id="3d28fb97-aefd-4f31-90dd-a609e21d0b22"
-        />
-      </head>
+    <html lang="es" suppressHydrationWarning>
       <body className="antialiased" style={geist.style}>
-        <NuqsAdapter>
-          <TRPCProvider>{children}</TRPCProvider>
-        </NuqsAdapter>
+        <ThemeProvider attribute="class" defaultTheme="system" disableTransitionOnChange>
+          <Head>
+            <Script
+              defer
+              src="https://u.anifz.com/script.js"
+              data-website-id="3d28fb97-aefd-4f31-90dd-a609e21d0b22"
+              strategy="lazyOnload"
+            />
+          </Head>
+          <NuqsAdapter>
+            <TRPCProvider>{children}</TRPCProvider>
+          </NuqsAdapter>
+        </ThemeProvider>
       </body>
     </html>
   );
