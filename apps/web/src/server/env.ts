@@ -17,7 +17,8 @@ const EnvSchema = z.object({
   SIGAE_COD_SYS: z.string(),
   UMAMI_URL: z.string().url(),
   UMAMI_WEBSITE_ID: z.string(),
-  SITE_URL: z.string().url()
+  SITE_URL: z.string().url(),
+  ADMIN_TOKEN: z.string()
 });
 
 export type EnvSchema = z.infer<typeof EnvSchema>;

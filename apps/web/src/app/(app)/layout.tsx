@@ -6,7 +6,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="h-dvh">
+    <div className="theme-map h-dvh">
       <MapSettingsProvider>
         <InteractiveMap />
         <FloatingMenu />
