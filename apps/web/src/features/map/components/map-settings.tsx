@@ -49,7 +49,7 @@ export default function MapSettings() {
           <div className="flex gap-2">
             <Button
               variant={style === "light" ? "default" : "outline"}
-              className="w-full justify-center"
+              className="flex-1 justify-center"
               onClick={() => {
                 setStyle("light");
                 setTheme("light");
@@ -60,7 +60,7 @@ export default function MapSettings() {
             </Button>
             <Button
               variant={style === "dark" ? "default" : "outline"}
-              className="w-full justify-center"
+              className="flex-1 justify-center"
               onClick={() => {
                 setStyle("dark");
                 setTheme("dark");
@@ -85,12 +85,12 @@ export default function MapSettings() {
 
 const StationsSettings = ({ showStations, setShowStations }: StationsSettingsProps) => {
   return (
-    <div>
+    <div className="space-y-2">
       <Label htmlFor="show-stations" className="font-medium text-sm">
         Mostrar estaciones
       </Label>
       <Select value={showStations} onValueChange={setShowStations}>
-        <SelectTrigger id="show-stations">
+        <SelectTrigger id="show-stations" className="w-full">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -110,7 +110,7 @@ const IncidentSettings = ({ incidentTimeRange, setIncidentTimeRange }: IncidentS
         Mostrar incidentes de las últimas
       </Label>
       <Select value={incidentTimeRange} onValueChange={setIncidentTimeRange}>
-        <SelectTrigger id="incident-time-range">
+        <SelectTrigger id="incident-time-range" className="w-full">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>

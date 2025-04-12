@@ -22,7 +22,7 @@ export function StationTabs({ name }: { name: string }) {
   ];
 
   return (
-    <div className="sticky top-[60px] z-50 bg-background py-2 backdrop-blur-md">
+    <div className="sticky top-[60px] z-50 bg-card py-2">
       <div className="flex w-full items-center justify-between">
         {tabs.map((tab) => (
           <Link

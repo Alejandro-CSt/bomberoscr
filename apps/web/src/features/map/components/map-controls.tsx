@@ -9,7 +9,7 @@ export function MapControls() {
 
   return (
     <div className="absolute right-4 bottom-12 z-10 hidden md:block">
-      <div className="flex flex-col items-center space-y-2 rounded-full bg-white/10 p-2 shadow-lg backdrop-blur-sm">
+      <div className="flex flex-col items-center space-y-2 rounded-full bg-white/10 p-2 shadow-lg backdrop-blur-xs">
         <Button
           variant="ghost"
           size="icon"

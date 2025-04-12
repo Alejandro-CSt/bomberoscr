@@ -4,7 +4,7 @@ export default function Loading() {
   return (
     <div className="flex flex-col py-2">
       <div className="flex items-center gap-4 border-b p-4">
-        <div className="size-12 flex-shrink-0">
+        <div className="size-12 shrink-0">
           <Skeleton className="size-full rounded-full" />
         </div>
         <div className="min-w-0 flex-1">

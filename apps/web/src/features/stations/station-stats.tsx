@@ -106,7 +106,7 @@ export function StationStats({ stationKey }: { stationKey: string }) {
   const chartConfig: ChartConfig = {
     count: {
       label: "Incidentes atendidos: ",
-      color: "hsl(var(--chart-2))"
+      color: "var(--chart-2)"
     },
     ...chartData.reduce((config, item) => {
       config[item.date] = {
@@ -117,7 +117,7 @@ export function StationStats({ stationKey }: { stationKey: string }) {
     ...incidentTypes?.reduce((config, item) => {
       config[item.name] = {
         label: item.name,
-        color: `hsl(var(--chart-${(Object.keys(config).length % 8) + 1}))`
+        color: `var(--chart-${(Object.keys(config).length % 8) + 1})`
       };
       return config;
     }, {} as ChartConfig)
@@ -131,7 +131,7 @@ export function StationStats({ stationKey }: { stationKey: string }) {
   if (totalIncidents.week === 0 && totalIncidents.month === 0)
     return (
       <div className="p-4">
-        <Alert variant="warning">
+        <Alert>
           <AlertTriangleIcon className="h-4 w-4" />
           <AlertTitle>
             No se encontraron incidentes en la estación {stationKey} en los últimos 30 días
@@ -155,7 +155,7 @@ export function StationStats({ stationKey }: { stationKey: string }) {
     incidentTypes?.map((type, index) => ({
       name: type.name,
       value: type.count,
-      fill: `hsl(var(--chart-${(index % 8) + 1}))`
+      fill: `var(--chart-${(index % 8) + 1})`
     })) ?? [];
 
   return (
@@ -207,8 +207,8 @@ export function StationStats({ stationKey }: { stationKey: string }) {
                 dataKey="count"
                 type="linear"
                 spacing={15}
-                fill="hsl(var(--primary))"
-                stroke="hsl(var(--primary))"
+                fill="var(--primary)"
+                stroke="var(--primary)"
               />
             </BarChart>
           </ChartContainer>
@@ -254,8 +254,8 @@ export function StationStats({ stationKey }: { stationKey: string }) {
               <Radar
                 name="Incidentes"
                 dataKey="count"
-                stroke="hsl(var(--primary))"
-                fill="hsl(var(--primary))"
+                stroke="var(--primary)"
+                fill="var(--primary)"
                 fillOpacity={0.6}
               />
               <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
@@ -303,7 +303,7 @@ export function StationStats({ stationKey }: { stationKey: string }) {
                         textAnchor="middle"
                         width={75}
                         fontSize={8}
-                        fill="hsl(var(--background))"
+                        fill="var(--background)"
                         className="sm:text[11px] fill-background"
                       >
                         {name}
@@ -311,7 +311,7 @@ export function StationStats({ stationKey }: { stationKey: string }) {
                       <Text
                         x={x2}
                         y={y2}
-                        fill="hsl(var(--foreground))"
+                        fill="var(--foreground)"
                         textAnchor={x2 > cx ? "start" : "end"}
                         dominantBaseline="middle"
                         className="text-[11px]"
