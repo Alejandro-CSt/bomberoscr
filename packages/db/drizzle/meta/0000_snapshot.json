@@ -39,12 +39,8 @@
           "name": "cantons_provinceId_provinces_id_fk",
           "tableFrom": "cantons",
           "tableTo": "provinces",
-          "columnsFrom": [
-            "provinceId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["provinceId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -96,12 +92,8 @@
           "name": "dispatched_stations_stationId_stations_id_fk",
           "tableFrom": "dispatched_stations",
           "tableTo": "stations",
-          "columnsFrom": [
-            "stationId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["stationId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -109,12 +101,8 @@
           "name": "dispatched_stations_incidentId_incidents_id_fk",
           "tableFrom": "dispatched_stations",
           "tableTo": "incidents",
-          "columnsFrom": [
-            "incidentId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["incidentId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -191,12 +179,8 @@
           "name": "dispatched_vehicles_vehicleId_vehicles_id_fk",
           "tableFrom": "dispatched_vehicles",
           "tableTo": "vehicles",
-          "columnsFrom": [
-            "vehicleId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["vehicleId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -204,12 +188,8 @@
           "name": "dispatched_vehicles_incidentId_incidents_id_fk",
           "tableFrom": "dispatched_vehicles",
           "tableTo": "incidents",
-          "columnsFrom": [
-            "incidentId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["incidentId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -217,12 +197,8 @@
           "name": "dispatched_vehicles_stationId_stations_id_fk",
           "tableFrom": "dispatched_vehicles",
           "tableTo": "stations",
-          "columnsFrom": [
-            "stationId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["stationId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -268,12 +244,8 @@
           "name": "districts_cantonId_cantons_id_fk",
           "tableFrom": "districts",
           "tableTo": "cantons",
-          "columnsFrom": [
-            "cantonId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["cantonId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -319,12 +291,8 @@
           "name": "incident_types_parent_id_incident_types_id_fk",
           "tableFrom": "incident_types",
           "tableTo": "incident_types",
-          "columnsFrom": [
-            "parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -334,9 +302,7 @@
         "incident_types_incidentCode_unique": {
           "name": "incident_types_incidentCode_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "incidentCode"
-          ]
+          "columns": ["incidentCode"]
         }
       },
       "policies": {},
@@ -457,12 +423,8 @@
           "name": "incidents_incidentCode_incident_types_incidentCode_fk",
           "tableFrom": "incidents",
           "tableTo": "incident_types",
-          "columnsFrom": [
-            "incidentCode"
-          ],
-          "columnsTo": [
-            "incidentCode"
-          ],
+          "columnsFrom": ["incidentCode"],
+          "columnsTo": ["incidentCode"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -470,12 +432,8 @@
           "name": "incidents_specificIncidentCode_incident_types_incidentCode_fk",
           "tableFrom": "incidents",
           "tableTo": "incident_types",
-          "columnsFrom": [
-            "specificIncidentCode"
-          ],
-          "columnsTo": [
-            "incidentCode"
-          ],
+          "columnsFrom": ["specificIncidentCode"],
+          "columnsTo": ["incidentCode"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -483,12 +441,8 @@
           "name": "incidents_dispatchIncidentCode_incident_types_incidentCode_fk",
           "tableFrom": "incidents",
           "tableTo": "incident_types",
-          "columnsFrom": [
-            "dispatchIncidentCode"
-          ],
-          "columnsTo": [
-            "incidentCode"
-          ],
+          "columnsFrom": ["dispatchIncidentCode"],
+          "columnsTo": ["incidentCode"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -496,12 +450,8 @@
           "name": "incidents_specificDispatchIncidentCode_incident_types_incidentCode_fk",
           "tableFrom": "incidents",
           "tableTo": "incident_types",
-          "columnsFrom": [
-            "specificDispatchIncidentCode"
-          ],
-          "columnsTo": [
-            "incidentCode"
-          ],
+          "columnsFrom": ["specificDispatchIncidentCode"],
+          "columnsTo": ["incidentCode"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -509,12 +459,8 @@
           "name": "incidents_responsibleStation_stations_id_fk",
           "tableFrom": "incidents",
           "tableTo": "stations",
-          "columnsFrom": [
-            "responsibleStation"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["responsibleStation"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -522,12 +468,8 @@
           "name": "incidents_provinceId_provinces_id_fk",
           "tableFrom": "incidents",
           "tableTo": "provinces",
-          "columnsFrom": [
-            "provinceId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["provinceId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -535,12 +477,8 @@
           "name": "incidents_cantonId_cantons_id_fk",
           "tableFrom": "incidents",
           "tableTo": "cantons",
-          "columnsFrom": [
-            "cantonId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["cantonId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -548,12 +486,8 @@
           "name": "incidents_districtId_districts_id_fk",
           "tableFrom": "incidents",
           "tableTo": "districts",
-          "columnsFrom": [
-            "districtId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["districtId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -752,12 +686,8 @@
           "name": "vehicles_stationId_stations_id_fk",
           "tableFrom": "vehicles",
           "tableTo": "stations",
-          "columnsFrom": [
-            "stationId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["stationId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -767,9 +697,7 @@
         "vehicles_internalNumber_unique": {
           "name": "vehicles_internalNumber_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "internalNumber"
-          ]
+          "columns": ["internalNumber"]
         }
       },
       "policies": {},
