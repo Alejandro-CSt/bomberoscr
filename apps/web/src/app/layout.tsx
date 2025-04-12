@@ -67,7 +67,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
   return (
     <html lang="es" suppressHydrationWarning>
       <body className="antialiased" style={geist.style}>
-        <ThemeProvider attribute="class" defaultTheme="system" disableTransitionOnChange>
+        <ThemeProvider attribute="class" defaultTheme="system">
           <Head>
             <Script
               defer

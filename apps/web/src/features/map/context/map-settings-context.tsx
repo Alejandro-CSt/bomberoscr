@@ -1,13 +1,11 @@
 "use client";
 
-import { type ReactNode, createContext, useContext, useState } from "react";
+import { type ReactNode, createContext, useContext, useState } from "react"; // Removed useEffect
 import { z } from "zod";
 
-export type MapStyle = "light" | "dark";
 export type ShowStations = "all" | "operative" | "none";
 export type IncidentTimeRange = "24h" | "48h" | "disabled";
 
-const styleSchema = z.enum(["light", "dark"]).default("light") as z.ZodType<MapStyle>;
 const showStationsSchema = z
   .enum(["all", "operative", "none"])
   .default("operative") as z.ZodType<ShowStations>;
@@ -19,20 +17,21 @@ function validateSetting<T>(value: unknown, schema: z.ZodType<T>): T {
   try {
     return schema.parse(value);
   } catch {
+    // Fallback to the schema's default value if parsing fails or value is undefined
     return schema.parse(undefined);
   }
 }
 
 function getLocalStorageItem(key: string, fallback: string | undefined): string | undefined {
-  if (typeof window !== "undefined") {
-    return localStorage.getItem(key) || fallback;
+  // Return fallback if window is not defined (SSR)
+  if (typeof window === "undefined") {
+    return fallback;
   }
-  return fallback;
+  return localStorage.getItem(key) || fallback;
 }
 
 type MapSettingsContextType = {
-  style: MapStyle;
-  setStyle: (newStyle: MapStyle) => void;
+  // Removed style and setStyle
   showStations: ShowStations;
   setShowStations: (value: ShowStations) => void;
   incidentTimeRange: IncidentTimeRange;
@@ -42,20 +41,12 @@ type MapSettingsContextType = {
 const MapSettingsContext = createContext<MapSettingsContextType | undefined>(undefined);
 
 export function MapSettingsProvider({ children }: { children: ReactNode }) {
-  const [style, setStyleState] = useState<MapStyle>(() =>
-    validateSetting(getLocalStorageItem("mapStyle", "light"), styleSchema)
-  );
   const [showStations, setShowStationsState] = useState<ShowStations>(() =>
     validateSetting(getLocalStorageItem("mapStations", undefined), showStationsSchema)
   );
   const [incidentTimeRange, setIncidentTimeRangeState] = useState<IncidentTimeRange>(() =>
     validateSetting(getLocalStorageItem("mapIncidentTimeRange", undefined), incidentTimeRangeSchema)
   );
-
-  const setStyle = (newStyle: MapStyle) => {
-    setStyleState(newStyle);
-    if (typeof window !== "undefined") localStorage.setItem("mapStyle", newStyle);
-  };
 
   const setShowStations = (value: ShowStations) => {
     setShowStationsState(value);
@@ -70,8 +61,6 @@ export function MapSettingsProvider({ children }: { children: ReactNode }) {
   return (
     <MapSettingsContext.Provider
       value={{
-        style,
-        setStyle,
         showStations,
         setShowStations,
         incidentTimeRange,

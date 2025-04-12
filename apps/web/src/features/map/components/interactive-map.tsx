@@ -12,11 +12,13 @@ import { trpc } from "@/lib/trpc/client";
 import { isReducedMotion } from "@/lib/utils";
 import type { IncidentWithCoordinates, Station } from "@/server/trpc";
 import { ShieldIcon } from "lucide-react";
+import { useTheme } from "next-themes"; // Import useTheme
 import Link from "next/link";
 import { MapProvider, Marker, Map as ReactMap, useMap } from "react-map-gl/maplibre";
 
 export const InteractiveMap = () => {
-  const { style, showStations, incidentTimeRange } = useMapSettings();
+  const { resolvedTheme } = useTheme();
+  const { showStations, incidentTimeRange } = useMapSettings();
   const incidentsQuery = trpc.incidents.getIncidentsCoordinates.useQuery({
     timeRange: incidentTimeRange
   });
@@ -30,7 +32,8 @@ export const InteractiveMap = () => {
       : showStations === "operative"
         ? operativeStations.data
         : allStations.data;
-  const mapStyleUrl = style === "light" ? LIGHT_MAP_STYLE : DARK_MAP_STYLE;
+
+  const mapStyleUrl = resolvedTheme === "light" ? LIGHT_MAP_STYLE : DARK_MAP_STYLE;
 
   return (
     <MapProvider>

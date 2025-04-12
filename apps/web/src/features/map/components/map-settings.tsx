@@ -30,15 +30,9 @@ interface IncidentSettingsProps {
 }
 
 export default function MapSettings() {
-  const { setTheme } = useTheme();
-  const {
-    style,
-    setStyle,
-    showStations,
-    setShowStations,
-    incidentTimeRange,
-    setIncidentTimeRange
-  } = useMapSettings();
+  const { theme, setTheme } = useTheme();
+  const { showStations, setShowStations, incidentTimeRange, setIncidentTimeRange } =
+    useMapSettings();
 
   return (
     <div className="flex h-full flex-col overflow-y-auto">
@@ -48,10 +42,9 @@ export default function MapSettings() {
           <Label className="font-medium text-sm">Estilo del mapa</Label>
           <div className="flex gap-2">
             <Button
-              variant={style === "light" ? "default" : "outline"}
+              variant={theme === "light" ? "default" : "outline"}
               className="flex-1 justify-center"
               onClick={() => {
-                setStyle("light");
                 setTheme("light");
               }}
             >
@@ -59,10 +52,9 @@ export default function MapSettings() {
               Claro
             </Button>
             <Button
-              variant={style === "dark" ? "default" : "outline"}
+              variant={theme === "dark" ? "default" : "outline"}
               className="flex-1 justify-center"
               onClick={() => {
-                setStyle("dark");
                 setTheme("dark");
               }}
             >
