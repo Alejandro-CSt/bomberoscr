@@ -4,7 +4,7 @@ import { stations as stationsSchema } from "@bomberoscr/db/schema";
 import { eq } from "drizzle-orm";
 import type { MetadataRoute } from "next";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = env.SITE_URL || "https://bomberos.anifz.com";
@@ -13,6 +13,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       name: true
     },
     where: eq(stationsSchema.isOperative, true)
+  });
+  const incidents = await db.query.incidents.findMany({
+    columns: {
+      id: true
+    },
+    limit: 49900
   });
 
   return [
@@ -30,6 +36,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${siteUrl}/estaciones/${station.name}`,
       lastModified: new Date(),
       changeFrequency: "hourly" as const
-    }))
+    })),
+    ...incidents.map((incident) => ({
+      url: `${siteUrl}/incidentes/${incident.id}`,
+      lastModified: new Date(),
+      changeFrequency: "hourly" as const
+    })),
+    {
+      url: `${siteUrl}/estaciones`,
+      lastModified: new Date(),
+      changeFrequency: "daily"
+    }
   ];
 }
