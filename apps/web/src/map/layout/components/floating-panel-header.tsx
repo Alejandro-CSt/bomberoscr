@@ -5,7 +5,7 @@ export function FloatingPanelHeader({ title }: { title: string }) {
   return (
     <div className="sticky top-0 z-30 flex items-center justify-between border-b bg-card p-4">
       <div className="flex items-center">
-        <h2 className="font-medium text-xl">{title}</h2>
+        <h1 className="font-medium text-xl">{title}</h1>
       </div>
       <Link href="/">
         <XIcon className="size-5" />
