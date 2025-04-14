@@ -27,8 +27,8 @@ export async function generateMetadata(
     })
     .join(" ");
 
-  const title = `Incidentes atendidos por la estación de ${titleCaseName} de Bomberos Costa Rica`;
-  const description = `Detalles y estadísticas de incidentes atendidos por la estación de ${titleCaseName} actualizados en tiempo real.`;
+  const title = `Incidentes atendidos por la estación de ${titleCaseName}`;
+  const description = `Detalles y estadísticas de incidentes atendidos por la estación de ${titleCaseName} de Bomberos de Costa Rica actualizados en tiempo real.`;
 
   return {
     title: title,
