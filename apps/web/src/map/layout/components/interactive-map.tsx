@@ -7,7 +7,7 @@ import { MapControls } from "@/map/layout/components/map-controls";
 import { useMapSettings } from "@/map/layout/context/map-settings-context";
 import type { IncidentWithCoordinates, Station } from "@/server/trpc";
 import { ShieldIcon } from "lucide-react";
-import { useTheme } from "next-themes"; // Import useTheme
+import { useTheme } from "next-themes";
 import Link from "next/link";
 import { MapProvider, Marker, Map as ReactMap, useMap } from "react-map-gl/maplibre";
 
@@ -49,6 +49,7 @@ export const InteractiveMap = () => {
           bearing: 0,
           pitch: 0
         }}
+        style={{ height: "100vh", width: "100vw" }}
         mapStyle={mapStyleUrl}
       >
         {stationsData?.map((station) => {
