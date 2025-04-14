@@ -1,5 +1,5 @@
-import { ThemeProvider } from "@/features/layout/components/theme-provider";
 import TRPCProvider from "@/lib/trpc/provider";
+import { ThemeProvider } from "@/map/layout/context/theme-provider";
 import "@/styles/globals.css";
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
