@@ -13,12 +13,8 @@ import {
   getStationsAttendingIncident,
   getVehiclesDispatchedToIncident
 } from "@bomberoscr/sigae/api";
-import {
-  rawToDispatchedStations,
-  rawToDispatchedVehicles,
-  rawToIncident
-} from "@bomberoscr/sync-core/transform";
 import { eq } from "drizzle-orm";
+import { rawToDispatchedStations, rawToDispatchedVehicles, rawToIncident } from "./transform";
 
 export async function upsertIncident(id: number) {
   const incidentDetails = await getIncidentDetails(id);

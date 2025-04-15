@@ -1,0 +1,18 @@
+{
+  "name": "@bomberoscr/lib",
+  "version": "0.0.0",
+  "scripts": {
+    "build": "tsc"
+  },
+  "exports": {
+    "./logger": "./src/logger.ts",
+    "./compare-two-strings": "./src/compare-two-strings.ts"
+  },
+  "dependencies": {
+    "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "@bomberoscr/typescript-config": "workspace:*",
+    "typescript": "^5"
+  }
+}

@@ -9,7 +9,9 @@
   },
   "dependencies": {
     "@bomberoscr/db": "workspace:*",
+    "@bomberoscr/lib": "workspace:*",
     "@bomberoscr/sigae": "workspace:*",
+    "@bomberoscr/sync-core": "workspace:*",
     "@sentry/node": "^9.8.0",
     "dotenv": "^16.4.7",
     "dotenv-expand": "^12.0.1",

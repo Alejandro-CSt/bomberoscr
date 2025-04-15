@@ -1,10 +1,10 @@
-import logger from "@/lib/logger";
 import db from "@bomberoscr/db/db";
 import {
   type incidentTypesInsertSchema,
   incidentTypes as incidentTypesTable
 } from "@bomberoscr/db/schema";
 import { conflictUpdateSetAllColumns } from "@bomberoscr/db/utils";
+import logger from "@bomberoscr/lib/logger";
 import { getIncidentTypes } from "@bomberoscr/sigae/api";
 import type { ItemObtenerTiposIncidente } from "@bomberoscr/sigae/types";
 import * as Sentry from "@sentry/node";

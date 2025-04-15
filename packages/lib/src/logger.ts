@@ -1,6 +1,5 @@
 import winston from "winston";
 
-// Define log levels
 const levels = {
   error: 0,
   warn: 1,
@@ -9,7 +8,6 @@ const levels = {
   debug: 4
 };
 
-// Define log colors for each level
 const colors = {
   error: "red",
   warn: "yellow",
@@ -20,7 +18,6 @@ const colors = {
 
 winston.addColors(colors);
 
-// Simple format with just timestamp, level, and message
 const logFormat = winston.format.combine(
   winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss:ms" }),
   winston.format.colorize({ all: true }),

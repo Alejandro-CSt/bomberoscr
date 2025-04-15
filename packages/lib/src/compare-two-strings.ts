@@ -5,7 +5,7 @@
  * @param string2 - The second string to compare.
  * @returns A number between 0 and 1 representing the similarity score.
  */
-export function compareTwoStrings(string1: string, string2: string) {
+export default function compareTwoStrings(string1: string, string2: string) {
   const first = string1.replace(/\s+/g, "");
   const second = string2.replace(/\s+/g, "");
 

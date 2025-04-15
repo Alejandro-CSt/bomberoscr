@@ -1,7 +1,7 @@
-import logger from "@/lib/logger";
 import db from "@bomberoscr/db/db";
 import { type vehiclesInsertSchema, vehicles as vehiclesTable } from "@bomberoscr/db/schema";
 import { conflictUpdateSetAllColumns } from "@bomberoscr/db/utils";
+import logger from "@bomberoscr/lib/logger";
 import { getAllVehicles, getVehicleDetails } from "@bomberoscr/sigae/api";
 import * as Sentry from "@sentry/node";
 import type { z } from "zod";
