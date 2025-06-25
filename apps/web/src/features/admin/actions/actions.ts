@@ -11,13 +11,12 @@ export async function submitAdminForm(formData: FormData) {
     name: "admin-token",
     value: adminToken as string
   });
-  redirect("/estadisticas/admin");
+  redirect("/admin");
 }
 
 export async function validateAdminSession() {
   const cookieStore = await cookies();
   const adminToken = cookieStore.get("admin-token");
-  if (!adminToken) redirect("/estadisticas/admin/auth/login?error=not-authenticated");
-  if (adminToken.value !== env.ADMIN_TOKEN)
-    redirect("/estadisticas/admin/auth/login?error=invalid-token");
+  if (!adminToken) redirect("/admin/auth/login?error=not-authenticated");
+  if (adminToken.value !== env.ADMIN_TOKEN) redirect("/admin/auth/login?error=invalid-token");
 }

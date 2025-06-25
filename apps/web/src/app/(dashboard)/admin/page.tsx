@@ -1,6 +1,6 @@
 "use server";
 
-import { validateAdminSession } from "@/server/admin/actions";
+import { validateAdminSession } from "@/features/admin/actions/actions";
 
 export default async function AdminPage() {
   await validateAdminSession();

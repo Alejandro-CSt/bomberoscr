@@ -62,6 +62,7 @@
     "next-themes": "^0.4.6",
     "nuqs": "^2.3.2",
     "pg": "^8.13.1",
+    "radix-ui": "^1.4.2",
     "react": "19.1.0",
     "react-day-picker": "8.10.1",
     "react-dom": "19.1.0",

@@ -1,6 +1,5 @@
 "use client";
 
-import { destinations } from "@/dashboard/layout/components/sidebar";
 import { cn } from "@/lib/utils";
 import {
   SidebarGroup,
@@ -10,8 +9,10 @@ import {
   SidebarMenuButton,
   SidebarMenuItem
 } from "@/shared/components/ui/sidebar";
+import { destinations } from "@/shared/nav/components/sidebar";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+
 export function NavMain() {
   const path = usePathname();
 

@@ -1,4 +1,4 @@
-import { DashboardCard } from "@/dashboard/overview/components/dashboard-card";
+import { DashboardCard } from "@/features/stats/components/quick-stats-card";
 import db from "@bomberoscr/db/db";
 import {
   dispatchedStations,

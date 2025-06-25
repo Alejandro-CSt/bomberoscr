@@ -1,6 +1,6 @@
 "use client";
 
-import { destinations } from "@/dashboard/layout/components/sidebar";
+import { destinations } from "@/shared/nav/components/sidebar";
 import { usePathname } from "next/navigation";
 
 export function CurrentPageTitle() {

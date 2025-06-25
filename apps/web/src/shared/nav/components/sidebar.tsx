@@ -1,11 +1,7 @@
-import { NavFooter } from "@/dashboard/layout/components/nav-footer";
-import { NavMain } from "@/dashboard/layout/components/nav-main";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarHeader,
-  SidebarRail
-} from "@/shared/components/ui/sidebar";
+import { Sidebar, SidebarContent, SidebarRail } from "@/shared/components/ui/sidebar";
+import { NavFooter } from "@/shared/nav/components/nav-footer";
+import { NavHeader } from "@/shared/nav/components/nav-header";
+import { NavMain } from "@/shared/nav/components/nav-main";
 import {
   BarChartHorizontalIcon,
   Building2Icon,
@@ -23,7 +19,7 @@ export const destinations = {
   navMain: [
     {
       title: "Inicio",
-      url: "/estadisticas",
+      url: "/",
       icon: ChartLineIcon
     },
     {
@@ -74,7 +70,7 @@ export const destinations = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar {...props}>
-      <SidebarHeader />
+      <NavHeader />
       <SidebarContent>
         <NavMain />
       </SidebarContent>
