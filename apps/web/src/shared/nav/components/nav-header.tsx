@@ -3,8 +3,7 @@
 import { cn } from "@/lib/utils";
 import { Button } from "@/shared/components/ui/button";
 import { SidebarHeader, useSidebar } from "@/shared/components/ui/sidebar";
-import { ArrowLeftToLineIcon } from "lucide-react";
-import Image from "next/image";
+import { ArrowLeftToLineIcon, FireExtinguisherIcon } from "lucide-react";
 import Link from "next/link";
 
 export function NavHeader() {
@@ -14,12 +13,12 @@ export function NavHeader() {
     <SidebarHeader>
       <div className="flex items-center justify-between gap-2">
         <Link href="/">
-          <Image src="/alarm-3d.png" height={48} width={48} alt="Logo" />
+          <FireExtinguisherIcon className="size-8" />
         </Link>
         <Button
           size="icon"
           variant="ghost"
-          className={cn(!open && "hidden")}
+          className={cn(!open && "hidden", "max-md:hidden")}
           onClick={() => setOpen(false)}
         >
           <ArrowLeftToLineIcon />

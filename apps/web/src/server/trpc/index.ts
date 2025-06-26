@@ -1,3 +1,4 @@
+import { featuredIncidentsRouter } from "@/features/homepage/api/featuredIncidentsRouter";
 import { incidentsRouter } from "@/server/trpc/incidents";
 import { router } from "@/server/trpc/init";
 import { stationsRouter } from "@/server/trpc/stations";
@@ -5,7 +6,8 @@ import type { inferRouterOutputs } from "@trpc/server";
 
 export const appRouter = router({
   stations: stationsRouter,
-  incidents: incidentsRouter
+  incidents: incidentsRouter,
+  featuredIncidents: featuredIncidentsRouter
 });
 
 export type AppRouter = typeof appRouter;

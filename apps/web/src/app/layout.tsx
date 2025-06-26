@@ -1,11 +1,12 @@
 import TRPCProvider from "@/lib/trpc/provider";
-import { ThemeProvider } from "@/map/layout/context/theme-provider";
+import { cn } from "@/lib/utils";
+import Header from "@/shared/components/header";
+import { SidebarInset, SidebarProvider } from "@/shared/components/ui/sidebar";
+import { ThemeProvider } from "@/shared/context/theme-provider";
+import { AppSidebar } from "@/shared/nav/components/sidebar";
 import "@/styles/globals.css";
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
-import Head from "next/head";
-import Script from "next/script";
-import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 const title = "Mapa de incidentes atendidos por Bomberos de Costa Rica en tiempo real";
 const description =
@@ -61,24 +62,23 @@ export const metadata: Metadata = {
   }
 };
 
-const geist = Geist({ subsets: ["latin"], weight: "variable" });
+const geist = Geist({ subsets: ["latin-ext"], weight: ["400", "500", "600", "700"] });
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es" suppressHydrationWarning>
-      <body className="antialiased" style={geist.style}>
+      <body className={cn("antialiased", geist.className)}>
         <ThemeProvider attribute="class" defaultTheme="system">
-          <Head>
-            <Script
-              defer
-              src="https://u.anifz.com/script.js"
-              data-website-id="3d28fb97-aefd-4f31-90dd-a609e21d0b22"
-              strategy="lazyOnload"
-            />
-          </Head>
-          <NuqsAdapter>
-            <TRPCProvider>{children}</TRPCProvider>
-          </NuqsAdapter>
+          <SidebarProvider>
+            <AppSidebar variant="inset" collapsible="icon" />
+            <SidebarInset>
+              <main>
+                <Header />
+                {/* <Header /> */}
+                <TRPCProvider>{children}</TRPCProvider>
+              </main>
+            </SidebarInset>
+          </SidebarProvider>
         </ThemeProvider>
       </body>
     </html>

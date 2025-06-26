@@ -8,6 +8,7 @@ export default function ThemeToggle() {
   return (
     <div>
       <Toggle
+        suppressHydrationWarning
         variant="outline"
         className="group size-8 rounded-full border-none text-muted-foreground shadow-none data-[state=on]:bg-transparent data-[state=on]:text-muted-foreground data-[state=on]:hover:bg-muted data-[state=on]:hover:text-foreground"
         pressed={theme === "dark"}
