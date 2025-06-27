@@ -12,22 +12,22 @@
     "@bomberoscr/lib": "workspace:*",
     "@bomberoscr/sigae": "workspace:*",
     "@bomberoscr/sync-core": "workspace:*",
-    "@sentry/node": "^9.8.0",
-    "dotenv": "^16.4.7",
-    "dotenv-expand": "^12.0.1",
+    "@sentry/node": "^9.33.0",
+    "dotenv": "^16.6.1",
+    "dotenv-expand": "^12.0.2",
     "drizzle-zod": "^0.6.1",
     "node-cron": "^3.0.3",
-    "tsx": "^4.19.2",
+    "tsx": "^4.20.3",
     "winston": "^3.17.0",
-    "zod": "^3.24.1"
+    "zod": "^3.25.67"
   },
   "devDependencies": {
     "@bomberoscr/typescript-config": "workspace:*",
-    "@types/node": "^20",
+    "@types/node": "^20.19.1",
     "@types/node-cron": "^3.0.11",
-    "nodemon": "^3.1.9",
+    "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
-    "tsup": "^8.4.0",
-    "typescript": "^5"
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.3"
   }
 }
