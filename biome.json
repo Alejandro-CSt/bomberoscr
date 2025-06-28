@@ -8,7 +8,7 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "ignore": [".next", "node_modules/*", ".turbo"]
+    "ignore": [".next*", "node_modules/*", ".turbo"]
   },
   "formatter": {
     "enabled": true,
