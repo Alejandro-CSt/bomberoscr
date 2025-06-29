@@ -1,0 +1,25 @@
+{
+  "name": "@bomberoscr/sync-domain",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@bomberoscr/db": "workspace:*",
+    "@bomberoscr/lib": "workspace:*",
+    "dotenv": "^16.4.7",
+    "dotenv-expand": "^11.0.1",
+    "neverthrow": "^8.2.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@bomberoscr/typescript-config": "workspace:*",
+    "typescript": "^5.8.3"
+  },
+  "exports": {
+    "./api": "./src/api.ts",
+    "./fetcher": "./src/fetcher.ts",
+    "./persist/*": "./src/persist/*.ts",
+    "./transform/*": "./src/transform/*.ts",
+    "./types": "./src/types.ts"
+  }
+}

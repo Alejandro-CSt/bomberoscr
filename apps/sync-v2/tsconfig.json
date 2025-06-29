@@ -1,0 +1,22 @@
+{
+  "extends": "@bomberoscr/typescript-config/base.json",
+  "compilerOptions": {
+    "module": "NodeNext",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    },
+    "outDir": "./dist",
+    "declaration": true,
+    "declarationDir": "./dist"
+  },
+  "include": [
+    "**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}
