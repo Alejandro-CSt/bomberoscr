@@ -6,7 +6,7 @@ import logger from "@bomberoscr/lib/logger";
 import { Worker } from "bullmq";
 
 export const worker = new Worker(
-  "incidentDiscovery",
+  "incident-discovery",
   async () => {
     const newIncidents = await getNewIncidents();
 
@@ -17,12 +17,17 @@ export const worker = new Worker(
 
     const newIncidentsIds = newIncidents.value;
 
+    if (newIncidentsIds.length === 0) {
+      logger.info("No new incidents found");
+      return { processed: true, discoveredIncidents: 0 };
+    }
+
     await openIncidentsQueue.addBulk(
       newIncidentsIds.map((incidentId) => ({
         name: "open-incident",
         data: { incidentId } as IncidentSyncJobData,
         opts: {
-          deduplication: { id: incidentId.toString() },
+          jobId: `open-incident-${incidentId}`,
           delay: 0
         }
       }))
@@ -46,13 +51,10 @@ worker.on("completed", (job) => {
   });
 });
 
-worker.on("failed", (job, err) => {
-  logger.error("Discovery job failed", {
-    jobId: job?.id,
-    error: err.message
-  });
+worker.on("failed", (_, err) => {
+  logger.error(`Discovery job failed: ${err.message}, ${err.stack}`);
 });
 
 worker.on("error", (err) => {
-  logger.error("Discovery worker error", { error: err.message });
+  logger.error(`Discovery worker error: ${err.message}`);
 });

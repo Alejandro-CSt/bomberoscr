@@ -8,7 +8,7 @@ import {
   text,
   timestamp
 } from "drizzle-orm/pg-core";
-import { createSelectSchema } from "drizzle-zod";
+import { createInsertSchema } from "drizzle-zod";
 
 export const stations = pgTable("stations", {
   id: integer().primaryKey(),
@@ -218,14 +218,13 @@ export const incidentsRelations = relations(incidents, ({ one, many }) => ({
   })
 }));
 
-export const stationsInsertSchema = createSelectSchema(stations);
-export const vehiclesInsertSchema = createSelectSchema(vehicles);
-export const vehicleDisponibilityInsertSchema = createSelectSchema(vehicleDisponibility);
-export const dispatchedVehiclesInsertSchema = createSelectSchema(dispatchedVehicles);
-export const dispatchedStationsInsertSchema = createSelectSchema(dispatchedStations);
-export const incidentTypesInsertSchema = createSelectSchema(incidentTypes);
-export const incidentsInsertSchema = createSelectSchema(incidents);
-
-export const provincesInsertSchema = createSelectSchema(provinces);
-export const cantonsInsertSchema = createSelectSchema(cantons);
-export const districtsInsertSchema = createSelectSchema(districts);
+export const stationsInsertSchema = createInsertSchema(stations);
+export const vehiclesInsertSchema = createInsertSchema(vehicles);
+export const vehicleDisponibilityInsertSchema = createInsertSchema(vehicleDisponibility);
+export const dispatchedVehiclesInsertSchema = createInsertSchema(dispatchedVehicles);
+export const dispatchedStationsInsertSchema = createInsertSchema(dispatchedStations);
+export const incidentTypesInsertSchema = createInsertSchema(incidentTypes);
+export const incidentsInsertSchema = createInsertSchema(incidents);
+export const provincesInsertSchema = createInsertSchema(provinces);
+export const cantonsInsertSchema = createInsertSchema(cantons);
+export const districtsInsertSchema = createInsertSchema(districts);

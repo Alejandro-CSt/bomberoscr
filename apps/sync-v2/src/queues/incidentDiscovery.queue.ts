@@ -1,7 +1,7 @@
 import { redis } from "@/config/redis";
 import { Queue } from "bullmq";
 
-export const incidentDiscoveryQueue = new Queue("incidentDiscovery", {
+export const incidentDiscoveryQueue = new Queue("incident-discovery", {
   connection: redis,
   defaultJobOptions: {
     removeOnComplete: 10,

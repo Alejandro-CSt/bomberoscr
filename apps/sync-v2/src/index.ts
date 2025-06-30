@@ -5,7 +5,7 @@ import logger from "@bomberoscr/lib/logger";
 import { ResultAsync } from "neverthrow";
 
 async function startDiscoveryScheduler() {
-  await incidentDiscoveryQueue.upsertJobScheduler("incidentDiscoveryScheduler", {
+  await incidentDiscoveryQueue.upsertJobScheduler("incident-discovery-scheduler", {
     pattern: "* * * * *",
     startDate: new Date(Date.now())
   });

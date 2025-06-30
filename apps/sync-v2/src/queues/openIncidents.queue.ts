@@ -6,6 +6,7 @@ export const openIncidentsQueue = new Queue("open-incidents", {
   defaultJobOptions: {
     removeOnComplete: 10,
     removeOnFail: 5,
+    delay: 3 * 60 * 1000,
     attempts: 3,
     backoff: {
       type: "exponential",
