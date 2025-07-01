@@ -19,9 +19,12 @@ const colors = {
 winston.addColors(colors);
 
 const logFormat = winston.format.combine(
-  winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss:ms" }),
+  winston.format.timestamp({ format: "DD-MMMM-YYYY HH:mm:ss" }),
   winston.format.colorize({ all: true }),
-  winston.format.printf((info) => `${info.timestamp} ${info.level}: ${info.message}`)
+  winston.format.printf(
+    (info) =>
+      `[${info.timestamp}] [${info.level}] ${info.message}${info.meta ? `\n${JSON.stringify(info.meta)}` : ""}`
+  )
 );
 
 const level = process.env.NODE_ENV === "development" ? "debug" : "http";
