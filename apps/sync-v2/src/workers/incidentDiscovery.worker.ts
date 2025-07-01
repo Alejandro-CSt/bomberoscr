@@ -18,7 +18,6 @@ export const worker = new Worker(
     const newIncidentsIds = newIncidents.value;
 
     if (newIncidentsIds.length === 0) {
-      logger.info("No new incidents found");
       return { processed: true, discoveredIncidents: 0 };
     }
 
@@ -33,10 +32,6 @@ export const worker = new Worker(
       }))
     );
 
-    logger.info("Added new incidents to queue", {
-      discoveredIncidents: newIncidentsIds.length
-    });
-
     return { processed: true, discoveredIncidents: newIncidentsIds.length };
   },
   {
@@ -45,9 +40,16 @@ export const worker = new Worker(
 );
 
 worker.on("completed", (job) => {
-  logger.info("Discovery job completed", {
+  const discoveredIncidents: number = job.returnvalue?.discoveredIncidents ?? 0;
+
+  const message =
+    discoveredIncidents === 0
+      ? "Discovery job completed - no incidents found"
+      : `Discovery job completed - ${discoveredIncidents} new incidents found`;
+
+  logger.info(message, {
     jobId: job.id,
-    discoveredIncidents: job.returnvalue?.discoveredIncidents
+    discoveredIncidents
   });
 });
 
