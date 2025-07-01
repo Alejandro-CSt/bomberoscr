@@ -9,7 +9,7 @@ export const vehicleDisponibilityQueue = new Queue("vehicleDisponibility", {
     attempts: 3,
     backoff: {
       type: "exponential",
-      delay: 60 * 1000 // 1 minute
+      delay: 3 * 60 * 1000
     }
   }
 });

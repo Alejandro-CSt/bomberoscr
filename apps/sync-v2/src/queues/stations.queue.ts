@@ -9,7 +9,7 @@ export const stationsQueue = new Queue("stations", {
     attempts: 3,
     backoff: {
       type: "exponential",
-      delay: 60 * 1000 // 1 minute
+      delay: 5 * 60 * 1000 // 5 minutes
     }
   }
 });
