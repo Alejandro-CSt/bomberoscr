@@ -5,7 +5,6 @@ import useTimeRangeQueryState from "@/features/homepage/hooks/useTimeRangeQueryS
 import { trpc } from "@/lib/trpc/client";
 import { cn, getRelativeTime } from "@/lib/utils";
 import { Skeleton } from "@/shared/components/ui/skeleton";
-import { ArrowRightIcon } from "lucide-react";
 import Link from "next/link";
 
 export function FeaturedIncidents() {
@@ -16,21 +15,18 @@ export function FeaturedIncidents() {
   });
 
   return (
-    <div className="overflow-hidden whitespace-nowrap rounded-lg border shadow-2xl">
+    <div className="overflow-hidden whitespace-nowrap rounded-lg border bg-card shadow-2xl">
       <div className="flex items-center justify-between gap-4 border-b p-2 font-medium text-size-3">
         <div className="flex items-center gap-4 text-xs">
-          <h2 className="mr-auto font-semibold text-xs">Incidentes destacados</h2>
+          <h2 className="mr-auto font-semibold text-sm">Incidentes destacados</h2>
           <div className="*:not-first:mt-2">
             <TimeRangeSelect value={timeRange} onValueChange={setTimeRange} />
           </div>
         </div>
-        <Link
-          className="group flex items-center gap-2 text-xs hover:text-primary-foreground"
-          href="/incidentes/destacados"
-        >
+        {/* <Link className="group flex items-center gap-2 text-xs" href="/incidentes/destacados">
           Ver todos
           <ArrowRightIcon className="size-3 transition-transform group-hover:translate-x-1" />
-        </Link>
+        </Link> */}
       </div>
       <div className="relative">
         <ul>

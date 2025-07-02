@@ -22,7 +22,7 @@ export default function TimeRangeSelect({ value, onValueChange }: TimeRangeSelec
       value={value.toString()}
       onValueChange={(val) => onValueChange(Number(val))}
     >
-      <SelectTrigger className="h-6 border-none p-0 text-xs focus-visible:ring-0">
+      <SelectTrigger className="h-6 border-none p-0 px-2 text-xs focus-visible:ring-0">
         <SelectValue placeholder="Rango de tiempo" />
       </SelectTrigger>
       <SelectContent className="text-xs">
