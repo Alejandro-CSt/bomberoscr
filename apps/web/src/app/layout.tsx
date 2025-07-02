@@ -7,6 +7,7 @@ import { AppSidebar } from "@/shared/nav/components/sidebar";
 import "@/styles/globals.css";
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 const title = "Mapa de incidentes atendidos por Bomberos de Costa Rica en tiempo real";
 const description =
@@ -68,18 +69,20 @@ export default async function Layout({ children }: { children: React.ReactNode }
   return (
     <html lang="es" suppressHydrationWarning>
       <body className={cn("antialiased", geist.className)}>
-        <ThemeProvider attribute="class" defaultTheme="system">
-          <SidebarProvider>
-            <AppSidebar variant="inset" collapsible="icon" />
-            <SidebarInset>
-              <main>
-                <Header />
-                {/* <Header /> */}
-                <TRPCProvider>{children}</TRPCProvider>
-              </main>
-            </SidebarInset>
-          </SidebarProvider>
-        </ThemeProvider>
+        <NuqsAdapter>
+          <ThemeProvider attribute="class" defaultTheme="system">
+            <SidebarProvider>
+              <AppSidebar variant="inset" collapsible="icon" />
+              <SidebarInset>
+                <main>
+                  <Header />
+                  {/* <Header /> */}
+                  <TRPCProvider>{children}</TRPCProvider>
+                </main>
+              </SidebarInset>
+            </SidebarProvider>
+          </ThemeProvider>
+        </NuqsAdapter>
       </body>
     </html>
   );

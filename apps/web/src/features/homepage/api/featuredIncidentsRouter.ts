@@ -1,3 +1,4 @@
+import { DEFAULT_TIME_RANGE, timeRangeSchema } from "@/features/homepage/schemas/timeRange";
 import { publicProcedure, router } from "@/server/trpc/init";
 import db from "@bomberoscr/db/db";
 import { districts, incidents } from "@bomberoscr/db/schema";
@@ -13,13 +14,13 @@ export const featuredIncidentsRouter = router({
    * field representing the sum of dispatched vehicles and stations. Results are ordered by
    * highest deployment first.
    *
-   * @param input.timeRange - Number of days to look back for incidents (1-7 days, default: 3)
+   * @param input.timeRange - Number of days to look back for incidents (7, 30, 90, or 365 days, default: 7)
    * @returns Array of incidents with all fields plus `totalDispatched` count, sorted by deployment size descending
    */
   getFeaturedIncidents: publicProcedure
     .input(
       z.object({
-        timeRange: z.number().min(1).max(7).default(3),
+        timeRange: timeRangeSchema.default(DEFAULT_TIME_RANGE),
         limit: z.number().min(1).max(30).default(5)
       })
     )
@@ -56,8 +57,7 @@ export const featuredIncidentsRouter = router({
         .orderBy(
           desc(
             sql`((SELECT COALESCE(COUNT(*), 0) FROM "dispatched_vehicles" dv WHERE dv."incidentId" = incidents.id) + (SELECT COALESCE(COUNT(*), 0) FROM "dispatched_stations" ds WHERE ds."incidentId" = incidents.id))`
-          ),
-          desc(incidents.id)
+          )
         )
         .limit(limit);
     })
