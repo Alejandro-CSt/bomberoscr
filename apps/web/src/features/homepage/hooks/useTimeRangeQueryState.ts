@@ -1,3 +1,5 @@
+"use client";
+
 import {
   ALLOWED_TIME_RANGE_VALUES,
   DEFAULT_TIME_RANGE
