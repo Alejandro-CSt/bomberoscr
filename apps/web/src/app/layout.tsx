@@ -1,9 +1,7 @@
 import TRPCProvider from "@/lib/trpc/provider";
 import { cn } from "@/lib/utils";
 import Header from "@/shared/components/header";
-import { SidebarInset, SidebarProvider } from "@/shared/components/ui/sidebar";
 import { ThemeProvider } from "@/shared/context/theme-provider";
-import { AppSidebar } from "@/shared/nav/components/sidebar";
 import "@/styles/globals.css";
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
@@ -71,16 +69,10 @@ export default async function Layout({ children }: { children: React.ReactNode }
       <body className={cn("antialiased", geist.className)}>
         <NuqsAdapter>
           <ThemeProvider attribute="class" defaultTheme="system">
-            <SidebarProvider>
-              <AppSidebar variant="inset" collapsible="icon" />
-              <SidebarInset>
-                <main>
-                  <Header />
-                  {/* <Header /> */}
-                  <TRPCProvider>{children}</TRPCProvider>
-                </main>
-              </SidebarInset>
-            </SidebarProvider>
+            <main>
+              <Header />
+              <TRPCProvider>{children}</TRPCProvider>
+            </main>
           </ThemeProvider>
         </NuqsAdapter>
       </body>

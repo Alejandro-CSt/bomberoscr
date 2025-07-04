@@ -6,7 +6,7 @@ import useTimeRangeQueryState from "@/features/homepage/hooks/useTimeRangeQueryS
 import { trpc } from "@/lib/trpc/client";
 
 export function FeaturedIncidents() {
-  const { timeRange, setTimeRange } = useTimeRangeQueryState();
+  const { timeRange } = useTimeRangeQueryState();
   const { data, isLoading, isError } = trpc.featuredIncidents.getFeaturedIncidents.useQuery({
     timeRange,
     limit: 5
@@ -16,7 +16,7 @@ export function FeaturedIncidents() {
   if (isLoading) {
     return (
       <div className="overflow-hidden whitespace-nowrap rounded-lg border bg-card shadow-2xl">
-        <FeaturedIncidentsHeader timeRange={timeRange} onTimeRangeChange={setTimeRange} />
+        <FeaturedIncidentsHeader />
         <div className="relative">
           <ul>
             {Array.from({ length: 5 }, (_, index) => ({
@@ -40,7 +40,7 @@ export function FeaturedIncidents() {
   if (isError) {
     return (
       <div className="overflow-hidden whitespace-nowrap rounded-lg border bg-card shadow-2xl">
-        <FeaturedIncidentsHeader timeRange={timeRange} onTimeRangeChange={setTimeRange} />
+        <FeaturedIncidentsHeader />
         <div className="relative">
           <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm">
             <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-4 text-center">
@@ -60,7 +60,7 @@ export function FeaturedIncidents() {
 
   return (
     <div className="overflow-hidden whitespace-nowrap rounded-lg border bg-card shadow-2xl">
-      <FeaturedIncidentsHeader timeRange={timeRange} onTimeRangeChange={setTimeRange} />
+      <FeaturedIncidentsHeader />
       <div className="relative">
         <ul>
           {sortedIncidents.map((incident, index) => (

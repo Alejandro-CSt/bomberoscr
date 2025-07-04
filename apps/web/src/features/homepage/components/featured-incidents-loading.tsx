@@ -1,11 +1,10 @@
 import { FeaturedIncidentsHeader } from "@/features/homepage/components/featured-incidents-header";
 import { IncidentListItem } from "@/features/homepage/components/incident-list-item";
-import { DEFAULT_TIME_RANGE } from "@/features/homepage/schemas/timeRange";
 
 export function FeaturedIncidentsLoading() {
   return (
     <div className="overflow-hidden whitespace-nowrap rounded-lg border bg-card shadow-2xl">
-      <FeaturedIncidentsHeader timeRange={DEFAULT_TIME_RANGE} onTimeRangeChange={() => {}} />
+      <FeaturedIncidentsHeader />
       <div className="relative">
         <ul>
           {Array.from({ length: 5 }, (_, index) => ({

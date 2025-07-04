@@ -1,3 +1,6 @@
+"use client";
+
+import useTimeRangeQueryState from "@/features/homepage/hooks/useTimeRangeQueryState";
 import {
   ALLOWED_TIME_RANGE_VALUES,
   TIME_RANGE_LABELS
@@ -10,17 +13,13 @@ import {
   SelectValue
 } from "@/shared/components/ui/select";
 
-interface TimeRangeSelectProps {
-  value: number;
-  onValueChange: (value: number) => void;
-}
-
-export default function TimeRangeSelect({ value, onValueChange }: TimeRangeSelectProps) {
+export default function TimeRangeSelect() {
+  const { timeRange, setTimeRange } = useTimeRangeQueryState();
   return (
     <Select
-      defaultValue={value.toString()}
-      value={value.toString()}
-      onValueChange={(val) => onValueChange(Number(val))}
+      defaultValue={timeRange.toString()}
+      value={timeRange.toString()}
+      onValueChange={(val) => setTimeRange(Number(val))}
     >
       <SelectTrigger className="h-6 border-none p-0 px-2 text-xs focus-visible:ring-0">
         <SelectValue placeholder="Rango de tiempo" />
