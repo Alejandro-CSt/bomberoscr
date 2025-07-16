@@ -1,6 +1,6 @@
 import { publicProcedure, router } from "@/server/trpc/init";
 import db from "@bomberoscr/db/db";
-import { districts, incidents } from "@bomberoscr/db/schema";
+import { districts, incidentTypes, incidents, stations } from "@bomberoscr/db/schema";
 import type { inferRouterOutputs } from "@trpc/server";
 import { desc, eq, sql } from "drizzle-orm";
 import { z } from "zod";
@@ -26,8 +26,11 @@ export const latestIncidentsRouter = router({
         .select({
           id: incidents.id,
           incidentTimestamp: incidents.incidentTimestamp,
+          address: incidents.address,
           importantDetails: incidents.importantDetails,
           districtName: districts.name,
+          responsibleStation: stations.name,
+          incidentType: incidentTypes.name,
           dispatchedVehiclesCount: sql<number>`
             (SELECT COALESCE(COUNT(*), 0)
              FROM "dispatched_vehicles" dv
@@ -43,6 +46,8 @@ export const latestIncidentsRouter = router({
         })
         .from(incidents)
         .leftJoin(districts, eq(incidents.districtId, districts.id))
+        .leftJoin(stations, eq(incidents.responsibleStation, stations.id))
+        .leftJoin(incidentTypes, eq(incidents.specificIncidentCode, incidentTypes.incidentCode))
         .orderBy(desc(incidents.incidentTimestamp))
         .limit(limit);
     })

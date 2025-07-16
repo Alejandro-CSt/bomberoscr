@@ -1,5 +1,4 @@
 import { cn, getRelativeTime, isUndefinedDate } from "@/lib/utils";
-import { FloatingPanelHeader } from "@/map/layout/components/floating-panel-header";
 import { getDetailedIncidentById } from "@/server/queries";
 import { ErrorPanel } from "@/shared/components/error-panel";
 import {
@@ -15,8 +14,13 @@ import {
   TableHeader,
   TableRow
 } from "@/shared/components/ui/table";
-import { ArrowElbowDownRight, CaretUpDown, FireTruck } from "@phosphor-icons/react/dist/ssr";
+import {
+  ArrowElbowDownRightIcon,
+  CaretUpDownIcon,
+  FireTruckIcon
+} from "@phosphor-icons/react/dist/ssr";
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { z } from "zod";
 
 export async function generateMetadata({
@@ -113,13 +117,7 @@ export default async function DetailedIncidentPanel({
   const incident = await getDetailedIncidentById(idResult.data);
 
   if (!incident) {
-    return (
-      <ErrorPanel
-        title="Detalles del incidente"
-        message="No se encontró el incidente"
-        backHref="/incidentes"
-      />
-    );
+    notFound();
   }
 
   const formatDateTime = (date: string | undefined) => {
@@ -138,8 +136,7 @@ export default async function DetailedIncidentPanel({
   };
 
   return (
-    <div className="flex h-full flex-col overflow-y-auto">
-      <FloatingPanelHeader title="Detalles del incidente" />
+    <div className="mx-auto flex h-full max-w-7xl flex-col overflow-y-auto">
       <div className="flex flex-col gap-4 p-4">
         <section className="flex justify-between">
           <div className="flex flex-col">
@@ -167,7 +164,7 @@ export default async function DetailedIncidentPanel({
               <div className="flex flex-col gap-0.5 text-xs tracking-wider">
                 <p>{incident.dispatchIncidentType?.name}</p>
                 <div className="inline-flex items-center gap-0.5">
-                  <ArrowElbowDownRight />
+                  <ArrowElbowDownRightIcon />
                   <p>{incident.specificDispatchIncidentType?.name}</p>
                 </div>
               </div>
@@ -177,7 +174,7 @@ export default async function DetailedIncidentPanel({
               <div className="flex flex-col gap-0.5 text-xs tracking-wider">
                 <p>{incident.dispatchIncidentType?.name}</p>
                 <div className="inline-flex items-center gap-0.5">
-                  <ArrowElbowDownRight />
+                  <ArrowElbowDownRightIcon />
                   <p>{incident.specificDispatchIncidentType?.name}</p>
                 </div>
               </div>
@@ -218,14 +215,14 @@ export default async function DetailedIncidentPanel({
               <CollapsibleTrigger className="flex w-full items-center justify-between rounded-md border px-4 py-2 data-[state=open]:rounded-b-none">
                 <span className="flex flex-col items-start gap-1">
                   <span className="flex items-center gap-4">
-                    <FireTruck className="size-6" weight="fill" />
+                    <FireTruckIcon className="size-6" weight="fill" />
                     {vehicle.vehicle?.internalNumber}
                   </span>
                   <span className="text-muted-foreground text-sm leading-none">
                     {vehicle.station.name}
                   </span>
                 </span>
-                <CaretUpDown />
+                <CaretUpDownIcon />
               </CollapsibleTrigger>
               <CollapsibleContent className="rounded-b-md border-x border-b px-4 py-4">
                 {!isUndefinedDate(vehicle.dispatchedTime) && (

@@ -18,13 +18,22 @@ export function isUndefinedDate(date: Date) {
 }
 
 /**
- * Returns the relative time of a date, in spanish (es-CR) format.
- * @example getRelativeTime("2025-01-31T13:26:48.000Z")) // "hace 6 días"
- * @param date date to evaluate
+ * Returns the relative time of a date in Spanish (es-CR) format.
+ *
+ * @param date - ISO string or date to evaluate.
+ * @param reference - Optional fixed "current" time.  When omitted, `new Date()` is used.
+ *
+ * @example
+ * getRelativeTime("2025-01-31T13:26:48.000Z")
+ * "hace 6 días"
+ *
+ * @example
+ * getRelativeTime("2025-01-31T13:26:48.000Z", new Date("2025-02-01T13:26:48.000Z"))
+ * "hace 1 día"
  */
-export function getRelativeTime(date: string): string {
+export function getRelativeTime(date: string, reference?: Date): string {
   const rtf = new Intl.RelativeTimeFormat("es-CR", { numeric: "auto" });
-  const now = new Date();
+  const now = reference ?? new Date();
   const then = new Date(date);
 
   const diffInSeconds = (now.getTime() - then.getTime()) / 1000;

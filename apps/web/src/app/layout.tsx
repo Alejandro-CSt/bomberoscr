@@ -1,6 +1,5 @@
 import TRPCProvider from "@/lib/trpc/provider";
 import { cn } from "@/lib/utils";
-import Header from "@/shared/components/header";
 import { ThemeProvider } from "@/shared/context/theme-provider";
 import "@/styles/globals.css";
 import type { Metadata } from "next";
@@ -69,10 +68,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
       <body className={cn("antialiased", geist.className)}>
         <NuqsAdapter>
           <ThemeProvider attribute="class" defaultTheme="system">
-            <main>
-              <Header />
-              <TRPCProvider>{children}</TRPCProvider>
-            </main>
+            <TRPCProvider>{children}</TRPCProvider>
           </ThemeProvider>
         </NuqsAdapter>
       </body>

@@ -1,0 +1,75 @@
+"use client";
+
+import { LiveRelativeTime } from "@/features/sidebar/components/live-relative-time";
+import { trpc } from "@/lib/trpc/client";
+import { cn } from "@/lib/utils";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarHeader
+} from "@/shared/components/ui/sidebar";
+import { ArrowRightIcon } from "lucide-react";
+import { Geist_Mono } from "next/font/google";
+import Link from "next/link";
+
+const geist = Geist_Mono({ subsets: ["latin-ext"], weight: ["400", "500", "600", "700"] });
+
+export function LatestIncidentsSidebar() {
+  const { data: incidents, dataUpdatedAt } = trpc.latestIncidents.getLatestIncidents.useQuery(
+    { limit: 20 },
+    { refetchInterval: 25_000 }
+  );
+
+  return (
+    <Sidebar collapsible="none" className={cn("hidden flex-1 md:flex", geist.className)}>
+      <SidebarHeader className="gap-3.5 border-b p-4">
+        <div className="flex w-full items-center justify-between">
+          <div className="text-ellipsis whitespace-nowrap font-medium text-base text-foreground">
+            Últimos incidentes
+            <p className="text-muted-foreground text-xs">
+              Actualizado <LiveRelativeTime iso={new Date(dataUpdatedAt).toISOString()} />
+            </p>
+          </div>
+        </div>
+      </SidebarHeader>
+
+      <SidebarContent>
+        <SidebarGroup className="p-0">
+          <SidebarGroupContent>
+            {incidents?.map((incident) => (
+              <Link
+                key={incident.id}
+                href={`/incidentes/${incident.id}`}
+                className="flex flex-col gap-3 border-b p-4 text-sm leading-tight last:border-b-0 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+              >
+                <div className="flex w-full justify-between gap-2">
+                  <p className="line-clamp-2">{incident.incidentType ?? "DESCONOCIDO"}</p>
+                  <div className="flex flex-col items-end">
+                    <p className="whitespace-nowrap text-muted-foreground text-xs first-letter:uppercase">
+                      <LiveRelativeTime iso={incident.incidentTimestamp} />
+                    </p>
+                  </div>
+                </div>
+                <p className="line-clamp-2 text-muted-foreground text-sm">{incident.address}</p>
+                <div className="flex flex-col">
+                  <p className="text-muted-foreground text-xs">ESTACIÓN RESPONSABLE</p>
+                  <p className="font-semibold text-muted-foreground">
+                    {incident.responsibleStation ?? "DESCONOCIDO"}
+                  </p>
+                </div>
+              </Link>
+            ))}
+            <Link
+              href="/incidentes"
+              className="flex min-h-20 w-full items-center justify-center gap-4 border-b p-4 leading-tight underline underline-offset-4 last:border-b-0 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+            >
+              Ver todos los incidentes <ArrowRightIcon className="size-4" />
+            </Link>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+    </Sidebar>
+  );
+}
