@@ -14,7 +14,8 @@
   "exports": {
     "./utils": "./src/utils.ts",
     "./db": "./src/db.ts",
-    "./schema": "./src/schema.ts"
+    "./schema": "./src/schema.ts",
+    "./queries/*": "./src/queries/incidentsTable.ts"
   },
   "devDependencies": {
     "@bomberoscr/typescript-config": "workspace:*",

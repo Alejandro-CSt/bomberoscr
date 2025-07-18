@@ -50,19 +50,19 @@ export default function Header() {
   const { title, breadcrumbs } = getCurrentPageInfo();
 
   return (
-    <header className="sticky top-0 flex shrink-0 items-center gap-2 border-b bg-background p-4">
+    <header className="sticky top-0 z-10 flex shrink-0 items-center gap-2 border-b bg-background p-4">
       <SidebarTrigger className="-ml-1" />
       <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
       <Breadcrumb>
         <BreadcrumbList>
-          <BreadcrumbItem className="hidden md:block">
+          <BreadcrumbItem>
             <BreadcrumbLink asChild>
               <Link href="/">Inicio</Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
           {breadcrumbs.length > 0 && (
             <>
-              <BreadcrumbSeparator className="hidden md:block" />
+              <BreadcrumbSeparator />
               {breadcrumbs.map((crumb, index) => (
                 <div key={crumb.href} className="flex items-center">
                   <BreadcrumbItem>
@@ -74,9 +74,7 @@ export default function Header() {
                       </BreadcrumbLink>
                     )}
                   </BreadcrumbItem>
-                  {index < breadcrumbs.length - 1 && (
-                    <BreadcrumbSeparator className="hidden md:block" />
-                  )}
+                  {index < breadcrumbs.length - 1 && <BreadcrumbSeparator />}
                 </div>
               ))}
             </>

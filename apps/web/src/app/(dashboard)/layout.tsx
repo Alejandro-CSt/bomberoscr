@@ -12,9 +12,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       }
     >
       <AppSidebar />
-      <SidebarInset>
+      <SidebarInset className="min-w-0 overflow-hidden">
         <Header />
-        <main>{children}</main>
+        <main className="min-w-0 overflow-auto">{children}</main>
       </SidebarInset>
     </SidebarProvider>
   );
