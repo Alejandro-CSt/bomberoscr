@@ -1,8 +1,8 @@
 "use client";
 
-import { DataTableColumnHeader } from "@/features/incidents/components/table/data-table-column-header";
-import DataTableDate from "@/features/incidents/components/table/data-table-date";
-import { DataTableIsOpenIndicator } from "@/features/incidents/components/table/data-table-is-open-column";
+import { DataTableColumnHeader } from "@/features/incidents/table/components/data-table-column-header";
+import DataTableDate from "@/features/incidents/table/components/data-table-date";
+import { DataTableIsOpenIndicator } from "@/features/incidents/table/components/data-table-is-open-column";
 import type { getIncidentsForTable } from "@bomberoscr/db/queries/";
 import type { ColumnDef } from "@tanstack/react-table";
 

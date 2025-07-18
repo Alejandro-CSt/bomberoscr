@@ -1,5 +1,5 @@
-import { columns } from "@/features/incidents/components/table/columns";
-import { DataTable } from "@/features/incidents/components/table/data-table";
+import { columns } from "@/features/incidents/table/components/columns";
+import { DataTable } from "@/features/incidents/table/components/data-table";
 import { getIncidentsForTable } from "@bomberoscr/db/queries/incidentsTable";
 
 export default async function Page() {

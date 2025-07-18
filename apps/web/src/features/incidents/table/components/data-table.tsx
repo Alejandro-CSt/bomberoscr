@@ -9,7 +9,7 @@ import {
 } from "@tanstack/react-table";
 import * as React from "react";
 
-import { DataTableViewOptions } from "@/features/incidents/components/table/data-table-view-options";
+import { DataTableViewOptions } from "@/features/incidents/table/components/data-table-view-options";
 import { cn } from "@/lib/utils";
 import { Input } from "@/shared/components/ui/input";
 import {
@@ -50,7 +50,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
   });
 
   return (
-    <div className="flex flex-col space-y-6">
+    <div className="mb-6 flex flex-col space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Input placeholder="Buscar incidente" className="rounded-none" />
