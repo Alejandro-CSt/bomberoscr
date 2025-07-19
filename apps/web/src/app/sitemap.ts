@@ -1,7 +1,6 @@
 import env from "@/server/env";
-import db from "@bomberoscr/db/db";
+import db, { eq } from "@bomberoscr/db/index";
 import { stations as stationsSchema } from "@bomberoscr/db/schema";
-import { eq } from "drizzle-orm";
 import type { MetadataRoute } from "next";
 
 export const dynamic = "force-dynamic";

@@ -2,9 +2,8 @@ import { StationTabs } from "@/map/layout/components/station-tabs";
 import { StationResume } from "@/map/stations/components/station-resume";
 import { StationStats } from "@/map/stations/components/station-stats";
 import { ErrorPanel } from "@/shared/components/error-panel";
-import db from "@bomberoscr/db/db";
+import db, { and, sql } from "@bomberoscr/db/index";
 import { stations } from "@bomberoscr/db/schema";
-import { and, sql } from "drizzle-orm";
 
 export default async function StationIncidents({
   params

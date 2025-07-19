@@ -3,9 +3,8 @@ import { StationResume } from "@/map/stations/components/station-resume";
 import { getLatestIncidents } from "@/server/queries";
 import { ErrorPanel } from "@/shared/components/error-panel";
 import { IncidentCard } from "@/shared/components/incident-card";
-import db from "@bomberoscr/db/db";
+import db, { and, sql } from "@bomberoscr/db/index";
 import { stations } from "@bomberoscr/db/schema";
-import { and, sql } from "drizzle-orm";
 import type { Metadata, ResolvingMetadata } from "next";
 
 type Props = {
