@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger
 } from "@/shared/components/ui/dropdown-menu";
 import type { Table } from "@tanstack/react-table";
-import { Settings2 } from "lucide-react";
+import { SlidersHorizontalIcon } from "lucide-react";
 
 interface DataTableViewOptionsProps<TData> {
   table: Table<TData>;
@@ -21,7 +21,7 @@ const COLUMN_LABELS: Record<string, string> = {
   incidentTimestamp: "Fecha",
   station: "Estación",
   specificIncidentType: "Tipo de incidente",
-  importantDetails: "Detalles importantes",
+  importantDetails: "Detalles",
   address: "Dirección"
 };
 
@@ -29,9 +29,8 @@ export function DataTableViewOptions<TData>({ table }: DataTableViewOptionsProps
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className="ml-auto h-8">
-          <Settings2 className="mr-2 h-4 w-4" />
-          Columnas
+        <Button variant="outline" size="icon">
+          <SlidersHorizontalIcon />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[150px]">

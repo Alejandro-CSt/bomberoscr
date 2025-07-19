@@ -17,7 +17,7 @@ export default async function Page() {
   const incidents = await getIncidentsForTable({ limit: 50 });
 
   return (
-    <div className="px-4 py-2">
+    <div className="flex h-full flex-col p-4">
       <DataTable columns={columns} data={incidents} />
     </div>
   );

@@ -81,7 +81,7 @@ export const columns: ColumnDef<IncidentTable>[] = [
   },
   {
     accessorKey: "importantDetails",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Detalles importantes" />,
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Detalles" />,
     cell: ({ row }) => {
       const importantDetails = row.getValue<IncidentTable["importantDetails"]>("importantDetails");
       return <div className="max-w-xs truncate">{importantDetails}</div>;

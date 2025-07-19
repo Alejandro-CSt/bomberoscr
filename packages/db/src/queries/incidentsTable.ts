@@ -1,4 +1,6 @@
 import { db } from "@bomberoscr/db/db";
+import { incidents } from "@bomberoscr/db/schema";
+import { desc } from "drizzle-orm";
 
 export async function getIncidentsForTable({ limit }: { limit: number }) {
   return db.query.incidents.findMany({
@@ -21,6 +23,7 @@ export async function getIncidentsForTable({ limit }: { limit: number }) {
         }
       }
     },
-    limit
+    limit,
+    orderBy: [desc(incidents.incidentTimestamp)]
   });
 }
