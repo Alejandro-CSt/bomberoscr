@@ -6,10 +6,12 @@
   },
   "exports": {
     "./logger": "./src/logger.ts",
-    "./compare-two-strings": "./src/compare-two-strings.ts"
+    "./compare-two-strings": "./src/compare-two-strings.ts",
+    "./time-range": "./src/time-range.ts"
   },
   "dependencies": {
-    "winston": "^3.17.0"
+    "winston": "^3.17.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@bomberoscr/typescript-config": "workspace:*",

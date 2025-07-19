@@ -2,16 +2,13 @@
 
 import useTimeRangeQueryState from "@/features/homepage/hooks/useTimeRangeQueryState";
 import {
-  ALLOWED_TIME_RANGE_VALUES,
-  TIME_RANGE_LABELS
-} from "@/features/homepage/schemas/timeRange";
-import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue
 } from "@/shared/components/ui/select";
+import { ALLOWED_TIME_RANGE_VALUES, TIME_RANGE_LABELS } from "@bomberoscr/lib/time-range";
 
 export default function TimeRangeSelect() {
   const { timeRange, setTimeRange } = useTimeRangeQueryState();

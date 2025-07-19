@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  ALLOWED_TIME_RANGE_VALUES,
-  DEFAULT_TIME_RANGE
-} from "@/features/homepage/schemas/timeRange";
+import { ALLOWED_TIME_RANGE_VALUES, DEFAULT_TIME_RANGE } from "@bomberoscr/lib/time-range";
 import { createParser, useQueryState } from "nuqs";
 
 const timeRangeParser = createParser({

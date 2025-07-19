@@ -15,18 +15,19 @@
     "./utils": "./src/utils.ts",
     "./index": "./src/index.ts",
     "./schema": "./src/schema.ts",
-    "./queries/*": "./src/queries/incidentsTable.ts"
+    "./queries/*": "./src/queries/*.ts"
   },
   "devDependencies": {
     "@bomberoscr/typescript-config": "workspace:*",
-    "drizzle-kit": "^0.30.6",
+    "drizzle-kit": "^0.31.4",
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "dotenv": "^16.6.1",
+    "@bomberoscr/lib": "workspace:*",
+    "dotenv": "^17.2.0",
     "dotenv-expand": "^12.0.2",
-    "drizzle-orm": "^0.41.0",
-    "drizzle-zod": "^0.6.1",
-    "zod": "^3.25.67"
+    "drizzle-orm": "^0.44.3",
+    "drizzle-zod": "^0.8.2",
+    "zod": "^4.0.5"
   }
 }

@@ -1,7 +1,7 @@
-import { DEFAULT_TIME_RANGE, timeRangeSchema } from "@/features/homepage/schemas/timeRange";
 import { publicProcedure, router } from "@/server/trpc/init";
 import db, { between, desc, eq, sql } from "@bomberoscr/db/index";
 import { districts, incidents } from "@bomberoscr/db/schema";
+import { DEFAULT_TIME_RANGE, timeRangeSchema } from "@bomberoscr/lib/time-range";
 import type { inferRouterOutputs } from "@trpc/server";
 import { z } from "zod";
 
