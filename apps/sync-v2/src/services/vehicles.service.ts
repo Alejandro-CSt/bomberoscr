@@ -1,5 +1,5 @@
 import { fetcher } from "@/config/fetcher";
-import { db } from "@bomberoscr/db/db";
+import { db } from "@bomberoscr/db/index";
 import { vehicles as vehiclesTable } from "@bomberoscr/db/schema";
 import { conflictUpdateSetAllColumns } from "@bomberoscr/db/utils";
 import { getAllVehicles, getVehicleDetails } from "@bomberoscr/sync-domain/api";

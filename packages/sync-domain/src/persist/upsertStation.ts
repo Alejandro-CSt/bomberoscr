@@ -1,4 +1,4 @@
-import { db } from "@bomberoscr/db/db";
+import { db } from "@bomberoscr/db/index";
 import { type stationsInsertSchema, stations as stationsTable } from "@bomberoscr/db/schema";
 import { conflictUpdateSetAllColumns } from "@bomberoscr/db/utils";
 import type { z } from "zod";

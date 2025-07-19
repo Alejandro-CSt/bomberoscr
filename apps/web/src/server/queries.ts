@@ -1,16 +1,9 @@
-import { db } from "@bomberoscr/db/db";
-import {
-  dispatchedStations,
-  dispatchedVehicles,
-  incidentTypes,
-  incidents,
-  stations
-} from "@bomberoscr/db/schema";
 import {
   aliasedTable,
   and,
   asc,
   between,
+  db,
   desc,
   eq,
   inArray,
@@ -20,7 +13,14 @@ import {
   not,
   or,
   sql
-} from "drizzle-orm";
+} from "@bomberoscr/db/index";
+import {
+  dispatchedStations,
+  dispatchedVehicles,
+  incidentTypes,
+  incidents,
+  stations
+} from "@bomberoscr/db/schema";
 
 export async function getStations(all: boolean) {
   return await db.query.stations.findMany({

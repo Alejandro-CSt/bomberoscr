@@ -1,9 +1,8 @@
 import { DEFAULT_TIME_RANGE, timeRangeSchema } from "@/features/homepage/schemas/timeRange";
 import { publicProcedure, router } from "@/server/trpc/init";
-import db from "@bomberoscr/db/db";
+import db, { between, desc, eq, sql } from "@bomberoscr/db/index";
 import { districts, incidents } from "@bomberoscr/db/schema";
 import type { inferRouterOutputs } from "@trpc/server";
-import { between, desc, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 
 export const featuredIncidentsRouter = router({

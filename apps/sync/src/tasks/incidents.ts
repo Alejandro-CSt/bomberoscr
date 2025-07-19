@@ -1,4 +1,4 @@
-import { db } from "@bomberoscr/db/db";
+import { db } from "@bomberoscr/db/index";
 import {
   dispatchedVehicles as dispatchedVehiclesTable,
   type incidentsInsertSchema,

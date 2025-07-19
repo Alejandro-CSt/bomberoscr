@@ -1,5 +1,5 @@
 import { fetcher } from "@/config/fetcher";
-import { db } from "@bomberoscr/db/db";
+import { and, db, eq } from "@bomberoscr/db/index";
 import { dispatchedVehicles, incidents } from "@bomberoscr/db/schema";
 import {
   getIncidentDetails,
@@ -12,7 +12,6 @@ import type {
   ObtenerEstacionesAtiendeIncidente,
   ObtenerUnidadesDespachadasIncidente
 } from "@bomberoscr/sync-domain/types";
-import { and, eq } from "drizzle-orm";
 import { ResultAsync, errAsync, okAsync } from "neverthrow";
 
 const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;

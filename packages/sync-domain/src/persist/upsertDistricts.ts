@@ -1,4 +1,4 @@
-import { db } from "@bomberoscr/db/db";
+import { db } from "@bomberoscr/db/index";
 import { districts as districtsTable } from "@bomberoscr/db/schema";
 import { conflictUpdateSetAllColumns } from "@bomberoscr/db/utils";
 import type { ItemObtenerDistritosLista } from "@bomberoscr/sync-domain/types";

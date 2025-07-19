@@ -1,8 +1,7 @@
 import { fetcher } from "@/config/fetcher";
-import db from "@bomberoscr/db/db";
+import db, { inArray } from "@bomberoscr/db/index";
 import { incidents } from "@bomberoscr/db/schema";
 import { getLatestIncidentsListApp } from "@bomberoscr/sync-domain/api";
-import { inArray } from "drizzle-orm";
 import { ResultAsync, okAsync } from "neverthrow";
 
 export function getNewIncidents() {

@@ -1,10 +1,9 @@
-import db from "@bomberoscr/db/db";
+import db, { eq } from "@bomberoscr/db/index";
 import { type incidentsInsertSchema, incidents as incidentsTable } from "@bomberoscr/db/schema";
 import type {
   ObtenerBoletaIncidente,
   ObtenerDetalleEmergencias
 } from "@bomberoscr/sync-domain/types";
-import { eq } from "drizzle-orm";
 import type z from "zod";
 
 export async function rawToIncident({

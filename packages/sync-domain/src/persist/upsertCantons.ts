@@ -1,4 +1,4 @@
-import { db } from "@bomberoscr/db/db";
+import { db } from "@bomberoscr/db/index";
 import { cantons as cantonsTable } from "@bomberoscr/db/schema";
 import { conflictUpdateSetAllColumns } from "@bomberoscr/db/utils";
 import type { ItemObtenerCantonesLista } from "@bomberoscr/sync-domain/types";

@@ -13,7 +13,7 @@
   },
   "exports": {
     "./utils": "./src/utils.ts",
-    "./db": "./src/db.ts",
+    "./index": "./src/index.ts",
     "./schema": "./src/schema.ts",
     "./queries/*": "./src/queries/incidentsTable.ts"
   },

@@ -1,4 +1,4 @@
-import { db } from "@bomberoscr/db/db";
+import { db } from "@bomberoscr/db/index";
 import {
   type incidentTypesInsertSchema,
   incidentTypes as incidentTypesTable

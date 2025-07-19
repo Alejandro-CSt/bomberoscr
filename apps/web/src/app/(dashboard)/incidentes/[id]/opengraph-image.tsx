@@ -1,7 +1,6 @@
-import db from "@bomberoscr/db/db";
+import db, { count, eq } from "@bomberoscr/db/index";
 import { dispatchedStations, dispatchedVehicles, incidents } from "@bomberoscr/db/schema";
 import { ImageResponse } from "@vercel/og";
-import { count, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
