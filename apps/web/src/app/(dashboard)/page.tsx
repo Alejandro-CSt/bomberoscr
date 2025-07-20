@@ -14,7 +14,6 @@ export default async function Page() {
     getDailyIncidents({ timeRange })
   ]);
 
-  console.log(responseTimes);
   return (
     <div className="mx-auto flex max-w-7xl flex-col p-4">
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">

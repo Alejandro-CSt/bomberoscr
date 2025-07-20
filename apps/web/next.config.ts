@@ -7,7 +7,10 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true
   },
   experimental: {
-    browserDebugInfoInTerminal: true,
+    browserDebugInfoInTerminal: {
+      showSourceLocation: true,
+      depthLimit: 2
+    },
     devtoolSegmentExplorer: true,
     clientSegmentCache: true,
     reactCompiler: true,

@@ -82,12 +82,12 @@ export function DailyIncidentsChart({ incidents, timeRange }: DailyIncidentsChar
           Comparación de incidentes por día - {getTimeRangeLabel(timeRange)} actual vs anterior
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-2">
         <ChartContainer
           config={chartConfig}
           className={cn("max-h-[300px] w-full", GeistMono.className)}
         >
-          <AreaChart accessibilityLayer data={data} margin={{ left: 16, right: 16 }}>
+          <AreaChart accessibilityLayer data={data} margin={{ right: 16 }}>
             <XAxis
               dataKey="displayDate"
               tickLine={false}
@@ -133,9 +133,6 @@ export function DailyIncidentsChart({ incidents, timeRange }: DailyIncidentsChar
           <span className={getChangeColor(summary.percentageChange)}>
             {formatChange(summary.percentageChange)}
           </span>
-        </div>
-        <div className="text-muted-foreground leading-none">
-          Comparando los últimos {getTimeRangeLabel(timeRange)} con el período anterior
         </div>
       </CardFooter>
     </Card>
