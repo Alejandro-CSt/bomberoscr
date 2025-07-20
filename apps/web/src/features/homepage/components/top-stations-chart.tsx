@@ -97,7 +97,7 @@ export function TopDispatchedStationsChart({ stations }: TopDispatchedStationsCh
   );
 }
 
-function CustomTooltipContent({ active, payload, _ }: CustomTooltipProps) {
+function CustomTooltipContent({ active, payload }: CustomTooltipProps) {
   if (active && payload && payload.length) {
     const data = payload[0]?.payload;
 

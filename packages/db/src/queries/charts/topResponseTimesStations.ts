@@ -25,16 +25,16 @@ export async function getTopResponseTimesStations(
             EXTRACT(EPOCH FROM (${dispatchedVehicles.arrivalTime} - ${dispatchedVehicles.dispatchedTime})) / 60
           )::numeric, 
           2
-        )
+        )::float
       `,
-      totalDispatches: sql<number>`count(*)`,
+      totalDispatches: sql<number>`count(*)::int`,
       fastestResponseMinutes: sql<number>`
         ROUND(
           MIN(
             EXTRACT(EPOCH FROM (${dispatchedVehicles.arrivalTime} - ${dispatchedVehicles.dispatchedTime})) / 60
           )::numeric, 
           2
-        )
+        )::float
       `,
       slowestResponseMinutes: sql<number>`
         ROUND(
@@ -42,7 +42,7 @@ export async function getTopResponseTimesStations(
             EXTRACT(EPOCH FROM (${dispatchedVehicles.arrivalTime} - ${dispatchedVehicles.dispatchedTime})) / 60
           )::numeric, 
           2
-        )
+        )::float
       `
     })
     .from(stations)
@@ -53,7 +53,8 @@ export async function getTopResponseTimesStations(
       AND ${dispatchedVehicles.arrivalTime} IS NOT NULL
       AND ${dispatchedVehicles.dispatchedTime} IS NOT NULL
       AND ${dispatchedVehicles.arrivalTime} > ${dispatchedVehicles.dispatchedTime}
-      AND EXTRACT(EPOCH FROM (${dispatchedVehicles.arrivalTime} - ${dispatchedVehicles.dispatchedTime})) >= 120
+      AND EXTRACT(EPOCH FROM (${dispatchedVehicles.arrivalTime} - ${dispatchedVehicles.dispatchedTime})) >= 60
+      AND EXTRACT(EPOCH FROM (${dispatchedVehicles.arrivalTime} - ${dispatchedVehicles.dispatchedTime})) <= 10800
     `)
     .groupBy(stations.id, stations.name, stations.stationKey)
     .having(sql`count(*) >= 10`);
@@ -84,16 +85,16 @@ export async function getTopResponseTimesStations(
             EXTRACT(EPOCH FROM (${dispatchedVehicles.arrivalTime} - ${dispatchedVehicles.dispatchedTime})) / 60
           )::numeric, 
           2
-        )
+        )::float
       `,
-      totalDispatches: sql<number>`count(*)`,
+      totalDispatches: sql<number>`count(*)::int`,
       fastestResponseMinutes: sql<number>`
         ROUND(
           MIN(
             EXTRACT(EPOCH FROM (${dispatchedVehicles.arrivalTime} - ${dispatchedVehicles.dispatchedTime})) / 60
           )::numeric, 
           2
-        )
+        )::float
       `,
       slowestResponseMinutes: sql<number>`
         ROUND(
@@ -101,7 +102,7 @@ export async function getTopResponseTimesStations(
             EXTRACT(EPOCH FROM (${dispatchedVehicles.arrivalTime} - ${dispatchedVehicles.dispatchedTime})) / 60
           )::numeric, 
           2
-        )
+        )::float
       `
     })
     .from(stations)
@@ -112,7 +113,8 @@ export async function getTopResponseTimesStations(
       AND ${dispatchedVehicles.arrivalTime} IS NOT NULL
       AND ${dispatchedVehicles.dispatchedTime} IS NOT NULL
       AND ${dispatchedVehicles.arrivalTime} > ${dispatchedVehicles.dispatchedTime}
-      AND EXTRACT(EPOCH FROM (${dispatchedVehicles.arrivalTime} - ${dispatchedVehicles.dispatchedTime})) >= 120
+      AND EXTRACT(EPOCH FROM (${dispatchedVehicles.arrivalTime} - ${dispatchedVehicles.dispatchedTime})) >= 60
+      AND EXTRACT(EPOCH FROM (${dispatchedVehicles.arrivalTime} - ${dispatchedVehicles.dispatchedTime})) <= 10800
     `);
 
   return [

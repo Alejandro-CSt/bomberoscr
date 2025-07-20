@@ -85,7 +85,7 @@ export function TopResponseTimesStationsChart({ stations }: TopResponseTimesStat
             margin={{ left: 16, right: 16 }}
             layout="vertical"
           >
-            <XAxis type="number" dataKey="avgResponseTimeMinutes" hide />
+            <XAxis type="number" dataKey="avgResponseTimeMinutes" allowDataOverflow />
             <YAxis
               dataKey="name"
               type="category"
@@ -107,7 +107,7 @@ export function TopResponseTimesStationsChart({ stations }: TopResponseTimesStat
                 offset={8}
                 fontSize={12}
                 fill="var(--foreground)"
-                formatter={(value: string) => `${value} min`}
+                formatter={(value: number) => `${value} min`}
               />
             </Bar>
           </BarChart>
