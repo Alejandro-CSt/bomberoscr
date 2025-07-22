@@ -1,8 +1,8 @@
-import { DailyIncidentsChart } from "@/features/homepage/components/daily-incidents-chart";
-import { IncidentsByDayOfWeekChart } from "@/features/homepage/components/incidents-by-day-of-week-chart";
-import { IncidentsByHourChart } from "@/features/homepage/components/incidents-by-hour-chart";
-import { TopDispatchedStationsChart } from "@/features/homepage/components/top-stations-chart";
-import { TopResponseTimesStationsChart } from "@/features/homepage/components/top-stations-response-time-chart";
+import { DailyIncidentsChart } from "@/features/homepage/charts/components/daily-incidents-chart";
+import { IncidentsByDayOfWeekChart } from "@/features/homepage/charts/components/incidents-by-day-of-week-chart";
+import { IncidentsByHourChart } from "@/features/homepage/charts/components/incidents-by-hour-chart";
+import { TopDispatchedStationsChart } from "@/features/homepage/charts/components/top-stations-chart";
+import { TopResponseTimesStationsChart } from "@/features/homepage/charts/components/top-stations-response-time-chart";
 import { getDailyIncidents } from "@bomberoscr/db/queries/charts/dailyIncidents";
 import { getIncidentsByDayOfWeek } from "@bomberoscr/db/queries/charts/incidentsByDayOfWeek";
 import { getIncidentsByHour } from "@bomberoscr/db/queries/charts/incidentsByHour";

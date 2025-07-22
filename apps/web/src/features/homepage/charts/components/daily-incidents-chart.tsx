@@ -140,52 +140,50 @@ export function DailyIncidentsChart({ incidents, timeRange }: DailyIncidentsChar
 }
 
 function CustomTooltipContent({ active, payload, label }: CustomTooltipProps) {
-  if (active && payload && payload.length) {
-    const data = payload[0]?.payload;
+  if (!active || !payload || !payload.length) return null;
 
-    if (!data) return null;
+  const data = payload[0]?.payload;
+  if (!data) return null;
 
-    const currentData = payload.find((p) => p.dataKey === "current");
-    const previousData = payload.find((p) => p.dataKey === "previous");
+  const currentData = payload.find((p) => p.dataKey === "current");
+  const previousData = payload.find((p) => p.dataKey === "previous");
 
-    return (
-      <div className="rounded-lg border bg-background p-3 shadow-sm">
+  return (
+    <div className="rounded-lg border bg-background p-3 shadow-sm">
+      <div className="space-y-1">
+        <div className="font-medium">{label}</div>
         <div className="space-y-1">
-          <div className="font-medium">{label}</div>
-          <div className="space-y-1">
-            {currentData && (
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-2">
-                  <div className="h-3 w-1 rounded-[2px] bg-chart-1" />
-                  <span className="text-muted-foreground text-xs">Período actual:</span>
-                </div>
-                <span className="font-medium font-mono text-sm">{currentData.value}</span>
+          {currentData && (
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <div className="h-3 w-1 rounded-[2px] bg-chart-1" />
+                <span className="text-muted-foreground text-xs">Período actual:</span>
               </div>
-            )}
-            {previousData && (
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-2">
-                  <div className="h-3 w-1 rounded-[2px] bg-chart-3" />
-                  <span className="text-muted-foreground text-xs">Período anterior:</span>
-                </div>
-                <span className="font-medium font-mono text-sm">{previousData.value}</span>
+              <span className="font-medium font-mono text-sm">{currentData.value}</span>
+            </div>
+          )}
+          {previousData && (
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <div className="h-3 w-1 rounded-[2px] bg-chart-3" />
+                <span className="text-muted-foreground text-xs">Período anterior:</span>
               </div>
-            )}
-          </div>
-          {currentData && previousData && (
-            <div className="mt-2 border-t pt-2">
-              <div className="flex items-center justify-between gap-4">
-                <span className="text-xs">Diferencia:</span>
-                <span className="font-mono text-xs">
-                  {currentData.value - previousData.value > 0 ? "+" : ""}
-                  {currentData.value - previousData.value}
-                </span>
-              </div>
+              <span className="font-medium font-mono text-sm">{previousData.value}</span>
             </div>
           )}
         </div>
+        {currentData && previousData && (
+          <div className="mt-2 border-t pt-2">
+            <div className="flex items-center justify-between gap-4">
+              <span className="text-xs">Diferencia:</span>
+              <span className="font-mono text-xs">
+                {currentData.value - previousData.value > 0 ? "+" : ""}
+                {currentData.value - previousData.value}
+              </span>
+            </div>
+          </div>
+        )}
       </div>
-    );
-  }
-  return null;
+    </div>
+  );
 }
