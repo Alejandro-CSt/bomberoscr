@@ -3,6 +3,7 @@ import { IncidentsByDayOfWeekChart } from "@/features/homepage/charts/components
 import { IncidentsByHourChart } from "@/features/homepage/charts/components/incidents-by-hour-chart";
 import { TopDispatchedStationsChart } from "@/features/homepage/charts/components/top-stations-chart";
 import { TopResponseTimesStationsChart } from "@/features/homepage/charts/components/top-stations-response-time-chart";
+import { MapCTA } from "@/features/homepage/components/map-cta";
 import { getDailyIncidents } from "@bomberoscr/db/queries/charts/dailyIncidents";
 import { getIncidentsByDayOfWeek } from "@bomberoscr/db/queries/charts/incidentsByDayOfWeek";
 import { getIncidentsByHour } from "@bomberoscr/db/queries/charts/incidentsByHour";
@@ -22,7 +23,8 @@ export default async function Page() {
     ]);
 
   return (
-    <div className="mx-auto flex max-w-7xl flex-col p-4">
+    <div className="mx-auto flex max-w-7xl flex-col gap-4 p-4">
+      <MapCTA />
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <TopDispatchedStationsChart stations={dispatchedStations} />
         <TopResponseTimesStationsChart stations={responseTimes} />
