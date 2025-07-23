@@ -34,15 +34,15 @@ export function MapCTA() {
   return (
     <Link
       href="/mapa"
-      className="group relative block w-full overflow-hidden rounded-xl transition-all duration-300 hover:shadow-xl lg:h-[300px]"
+      className="group relative block h-[300px] w-full overflow-hidden rounded-xl transition-all duration-300 hover:shadow-xl"
     >
       <Image
         suppressHydrationWarning
         src={resolvedTheme === "dark" ? "/map-dark.png" : "/map-light.png"}
-        alt="Map"
+        alt="Mapa de incidentes en tiempo real"
         width={1000}
         height={1000}
-        quality={90}
+        quality={100}
         className="size-full object-cover transition-all duration-300 group-hover:scale-105"
       />
 
