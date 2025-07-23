@@ -106,7 +106,7 @@ export function DailyIncidentsChart({ incidents, timeRange }: DailyIncidentsChar
               dataKey="previous"
               type="monotone"
               fill="var(--color-previous)"
-              fillOpacity={0.4}
+              fillOpacity={0.05}
               stroke="var(--color-previous)"
               strokeWidth={2}
               stackId="a"
