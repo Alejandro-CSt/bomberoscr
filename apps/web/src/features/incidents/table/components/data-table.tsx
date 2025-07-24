@@ -1,3 +1,4 @@
+"use no memo"; // https://github.com/TanStack/table/issues/5567
 "use client";
 
 import {

@@ -3,7 +3,7 @@
 import { DataTableColumnHeader } from "@/features/incidents/table/components/data-table-column-header";
 import DataTableDate from "@/features/incidents/table/components/data-table-date";
 import { DataTableIsOpenIndicator } from "@/features/incidents/table/components/data-table-is-open-column";
-import type { getIncidentsForTable } from "@bomberoscr/db/queries/";
+import type { getIncidentsForTable } from "@bomberoscr/db/queries/incidentsTable";
 import type { ColumnDef } from "@tanstack/react-table";
 
 type IncidentTable = Awaited<ReturnType<typeof getIncidentsForTable>>[number];
