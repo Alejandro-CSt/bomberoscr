@@ -1,11 +1,7 @@
+import IncidentMap from "@/features/incidents/incident-map";
 import { cn, getRelativeTime, isUndefinedDate } from "@/lib/utils";
-import { getDetailedIncidentById } from "@/server/queries";
-import { ErrorPanel } from "@/shared/components/error-panel";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger
-} from "@/shared/components/ui/collapsible";
+import { IncidentStatusIndicator } from "@/shared/components/incident-status-indicator";
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import {
   Table,
   TableBody,
@@ -14,297 +10,157 @@ import {
   TableHeader,
   TableRow
 } from "@/shared/components/ui/table";
-import {
-  ArrowElbowDownRightIcon,
-  CaretUpDownIcon,
-  FireTruckIcon
-} from "@phosphor-icons/react/dist/ssr";
-import type { Metadata } from "next";
+import { getDetailedIncidentById } from "@bomberoscr/db/queries/incidentDetails";
+import { Geist_Mono } from "next/font/google";
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import { z } from "zod";
 
-export async function generateMetadata({
-  params
-}: { params: Promise<{ id: string }> }): Promise<Metadata> {
-  const idSchema = z.coerce.number().int().positive();
-  const idResult = idSchema.safeParse((await params).id);
-
-  if (!idResult.success) {
-    return {
-      title: "Incidente no encontrado",
-      description: "No se pudo encontrar el incidente especificado."
-    };
-  }
-
-  const incident = await getDetailedIncidentById(idResult.data);
-
-  if (!incident) {
-    return {
-      title: "Incidente no encontrado",
-      description: "No se pudo encontrar el incidente especificado."
-    };
-  }
-
-  // Determine location: if detailed data is available, use it.
-  // Otherwise, use the reported address with a note.
-  let location: string;
-  if (incident.province && incident.canton && incident.district) {
-    location = `${incident.district.name}, ${incident.canton.name}, ${incident.province.name}`;
-  } else if (incident.address) {
-    location = `${incident.address} (ubicación en proceso de confirmación)`;
-  } else {
-    location = "Ubicación pendiente de confirmación";
-  }
-
-  const formattedDate = new Date(incident.incidentTimestamp.toString()).toLocaleDateString(
-    "es-CR",
-    {
-      day: "2-digit",
-      month: "long",
-      year: "numeric"
-    }
-  );
-
-  const incidentType =
-    incident.specificDispatchIncidentType?.name ||
-    incident.dispatchIncidentType?.name ||
-    "Incidente";
-
-  const titleContent =
-    incident.specificDispatchIncidentType?.name || incident.importantDetails || incidentType;
-
-  let titleWithLocation = titleContent;
-  if (incident.district && incident.canton) {
-    titleWithLocation = `${titleContent} en ${incident.district.name}, ${incident.canton.name}`;
-  } else {
-    titleWithLocation = `${titleContent} (ubicación pendiente)`;
-  }
-
-  return {
-    title: `${titleContent} | EE-${incident.EEConsecutive}`,
-    description: `Incidente reportado el ${formattedDate} en ${location}. ${incident.dispatchedStations.length} estacion(es) y ${incident.dispatchedVehicles.length} unidad(es) despachadas.`,
-    openGraph: {
-      title: `${titleWithLocation}`,
-      description: `Incidente EE-${incident.EEConsecutive} reportado el ${formattedDate} en ${location}.`,
-      type: "article"
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: `${titleWithLocation}`,
-      description: `Incidente EE-${incident.EEConsecutive} reportado el ${formattedDate} en ${location}.`
-    }
-  };
+// Helper function to format timestamp to local string
+function formatDateTime(date: Date): string {
+  return date.toLocaleString("es-CR");
 }
 
-export default async function DetailedIncidentPanel({
-  params
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const idSchema = z.coerce.number().int().positive();
-  const idResult = idSchema.safeParse((await params).id);
+const GeistMono = Geist_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"]
+});
 
-  if (!idResult.success) {
-    return (
-      <ErrorPanel
-        title="Detalles del incidente"
-        message="ID de incidente inválido"
-        backHref="/incidentes"
-      />
-    );
-  }
+function formatTime(date: Date): string {
+  if (isUndefinedDate(date)) return "N/A";
+  return date.toLocaleTimeString("es-CR", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true
+  });
+}
 
-  const incident = await getDetailedIncidentById(idResult.data);
+function calculateResponseTime(dispatch: Date, arrival: Date) {
+  const diff = arrival.getTime() - dispatch.getTime();
+  const minutes = Math.floor(diff / 60000);
+  const seconds = Math.floor((diff % 60000) / 1000);
+  return `${minutes}m ${seconds}s`;
+}
 
-  if (!incident) {
-    notFound();
-  }
+export default async function IncidentPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const incident = await getDetailedIncidentById(Number(id));
 
-  const formatDateTime = (date: string | undefined) => {
-    if (!date) return "N/A";
-    return new Date(date).toLocaleString("es-CR", {
-      dateStyle: "medium",
-      timeStyle: "short"
-    });
-  };
-
-  const calculateResponseTime = (dispatch: string, arrival: string) => {
-    const diff = new Date(arrival).getTime() - new Date(dispatch).getTime();
-    const minutes = Math.floor(diff / 60000);
-    const seconds = Math.floor((diff % 60000) / 1000);
-    return `${minutes}m ${seconds}s`;
-  };
+  if (!incident) notFound();
 
   return (
-    <div className="mx-auto flex h-full max-w-7xl flex-col overflow-y-auto">
-      <div className="flex flex-col gap-4 p-4">
-        <section className="flex justify-between">
-          <div className="flex flex-col">
-            <p className="font-semibold text-muted-foreground">Aviso</p>
-            <p className="text-sm">{formatDateTime(incident.incidentTimestamp.toString())}</p>
+    <div className="mx-auto flex max-w-5xl flex-col gap-4 p-4">
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <IncidentStatusIndicator isOpen={incident.isOpen} />
+            {incident.isOpen && (
+              <p className="rounded-lg border px-2 py-1 text-muted-foreground text-sm">
+                Actualizado {getRelativeTime(incident.incidentTimestamp.toISOString())}
+              </p>
+            )}
+            {incident.specificIncidentType && (
+              <p className="rounded-lg border px-2 py-1 text-muted-foreground text-sm">
+                {incident.specificIncidentType.name}
+              </p>
+            )}
           </div>
-          <div className="flex flex-col text-end">
-            <p className="font-semibold text-muted-foreground">Última actualización</p>
-            <p className="text-sm first-letter:uppercase">
-              {incident.modifiedAt ? getRelativeTime(incident.modifiedAt.toString()) : "N/A"}
-            </p>
-          </div>
-        </section>
+          <h1 className="font-bold text-3xl">{incident.importantDetails}</h1>
+          <p className="text-muted-foreground">{formatDateTime(incident.incidentTimestamp)}</p>
+        </div>
 
-        <section>
-          <p className="text-muted-foreground text-sm leading-relaxed tracking-wide">
-            {incident.address}
-          </p>
-        </section>
+        <p className="max-w-prose text-muted-foreground leading-relaxed">{incident.address}</p>
 
-        <section className="flex flex-col gap-4">
-          <div className="flex justify-between gap-4">
-            <div className="flex flex-col">
-              <p className="font-semibold text-muted-foreground">Se despacha por</p>
-              <div className="flex flex-col gap-0.5 text-xs tracking-wider">
-                <p>{incident.dispatchIncidentType?.name}</p>
-                <div className="inline-flex items-center gap-0.5">
-                  <ArrowElbowDownRightIcon />
-                  <p>{incident.specificDispatchIncidentType?.name}</p>
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-col">
-              <p className="font-semibold text-muted-foreground">Bomberos reportan</p>
-              <div className="flex flex-col gap-0.5 text-xs tracking-wider">
-                <p>{incident.dispatchIncidentType?.name}</p>
-                <div className="inline-flex items-center gap-0.5">
-                  <ArrowElbowDownRightIcon />
-                  <p>{incident.specificDispatchIncidentType?.name}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <p className="font-semibold text-sm">{incident.importantDetails}</p>
-        </section>
-
-        <section className="flex flex-col gap-4 rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="border-r">Estación</TableHead>
-                <TableHead>Rol</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {incident.dispatchedStations.map((station) => (
-                <TableRow key={station.id}>
-                  <TableCell
-                    className={cn("border-r", station.serviceTypeId === 1 && "font-semibold")}
-                  >
-                    {station.station.name}
-                  </TableCell>
-                  <TableCell className={cn(station.serviceTypeId === 1 && "font-semibold")}>
-                    {station.serviceTypeId === 1 ? "RESPONSABLE" : "APOYO"}
-                  </TableCell>
+        <IncidentMap
+          latitude={Number(incident.latitude)}
+          longitude={Number(incident.longitude)}
+          stations={incident.dispatchedStations.map((station) => ({
+            latitude: Number(station.station.latitude),
+            longitude: Number(station.station.longitude)
+          }))}
+        />
+      </div>
+      <div className="flex basis-1/2 flex-col gap-4">
+        <Card>
+          <CardHeader>
+            <CardTitle>Estaciones despachadas</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table className={cn(GeistMono.className, "text-sm")}>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Estación</TableHead>
+                  <TableHead>Rol</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </section>
+              </TableHeader>
+              <TableBody>
+                {incident.dispatchedStations
+                  .sort((a, b) => (b.serviceTypeId ?? 0) - (a.serviceTypeId ?? 0))
+                  .map((station) => (
+                    <TableRow
+                      key={station.id}
+                      className={cn(station.serviceTypeId === 1 && "font-semibold")}
+                    >
+                      <TableCell>
+                        <Link href={`/estaciones/${station.station.name}`}>
+                          {station.station.name}
+                        </Link>
+                      </TableCell>
 
-        <section className="flex flex-col gap-2 pb-4">
-          <h4 className="font-semibold text-muted-foreground">Unidades</h4>
-          {incident.dispatchedVehicles.map((vehicle) => (
-            <Collapsible key={vehicle.id} defaultOpen={incident.dispatchedVehicles.length <= 2}>
-              <CollapsibleTrigger className="flex w-full items-center justify-between rounded-md border px-4 py-2 data-[state=open]:rounded-b-none">
-                <span className="flex flex-col items-start gap-1">
-                  <span className="flex items-center gap-4">
-                    <FireTruckIcon className="size-6" weight="fill" />
-                    {vehicle.vehicle?.internalNumber}
-                  </span>
-                  <span className="text-muted-foreground text-sm leading-none">
-                    {vehicle.station.name}
-                  </span>
-                </span>
-                <CaretUpDownIcon />
-              </CollapsibleTrigger>
-              <CollapsibleContent className="rounded-b-md border-x border-b px-4 py-4">
-                {!isUndefinedDate(vehicle.dispatchedTime) && (
-                  <DispatchedVehicleTimelineEvent
-                    isLast={isUndefinedDate(vehicle.arrivalTime)}
-                    type="Despacho"
-                    value={formatDateTime(vehicle.dispatchedTime.toString())}
-                  />
-                )}
-                {!isUndefinedDate(vehicle.arrivalTime) && (
-                  <DispatchedVehicleTimelineEvent
-                    isLast={isUndefinedDate(vehicle.departureTime)}
-                    type="Llegada a incidente"
-                    value={formatDateTime(vehicle.arrivalTime.toString())}
-                  />
-                )}
-                {!isUndefinedDate(vehicle.departureTime) && (
-                  <DispatchedVehicleTimelineEvent
-                    isLast={isUndefinedDate(vehicle.baseReturnTime)}
-                    type="Retiro"
-                    value={formatDateTime(vehicle.departureTime.toString())}
-                  />
-                )}
-                {!isUndefinedDate(vehicle.baseReturnTime) && (
-                  <DispatchedVehicleTimelineEvent
-                    isLast={true}
-                    type="Llegada a base"
-                    value={formatDateTime(vehicle.baseReturnTime.toString())}
-                  />
-                )}
-                <div className="flex flex-col">
-                  <p className="text-muted-foreground text-sm">Tiempo de respuesta</p>
-                  <p className="font-semibold text-sm">
-                    {isUndefinedDate(vehicle.dispatchedTime) || isUndefinedDate(vehicle.arrivalTime)
-                      ? "No disponible"
-                      : calculateResponseTime(
-                          vehicle.dispatchedTime.toString(),
-                          vehicle.arrivalTime.toString()
-                        )}
-                  </p>
-                </div>
-              </CollapsibleContent>
-            </Collapsible>
-          ))}
-        </section>
+                      <TableCell>{station.serviceTypeId === 1 ? "Responsable" : "Apoyo"}</TableCell>
+                    </TableRow>
+                  ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Vehículos despachados</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table className={cn(GeistMono.className, "text-sm")}>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Vehículo</TableHead>
+                  <TableHead>Estación</TableHead>
+                  <TableHead>Despacho</TableHead>
+                  <TableHead>Llegada</TableHead>
+                  <TableHead>Retiro</TableHead>
+                  <TableHead>Tiempo de respuesta</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {incident.dispatchedVehicles.map((vehicle) => (
+                  <TableRow key={vehicle.id}>
+                    <TableCell>
+                      <div>
+                        <p className="font-medium">{vehicle.vehicle?.internalNumber || "N/A"}</p>
+                      </div>
+                    </TableCell>
+                    <TableCell>{vehicle.station.name}</TableCell>
+                    <TableCell className="font-mono text-xs">
+                      {formatTime(vehicle.dispatchedTime)}
+                    </TableCell>
+                    <TableCell className="font-mono text-xs">
+                      {formatTime(vehicle.arrivalTime)}
+                    </TableCell>
+                    <TableCell className="font-mono text-xs">
+                      {formatTime(vehicle.departureTime)}
+                    </TableCell>
+                    <TableCell className="font-mono text-xs">
+                      {isUndefinedDate(vehicle.dispatchedTime) ||
+                      isUndefinedDate(vehicle.arrivalTime)
+                        ? "N/A"
+                        : calculateResponseTime(vehicle.dispatchedTime, vehicle.arrivalTime)}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
 }
-
-const DispatchedVehicleTimelineEvent = ({
-  type,
-  value,
-  isLast
-}: {
-  type: string;
-  value: string;
-  isLast: boolean;
-}) => {
-  return (
-    <div className="relative flex items-baseline gap-4 pb-2">
-      <div
-        className={cn(
-          !isLast &&
-            "overflow-hidden before:absolute before:left-[5px] before:h-full before:w-[2px] before:bg-foreground"
-        )}
-      >
-        {/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="12"
-          height="12"
-          className="bi bi-circle-fill fill-foreground"
-          viewBox="0 0 16 16"
-        >
-          <circle cx="8" cy="8" r="8" />
-        </svg>
-      </div>
-      <div className="flex flex-col gap-1">
-        <p className="text-muted-foreground text-sm">{type}</p>
-        <p className="text-sm">{value}</p>
-      </div>
-    </div>
-  );
-};
