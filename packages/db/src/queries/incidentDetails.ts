@@ -61,3 +61,5 @@ export async function getDetailedIncidentById(id: number) {
     }
   });
 }
+
+export type DetailedIncident = Awaited<ReturnType<typeof getDetailedIncidentById>>;

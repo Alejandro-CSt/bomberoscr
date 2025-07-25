@@ -1,4 +1,5 @@
 import IncidentMap from "@/features/incidents/incident-map";
+import { VehicleResponseTimeChart } from "@/features/incidents/vehicle-response-time-chart";
 import { cn, getRelativeTime, isUndefinedDate } from "@/lib/utils";
 import { IncidentStatusIndicator } from "@/shared/components/incident-status-indicator";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
@@ -14,11 +15,6 @@ import { getDetailedIncidentById } from "@bomberoscr/db/queries/incidentDetails"
 import { Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-
-// Helper function to format timestamp to local string
-function formatDateTime(date: Date): string {
-  return date.toLocaleString("es-CR");
-}
 
 const GeistMono = Geist_Mono({
   subsets: ["latin"],
@@ -64,8 +60,10 @@ export default async function IncidentPage({ params }: { params: Promise<{ id: s
               </p>
             )}
           </div>
-          <h1 className="font-bold text-3xl">{incident.importantDetails}</h1>
-          <p className="text-muted-foreground">{formatDateTime(incident.incidentTimestamp)}</p>
+          <h1 className="font-bold text-xl md:text-3xl">{incident.importantDetails}</h1>
+          <p className="text-muted-foreground">
+            {incident.incidentTimestamp.toLocaleString("es-CR")}
+          </p>
         </div>
 
         <p className="max-w-prose text-muted-foreground leading-relaxed">{incident.address}</p>
@@ -114,6 +112,8 @@ export default async function IncidentPage({ params }: { params: Promise<{ id: s
           </CardContent>
         </Card>
 
+        <VehicleResponseTimeChart vehicles={incident.dispatchedVehicles} isOpen={incident.isOpen} />
+
         <Card>
           <CardHeader>
             <CardTitle>Vehículos despachados</CardTitle>
@@ -133,22 +133,12 @@ export default async function IncidentPage({ params }: { params: Promise<{ id: s
               <TableBody>
                 {incident.dispatchedVehicles.map((vehicle) => (
                   <TableRow key={vehicle.id}>
-                    <TableCell>
-                      <div>
-                        <p className="font-medium">{vehicle.vehicle?.internalNumber || "N/A"}</p>
-                      </div>
-                    </TableCell>
+                    <TableCell>{vehicle.vehicle?.internalNumber || "N/A"}</TableCell>
                     <TableCell>{vehicle.station.name}</TableCell>
-                    <TableCell className="font-mono text-xs">
-                      {formatTime(vehicle.dispatchedTime)}
-                    </TableCell>
-                    <TableCell className="font-mono text-xs">
-                      {formatTime(vehicle.arrivalTime)}
-                    </TableCell>
-                    <TableCell className="font-mono text-xs">
-                      {formatTime(vehicle.departureTime)}
-                    </TableCell>
-                    <TableCell className="font-mono text-xs">
+                    <TableCell className="text-xs">{formatTime(vehicle.dispatchedTime)}</TableCell>
+                    <TableCell className="text-xs">{formatTime(vehicle.arrivalTime)}</TableCell>
+                    <TableCell className="text-xs">{formatTime(vehicle.departureTime)}</TableCell>
+                    <TableCell className="text-xs">
                       {isUndefinedDate(vehicle.dispatchedTime) ||
                       isUndefinedDate(vehicle.arrivalTime)
                         ? "N/A"
