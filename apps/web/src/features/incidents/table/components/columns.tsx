@@ -6,7 +6,7 @@ import { DataTableIsOpenIndicator } from "@/features/incidents/table/components/
 import type { getIncidentsForTable } from "@bomberoscr/db/queries/incidentsTable";
 import type { ColumnDef } from "@tanstack/react-table";
 
-type IncidentTable = Awaited<ReturnType<typeof getIncidentsForTable>>[number];
+export type IncidentTable = Awaited<ReturnType<typeof getIncidentsForTable>>[number];
 
 export const columns: ColumnDef<IncidentTable>[] = [
   {

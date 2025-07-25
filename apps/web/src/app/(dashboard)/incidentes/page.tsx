@@ -1,5 +1,7 @@
 import { columns } from "@/features/incidents/table/components/columns";
 import { DataTable } from "@/features/incidents/table/components/data-table";
+import { DataTableProvider } from "@/features/incidents/table/components/data-table-provider";
+import { IncidentSheet } from "@/features/incidents/table/components/incident-sheet";
 import { getIncidentsForTable } from "@bomberoscr/db/queries/incidentsTable";
 
 export default async function Page() {
@@ -18,7 +20,10 @@ export default async function Page() {
 
   return (
     <div className="flex h-full flex-col p-4">
-      <DataTable columns={columns} data={incidents} />
+      <DataTableProvider columns={columns} data={incidents}>
+        <DataTable />
+        <IncidentSheet />
+      </DataTableProvider>
     </div>
   );
 }

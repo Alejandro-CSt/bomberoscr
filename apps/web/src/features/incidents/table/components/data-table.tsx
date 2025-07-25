@@ -1,15 +1,8 @@
 "use no memo"; // https://github.com/TanStack/table/issues/5567
 "use client";
 
-import {
-  type ColumnDef,
-  type VisibilityState,
-  flexRender,
-  getCoreRowModel,
-  useReactTable
-} from "@tanstack/react-table";
-import * as React from "react";
-
+import { IsOpenIndicatorLegend } from "@/features/incidents/table/components/data-table-is-open-column";
+import { useDataTableContext } from "@/features/incidents/table/components/data-table-provider";
 import { DataTableViewOptions } from "@/features/incidents/table/components/data-table-view-options";
 import { cn } from "@/lib/utils";
 import { Input } from "@/shared/components/ui/input";
@@ -21,36 +14,17 @@ import {
   TableHeader,
   TableRow
 } from "@/shared/components/ui/table";
+import { flexRender } from "@tanstack/react-table";
 import { FilterIcon, SearchIcon } from "lucide-react";
 import { Geist_Mono } from "next/font/google";
-import { IsOpenIndicatorLegend } from "./data-table-is-open-column";
 
-const GeistMono = Geist_Mono({ subsets: ["latin"] });
+const GeistMono = Geist_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"]
+});
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
-}
-
-export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
-    isOpen: true,
-    EEConsecutive: false,
-    incidentTimestamp: true,
-    station: true,
-    specificIncidentType: true,
-    importantDetails: true,
-    address: true
-  });
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    state: {
-      columnVisibility
-    }
-  });
+export function DataTable<TData, TValue>() {
+  const { columns, table } = useDataTableContext<TData, TValue>();
 
   return (
     <div className="flex h-full flex-col">
@@ -70,10 +44,10 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
         <DataTableViewOptions table={table} />
       </div>
 
-      <div className={cn("flex-1 overflow-auto", GeistMono.className)}>
+      <div className={cn("flex-1 overflow-auto")}>
         <IsOpenIndicatorLegend className={cn("py-2 text-muted-foreground")} />
         <div className={cn("border border-border md:border-r md:border-l")}>
-          <Table>
+          <Table className={cn(GeistMono.className)}>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
@@ -95,7 +69,8 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
                   <TableRow
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}
-                    className="border-b"
+                    className="-outline-offset-1 outline-primary transition-colors focus-visible:bg-muted/50 focus-visible:outline data-[state=selected]:outline"
+                    onClick={() => row.toggleSelected()}
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id} className="border-r last:border-r-0">
