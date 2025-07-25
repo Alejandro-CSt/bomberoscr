@@ -39,7 +39,7 @@ export function DataTableProvider<TData, TValue>({
     station: true,
     specificIncidentType: true,
     importantDetails: true,
-    address: true
+    address: false
   });
 
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});

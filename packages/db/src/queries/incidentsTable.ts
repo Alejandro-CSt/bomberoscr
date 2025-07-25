@@ -5,6 +5,7 @@ import { desc } from "drizzle-orm";
 export async function getIncidentsForTable({ limit }: { limit: number }) {
   return db.query.incidents.findMany({
     columns: {
+      id: true,
       EEConsecutive: true,
       address: true,
       incidentTimestamp: true,

@@ -84,7 +84,7 @@ export const columns: ColumnDef<IncidentTable>[] = [
     header: ({ column }) => <DataTableColumnHeader column={column} title="Detalles" />,
     cell: ({ row }) => {
       const importantDetails = row.getValue<IncidentTable["importantDetails"]>("importantDetails");
-      return <div className="max-w-xs truncate">{importantDetails}</div>;
+      return <div className="truncate">{importantDetails}</div>;
     },
     enableHiding: true,
     enableResizing: true,

@@ -1,10 +1,18 @@
 "use client";
 import type { IncidentTable } from "@/features/incidents/table/components/columns";
 import { useDataTableContext } from "@/features/incidents/table/components/data-table-provider";
+import { cn } from "@/lib/utils";
 import { Button } from "@/shared/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/shared/components/ui/sheet";
-import { ChevronDown, ChevronUp, XIcon } from "lucide-react";
+import { ArrowRightIcon, ChevronDown, ChevronUp, XIcon } from "lucide-react";
+import { Geist_Mono } from "next/font/google";
+import Link from "next/link";
 import * as React from "react";
+
+const GeistMono = Geist_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"]
+});
 
 export function IncidentSheet() {
   const { rowSelection, setRowSelection, table } = useDataTableContext<IncidentTable, unknown>();
@@ -56,15 +64,24 @@ export function IncidentSheet() {
 
   const formattedDate =
     selectedIncident && selectedIncident.incidentTimestamp instanceof Date
-      ? selectedIncident.incidentTimestamp.toLocaleString()
+      ? selectedIncident.incidentTimestamp.toLocaleString("es-CR", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true
+        })
       : String(selectedIncident?.incidentTimestamp ?? "");
 
   return (
     <Sheet open={open} onOpenChange={handleOpenChange}>
-      <SheetContent side="right">
+      <SheetContent side="right" className="overflow-x-auto pb-8 sm:max-w-lg">
         <SheetHeader>
-          <div className="flex items-center justify-between gap-2">
-            <SheetTitle>Incidente EE-{selectedIncident?.EEConsecutive}</SheetTitle>
+          <div className="flex items-start justify-between gap-2">
+            <SheetTitle className="font-semibold text-lg">
+              Incidente EE-{selectedIncident?.EEConsecutive}
+            </SheetTitle>
             <div className="flex items-center gap-1">
               <Button
                 size="icon"
@@ -73,7 +90,7 @@ export function IncidentSheet() {
                 onClick={handlePrev}
                 disabled={!prevRow}
               >
-                <ChevronUp className="h-5 w-5" />
+                <ChevronUp className="h-4 w-4" />
                 <span className="sr-only">Anterior</span>
               </Button>
               <Button
@@ -83,7 +100,7 @@ export function IncidentSheet() {
                 onClick={handleNext}
                 disabled={!nextRow}
               >
-                <ChevronDown className="h-5 w-5" />
+                <ChevronDown className="h-4 w-4" />
                 <span className="sr-only">Siguiente</span>
               </Button>
               <Button
@@ -92,32 +109,60 @@ export function IncidentSheet() {
                 className="h-7 w-7"
                 onClick={() => setOpen(false)}
               >
-                <XIcon className="h-5 w-5" />
+                <XIcon className="h-4 w-4" />
                 <span className="sr-only">Cerrar</span>
               </Button>
             </div>
           </div>
         </SheetHeader>
-        {selectedIncident && (
-          <div className="flex flex-col gap-2">
-            <div>
-              <b>Fecha:</b> {formattedDate}
-            </div>
-            <div>
-              <b>Estación:</b> {selectedIncident.station?.name ?? "-"}
-            </div>
-            <div>
-              <b>Tipo:</b> {selectedIncident.specificIncidentType?.name ?? "-"}
-            </div>
-            <div>
-              <b>Detalles:</b> {selectedIncident.importantDetails}
-            </div>
-            <div>
-              <b>Dirección:</b> {selectedIncident.address}
-            </div>
-          </div>
-        )}
+        <div className="flex flex-col gap-2">
+          <IncidentProperty label="Fecha" value={formattedDate} />
+          <IncidentProperty
+            label="Tipo de incidente"
+            value={selectedIncident?.specificIncidentType?.name ?? "N/A"}
+          />
+          <IncidentProperty
+            label="Descripción"
+            value={selectedIncident?.importantDetails ?? "N/A"}
+          />
+          <IncidentProperty
+            label="Estado"
+            value={selectedIncident?.isOpen ? "En progreso" : "Atendido"}
+          />
+          <IncidentProperty
+            label="Estación responsable"
+            value={selectedIncident?.station?.name ?? "N/A"}
+          />
+          <IncidentProperty label="Ubicación" value={selectedIncident?.address ?? "N/A"} />
+
+          <Link
+            href={`/incidentes/${selectedIncident?.id}`}
+            className="group flex w-full items-center justify-center gap-2 p-8 text-primary underline-offset-4 hover:underline"
+          >
+            Ver detalles{" "}
+            <ArrowRightIcon className="size-4 transition-transform group-hover:translate-x-1" />
+          </Link>
+        </div>
       </SheetContent>
     </Sheet>
   );
 }
+
+const IncidentProperty = ({
+  label,
+  value,
+  className
+}: { label: string; value: string; className?: string }) => {
+  return (
+    <div
+      className={cn(
+        "mx-2 flex justify-between gap-2 border-b py-4 text-xs md:mx-4",
+        GeistMono.className,
+        className
+      )}
+    >
+      <p className="text-muted-foreground">{label}</p>
+      <p className="break-words text-end font-medium">{value}</p>
+    </div>
+  );
+};
