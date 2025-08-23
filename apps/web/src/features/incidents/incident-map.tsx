@@ -2,15 +2,16 @@
 
 import { DARK_MAP_STYLE, LIGHT_MAP_STYLE } from "@/map/constants";
 import { GarageIcon } from "@phosphor-icons/react/dist/ssr";
-import { TriangleAlertIcon } from "lucide-react";
+import { TriangleAlertIcon, X as XIcon } from "lucide-react";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useTheme } from "next-themes";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   Layer,
   type LngLatBoundsLike,
   MapProvider,
   Marker,
+  Popup,
   Map as ReactMap,
   Source
 } from "react-map-gl/maplibre";
@@ -21,15 +22,34 @@ interface IncidentMapProps {
   stations: Array<{
     latitude: number;
     longitude: number;
+    name: string;
   }>;
 }
 
 export default function IncidentMap({ latitude, longitude, stations }: IncidentMapProps) {
   const { resolvedTheme } = useTheme();
+  const [activeStation, setActiveStation] = useState<{
+    latitude: number;
+    longitude: number;
+    name: string;
+  } | null>(null);
 
   const mapStyleUrl = resolvedTheme === "light" ? LIGHT_MAP_STYLE : DARK_MAP_STYLE;
 
   const areCoordinatesValid = latitude !== 0 && longitude !== 0;
+
+  const handleMapClick = (event: { originalEvent?: { target?: EventTarget | null } }) => {
+    if (event.originalEvent?.target) {
+      const target = event.originalEvent.target;
+      if (
+        target instanceof Element &&
+        (target.classList.contains("maplibregl-canvas") ||
+          target.classList.contains("maplibregl-map"))
+      ) {
+        setActiveStation(null);
+      }
+    }
+  };
 
   const centerCoords = useMemo(() => {
     if (areCoordinatesValid) {
@@ -44,7 +64,6 @@ export default function IncidentMap({ latitude, longitude, stations }: IncidentM
   /**
    * Bounding box that keeps the map centered on the incident and all dispatched stations.
    *
-   * @remarks
    * - If the incident has valid coordinates, it is included in the calculation.
    * - All dispatched stations are also included.
    * - A 0.03° margin is added around the computed bounds to ensure markers are not clipped.
@@ -86,7 +105,7 @@ export default function IncidentMap({ latitude, longitude, stations }: IncidentM
         {!areCoordinatesValid && (
           <div className="absolute inset-0 z-20 flex items-center justify-center backdrop-blur-sm">
             <div className="mx-4 w-fit rounded-md bg-background/60 px-4 py-3 backdrop-blur-3xl">
-              <p className="text-sm">
+              <p className="select-none text-sm">
                 <TriangleAlertIcon
                   className="-mt-0.5 me-3 inline-flex text-amber-500"
                   size={16}
@@ -113,7 +132,21 @@ export default function IncidentMap({ latitude, longitude, stations }: IncidentM
             zIndex: 10
           }}
           mapStyle={mapStyleUrl}
+          onClick={handleMapClick}
         >
+          <style>
+            {`
+              .station-popup .maplibregl-popup-content {
+                padding: 0 !important;
+                background: transparent !important;
+                box-shadow: none !important;
+                border: none !important;
+              }
+              .station-popup .maplibregl-popup-tip {
+                display: none !important;
+              }
+            `}
+          </style>
           {areCoordinatesValid && <Marker latitude={latitude} longitude={longitude} />}
           {stations.map((station) => (
             <Marker
@@ -122,9 +155,44 @@ export default function IncidentMap({ latitude, longitude, stations }: IncidentM
               longitude={station.longitude}
               anchor="center"
             >
-              <GarageIcon className="size-5 rounded-xl bg-[#facd01] p-1 text-black lg:size-8" />
+              <button
+                type="button"
+                onClick={() => setActiveStation(station)}
+                className="group relative cursor-pointer rounded-md focus:outline-none focus:ring-2 focus:ring-[#facd01]/70"
+                aria-label={`Estación ${station.name}`}
+              >
+                <GarageIcon className="size-5 rounded-xl bg-[#facd01] p-1 text-black shadow-lg ring-1 ring-black/10 lg:size-8" />
+              </button>
             </Marker>
           ))}
+          {activeStation && (
+            <Popup
+              longitude={activeStation.longitude}
+              latitude={activeStation.latitude}
+              anchor="top"
+              offset={16}
+              closeOnMove={false}
+              closeOnClick={false}
+              focusAfterOpen={false}
+              onClose={() => setActiveStation(null)}
+              className="station-popup"
+              closeButton={false}
+              style={{ zIndex: 50 }}
+            >
+              <div className="relative rounded-md bg-background/95 px-3 py-2 pr-8 text-sm shadow-lg ring-1 ring-border">
+                <button
+                  type="button"
+                  onClick={() => setActiveStation(null)}
+                  aria-label="Cerrar"
+                  className="-translate-y-1/2 absolute top-1/2 right-1.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-foreground/70 text-background hover:bg-foreground/80"
+                >
+                  <XIcon className="h-3.5 w-3.5" />
+                </button>
+                <span className="font-medium">Estación </span>
+                <span className="font-semibold">{activeStation.name}</span>
+              </div>
+            </Popup>
+          )}
           {areCoordinatesValid && (
             <ArcsLayer stations={stations} incidentLat={latitude} incidentLng={longitude} />
           )}

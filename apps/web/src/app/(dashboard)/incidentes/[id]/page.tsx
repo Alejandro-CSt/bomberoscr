@@ -73,7 +73,8 @@ export default async function IncidentPage({ params }: { params: Promise<{ id: s
           longitude={Number(incident.longitude)}
           stations={incident.dispatchedStations.map((station) => ({
             latitude: Number(station.station.latitude),
-            longitude: Number(station.station.longitude)
+            longitude: Number(station.station.longitude),
+            name: station.station.name
           }))}
         />
       </div>
