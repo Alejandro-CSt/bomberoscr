@@ -91,3 +91,78 @@ export function compareTwoStrings(string1: string, string2: string) {
 
   return (2.0 * intersectionSize) / (first.length + second.length - 2);
 }
+
+/**
+ * Converts a duration expressed in seconds into a human-readable string
+ * formatted as "HHh MMm SSs".
+ *
+ * @example
+ * formatSecondsToHMS(0)        // "0s"
+ * formatSecondsToHMS(45)       // "45s"
+ * formatSecondsToHMS(125)      // "2m 5s"
+ * formatSecondsToHMS(3665)     // "1h 1m 5s"
+ *
+ * @param totalSeconds - The duration in seconds to format.
+ * @returns A string containing hours, minutes and seconds, omitting any
+ * zero-value components except when the total is zero.
+ */
+export function formatSecondsToHMS(totalSeconds: number): string {
+  if (totalSeconds === 0) {
+    return "0s";
+  }
+
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  let formattedTime = "";
+  if (hours > 0) {
+    formattedTime += `${hours}h `;
+  }
+  if (minutes > 0 || hours > 0) {
+    formattedTime += `${minutes}m `;
+  }
+  if (seconds > 0 || (hours === 0 && minutes === 0)) {
+    formattedTime += `${seconds}s`;
+  }
+
+  return formattedTime.trim();
+}
+
+/**
+ * Converts a duration expressed in minutes (including fractional minutes) into a human-readable string
+ * formatted as "HHh MMm SSs".
+ *
+ * @example
+ * formatMinutesToHMS(0)        // "0s"
+ * formatMinutesToHMS(1.5)      // "1m 30s"
+ * formatMinutesToHMS(125)      // "2h 5m 0s"
+ * formatMinutesToHMS(61.1)     // "1h 1m 6s"
+ *
+ * @param totalMinutes - The duration in minutes to format.
+ * @returns A string containing hours, minutes and seconds, omitting any
+ * zero-value components except when the total is zero.
+ */
+export function formatMinutesToHMS(totalMinutes: number): string {
+  if (totalMinutes === 0) {
+    return "0s";
+  }
+
+  const totalMinutesFloor = Math.floor(totalMinutes);
+  const seconds = Math.round((totalMinutes - totalMinutesFloor) * 60);
+  const hours = Math.floor(totalMinutesFloor / 60);
+  const minutes = totalMinutesFloor % 60;
+
+  let formattedTime = "";
+  if (hours > 0) {
+    formattedTime += `${hours}h `;
+  }
+  if (minutes > 0 || hours > 0) {
+    formattedTime += `${minutes}m `;
+  }
+  if (seconds > 0 || (hours === 0 && minutes === 0)) {
+    formattedTime += `${seconds}s`;
+  }
+
+  return formattedTime.trim();
+}

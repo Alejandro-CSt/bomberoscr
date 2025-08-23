@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { cn, formatMinutesToHMS } from "@/lib/utils";
 import {
   Card,
   CardContent,
@@ -107,17 +107,7 @@ export function TopResponseTimesStationsChart({ stations }: TopResponseTimesStat
                 offset={8}
                 fontSize={12}
                 fill="var(--foreground)"
-                formatter={(value: number) => {
-                  const totalMinutes = Math.floor(value);
-                  const seconds = Math.round((value - totalMinutes) * 60);
-                  const hours = Math.floor(totalMinutes / 60);
-                  const minutes = totalMinutes % 60;
-
-                  if (hours > 0) {
-                    return `${hours}h ${minutes}m ${seconds}s`;
-                  }
-                  return `${minutes}m ${seconds}s`;
-                }}
+                formatter={(value: number) => formatMinutesToHMS(value)}
               />
             </Bar>
           </BarChart>
@@ -165,19 +155,19 @@ function CustomTooltipContent({ active, payload }: CustomTooltipProps) {
             <div className="flex items-center justify-between gap-4">
               <span className="text-muted-foreground text-xs">Tiempo promedio:</span>
               <span className="font-medium font-mono text-sm">
-                {data.avgResponseTimeMinutes} min
+                {formatMinutesToHMS(Number(data.avgResponseTimeMinutes) ?? 0)}
               </span>
             </div>
             <div className="flex items-center justify-between gap-4">
               <span className="text-muted-foreground text-xs">Más rápido:</span>
               <span className="font-medium font-mono text-sm">
-                {data.fastestResponseMinutes} min
+                {formatMinutesToHMS(Number(data.fastestResponseMinutes) ?? 0)}
               </span>
             </div>
             <div className="flex items-center justify-between gap-4">
               <span className="text-muted-foreground text-xs">Más lento:</span>
               <span className="font-medium font-mono text-sm">
-                {data.slowestResponseMinutes} min
+                {formatMinutesToHMS(Number(data.slowestResponseMinutes) ?? 0)}
               </span>
             </div>
             <div className="mt-2 border-t pt-2">

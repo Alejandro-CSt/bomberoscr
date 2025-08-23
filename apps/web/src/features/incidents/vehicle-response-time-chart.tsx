@@ -1,6 +1,6 @@
 "use client";
 
-import { isUndefinedDate } from "@/lib/utils";
+import { formatSecondsToHMS, isUndefinedDate } from "@/lib/utils";
 import {
   Card,
   CardContent,
@@ -50,43 +50,6 @@ const calculateTimeDiffInSeconds = (end?: Date, start?: Date): number => {
     return 0;
   }
   return Math.floor((end.getTime() - start.getTime()) / 1000);
-};
-
-/**
- * Converts a duration expressed in seconds into a human-readable string
- * formatted as “HHh MMm SSs”.
- *
- * @example
- * formatSecondsToHMS(0)        // "0s"
- * formatSecondsToHMS(45)       // "45s"
- * formatSecondsToHMS(125)      // "2m 5s"
- * formatSecondsToHMS(3665)     // "1h 1m 5s"
- *
- * @param totalSeconds - The duration in seconds to format.
- * @returns A string containing hours, minutes and seconds, omitting any
- * zero-value components except when the total is zero.
- */
-const formatSecondsToHMS = (totalSeconds: number): string => {
-  if (totalSeconds === 0) {
-    return "0s";
-  }
-
-  const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  const seconds = totalSeconds % 60;
-
-  let formattedTime = "";
-  if (hours > 0) {
-    formattedTime += `${hours}h `;
-  }
-  if (minutes > 0 || hours > 0) {
-    formattedTime += `${minutes}m `;
-  }
-  if (seconds > 0 || (hours === 0 && minutes === 0)) {
-    formattedTime += `${seconds}s`;
-  }
-
-  return formattedTime.trim();
 };
 
 export function VehicleResponseTimeChart({
