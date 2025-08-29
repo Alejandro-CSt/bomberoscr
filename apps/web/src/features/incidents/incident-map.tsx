@@ -1,20 +1,22 @@
 "use client";
 
 import { DARK_MAP_STYLE, LIGHT_MAP_STYLE } from "@/map/constants";
+import { ArcLayer } from "@deck.gl/layers";
+import { MapboxOverlay } from "@deck.gl/mapbox";
 import { GarageIcon } from "@phosphor-icons/react/dist/ssr";
 import { TriangleAlertIcon, X as XIcon } from "lucide-react";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useTheme } from "next-themes";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  Layer,
   type LngLatBoundsLike,
   MapProvider,
+  type MapRef,
   Marker,
   Popup,
-  Map as ReactMap,
-  Source
+  Map as ReactMap
 } from "react-map-gl/maplibre";
+import { IncidentMapControls } from "./incident-map-controls";
 
 interface IncidentMapProps {
   latitude: number;
@@ -33,10 +35,24 @@ export default function IncidentMap({ latitude, longitude, stations }: IncidentM
     longitude: number;
     name: string;
   } | null>(null);
+  const mapRef = useRef<MapRef | null>(null);
+  const overlayRef = useRef<MapboxOverlay | null>(null);
+  const animationRef = useRef<number | null>(null);
+  const [isAnimating, setIsAnimating] = useState(true);
+  const [mapLoaded, setMapLoaded] = useState(false);
+  const ANIMATION_ZOOM = 12;
+  const ANIMATION_PITCH = 60;
+  const ROTATION_SPEED_DEG_PER_SEC = 20;
+  const animationStartRef = useRef<number | null>(null);
+  const baseBearingRef = useRef<number>(0);
 
   const mapStyleUrl = resolvedTheme === "light" ? LIGHT_MAP_STYLE : DARK_MAP_STYLE;
 
   const areCoordinatesValid = latitude !== 0 && longitude !== 0;
+
+  const stopAnimation = useCallback(() => {
+    setIsAnimating((prev) => (prev ? false : prev));
+  }, []);
 
   const handleMapClick = (event: { originalEvent?: { target?: EventTarget | null } }) => {
     if (event.originalEvent?.target) {
@@ -49,6 +65,18 @@ export default function IncidentMap({ latitude, longitude, stations }: IncidentM
         setActiveStation(null);
       }
     }
+  };
+
+  const handleMapClickWithStop = (event: { originalEvent?: { target?: EventTarget | null } }) => {
+    const target = event.originalEvent?.target;
+    if (
+      target instanceof Element &&
+      (target.classList.contains("maplibregl-canvas") ||
+        target.classList.contains("maplibregl-map"))
+    ) {
+      stopAnimation();
+    }
+    handleMapClick(event);
   };
 
   const centerCoords = useMemo(() => {
@@ -91,13 +119,102 @@ export default function IncidentMap({ latitude, longitude, stations }: IncidentM
     const minLng = Math.min(...lngs);
     const maxLng = Math.max(...lngs);
 
-    const margin = 0.03;
+    const margin = 0.2;
 
     return [
       [minLng - margin, minLat - margin],
       [maxLng + margin, maxLat + margin]
     ];
   }, [latitude, longitude, stations, areCoordinatesValid]);
+
+  useEffect(() => {
+    const map = mapRef.current?.getMap();
+    if (!map || !overlayRef.current) return;
+
+    const overlay = overlayRef.current;
+    const validStations = stations.filter(
+      (s) => s && Number.isFinite(s.latitude) && Number.isFinite(s.longitude)
+    );
+
+    if (!areCoordinatesValid || validStations.length === 0) {
+      overlay.setProps({ layers: [] });
+      return;
+    }
+
+    const layer = new ArcLayer({
+      id: "arcs-3d",
+      data: validStations,
+      getSourcePosition: (d: { longitude: number; latitude: number }) => [d.longitude, d.latitude],
+      getTargetPosition: () => [longitude, latitude],
+      getHeight: 0.5,
+      getWidth: 2,
+      getSourceColor: [250, 205, 1],
+      getTargetColor: [250, 205, 1],
+      greatCircle: true,
+      pickable: false,
+      numSegments: 64
+    });
+
+    overlay.setProps({ layers: [layer] });
+  }, [stations, latitude, longitude, areCoordinatesValid]);
+
+  useEffect(() => {
+    if (!mapLoaded || !areCoordinatesValid) return;
+    if (isAnimating) {
+      if (animationStartRef.current === null) {
+        animationStartRef.current = performance.now();
+        const mapObj = mapRef.current?.getMap();
+        if (mapObj) baseBearingRef.current = mapObj.getBearing();
+      }
+      const animate = () => {
+        const mapObj = mapRef.current?.getMap();
+        if (mapObj && animationStartRef.current !== null) {
+          const elapsedMs = performance.now() - animationStartRef.current;
+          const deltaDeg = (elapsedMs / 1000) * ROTATION_SPEED_DEG_PER_SEC;
+          const bearing = (baseBearingRef.current + deltaDeg) % 360;
+          mapObj.setBearing(bearing);
+        }
+        if (isAnimating) animationRef.current = requestAnimationFrame(animate);
+      };
+      if (!animationRef.current) animationRef.current = requestAnimationFrame(animate);
+    } else if (animationRef.current) {
+      cancelAnimationFrame(animationRef.current);
+      animationRef.current = null;
+      animationStartRef.current = null;
+    }
+    return () => {
+      if (animationRef.current && !isAnimating) {
+        cancelAnimationFrame(animationRef.current);
+        animationRef.current = null;
+        animationStartRef.current = null;
+      }
+    };
+  }, [isAnimating, areCoordinatesValid, mapLoaded]);
+
+  interface PossiblyUserEvent {
+    originalEvent?: unknown;
+  }
+  const userInteractionStop = useCallback(
+    (e: PossiblyUserEvent) => {
+      if (e && Object.prototype.hasOwnProperty.call(e, "originalEvent") && e.originalEvent) {
+        stopAnimation();
+      }
+    },
+    [stopAnimation]
+  );
+
+  useEffect(() => {
+    return () => {
+      const map = mapRef.current?.getMap();
+      const overlay = overlayRef.current;
+      if (overlay && map) {
+        overlay.setProps({ layers: [] });
+        map.removeControl(overlay);
+        overlay.finalize();
+        overlayRef.current = null;
+      }
+    };
+  }, []);
 
   return (
     <MapProvider>
@@ -111,18 +228,63 @@ export default function IncidentMap({ latitude, longitude, stations }: IncidentM
                   size={16}
                   aria-hidden="true"
                 />
-                Coordenadas no disponibles aún.
+                Coordenadas aún no disponibles.
               </p>
             </div>
           </div>
         )}
         <ReactMap
+          ref={mapRef}
+          onDragStart={userInteractionStop}
+          onRotateStart={userInteractionStop}
+          onPitchStart={userInteractionStop}
+          onZoomStart={userInteractionStop}
+          onMoveStart={userInteractionStop}
+          onClick={handleMapClickWithStop}
+          onLoad={() => {
+            const map = mapRef.current?.getMap();
+            if (!map) return;
+            setMapLoaded(true);
+            if (!overlayRef.current) {
+              overlayRef.current = new MapboxOverlay({ interleaved: true });
+              map.addControl(overlayRef.current);
+
+              setTimeout(() => {
+                const validStations = stations.filter(
+                  (s) => s && Number.isFinite(s.latitude) && Number.isFinite(s.longitude)
+                );
+
+                if (areCoordinatesValid && validStations.length > 0) {
+                  const layer = new ArcLayer({
+                    id: "arcs-3d",
+                    data: validStations,
+                    getSourcePosition: (d: { longitude: number; latitude: number }) => [
+                      d.longitude,
+                      d.latitude
+                    ],
+                    getTargetPosition: () => [longitude, latitude],
+                    getHeight: 0.5,
+                    getWidth: 2,
+                    getSourceColor: [250, 205, 1],
+                    getTargetColor: [250, 205, 1],
+                    greatCircle: true,
+                    pickable: false,
+                    numSegments: 64
+                  });
+
+                  if (overlayRef.current) {
+                    overlayRef.current.setProps({ layers: [layer] });
+                  }
+                }
+              }, 100);
+            }
+          }}
           initialViewState={{
             latitude: centerCoords.lat,
             longitude: centerCoords.lng,
-            zoom: 14,
+            zoom: 12,
             bearing: 0,
-            pitch: 0
+            pitch: 60
           }}
           maxBounds={maxBounds as LngLatBoundsLike}
           style={{
@@ -132,8 +294,72 @@ export default function IncidentMap({ latitude, longitude, stations }: IncidentM
             zIndex: 10
           }}
           mapStyle={mapStyleUrl}
-          onClick={handleMapClick}
         >
+          {areCoordinatesValid && (
+            <IncidentMapControls
+              mapRef={mapRef}
+              isAnimating={isAnimating}
+              onStopAnimation={stopAnimation}
+              onToggleAnimation={() => {
+                const map = mapRef.current?.getMap();
+                if (!map) return;
+                if (isAnimating) {
+                  setIsAnimating(false);
+                  return;
+                }
+                const targetCenter: [number, number] = [centerCoords.lng, centerCoords.lat];
+                const currentCenter = map.getCenter();
+                const centerDist = Math.hypot(
+                  currentCenter.lng - targetCenter[0],
+                  currentCenter.lat - targetCenter[1]
+                );
+                const currentBearing = map.getBearing();
+                const currentPitch = map.getPitch();
+                const currentZoom = map.getZoom();
+                const bearingDiff = Math.abs(currentBearing - 0);
+                const pitchDiff = Math.abs(currentPitch - ANIMATION_PITCH);
+                const zoomDiff = Math.abs(currentZoom - ANIMATION_ZOOM);
+                const withinTolerance =
+                  centerDist < 0.0005 && bearingDiff < 1 && pitchDiff < 1 && zoomDiff < 0.2;
+
+                const startLoop = () => {
+                  baseBearingRef.current = map.getBearing();
+                  animationStartRef.current = performance.now();
+                  setActiveStation(null);
+                  setIsAnimating(true);
+                };
+
+                if (withinTolerance) {
+                  startLoop();
+                } else {
+                  const startAfterMove = () => {
+                    map.off("moveend", startAfterMove);
+                    startLoop();
+                  };
+                  map.on("moveend", startAfterMove);
+                  map.easeTo({
+                    center: targetCenter,
+                    zoom: ANIMATION_ZOOM,
+                    bearing: 0,
+                    pitch: ANIMATION_PITCH,
+                    duration: 800,
+                    easing: (t) => 1 - (1 - t) ** 3
+                  });
+                }
+              }}
+              onResetView={() => {
+                const map = mapRef.current?.getMap();
+                if (!map) return;
+                map.easeTo({
+                  center: [centerCoords.lng, centerCoords.lat],
+                  zoom: ANIMATION_ZOOM,
+                  bearing: 0,
+                  pitch: 0,
+                  duration: 600
+                });
+              }}
+            />
+          )}
           <style>
             {`
               .station-popup .maplibregl-popup-content {
@@ -157,7 +383,10 @@ export default function IncidentMap({ latitude, longitude, stations }: IncidentM
             >
               <button
                 type="button"
-                onClick={() => setActiveStation(station)}
+                onClick={() => {
+                  stopAnimation();
+                  setActiveStation(station);
+                }}
                 className="group relative cursor-pointer rounded-md focus:outline-none focus:ring-2 focus:ring-[#facd01]/70"
                 aria-label={`Estación ${station.name}`}
               >
@@ -193,137 +422,8 @@ export default function IncidentMap({ latitude, longitude, stations }: IncidentM
               </div>
             </Popup>
           )}
-          {areCoordinatesValid && (
-            <ArcsLayer stations={stations} incidentLat={latitude} incidentLng={longitude} />
-          )}
         </ReactMap>
       </div>
     </MapProvider>
   );
-}
-
-function ArcsLayer({
-  stations,
-  incidentLat,
-  incidentLng
-}: {
-  stations: Array<{ latitude: number; longitude: number }>;
-  incidentLat: number;
-  incidentLng: number;
-}) {
-  const geojsonData = useMemo(() => {
-    if (!stations.length) return null;
-
-    const arcFeatures = stations.map((station, index) => {
-      const coordinates = createArcLine(
-        [station.longitude, station.latitude],
-        [incidentLng, incidentLat]
-      );
-
-      return {
-        type: "Feature" as const,
-        properties: {
-          id: `arc-${index}`,
-          stationName: `Station ${index + 1}`
-        },
-        geometry: {
-          type: "LineString" as const,
-          coordinates
-        }
-      };
-    });
-
-    return {
-      type: "FeatureCollection" as const,
-      features: arcFeatures
-    };
-  }, [stations, incidentLat, incidentLng]);
-
-  if (!geojsonData) return null;
-
-  return (
-    <Source id="arcs" type="geojson" data={geojsonData}>
-      <Layer
-        id="arcs-layer"
-        type="line"
-        layout={{
-          "line-join": "round",
-          "line-cap": "round"
-        }}
-        paint={{
-          "line-color": "red",
-          "line-width": 2,
-          "line-opacity": 0.8,
-          "line-dasharray": [2, 2]
-        }}
-      />
-    </Source>
-  );
-}
-
-/**
- * Generates coordinates for a curved arc line between two geographical points.
- * The curvature is determined by the relative positions of the start and end points.
- *
- * @param start The starting coordinate as `[longitude, latitude]`.
- * @param end The ending coordinate as `[longitude, latitude]`.
- * @param numPoints The number of points to generate for the arc. Defaults to 100.
- * @returns An array of coordinates `[longitude, latitude][]` that form the arc.
- */
-function createArcLine(start: [number, number], end: [number, number], numPoints = 20) {
-  const coordinates: [number, number][] = [];
-
-  const startLat = (start[1] * Math.PI) / 180;
-  const startLng = (start[0] * Math.PI) / 180;
-  const endLat = (end[1] * Math.PI) / 180;
-  const endLng = (end[0] * Math.PI) / 180;
-
-  const d =
-    2 *
-    Math.asin(
-      Math.sqrt(
-        Math.sin((endLat - startLat) / 2) ** 2 +
-          Math.cos(startLat) * Math.cos(endLat) * Math.sin((endLng - startLng) / 2) ** 2
-      )
-    );
-
-  const yBearing = Math.sin(endLng - startLng) * Math.cos(endLat);
-  const xBearing =
-    Math.cos(startLat) * Math.sin(endLat) -
-    Math.sin(startLat) * Math.cos(endLat) * Math.cos(endLng - startLng);
-  const bearing = Math.atan2(yBearing, xBearing);
-
-  const isRight = start[0] < end[0];
-  const curvatureDirection = isRight ? -1 : 1;
-
-  const arcHeight = Math.min(d * 0.1, 0.02) * curvatureDirection;
-
-  for (let i = 0; i <= numPoints; i++) {
-    const t = i / numPoints;
-
-    const A = Math.sin((1 - t) * d) / Math.sin(d);
-    const B = Math.sin(t * d) / Math.sin(d);
-
-    const x = A * Math.cos(startLat) * Math.cos(startLng) + B * Math.cos(endLat) * Math.cos(endLng);
-    const y = A * Math.cos(startLat) * Math.sin(startLng) + B * Math.cos(endLat) * Math.sin(endLng);
-    const z = A * Math.sin(startLat) + B * Math.sin(endLat);
-
-    let lat = (Math.atan2(z, Math.sqrt(x ** 2 + y ** 2)) * 180) / Math.PI;
-    let lng = (Math.atan2(y, x) * 180) / Math.PI;
-
-    if (i > 0 && i < numPoints) {
-      const offsetDistance = arcHeight * Math.sin(Math.PI * t);
-      const offsetLat = offsetDistance * Math.cos(bearing + Math.PI / 2) * (180 / Math.PI);
-      const offsetLng =
-        (offsetDistance * Math.sin(bearing + Math.PI / 2) * (180 / Math.PI)) /
-        Math.cos((lat * Math.PI) / 180);
-
-      lat += offsetLat;
-      lng += offsetLng;
-    }
-
-    coordinates.push([lng, lat]);
-  }
-
-  return coordinates;
 }

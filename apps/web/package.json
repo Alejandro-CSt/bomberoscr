@@ -11,6 +11,8 @@
   "dependencies": {
     "@bomberoscr/db": "workspace:*",
     "@bomberoscr/lib": "workspace:*",
+    "@deck.gl/layers": "^9.1.14",
+    "@deck.gl/mapbox": "^9.1.14",
     "@hookform/resolvers": "^5.1.1",
     "@phosphor-icons/react": "^2.1.10",
     "@radix-ui/react-accordion": "^1.2.11",
