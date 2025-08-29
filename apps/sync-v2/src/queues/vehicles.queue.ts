@@ -4,7 +4,7 @@ import { Queue } from "bullmq";
 export const vehiclesQueue = new Queue("vehicles", {
   connection: redis,
   defaultJobOptions: {
-    removeOnComplete: 10,
+    removeOnComplete: true,
     removeOnFail: 5,
     attempts: 3,
     backoff: {

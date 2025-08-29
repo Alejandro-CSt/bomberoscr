@@ -8,6 +8,7 @@ export async function getDetailedIncidentById(id: number) {
     columns: {
       id: true,
       incidentTimestamp: true,
+      modifiedAt: true,
       isOpen: true,
       importantDetails: true,
       longitude: true,

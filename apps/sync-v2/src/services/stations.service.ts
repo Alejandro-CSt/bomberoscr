@@ -83,3 +83,51 @@ export function syncStations(): ResultAsync<string, StationSyncError> {
     });
   });
 }
+
+export function syncSingleStation(
+  id: number,
+  isOperative: boolean,
+  fallbackName?: string,
+  fallbackStationKey?: string
+): ResultAsync<string, StationSyncError> {
+  return getStationDetails({ fetcher, id })
+    .mapErr(
+      (error) =>
+        ({
+          type: "api_error",
+          resource: `station_details:${id}`,
+          error
+        }) as const
+    )
+    .andThen((detailedStation) => {
+      const stationRow = {
+        id,
+        name: detailedStation.Nombre ?? fallbackName ?? "",
+        stationKey: detailedStation.ClaveEstacion ?? fallbackStationKey ?? "",
+        radioChannel: detailedStation.CanalRadio,
+        latitude: detailedStation.Latitud.toString(),
+        longitude: detailedStation.Longitud.toString(),
+        address: detailedStation.Direccion,
+        phoneNumber: detailedStation.Telefono,
+        fax: detailedStation.Fax,
+        email: detailedStation.Email,
+        isOperative
+      };
+
+      return ResultAsync.fromPromise(
+        db
+          .insert(stationsTable)
+          .values(stationRow)
+          .onConflictDoUpdate({
+            target: stationsTable.id,
+            set: conflictUpdateSetAllColumns(stationsTable)
+          }),
+        (error) =>
+          ({
+            type: "database_error",
+            resource: "syncSingleStation",
+            error
+          }) as const
+      ).map(() => `Synced station ${id}.`);
+    });
+}

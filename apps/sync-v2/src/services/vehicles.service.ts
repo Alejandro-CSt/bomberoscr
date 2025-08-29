@@ -62,3 +62,42 @@ export function syncVehicles(): ResultAsync<string, VehicleSyncError> {
       });
     });
 }
+
+export function syncSingleVehicle(id: number): ResultAsync<string, VehicleSyncError> {
+  return getVehicleDetails({ fetcher, id })
+    .mapErr(
+      (error) =>
+        ({
+          type: "api_error",
+          resource: `vehicle_details:${id}`,
+          error
+        }) as const
+    )
+    .andThen((detailedVehicle) => {
+      const vehicleRow = {
+        id,
+        internalNumber: detailedVehicle.Numero_interno,
+        plate: detailedVehicle.Placa,
+        class: detailedVehicle.Des_clase_vehiculo,
+        descriptionType: detailedVehicle.Des_tipo_vehiculo,
+        stationId: detailedVehicle.Id_estacion,
+        descriptionOperationalStatus: detailedVehicle.Des_estado_operativo
+      };
+
+      return ResultAsync.fromPromise(
+        db
+          .insert(vehiclesTable)
+          .values(vehicleRow)
+          .onConflictDoUpdate({
+            target: vehiclesTable.id,
+            set: conflictUpdateSetAllColumns(vehiclesTable)
+          }),
+        (error) =>
+          ({
+            type: "database_error",
+            resource: "syncSingleVehicle",
+            error
+          }) as const
+      ).map(() => `Synced vehicle ${id}.`);
+    });
+}

@@ -76,7 +76,7 @@ async function startStationsScheduler() {
     )
   ) {
     await stationsQueue.add(
-      "stations-scheduler",
+      "stations:seed",
       {},
       {
         repeat: {
@@ -118,7 +118,7 @@ async function startVehiclesScheduler() {
     )
   ) {
     await vehiclesQueue.add(
-      "vehicles-scheduler",
+      "vehicles:seed",
       {},
       {
         repeat: {

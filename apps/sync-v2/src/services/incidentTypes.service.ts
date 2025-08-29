@@ -53,6 +53,13 @@ export function syncIncidentTypes(): ResultAsync<string, IncidentTypesSyncError>
     .andThen((incidentTypes) => {
       const incidentTypesList: IncidentType[] = getIncidentsRecursively(incidentTypes.items);
 
+      if (incidentTypesList.length === 0) {
+        return ResultAsync.fromPromise(
+          Promise.resolve(),
+          () => ({ type: "database_error", resource: "syncIncidentTypes", error: null }) as const
+        ).map(() => "Synced 0 incident types.");
+      }
+
       return ResultAsync.fromPromise(
         db
           .insert(incidentTypesTable)
