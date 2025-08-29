@@ -51,7 +51,7 @@ export default async function IncidentPage({ params }: { params: Promise<{ id: s
             <IncidentStatusIndicator isOpen={incident.isOpen} />
             {incident.isOpen && (
               <p className="rounded-lg border px-2 py-1 text-muted-foreground text-sm">
-                Actualizado {getRelativeTime(incident.incidentTimestamp.toISOString())}
+                Actualizado {getRelativeTime(incident.modifiedAt.toISOString())}
               </p>
             )}
             {incident.specificIncidentType && (
