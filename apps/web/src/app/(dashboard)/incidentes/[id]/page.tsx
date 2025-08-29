@@ -1,4 +1,4 @@
-import IncidentMap from "@/features/incidents/incident-map";
+import IncidentMap from "@/features/incidents/map/components/incident-map";
 import { VehicleResponseTimeChart } from "@/features/incidents/vehicle-response-time-chart";
 import { cn, getRelativeTime, isUndefinedDate } from "@/lib/utils";
 import { IncidentStatusIndicator } from "@/shared/components/incident-status-indicator";
