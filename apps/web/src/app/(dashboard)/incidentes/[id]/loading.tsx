@@ -1,78 +1,88 @@
-import { FloatingPanelHeader } from "@/map/layout/components/floating-panel-header";
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { Skeleton } from "@/shared/components/ui/skeleton";
 
 export default function Loading() {
   return (
-    <div className="flex h-full flex-col overflow-y-auto">
-      <FloatingPanelHeader title="Detalles del incidente" />
-      <div className="flex flex-col gap-4 p-4">
-        <section className="flex justify-between">
-          <div className="flex flex-col">
-            <p className="font-semibold text-muted-foreground">Aviso</p>
-            <Skeleton className="mt-1 h-4 w-32" />
+    <div className="mx-auto flex max-w-5xl flex-col gap-4 p-4">
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <Skeleton className="h-6 w-16 rounded-lg" />
+            <Skeleton className="h-6 w-32 rounded-lg" />
+            <Skeleton className="h-6 w-28 rounded-lg" />
           </div>
-          <div className="flex flex-col text-end">
-            <p className="font-semibold text-muted-foreground">Última actualización</p>
-            <Skeleton className="mt-1 ml-auto h-4 w-32" />
-          </div>
-        </section>
+          <Skeleton className="h-8 w-3/4 md:h-10" />
+          <Skeleton className="h-4 w-64" />
+        </div>
 
-        <section>
-          <Skeleton className="h-4 w-full" />
-        </section>
+        <div className="mt-3 space-y-2.5">
+          <Skeleton className="h-4 w-full max-w-prose" />
+          <Skeleton className="h-4 w-5/6 max-w-prose" />
+        </div>
 
-        <section className="flex flex-col gap-4">
-          <div className="flex justify-between gap-4">
-            <div className="flex flex-col">
-              <p className="font-semibold text-muted-foreground">Se despacha por</p>
-              <Skeleton className="mt-1 h-3 w-24" />
-              <Skeleton className="mt-2 h-3 w-32" />
+        <div className="mt-2 h-[400px] w-full rounded-lg border bg-muted" />
+      </div>
+
+      <div className="flex basis-1/2 flex-col gap-4">
+        <Card>
+          <CardHeader>
+            <CardTitle>
+              <Skeleton className="h-5 w-48" />
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-4">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-4 w-16" />
+              </div>
+              {Array(3)
+                .fill(0)
+                .map((_, i) => (
+                  // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+                  <div key={i} className="grid grid-cols-2 gap-4">
+                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="h-4 w-20" />
+                  </div>
+                ))}
             </div>
-            <div className="flex flex-col">
-              <p className="font-semibold text-muted-foreground">Bomberos reportan</p>
-              <Skeleton className="mt-1 h-3 w-24" />
-              <Skeleton className="mt-2 h-3 w-32" />
-            </div>
-          </div>
-          <Skeleton className="h-4 w-full" />
-        </section>
+          </CardContent>
+        </Card>
 
-        <section className="flex flex-col gap-2 rounded-md border p-4">
-          <div className="mb-2 flex items-center justify-between">
-            <Skeleton className="h-5 w-24" />
-            <Skeleton className="h-5 w-20" />
-          </div>
-          {Array(3)
-            .fill(0)
-            .map((_, i) => (
-              <div
-                // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-                key={i}
-                className="flex items-center justify-between border-b py-2 last:border-b-0"
-              >
-                <Skeleton className="h-4 w-36" />
+        <div className="h-64 w-full rounded-md border bg-muted" />
+
+        <Card>
+          <CardHeader>
+            <CardTitle>
+              <Skeleton className="h-5 w-48" />
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <div className="grid grid-cols-6 gap-4">
+                <Skeleton className="h-4 w-16" />
+                <Skeleton className="h-4 w-20" />
+                <Skeleton className="h-4 w-16" />
+                <Skeleton className="h-4 w-16" />
+                <Skeleton className="h-4 w-16" />
                 <Skeleton className="h-4 w-24" />
               </div>
-            ))}
-        </section>
-
-        <section className="flex flex-col gap-2 pb-4">
-          <h4 className="font-semibold text-muted-foreground">Unidades</h4>
-          {Array(2)
-            .fill(0)
-            .map((_, i) => (
-              // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-              <div key={i} className="space-y-4 rounded-md border p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex flex-col gap-2">
-                    <Skeleton className="h-5 w-20" />
-                    <Skeleton className="h-4 w-32" />
+              {Array(3)
+                .fill(0)
+                .map((_, i) => (
+                  // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+                  <div key={i} className="grid grid-cols-6 gap-4">
+                    <Skeleton className="h-4 w-16" />
+                    <Skeleton className="h-4 w-20" />
+                    <Skeleton className="h-4 w-16" />
+                    <Skeleton className="h-4 w-16" />
+                    <Skeleton className="h-4 w-16" />
+                    <Skeleton className="h-4 w-24" />
                   </div>
-                  <Skeleton className="h-6 w-6 rounded-full" />
-                </div>
-              </div>
-            ))}
-        </section>
+                ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
