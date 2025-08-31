@@ -1,5 +1,5 @@
 import { publicProcedure, router } from "@/server/trpc/init";
-import { getIncidentsForTable } from "@bomberoscr/db/queries/";
+import { getIncidentsForTable } from "@bomberoscr/db/queries/incidentsTable";
 
 export const incidentRouter = router({
   get: publicProcedure.query(async () => {

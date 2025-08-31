@@ -310,13 +310,13 @@ export default async function Image({ params }: { params: Promise<{ id: string }
       fonts: [
         {
           name: "JetBrains Mono",
-          data: fontDataRegular.buffer,
+          data: fontDataRegular,
           style: "normal",
           weight: 400
         },
         {
           name: "JetBrains Mono",
-          data: fontDataBold.buffer,
+          data: fontDataBold,
           style: "normal",
           weight: 700
         }

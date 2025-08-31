@@ -24,7 +24,7 @@ export default function TimeRangeSelect() {
       <SelectContent className="text-xs">
         {ALLOWED_TIME_RANGE_VALUES.map((timeRange) => (
           <SelectItem key={timeRange} value={timeRange.toString()}>
-            {TIME_RANGE_LABELS[timeRange]}
+            {TIME_RANGE_LABELS[timeRange as keyof typeof TIME_RANGE_LABELS]}
           </SelectItem>
         ))}
       </SelectContent>

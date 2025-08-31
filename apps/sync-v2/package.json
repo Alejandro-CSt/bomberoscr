@@ -20,7 +20,7 @@
     "node-cron": "^3.0.3",
     "tsx": "^4.20.3",
     "winston": "^3.17.0",
-    "zod": "^3.25.67"
+    "zod": "^4.0.5"
   },
   "devDependencies": {
     "@bomberoscr/typescript-config": "workspace:*",

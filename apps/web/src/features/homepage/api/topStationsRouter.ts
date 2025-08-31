@@ -1,11 +1,11 @@
 import { publicProcedure, router } from "@/server/trpc/init";
-import { getTopStationsByTimesDispatched } from "@bomberoscr/db/queries/charts/topStations";
-import { topStationsInputSchema } from "@bomberoscr/lib/time-range";
+import { getTopDispatchedStations } from "@bomberoscr/db/queries/charts/topDispatchedStations";
+import { timeRangeInputSchema } from "@bomberoscr/lib/time-range";
 
 export const topStationsRouter = router({
   getTopStations: publicProcedure
-    .input(topStationsInputSchema.optional())
+    .input(timeRangeInputSchema.optional())
     .query(async ({ input }) => {
-      return await getTopStationsByTimesDispatched(input);
+      return await getTopDispatchedStations(input);
     })
 });
