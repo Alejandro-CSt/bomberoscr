@@ -13,11 +13,13 @@ import {
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
-  SidebarMenuItem
+  SidebarMenuItem,
+  useSidebar
 } from "@/shared/components/ui/sidebar";
 import { FireTruckIcon, FlameIcon, GarageIcon } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useRef } from "react";
 
 export const navItems = [
   {
@@ -43,8 +45,40 @@ export const navItems = [
 ];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { setOpen, open } = useSidebar();
   const pathname = usePathname();
   const activeItem = navItems.find((item) => item.url === pathname);
+  const previousPathname = useRef(pathname);
+  const userManuallyOpened = useRef(false);
+
+  useEffect(() => {
+    const isNavigatingToIncidentes =
+      pathname === "/incidentes" && previousPathname.current !== "/incidentes";
+    const isNavigatingAwayFromIncidentes =
+      previousPathname.current === "/incidentes" && pathname !== "/incidentes";
+
+    if (isNavigatingToIncidentes) {
+      userManuallyOpened.current = false;
+      setOpen(false);
+      previousPathname.current = pathname;
+      return;
+    }
+
+    if (isNavigatingAwayFromIncidentes) {
+      userManuallyOpened.current = false;
+      setOpen(true);
+      previousPathname.current = pathname;
+      return;
+    }
+
+    if (pathname === "/incidentes" && open && !userManuallyOpened.current) {
+      userManuallyOpened.current = true;
+      previousPathname.current = pathname;
+      return;
+    }
+
+    previousPathname.current = pathname;
+  }, [pathname, open, setOpen]);
 
   return (
     <Sidebar
