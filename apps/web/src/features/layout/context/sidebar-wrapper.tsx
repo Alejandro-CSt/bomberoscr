@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 
 export function SidebarWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const shouldStartOpen = pathname !== "/incidentes";
+  const shouldStartOpen = pathname !== "/incidentes" && !pathname.startsWith("/mapa");
 
   return (
     <SidebarProvider

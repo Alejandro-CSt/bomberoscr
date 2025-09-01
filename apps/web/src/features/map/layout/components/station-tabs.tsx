@@ -10,12 +10,12 @@ export function StationTabs({ name }: { name: string }) {
 
   const tabs = [
     {
-      href: `/estaciones/${name}`,
+      href: `/mapa/estaciones/${name}`,
       label: "Incidentes",
       icon: <SirenIcon className="size-4" />
     },
     {
-      href: `/estaciones/${name}/estadisticas`,
+      href: `/mapa/estaciones/${name}/estadisticas`,
       label: "Estadísticas",
       icon: <ChartSplineIcon className="size-4" />
     }

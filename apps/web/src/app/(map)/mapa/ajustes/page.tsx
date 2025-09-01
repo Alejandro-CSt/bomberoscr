@@ -1,4 +1,4 @@
-import MapSettings from "@/map/layout/components/map-settings";
+import MapSettings from "@/features/map/layout/components/map-settings";
 
 import type { Metadata } from "next";
 

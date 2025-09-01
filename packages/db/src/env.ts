@@ -14,7 +14,7 @@ const EnvSchema = z.object({
 
 export type EnvSchema = z.infer<typeof EnvSchema>;
 
-expand(config());
+expand(config({ quiet: true }));
 
 function validateEnv() {
   if (process.env.SKIP_ENV_CHECK) {

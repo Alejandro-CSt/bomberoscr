@@ -1,7 +1,7 @@
-import FloatingMenu from "@/map/layout/components/floating-menu";
-import { FloatingPanel } from "@/map/layout/components/floating-panel";
-import { InteractiveMap } from "@/map/layout/components/interactive-map";
-import { MapSettingsProvider } from "@/map/layout/context/map-settings-context";
+import { FloatingPanel } from "@/features/map/layout/components/floating-panel";
+import { FloatingSidebarToggle } from "@/features/map/layout/components/floating-sidebar-toggle";
+import { InteractiveMap } from "@/features/map/layout/components/interactive-map";
+import { MapSettingsProvider } from "@/features/map/layout/context/map-settings-context";
 import "maplibre-gl/dist/maplibre-gl.css";
 import type { Metadata } from "next";
 
@@ -63,7 +63,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <MapSettingsProvider>
       <InteractiveMap />
-      <FloatingMenu />
+      <FloatingSidebarToggle />
       <FloatingPanel>{children}</FloatingPanel>
     </MapSettingsProvider>
   );

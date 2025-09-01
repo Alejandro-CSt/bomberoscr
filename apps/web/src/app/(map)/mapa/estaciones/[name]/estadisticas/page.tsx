@@ -1,6 +1,6 @@
-import { StationTabs } from "@/map/layout/components/station-tabs";
-import { StationResume } from "@/map/stations/components/station-resume";
-import { StationStats } from "@/map/stations/components/station-stats";
+import { StationTabs } from "@/features/map/layout/components/station-tabs";
+import { StationStats } from "@/features/map/stations/components/station-stats";
+import { StationSummary } from "@/features/map/stations/components/station-summary";
 import { ErrorPanel } from "@/shared/components/error-panel";
 import db, { and, sql } from "@bomberoscr/db/index";
 import { stations } from "@bomberoscr/db/schema";
@@ -31,7 +31,7 @@ export default async function StationIncidents({
 
   return (
     <div className="flex flex-col py-2">
-      <StationResume station={{ name: station.name, stationKey: station.stationKey }} />
+      <StationSummary station={{ name: station.name, stationKey: station.stationKey }} />
       <StationTabs name={station.name} />
       <StationStats stationKey={station.stationKey} />
     </div>

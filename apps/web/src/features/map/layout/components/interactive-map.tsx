@@ -1,10 +1,15 @@
 "use client";
 
+import {
+  CR_NE_CORNER,
+  CR_SW_CORNER,
+  DARK_MAP_STYLE,
+  LIGHT_MAP_STYLE
+} from "@/features/map/constants";
+import { MapFloatingControls } from "@/features/map/layout/components/map-floating-controls";
+import { useMapSettings } from "@/features/map/layout/context/map-settings-context";
 import { trpc } from "@/lib/trpc/client";
 import { isReducedMotion } from "@/lib/utils";
-import { CR_NE_CORNER, CR_SW_CORNER, DARK_MAP_STYLE, LIGHT_MAP_STYLE } from "@/map/constants";
-import { MapControls } from "@/map/layout/components/map-controls";
-import { useMapSettings } from "@/map/layout/context/map-settings-context";
 import type { IncidentWithCoordinates, Station } from "@/server/trpc";
 import { ShieldIcon } from "lucide-react";
 import { useTheme } from "next-themes";
@@ -49,8 +54,10 @@ export const InteractiveMap = () => {
           bearing: 0,
           pitch: 0
         }}
-        style={{ height: "100vh", width: "100vw" }}
         mapStyle={mapStyleUrl}
+        style={{
+          height: "100dvh"
+        }}
       >
         {stationsData?.map((station) => {
           return <StationMarker key={station.id} station={station} />;
@@ -58,7 +65,7 @@ export const InteractiveMap = () => {
         {incidentsQuery.data?.map((incident) => (
           <IncidentMarker key={incident.id} incident={incident} />
         ))}
-        <MapControls />
+        <MapFloatingControls />
       </ReactMap>
     </MapProvider>
   );
@@ -81,7 +88,7 @@ function StationMarker({ station }: { station: Station }) {
 
   return (
     <Link
-      href={`/estaciones/${encodeURIComponent(station.name)}`}
+      href={`/mapa/estaciones/${encodeURIComponent(station.name)}`}
       className="cursor-pointer"
       passHref
     >
@@ -114,7 +121,7 @@ function IncidentMarker({ incident }: { incident: IncidentWithCoordinates }) {
   };
 
   return (
-    <Link href={`/incidentes/${incident.id}`} className="cursor-pointer" passHref>
+    <Link href={`/mapa/incidentes/${incident.id}`} className="cursor-pointer" passHref>
       <Marker
         key={incident.id}
         longitude={Number.parseFloat(incident.longitude ?? "0")}

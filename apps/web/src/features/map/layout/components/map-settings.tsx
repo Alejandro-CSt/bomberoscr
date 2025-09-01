@@ -1,11 +1,11 @@
 "use client";
 
-import { FloatingPanelHeader } from "@/map/layout/components/floating-panel-header";
+import { FloatingPanelHeader } from "@/features/map/layout/components/floating-panel-header";
 import {
   type IncidentTimeRange,
   type ShowStations,
   useMapSettings
-} from "@/map/layout/context/map-settings-context";
+} from "@/features/map/layout/context/map-settings-context";
 import { Button } from "@/shared/components/ui/button";
 import { Label } from "@/shared/components/ui/label";
 import {

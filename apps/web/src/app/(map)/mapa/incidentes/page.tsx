@@ -1,7 +1,7 @@
 "use client";
 
+import { FloatingPanelHeader } from "@/features/map/layout/components/floating-panel-header";
 import { trpc } from "@/lib/trpc/client";
-import { FloatingPanelHeader } from "@/map/layout/components/floating-panel-header";
 import type { LatestIncident } from "@/server/trpc";
 import { IncidentCard } from "@/shared/components/incident-card";
 import { Button } from "@/shared/components/ui/button";
@@ -49,7 +49,7 @@ export default function Incidents() {
           <span className="mr-2 text-muted-foreground text-sm">Filtrar</span>
           <Select onValueChange={handleStationChange} defaultValue="all">
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Todas las estacigfones" />
+              <SelectValue placeholder="Todas las estaciones" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todas las estaciones</SelectItem>
@@ -73,7 +73,7 @@ export default function Incidents() {
             {hasNextPage && (
               <Button
                 variant="outline"
-                className="gap- w2 mx-auto my-4 flex items-center justify-center"
+                className="mx-auto my-4 flex items-center justify-center gap-2"
                 onClick={() => fetchNextPage()}
                 disabled={isFetchingNextPage}
               >

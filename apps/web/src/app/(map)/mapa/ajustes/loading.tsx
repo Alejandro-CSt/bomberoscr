@@ -1,4 +1,4 @@
-import { FloatingPanelHeader } from "@/map/layout/components/floating-panel-header";
+import { FloatingPanelHeader } from "@/features/map/layout/components/floating-panel-header";
 import { Separator } from "@/shared/components/ui/separator";
 import { Skeleton } from "@/shared/components/ui/skeleton";
 

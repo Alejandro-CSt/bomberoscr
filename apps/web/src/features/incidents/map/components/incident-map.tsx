@@ -7,7 +7,7 @@ import { StationMarker } from "@/features/incidents/map/components/station-marke
 import { StationPopup } from "@/features/incidents/map/components/station-popup";
 import { calculateCenterCoords, calculateMaxBounds } from "@/features/incidents/map/lib/bounds";
 import { calculateDynamicZoom } from "@/features/incidents/map/lib/zoom";
-import { DARK_MAP_STYLE, LIGHT_MAP_STYLE } from "@/map/constants";
+import { DARK_MAP_STYLE, LIGHT_MAP_STYLE } from "@/features/map/constants";
 import { TriangleAlertIcon } from "lucide-react";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useTheme } from "next-themes";

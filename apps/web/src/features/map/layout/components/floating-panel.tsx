@@ -18,12 +18,12 @@ export function FloatingPanel({ children }: { children: React.ReactNode }) {
 
   return (
     <AnimatePresence mode="sync">
-      {pathname !== "/" && (
+      {pathname !== "/mapa" && (
         <motion.div
-          className="fixed top-20 bottom-0 z-50 max-h-dvh w-full overflow-hidden rounded-xl border bg-card shadow-xl max-md:rounded-b-none md:bottom-4 md:left-8 md:w-[450px] md:max-w-[calc(100vw-32px)]"
-          initial={isInitialLoad ? false : isMobile ? { y: "100%" } : { x: "-110%" }}
+          className="fixed top-20 bottom-0 z-50 max-h-dvh w-full overflow-hidden rounded-xl border bg-card shadow-xl max-md:rounded-b-none md:right-8 md:bottom-4 md:w-[450px] md:max-w-[calc(100vw-32px)]"
+          initial={isInitialLoad ? false : isMobile ? { y: "100%" } : { x: "110%" }}
           animate={isMobile ? { y: 0 } : { x: 0 }}
-          exit={isMobile ? { y: "100%" } : { x: "-110%" }}
+          exit={isMobile ? { y: "100%" } : { x: "110%" }}
           transition={{ type: "spring", damping: 25, stiffness: 300 }}
         >
           {children}

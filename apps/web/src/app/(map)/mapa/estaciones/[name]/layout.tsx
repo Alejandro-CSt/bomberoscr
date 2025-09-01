@@ -1,4 +1,4 @@
-import { FloatingPanelHeader } from "@/map/layout/components/floating-panel-header";
+import { FloatingPanelHeader } from "@/features/map/layout/components/floating-panel-header";
 
 export default async function StationLayout({ children }: { children: React.ReactNode }) {
   return (

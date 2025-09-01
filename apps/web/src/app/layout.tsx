@@ -1,5 +1,8 @@
+import { SidebarWrapper } from "@/features/layout/context/sidebar-wrapper";
+import { AppSidebar } from "@/features/sidebar/components/sidebar";
 import TRPCProvider from "@/lib/trpc/provider";
 import { cn } from "@/lib/utils";
+import { SidebarInset } from "@/shared/components/ui/sidebar";
 import { ThemeProvider } from "@/shared/context/theme-provider";
 import "@/styles/globals.css";
 import type { Metadata } from "next";
@@ -69,11 +72,18 @@ export default async function Layout({ children }: { children: React.ReactNode }
   return (
     <html lang="es" suppressHydrationWarning>
       <body className={cn("antialiased", geist.className)}>
-        <NuqsAdapter>
-          <ThemeProvider attribute="class" defaultTheme="system">
-            <TRPCProvider>{children}</TRPCProvider>
-          </ThemeProvider>
-        </NuqsAdapter>
+        <SidebarWrapper>
+          <NuqsAdapter>
+            <ThemeProvider attribute="class" defaultTheme="system">
+              <TRPCProvider>
+                <AppSidebar />
+                <SidebarInset className="overflow-hidden">
+                  <main>{children}</main>
+                </SidebarInset>
+              </TRPCProvider>
+            </ThemeProvider>
+          </NuqsAdapter>
+        </SidebarWrapper>
       </body>
     </html>
   );

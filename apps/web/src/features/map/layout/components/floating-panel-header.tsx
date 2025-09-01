@@ -7,7 +7,7 @@ export function FloatingPanelHeader({ title }: { title: string }) {
       <div className="flex items-center">
         <h1 className="font-medium text-xl">{title}</h1>
       </div>
-      <Link href="/">
+      <Link href="/mapa">
         <XIcon className="size-5" />
         <span className="sr-only">Cerrar</span>
       </Link>

@@ -1,5 +1,5 @@
-import { StationTabs } from "@/map/layout/components/station-tabs";
-import { StationResume } from "@/map/stations/components/station-resume";
+import { StationTabs } from "@/features/map/layout/components/station-tabs";
+import { StationSummary } from "@/features/map/stations/components/station-summary";
 import { getLatestIncidents } from "@/server/queries";
 import { ErrorPanel } from "@/shared/components/error-panel";
 import { IncidentCard } from "@/shared/components/incident-card";
@@ -53,13 +53,7 @@ export default async function DetailedStationPage({ params }: Props) {
   });
 
   if (!station)
-    return (
-      <ErrorPanel
-        title="Detalles de la estación"
-        message="No se encontró la estación"
-        backHref="/estaciones"
-      />
-    );
+    return <ErrorPanel message="No se encontró la estación" backHref="/mapa/estaciones" />;
 
   const incidents = await getLatestIncidents({
     stationFilter: station.stationKey,
@@ -69,7 +63,7 @@ export default async function DetailedStationPage({ params }: Props) {
 
   return (
     <div className="flex flex-col py-2">
-      <StationResume station={{ name: station.name, stationKey: station.stationKey }} />
+      <StationSummary station={{ name: station.name, stationKey: station.stationKey }} />
       <StationTabs name={station.name} />
       <StationIncidents incidents={incidents} />
     </div>
