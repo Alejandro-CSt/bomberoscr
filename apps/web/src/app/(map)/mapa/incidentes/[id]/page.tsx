@@ -1,3 +1,4 @@
+import { FloatingPanelHeader } from "@/features/map/layout/components/floating-panel-header";
 import { getDetailedIncidentById } from "@/features/server/queries";
 import { cn, getRelativeTime, isUndefinedDate } from "@/lib/utils";
 import { ErrorPanel } from "@/shared/components/error-panel";
@@ -137,6 +138,7 @@ export default async function DetailedIncidentPanel({
 
   return (
     <div className="mx-auto flex h-full max-w-7xl flex-col overflow-y-auto">
+      <FloatingPanelHeader title="Detalles del incidente" />
       <div className="flex flex-col gap-4 p-4">
         <section className="flex justify-between">
           <div className="flex flex-col">
