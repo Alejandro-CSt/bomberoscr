@@ -1,6 +1,6 @@
 import { StationTabs } from "@/features/map/layout/components/station-tabs";
 import { StationSummary } from "@/features/map/stations/components/station-summary";
-import { getLatestIncidents } from "@/server/queries";
+import { getLatestIncidents } from "@/features/server/queries";
 import { ErrorPanel } from "@/shared/components/error-panel";
 import { IncidentCard } from "@/shared/components/incident-card";
 import db, { and, sql } from "@bomberoscr/db/index";

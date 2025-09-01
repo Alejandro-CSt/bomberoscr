@@ -1,4 +1,4 @@
-import { IsOpenIndicatorLegend } from "@/features/incidents/table/components/data-table-is-open-column";
+import { IsOpenIndicatorLegend } from "@/features/dashboard/incidents/table/components/data-table-is-open-column";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { Skeleton } from "@/shared/components/ui/skeleton";

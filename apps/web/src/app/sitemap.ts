@@ -1,4 +1,4 @@
-import env from "@/server/env";
+import env from "@/features/server/env";
 import db, { eq } from "@bomberoscr/db/index";
 import { stations as stationsSchema } from "@bomberoscr/db/schema";
 import type { MetadataRoute } from "next";

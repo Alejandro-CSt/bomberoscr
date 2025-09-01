@@ -1,6 +1,6 @@
 "use server";
 
-import { submitAdminForm } from "@/features/admin/actions/actions";
+import { submitAdminForm } from "@/features/dashboard/admin/actions/actions";
 import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";

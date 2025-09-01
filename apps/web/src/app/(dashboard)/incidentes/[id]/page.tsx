@@ -1,5 +1,5 @@
-import IncidentMap from "@/features/incidents/map/components/incident-map";
-import { VehicleResponseTimeChart } from "@/features/incidents/vehicle-response-time-chart";
+import IncidentMap from "@/features/dashboard/incidents/map/components/incident-map";
+import { VehicleResponseTimeChart } from "@/features/dashboard/incidents/vehicle-response-time-chart";
 import { cn, getRelativeTime, isUndefinedDate } from "@/lib/utils";
 import { IncidentStatusIndicator } from "@/shared/components/incident-status-indicator";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";

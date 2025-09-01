@@ -1,8 +1,8 @@
 "use client";
 
 import { FloatingPanelHeader } from "@/features/map/layout/components/floating-panel-header";
+import type { LatestIncident } from "@/features/trpc";
 import { trpc } from "@/lib/trpc/client";
-import type { LatestIncident } from "@/server/trpc";
 import { IncidentCard } from "@/shared/components/incident-card";
 import { Button } from "@/shared/components/ui/button";
 import {

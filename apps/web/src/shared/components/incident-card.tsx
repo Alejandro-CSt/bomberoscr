@@ -1,8 +1,8 @@
 "use client";
 
+import type { getLatestIncidents } from "@/features/server/queries";
+import type { LatestIncident } from "@/features/trpc";
 import { getRelativeTime } from "@/lib/utils";
-import type { getLatestIncidents } from "@/server/queries";
-import type { LatestIncident } from "@/server/trpc";
 import { Badge } from "@/shared/components/ui/badge";
 import Link from "next/link";
 

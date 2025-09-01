@@ -8,9 +8,9 @@ import {
 } from "@/features/map/constants";
 import { MapFloatingControls } from "@/features/map/layout/components/map-floating-controls";
 import { useMapSettings } from "@/features/map/layout/context/map-settings-context";
+import type { IncidentWithCoordinates, Station } from "@/features/trpc";
 import { trpc } from "@/lib/trpc/client";
 import { isReducedMotion } from "@/lib/utils";
-import type { IncidentWithCoordinates, Station } from "@/server/trpc";
 import { ShieldIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 import Link from "next/link";

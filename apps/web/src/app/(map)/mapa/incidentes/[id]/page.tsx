@@ -1,5 +1,5 @@
+import { getDetailedIncidentById } from "@/features/server/queries";
 import { cn, getRelativeTime, isUndefinedDate } from "@/lib/utils";
-import { getDetailedIncidentById } from "@/server/queries";
 import { ErrorPanel } from "@/shared/components/error-panel";
 import {
   Collapsible,
