@@ -1,8 +1,7 @@
 "use client";
 
-import { SearchIcon } from "lucide-react";
-
 import ThemeToggle from "@/features/layout/components/theme-toggle";
+import { cn } from "@/lib/utils";
 import {
   Sidebar,
   SidebarContent,
@@ -21,6 +20,7 @@ import {
   MapTrifoldIcon,
   SirenIcon
 } from "@phosphor-icons/react/dist/ssr";
+import { SearchIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -28,40 +28,46 @@ export const navItems = [
   {
     title: "Inicio",
     url: "/",
-    icon: HouseLineIcon
+    icon: HouseLineIcon,
+    enabled: true
   },
   {
     title: "Mapa interactivo",
     url: "/mapa",
-    icon: MapTrifoldIcon
+    icon: MapTrifoldIcon,
+    enabled: true
   },
   {
     title: "Incidentes",
     url: "/incidentes",
-    icon: SirenIcon
+    icon: SirenIcon,
+    enabled: true
   },
   {
     title: "Estaciones",
     url: "/estaciones",
-    icon: GarageIcon
+    icon: GarageIcon,
+    enabled: false
   },
   {
     title: (
       <span className="flex items-center">
         Búsqueda
-        <span className="ms-1 hidden rounded-md bg-accent/25 p-0.5 text-xs/snug md:block">
+        {/* <span className="ms-1 hidden rounded-md bg-accent/25 p-0.5 text-xs/snug md:block">
           <kbd>Ctrl</kbd>+<kbd>K</kbd>
-        </span>
+        </span> */}
       </span>
     ),
     url: "/busqueda",
-    icon: SearchIcon
+    icon: SearchIcon,
+    enabled: false
   }
 ];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
-  const activeItem = navItems.find((item) => item.url === pathname);
+  const isActive = (item: (typeof navItems)[number]): boolean =>
+    item.url === "/" ? pathname === "/" : pathname !== "/" && pathname.startsWith(item.url);
 
   return (
     <Sidebar collapsible="icon" side="left" variant="inset" {...props}>
@@ -88,14 +94,23 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     asChild
                     tooltip={{
                       children: item.title,
-                      hidden: false
+                      hidden: !item.enabled
                     }}
-                    isActive={activeItem?.title === item.title}
+                    isActive={isActive(item)}
+                    disabled={!item.enabled}
+                    className={cn(!item.enabled && "select-none opacity-30")}
                   >
-                    <Link href={item.url}>
-                      {item.icon && <item.icon />}
-                      <span>{item.title}</span>
-                    </Link>
+                    {item.enabled ? (
+                      <Link href={item.url}>
+                        {item.icon && <item.icon />}
+                        <span>{item.title}</span>
+                      </Link>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        {item.icon && <item.icon />}
+                        <span>{item.title}</span>
+                      </div>
+                    )}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}

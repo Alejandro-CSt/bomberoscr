@@ -12,7 +12,7 @@ export function MapFloatingControls() {
   const pathname = usePathname();
 
   return (
-    <div className="absolute top-6 right-6 z-10 flex flex-col gap-1">
+    <div className="absolute top-6 right-6 z-10 flex flex-col gap-1 md:right-auto md:left-6">
       <div className="flex flex-col items-center rounded-full border bg-background/80 p-0.5 shadow-lg backdrop-blur-lg">
         <Button
           variant="ghost"

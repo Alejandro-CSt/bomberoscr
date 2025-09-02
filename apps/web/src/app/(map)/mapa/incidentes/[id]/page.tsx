@@ -2,6 +2,7 @@ import { FloatingPanelHeader } from "@/features/map/layout/components/floating-p
 import { getDetailedIncidentById } from "@/features/server/queries";
 import { cn, getRelativeTime, isUndefinedDate } from "@/lib/utils";
 import { ErrorPanel } from "@/shared/components/error-panel";
+import { Button } from "@/shared/components/ui/button";
 import {
   Collapsible,
   CollapsibleContent,
@@ -21,6 +22,7 @@ import {
   FireTruckIcon
 } from "@phosphor-icons/react/dist/ssr";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { z } from "zod";
 
@@ -183,6 +185,12 @@ export default async function DetailedIncidentPanel({
             </div>
           </div>
           <p className="font-semibold text-sm">{incident.importantDetails}</p>
+        </section>
+
+        <section>
+          <Button asChild className="w-full">
+            <Link href={`/incidentes/${incident.id}`}>Ver detalles</Link>
+          </Button>
         </section>
 
         <section className="flex flex-col gap-4 rounded-md border">

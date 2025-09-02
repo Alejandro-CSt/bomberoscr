@@ -75,7 +75,7 @@ export function IncidentsByHourChart({ incidents, timeRange }: IncidentsByHourCh
           <BarChart
             accessibilityLayer
             data={incidents}
-            margin={{ right: 16, top: 20 }}
+            margin={{ right: 16, top: 30 }}
             layout="horizontal"
           >
             <XAxis
@@ -96,15 +96,17 @@ export function IncidentsByHourChart({ incidents, timeRange }: IncidentsByHourCh
             />
             <YAxis type="number" tickLine={false} axisLine={false} tickMargin={8} hide />
             <ChartTooltip cursor={false} content={<CustomTooltipContent />} />
-            <Bar dataKey="count" radius={4}>
+            <Bar dataKey="count" radius={4} spacing={4}>
               {incidents.map((incident) => (
                 <Cell key={incident.hour} fill={getHourColor(incident.count, maxCount)} />
               ))}
               <LabelList
                 dataKey="count"
                 position="top"
-                offset={8}
+                spacing={4}
+                offset={16}
                 fontSize={10}
+                angle={-90}
                 fill="var(--foreground)"
               />
             </Bar>
