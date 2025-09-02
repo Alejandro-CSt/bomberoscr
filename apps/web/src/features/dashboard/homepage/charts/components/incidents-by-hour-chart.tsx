@@ -104,7 +104,7 @@ export function IncidentsByHourChart({ incidents, timeRange }: IncidentsByHourCh
                 dataKey="count"
                 position="top"
                 offset={8}
-                fontSize={12}
+                fontSize={10}
                 fill="var(--foreground)"
               />
             </Bar>
