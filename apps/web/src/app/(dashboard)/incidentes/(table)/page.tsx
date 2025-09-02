@@ -4,6 +4,8 @@ import { IncidentSheet } from "@/features/dashboard/incidents/table/components/d
 import { DataTableProvider } from "@/features/dashboard/incidents/table/components/data-table-provider";
 import { getIncidentsForTable } from "@bomberoscr/db/queries/incidentsTable";
 
+export const dynamic = "force-dynamic";
+
 export default async function Page() {
   // const { pageIndex, pageSize, query, sortBy, sortDirection } =
   //   await tableSearchParamsCache.parse(searchParams);

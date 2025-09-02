@@ -9,18 +9,32 @@ import { getIncidentsByDayOfWeek } from "@bomberoscr/db/queries/charts/incidents
 import { getIncidentsByHour } from "@bomberoscr/db/queries/charts/incidentsByHour";
 import { getTopDispatchedStations } from "@bomberoscr/db/queries/charts/topDispatchedStations";
 import { getTopResponseTimesStations } from "@bomberoscr/db/queries/charts/topResponseTimesStations";
+import { unstable_cache } from "next/cache";
 
-export default async function Page() {
-  const timeRange = 30;
+export const dynamic = "force-dynamic";
 
-  const [responseTimes, dispatchedStations, dailyIncidents, incidentsByDayOfWeek, incidentsByHour] =
-    await Promise.all([
+const getCachedHomepageData = unstable_cache(
+  async (timeRange: number) => {
+    return await Promise.all([
       getTopResponseTimesStations({ timeRange }),
       getTopDispatchedStations({ timeRange }),
       getDailyIncidents({ timeRange }),
       getIncidentsByDayOfWeek({ timeRange }),
       getIncidentsByHour({ timeRange })
     ]);
+  },
+  ["homepage-data"],
+  {
+    revalidate: 60 * 10,
+    tags: ["homepage"]
+  }
+);
+
+export default async function Page() {
+  const timeRange = 30;
+
+  const [responseTimes, dispatchedStations, dailyIncidents, incidentsByDayOfWeek, incidentsByHour] =
+    await getCachedHomepageData(timeRange);
 
   return (
     <div className="mx-auto flex max-w-7xl flex-col gap-8 p-4">

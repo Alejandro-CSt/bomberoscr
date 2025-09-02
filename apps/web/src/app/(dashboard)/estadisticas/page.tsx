@@ -10,6 +10,8 @@ import {
 } from "@bomberoscr/db/schema";
 import { Building2, Car, FileText, Flame, Truck, Users } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminPage() {
   const [
     stationsCount,
