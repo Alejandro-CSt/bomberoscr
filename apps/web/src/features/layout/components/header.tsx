@@ -1,6 +1,7 @@
 "use client";
 
 import { navItems } from "@/features/sidebar/components/sidebar";
+import { cn } from "@/lib/utils";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -50,9 +51,17 @@ export default function Header() {
   const { title, breadcrumbs } = getCurrentPageInfo();
 
   return (
-    <header className="sticky top-0 z-10 flex shrink-0 items-center gap-2 border-b bg-background p-4">
-      <SidebarTrigger className="-ml-1" />
-      <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
+    <header
+      className={cn(
+        "sticky top-0 z-10 flex shrink-0 items-center gap-2 border-b bg-background p-4",
+        pathname === "/" && "md:hidden"
+      )}
+    >
+      <SidebarTrigger className="-ml-1 md:hidden" />
+      <Separator
+        orientation="vertical"
+        className="mr-2 data-[orientation=vertical]:h-4 md:hidden"
+      />
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>

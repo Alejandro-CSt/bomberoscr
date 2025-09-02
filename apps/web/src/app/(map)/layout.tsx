@@ -62,9 +62,11 @@ export const metadata: Metadata = {
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <MapSettingsProvider>
-      <InteractiveMap />
-      <FloatingSidebarToggle />
-      <FloatingPanel>{children}</FloatingPanel>
+      <div className="flex min-h-full">
+        <InteractiveMap />
+        <FloatingSidebarToggle />
+        <FloatingPanel>{children}</FloatingPanel>
+      </div>
     </MapSettingsProvider>
   );
 }
