@@ -1,6 +1,6 @@
 import { FloatingPanelHeader } from "@/features/map/layout/components/floating-panel-header";
-import { Separator } from "@/shared/components/ui/separator";
-import { Skeleton } from "@/shared/components/ui/skeleton";
+import { Separator } from "@/features/shared/components/ui/separator";
+import { Skeleton } from "@/features/shared/components/ui/skeleton";
 
 export default function Loading() {
   return (

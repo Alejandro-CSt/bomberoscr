@@ -1,7 +1,7 @@
 "use client";
 
-import { cn } from "@/lib/utils";
-import { Button } from "@/shared/components/ui/button";
+import { Button } from "@/features/shared/components/ui/button";
+import { cn } from "@/features/shared/lib/utils";
 import { ArrowRight } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Bricolage_Grotesque } from "next/font/google";

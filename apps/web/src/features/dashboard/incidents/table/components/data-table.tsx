@@ -4,8 +4,7 @@
 import { IsOpenIndicatorLegend } from "@/features/dashboard/incidents/table/components/data-table-is-open-column";
 import { useDataTableContext } from "@/features/dashboard/incidents/table/components/data-table-provider";
 import { DataTableViewOptions } from "@/features/dashboard/incidents/table/components/data-table-view-options";
-import { cn } from "@/lib/utils";
-import { Input } from "@/shared/components/ui/input";
+import { Input } from "@/features/shared/components/ui/input";
 import {
   Table,
   TableBody,
@@ -13,7 +12,8 @@ import {
   TableHead,
   TableHeader,
   TableRow
-} from "@/shared/components/ui/table";
+} from "@/features/shared/components/ui/table";
+import { cn } from "@/features/shared/lib/utils";
 import { flexRender } from "@tanstack/react-table";
 import { FilterIcon, SearchIcon } from "lucide-react";
 import { Geist_Mono } from "next/font/google";

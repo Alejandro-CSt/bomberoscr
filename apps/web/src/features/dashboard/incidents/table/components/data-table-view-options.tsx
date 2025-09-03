@@ -1,7 +1,7 @@
 "use no memo";
 "use client";
 
-import { Button } from "@/shared/components/ui/button";
+import { Button } from "@/features/shared/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -9,7 +9,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger
-} from "@/shared/components/ui/dropdown-menu";
+} from "@/features/shared/components/ui/dropdown-menu";
 import type { Table } from "@tanstack/react-table";
 import { SlidersHorizontalIcon } from "lucide-react";
 

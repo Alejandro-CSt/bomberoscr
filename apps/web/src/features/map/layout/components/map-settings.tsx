@@ -6,16 +6,16 @@ import {
   type ShowStations,
   useMapSettings
 } from "@/features/map/layout/context/map-settings-context";
-import { Button } from "@/shared/components/ui/button";
-import { Label } from "@/shared/components/ui/label";
+import { Button } from "@/features/shared/components/ui/button";
+import { Label } from "@/features/shared/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue
-} from "@/shared/components/ui/select";
-import { Separator } from "@/shared/components/ui/separator";
+} from "@/features/shared/components/ui/select";
+import { Separator } from "@/features/shared/components/ui/separator";
 import { MoonIcon, SunIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 

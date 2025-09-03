@@ -1,20 +1,20 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle
-} from "@/shared/components/ui/card";
+} from "@/features/shared/components/ui/card";
 import {
   type ChartConfig,
   ChartContainer,
   ChartLegend,
   ChartLegendContent,
   ChartTooltip
-} from "@/shared/components/ui/chart";
+} from "@/features/shared/components/ui/chart";
+import { cn } from "@/features/shared/lib/utils";
 import type { getTopDispatchedStations } from "@bomberoscr/db/queries/charts/topDispatchedStations";
 import { Geist_Mono } from "next/font/google";
 import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";

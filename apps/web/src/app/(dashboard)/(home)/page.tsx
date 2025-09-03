@@ -9,32 +9,31 @@ import { getIncidentsByDayOfWeek } from "@bomberoscr/db/queries/charts/incidents
 import { getIncidentsByHour } from "@bomberoscr/db/queries/charts/incidentsByHour";
 import { getTopDispatchedStations } from "@bomberoscr/db/queries/charts/topDispatchedStations";
 import { getTopResponseTimesStations } from "@bomberoscr/db/queries/charts/topResponseTimesStations";
-import { unstable_cache } from "next/cache";
+import { unstable_cacheLife as cacheLife, unstable_cacheTag as cacheTag } from "next/cache";
+import { headers } from "next/headers";
 
-export const dynamic = "force-dynamic";
+async function getHomepageData(timeRange: number) {
+  "use cache";
+  cacheLife({ revalidate: 10 * 60 });
+  cacheTag("homepage");
 
-const getCachedHomepageData = unstable_cache(
-  async (timeRange: number) => {
-    return await Promise.all([
-      getTopResponseTimesStations({ timeRange }),
-      getTopDispatchedStations({ timeRange }),
-      getDailyIncidents({ timeRange }),
-      getIncidentsByDayOfWeek({ timeRange }),
-      getIncidentsByHour({ timeRange })
-    ]);
-  },
-  ["homepage-data"],
-  {
-    revalidate: 60 * 10,
-    tags: ["homepage"]
-  }
-);
+  const result = await Promise.all([
+    getTopResponseTimesStations({ timeRange }),
+    getTopDispatchedStations({ timeRange }),
+    getDailyIncidents({ timeRange }),
+    getIncidentsByDayOfWeek({ timeRange }),
+    getIncidentsByHour({ timeRange })
+  ]);
+
+  return result;
+}
 
 export default async function Page() {
+  await headers();
   const timeRange = 30;
 
   const [responseTimes, dispatchedStations, dailyIncidents, incidentsByDayOfWeek, incidentsByHour] =
-    await getCachedHomepageData(timeRange);
+    await getHomepageData(timeRange);
 
   return (
     <div className="mx-auto flex max-w-7xl flex-col gap-8 p-4">

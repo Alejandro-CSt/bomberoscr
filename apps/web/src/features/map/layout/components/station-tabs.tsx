@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/features/shared/lib/utils";
 import { ChartSplineIcon, SirenIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";

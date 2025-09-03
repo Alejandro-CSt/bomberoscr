@@ -2,7 +2,7 @@
 
 import { IncidentListItem } from "@/features/dashboard/homepage/components/incident-list-item";
 import { LatestIncidentsHeader } from "@/features/dashboard/homepage/components/latest-incidents-header";
-import { trpc } from "@/lib/trpc/client";
+import { trpc } from "@/features/trpc/client";
 
 export function LatestIncidents() {
   const {

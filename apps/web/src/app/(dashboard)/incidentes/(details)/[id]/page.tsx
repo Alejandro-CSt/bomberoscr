@@ -1,8 +1,7 @@
 import IncidentMap from "@/features/dashboard/incidents/map/components/incident-map";
 import { VehicleResponseTimeChart } from "@/features/dashboard/incidents/vehicle-response-time-chart";
-import { cn, getRelativeTime, isUndefinedDate } from "@/lib/utils";
-import { IncidentStatusIndicator } from "@/shared/components/incident-status-indicator";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import { IncidentStatusIndicator } from "@/features/shared/components/incident-status-indicator";
+import { Card, CardContent, CardHeader, CardTitle } from "@/features/shared/components/ui/card";
 import {
   Table,
   TableBody,
@@ -10,8 +9,10 @@ import {
   TableHead,
   TableHeader,
   TableRow
-} from "@/shared/components/ui/table";
+} from "@/features/shared/components/ui/table";
+import { cn, getRelativeTime, isUndefinedDate } from "@/features/shared/lib/utils";
 import { getDetailedIncidentById } from "@bomberoscr/db/queries/incidentDetails";
+import { unstable_cacheLife as cacheLife } from "next/cache";
 import { Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -37,9 +38,15 @@ function calculateResponseTime(dispatch: Date, arrival: Date) {
   return `${minutes}m ${seconds}s`;
 }
 
+async function getIncident(id: string) {
+  "use cache";
+  cacheLife({ revalidate: 60 * 2, expire: 60 * 2 });
+  return await getDetailedIncidentById(Number(id));
+}
+
 export default async function IncidentPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const incident = await getDetailedIncidentById(Number(id));
+  const incident = await getIncident(id);
 
   if (!incident) notFound();
 

@@ -1,5 +1,5 @@
-import { cn, getRelativeTime } from "@/lib/utils";
-import { Skeleton } from "@/shared/components/ui/skeleton";
+import { Skeleton } from "@/features/shared/components/ui/skeleton";
+import { cn, getRelativeTime } from "@/features/shared/lib/utils";
 import Link from "next/link";
 
 interface IncidentData {

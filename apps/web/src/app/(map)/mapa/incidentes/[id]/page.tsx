@@ -1,13 +1,12 @@
 import { FloatingPanelHeader } from "@/features/map/layout/components/floating-panel-header";
 import { getDetailedIncidentById } from "@/features/server/queries";
-import { cn, getRelativeTime, isUndefinedDate } from "@/lib/utils";
-import { ErrorPanel } from "@/shared/components/error-panel";
-import { Button } from "@/shared/components/ui/button";
+import { ErrorPanel } from "@/features/shared/components/error-panel";
+import { Button } from "@/features/shared/components/ui/button";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger
-} from "@/shared/components/ui/collapsible";
+} from "@/features/shared/components/ui/collapsible";
 import {
   Table,
   TableBody,
@@ -15,13 +14,15 @@ import {
   TableHead,
   TableHeader,
   TableRow
-} from "@/shared/components/ui/table";
+} from "@/features/shared/components/ui/table";
+import { cn, getRelativeTime, isUndefinedDate } from "@/features/shared/lib/utils";
 import {
   ArrowElbowDownRightIcon,
   CaretUpDownIcon,
   FireTruckIcon
 } from "@phosphor-icons/react/dist/ssr";
 import type { Metadata } from "next";
+import { unstable_cacheLife as cacheLife } from "next/cache";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { z } from "zod";
@@ -99,6 +100,12 @@ export async function generateMetadata({
   };
 }
 
+async function getIncident(id: number) {
+  "use cache";
+  cacheLife({ revalidate: 60 * 2, expire: 60 * 2 });
+  return await getDetailedIncidentById(Number(id));
+}
+
 export default async function DetailedIncidentPanel({
   params
 }: {
@@ -117,7 +124,7 @@ export default async function DetailedIncidentPanel({
     );
   }
 
-  const incident = await getDetailedIncidentById(idResult.data);
+  const incident = await getIncident(idResult.data);
 
   if (!incident) {
     notFound();

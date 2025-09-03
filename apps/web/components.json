@@ -12,7 +12,7 @@
   "aliases": {
     "components": "@/shared/components",
     "utils": "@/lib/utils",
-    "ui": "@/shared/components/ui",
+    "ui": "@/features/shared/components/ui",
     "lib": "@/lib",
     "hooks": "@/shared/hooks"
   },

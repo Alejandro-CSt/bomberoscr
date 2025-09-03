@@ -1,7 +1,6 @@
 "use client";
 
 import ThemeToggle from "@/features/layout/components/theme-toggle";
-import { cn } from "@/lib/utils";
 import {
   Sidebar,
   SidebarContent,
@@ -12,7 +11,8 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem
-} from "@/shared/components/ui/sidebar";
+} from "@/features/shared/components/ui/sidebar";
+import { cn } from "@/features/shared/lib/utils";
 import {
   FireTruckIcon,
   GarageIcon,

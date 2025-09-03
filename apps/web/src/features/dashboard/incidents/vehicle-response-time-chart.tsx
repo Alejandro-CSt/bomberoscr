@@ -1,20 +1,20 @@
 "use client";
 
-import { formatSecondsToHMS, isUndefinedDate } from "@/lib/utils";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle
-} from "@/shared/components/ui/card";
+} from "@/features/shared/components/ui/card";
 import {
   type ChartConfig,
   ChartContainer,
   ChartLegend,
   ChartLegendContent,
   ChartTooltip
-} from "@/shared/components/ui/chart";
+} from "@/features/shared/components/ui/chart";
+import { formatSecondsToHMS, isUndefinedDate } from "@/features/shared/lib/utils";
 import type { DetailedIncident } from "@bomberoscr/db/queries/incidentDetails";
 import { Bar, BarChart, XAxis, YAxis } from "recharts";
 

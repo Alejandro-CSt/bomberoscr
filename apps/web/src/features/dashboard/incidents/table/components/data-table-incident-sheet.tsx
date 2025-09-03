@@ -1,9 +1,14 @@
 "use client";
 import type { IncidentTable } from "@/features/dashboard/incidents/table/components/columns";
 import { useDataTableContext } from "@/features/dashboard/incidents/table/components/data-table-provider";
-import { cn } from "@/lib/utils";
-import { Button } from "@/shared/components/ui/button";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/shared/components/ui/sheet";
+import { Button } from "@/features/shared/components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle
+} from "@/features/shared/components/ui/sheet";
+import { cn } from "@/features/shared/lib/utils";
 import { ArrowRightIcon, ChevronDown, ChevronUp, XIcon } from "lucide-react";
 import { Geist_Mono } from "next/font/google";
 import Link from "next/link";

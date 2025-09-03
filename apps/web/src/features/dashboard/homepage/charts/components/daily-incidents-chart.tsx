@@ -1,6 +1,5 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import {
   Card,
   CardContent,
@@ -8,14 +7,15 @@ import {
   CardFooter,
   CardHeader,
   CardTitle
-} from "@/shared/components/ui/card";
+} from "@/features/shared/components/ui/card";
 import {
   type ChartConfig,
   ChartContainer,
   ChartLegend,
   ChartLegendContent,
   ChartTooltip
-} from "@/shared/components/ui/chart";
+} from "@/features/shared/components/ui/chart";
+import { cn } from "@/features/shared/lib/utils";
 import type { getDailyIncidents } from "@bomberoscr/db/queries/charts/dailyIncidents";
 import { Geist_Mono } from "next/font/google";
 import { Area, AreaChart, XAxis, YAxis } from "recharts";

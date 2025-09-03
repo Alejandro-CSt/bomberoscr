@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "@/shared/components/ui/button";
-import { useSidebar } from "@/shared/components/ui/sidebar";
+import { Button } from "@/features/shared/components/ui/button";
+import { useSidebar } from "@/features/shared/components/ui/sidebar";
 import { MenuIcon } from "lucide-react";
 
 export function FloatingSidebarToggle() {

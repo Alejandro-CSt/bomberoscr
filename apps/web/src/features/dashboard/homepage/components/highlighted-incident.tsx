@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/features/shared/lib/utils";
 import type { HighlightedIncident as HighlightedIncidentType } from "@bomberoscr/db/queries/highlightedIncidents";
 import { ArrowRightIcon, ImageIcon } from "lucide-react";
 import { Bricolage_Grotesque } from "next/font/google";

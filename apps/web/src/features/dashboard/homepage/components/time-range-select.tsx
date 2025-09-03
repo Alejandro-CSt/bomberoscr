@@ -7,7 +7,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue
-} from "@/shared/components/ui/select";
+} from "@/features/shared/components/ui/select";
 import { ALLOWED_TIME_RANGE_VALUES, TIME_RANGE_LABELS } from "@bomberoscr/lib/time-range";
 
 export default function TimeRangeSelect() {

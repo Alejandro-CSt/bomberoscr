@@ -4,6 +4,7 @@ import { InteractiveMap } from "@/features/map/layout/components/interactive-map
 import { MapSettingsProvider } from "@/features/map/layout/context/map-settings-context";
 import "maplibre-gl/dist/maplibre-gl.css";
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
 const title = "Mapa de incidentes atendidos por Bomberos de Costa Rica en tiempo real";
 const description =
@@ -65,7 +66,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <div className="flex min-h-full">
         <InteractiveMap />
         <FloatingSidebarToggle />
-        <FloatingPanel>{children}</FloatingPanel>
+        <Suspense fallback={null}>
+          <FloatingPanel>{children}</FloatingPanel>
+        </Suspense>
       </div>
     </MapSettingsProvider>
   );

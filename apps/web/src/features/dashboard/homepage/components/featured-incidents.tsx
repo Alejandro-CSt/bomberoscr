@@ -3,7 +3,7 @@
 import { FeaturedIncidentsHeader } from "@/features/dashboard/homepage/components/featured-incidents-header";
 import { IncidentListItem } from "@/features/dashboard/homepage/components/incident-list-item";
 import useTimeRangeQueryState from "@/features/dashboard/homepage/hooks/useTimeRangeQueryState";
-import { trpc } from "@/lib/trpc/client";
+import { trpc } from "@/features/trpc/client";
 
 export function FeaturedIncidents() {
   const { timeRange } = useTimeRangeQueryState();

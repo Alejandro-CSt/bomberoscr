@@ -1,12 +1,13 @@
+import { SidebarInset, SidebarProvider } from "@/features/shared/components/ui/sidebar";
+import { ThemeProvider } from "@/features/shared/context/theme-provider";
+import { cn } from "@/features/shared/lib/utils";
 import { AppSidebar } from "@/features/sidebar/components/sidebar";
-import TRPCProvider from "@/lib/trpc/provider";
-import { cn } from "@/lib/utils";
-import { SidebarInset, SidebarProvider } from "@/shared/components/ui/sidebar";
-import { ThemeProvider } from "@/shared/context/theme-provider";
-import "@/styles/globals.css";
+import "@/features/styles/globals.css";
+import TRPCProvider from "@/features/trpc/provider";
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { Suspense } from "react";
 
 const title = "Mapa de incidentes atendidos por Bomberos de Costa Rica en tiempo real";
 const description =
@@ -75,7 +76,9 @@ export default async function Layout({ children }: { children: React.ReactNode }
           <NuqsAdapter>
             <ThemeProvider attribute="class" defaultTheme="system">
               <TRPCProvider>
-                <AppSidebar />
+                <Suspense fallback={null}>
+                  <AppSidebar />
+                </Suspense>
                 <SidebarInset className="overflow-hidden">
                   <main className="h-full">{children}</main>
                 </SidebarInset>

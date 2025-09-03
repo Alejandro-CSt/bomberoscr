@@ -1,6 +1,6 @@
 "use client";
 
-import { useMediaQuery } from "@/shared/hooks/use-media-query";
+import { useMediaQuery } from "@/features/shared/hooks/use-media-query";
 import { AnimatePresence, motion } from "motion/react";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";

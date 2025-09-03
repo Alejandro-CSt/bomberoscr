@@ -1,14 +1,18 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle
-} from "@/shared/components/ui/card";
-import { type ChartConfig, ChartContainer, ChartTooltip } from "@/shared/components/ui/chart";
+} from "@/features/shared/components/ui/card";
+import {
+  type ChartConfig,
+  ChartContainer,
+  ChartTooltip
+} from "@/features/shared/components/ui/chart";
+import { cn } from "@/features/shared/lib/utils";
 import type { getIncidentsByHour } from "@bomberoscr/db/queries/charts/incidentsByHour";
 import { Geist_Mono } from "next/font/google";
 import { Bar, BarChart, Cell, LabelList, XAxis, YAxis } from "recharts";

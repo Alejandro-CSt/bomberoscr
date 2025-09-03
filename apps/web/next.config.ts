@@ -14,7 +14,10 @@ const nextConfig: NextConfig = {
     devtoolSegmentExplorer: true,
     clientSegmentCache: true,
     reactCompiler: true,
-    cssChunking: true
+    ppr: true,
+    cssChunking: true,
+    useCache: true,
+    cacheComponents: true
   }
 };
 

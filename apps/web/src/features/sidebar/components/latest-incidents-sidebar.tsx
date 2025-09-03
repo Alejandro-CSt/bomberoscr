@@ -1,16 +1,16 @@
 "use client";
 
-import { LiveRelativeTime } from "@/features/sidebar/components/live-relative-time";
-import { trpc } from "@/lib/trpc/client";
-import { cn } from "@/lib/utils";
 import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
   SidebarHeader
-} from "@/shared/components/ui/sidebar";
-import { Skeleton } from "@/shared/components/ui/skeleton";
+} from "@/features/shared/components/ui/sidebar";
+import { Skeleton } from "@/features/shared/components/ui/skeleton";
+import { cn } from "@/features/shared/lib/utils";
+import { LiveRelativeTime } from "@/features/sidebar/components/live-relative-time";
+import { trpc } from "@/features/trpc/client";
 import { ArrowRightIcon } from "lucide-react";
 import { Geist_Mono } from "next/font/google";
 import Link from "next/link";

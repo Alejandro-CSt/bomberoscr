@@ -1,4 +1,4 @@
-import { Toggle } from "@/shared/components/ui/toggle";
+import { Toggle } from "@/features/shared/components/ui/toggle";
 import { MoonIcon, SunIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 

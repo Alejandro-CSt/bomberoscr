@@ -1,6 +1,5 @@
 "use client";
 
-import { cn, formatMinutesToHMS } from "@/lib/utils";
 import {
   Card,
   CardContent,
@@ -8,8 +7,13 @@ import {
   CardFooter,
   CardHeader,
   CardTitle
-} from "@/shared/components/ui/card";
-import { type ChartConfig, ChartContainer, ChartTooltip } from "@/shared/components/ui/chart";
+} from "@/features/shared/components/ui/card";
+import {
+  type ChartConfig,
+  ChartContainer,
+  ChartTooltip
+} from "@/features/shared/components/ui/chart";
+import { cn, formatMinutesToHMS } from "@/features/shared/lib/utils";
 import type { getTopResponseTimesStations } from "@bomberoscr/db/queries/charts/topResponseTimesStations";
 import { Geist_Mono } from "next/font/google";
 import { Bar, BarChart, Cell, LabelList, XAxis, YAxis } from "recharts";

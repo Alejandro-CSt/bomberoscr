@@ -1,17 +1,17 @@
 "use client";
 
 import { FloatingPanelHeader } from "@/features/map/layout/components/floating-panel-header";
-import type { LatestIncident } from "@/features/trpc";
-import { trpc } from "@/lib/trpc/client";
-import { IncidentCard } from "@/shared/components/incident-card";
-import { Button } from "@/shared/components/ui/button";
+import { IncidentCard } from "@/features/shared/components/incident-card";
+import { Button } from "@/features/shared/components/ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue
-} from "@/shared/components/ui/select";
+} from "@/features/shared/components/ui/select";
+import type { LatestIncident } from "@/features/trpc";
+import { trpc } from "@/features/trpc/client";
 import { Loader2Icon } from "lucide-react";
 import { useEffect, useState } from "react";
 

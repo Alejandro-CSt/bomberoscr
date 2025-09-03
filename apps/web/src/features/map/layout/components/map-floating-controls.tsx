@@ -1,7 +1,7 @@
 "use client";
 
-import { cn } from "@/lib/utils";
-import { Button } from "@/shared/components/ui/button";
+import { Button } from "@/features/shared/components/ui/button";
+import { cn } from "@/features/shared/lib/utils";
 import { CompassIcon, Settings2Icon, ZoomInIcon, ZoomOutIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";

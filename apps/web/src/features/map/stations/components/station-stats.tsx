@@ -1,7 +1,6 @@
 "use client";
 
-import { trpc } from "@/lib/trpc/client";
-import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "@/features/shared/components/ui/alert";
 import {
   Card,
   CardContent,
@@ -9,14 +8,15 @@ import {
   CardFooter,
   CardHeader,
   CardTitle
-} from "@/shared/components/ui/card";
+} from "@/features/shared/components/ui/card";
 import {
   type ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent
-} from "@/shared/components/ui/chart";
-import { Skeleton } from "@/shared/components/ui/skeleton";
+} from "@/features/shared/components/ui/chart";
+import { Skeleton } from "@/features/shared/components/ui/skeleton";
+import { trpc } from "@/features/trpc/client";
 import { AlertCircleIcon, AlertTriangleIcon } from "lucide-react";
 import { useState } from "react";
 import {

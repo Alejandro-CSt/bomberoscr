@@ -8,9 +8,9 @@ import {
 } from "@/features/map/constants";
 import { MapFloatingControls } from "@/features/map/layout/components/map-floating-controls";
 import { useMapSettings } from "@/features/map/layout/context/map-settings-context";
+import { isReducedMotion } from "@/features/shared/lib/utils";
 import type { IncidentWithCoordinates, Station } from "@/features/trpc";
-import { trpc } from "@/lib/trpc/client";
-import { isReducedMotion } from "@/lib/utils";
+import { trpc } from "@/features/trpc/client";
 import { ShieldIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
@@ -86,11 +86,7 @@ function StationMarker({ station }: { station: Station }) {
   };
 
   return (
-    <Link
-      href={`/mapa/estaciones/${encodeURIComponent(station.name)}`}
-      className="cursor-pointer"
-      passHref
-    >
+    <Link href={`/mapa/estaciones/${encodeURIComponent(station.name)}`} className="cursor-pointer">
       <Marker
         key={station.id}
         longitude={Number.parseFloat(station.longitude ?? "")}
@@ -120,7 +116,7 @@ function IncidentMarker({ incident }: { incident: IncidentWithCoordinates }) {
   };
 
   return (
-    <Link href={`/mapa/incidentes/${incident.id}`} className="cursor-pointer" passHref>
+    <Link href={`/mapa/incidentes/${incident.id}`} className="cursor-pointer">
       <Marker
         key={incident.id}
         longitude={Number.parseFloat(incident.longitude ?? "0")}

@@ -1,7 +1,7 @@
 import { IsOpenIndicatorLegend } from "@/features/dashboard/incidents/table/components/data-table-is-open-column";
-import { Button } from "@/shared/components/ui/button";
-import { Input } from "@/shared/components/ui/input";
-import { Skeleton } from "@/shared/components/ui/skeleton";
+import { Button } from "@/features/shared/components/ui/button";
+import { Input } from "@/features/shared/components/ui/input";
+import { Skeleton } from "@/features/shared/components/ui/skeleton";
 import { FilterIcon, SearchIcon, SlidersHorizontalIcon } from "lucide-react";
 
 export default function Loading() {
