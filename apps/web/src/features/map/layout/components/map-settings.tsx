@@ -6,7 +6,6 @@ import {
   type ShowStations,
   useMapSettings
 } from "@/features/map/layout/context/map-settings-context";
-import { Button } from "@/features/shared/components/ui/button";
 import { Label } from "@/features/shared/components/ui/label";
 import {
   Select,
@@ -15,10 +14,9 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/features/shared/components/ui/select";
-import { Separator } from "@/features/shared/components/ui/separator";
-import { MoonIcon, SunIcon } from "lucide-react";
+import { cn } from "@/features/shared/lib/utils";
 import { useTheme } from "next-themes";
-
+import Image from "next/image";
 interface StationsSettingsProps {
   showStations: ShowStations;
   setShowStations: (value: ShowStations) => void;
@@ -37,38 +35,59 @@ export default function MapSettings() {
   return (
     <div className="flex h-full flex-col overflow-y-auto">
       <FloatingPanelHeader title="Ajustes" />
-      <div className="flex flex-col gap-2 p-4">
+      <div className="flex flex-col gap-2 p-2">
         <div>
           <Label className="font-medium text-sm">Estilo del mapa</Label>
-          <div className="flex gap-2">
-            <Button
-              variant={theme === "light" ? "default" : "outline"}
-              className="flex-1 justify-center"
+          <div className="mt-2 flex gap-2">
+            <button
+              type="button"
+              className={cn(
+                "flex flex-1 flex-col items-center gap-2 rounded-lg p-2 transition-all",
+                theme === "light" ? "ring-2 ring-primary" : "hover:bg-muted"
+              )}
               onClick={() => {
                 setTheme("light");
               }}
             >
-              <SunIcon className="mr-2 h-4 w-4" />
-              Claro
-            </Button>
-            <Button
-              variant={theme === "dark" ? "default" : "outline"}
-              className="flex-1 justify-center"
+              <div className="relative overflow-hidden rounded-lg">
+                <Image
+                  src="/light-map.png"
+                  alt="Vista clara del mapa"
+                  width={160}
+                  height={112}
+                  quality={95}
+                  className="h-28 w-full object-cover"
+                />
+              </div>
+              <span className="font-medium text-foreground text-xs">Claro</span>
+            </button>
+            <button
+              type="button"
+              className={cn(
+                "gtransition-all flex flex-1 flex-col items-center gap-2 rounded-lg p-2",
+                theme === "dark" ? "ring-2 ring-primary" : "hover:bg-muted"
+              )}
               onClick={() => {
                 setTheme("dark");
               }}
             >
-              <MoonIcon className="mr-2 h-4 w-4" />
-              Oscuro
-            </Button>
+              <div className="relative overflow-hidden rounded-lg">
+                <Image
+                  src="/dark-map.png"
+                  alt="Vista oscura del mapa"
+                  width={160}
+                  height={112}
+                  className="h-28 w-full object-cover"
+                />
+              </div>
+              <span className="font-medium text-foreground text-xs">Oscuro</span>
+            </button>
           </div>
         </div>
-        <Separator />
         <IncidentSettings
           incidentTimeRange={incidentTimeRange}
           setIncidentTimeRange={setIncidentTimeRange}
         />
-        <Separator />
         <StationsSettings showStations={showStations} setShowStations={setShowStations} />
       </div>
     </div>

@@ -18,6 +18,17 @@ const nextConfig: NextConfig = {
     cssChunking: true,
     useCache: true,
     cacheComponents: true
+  },
+  typedRoutes: true,
+  images: {
+    qualities: [75, 80, 90, 95, 100]
+  },
+  productionBrowserSourceMaps: true,
+  logging: {
+    fetches: {
+      fullUrl: true
+    },
+    incomingRequests: true
   }
 };
 

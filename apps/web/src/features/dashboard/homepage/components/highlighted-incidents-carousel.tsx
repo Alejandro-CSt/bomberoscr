@@ -1,3 +1,4 @@
+import { HighlightedIncident } from "@/features/dashboard/homepage/components/highlighted-incident";
 import {
   Carousel,
   CarouselContent,
@@ -6,7 +7,6 @@ import {
   CarouselPrevious
 } from "@/features/shared/components/ui/carousel";
 import { getHighlightedIncidents } from "@bomberoscr/db/queries/highlightedIncidents";
-import { HighlightedIncident } from "./highlighted-incident";
 
 export async function HighlightedIncidents() {
   const highlightedIncidents = await getHighlightedIncidents();
