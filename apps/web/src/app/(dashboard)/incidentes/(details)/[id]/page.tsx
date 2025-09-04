@@ -107,7 +107,7 @@ export default async function IncidentPage({ params }: { params: Promise<{ id: s
                       className={cn(station.serviceTypeId === 1 && "font-semibold")}
                     >
                       <TableCell>
-                        <Link href={`/estaciones/${station.station.name}`}>
+                        <Link href={`/mapa/estaciones/${station.station.name}`}>
                           {station.station.name}
                         </Link>
                       </TableCell>

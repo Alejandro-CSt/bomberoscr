@@ -15,7 +15,7 @@ export function ErrorPanel({ message, backHref, backLabel = "Volver" }: ErrorPan
       <div className="flex w-full flex-col items-center gap-4 p-4">
         <p className="text-muted-foreground">{message}</p>
         <Button asChild>
-          <Link href={backHref} className="group flex gap-2">
+          <Link href={{ pathname: backHref }} className="group flex gap-2">
             <ArrowLeftIcon className="group-hover:-translate-x-1 transition-transform" />{" "}
             {backLabel}
           </Link>

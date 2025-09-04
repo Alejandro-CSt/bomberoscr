@@ -26,7 +26,7 @@ export function StationTabs({ name }: { name: string }) {
       <div className="flex w-full items-center justify-between">
         {tabs.map((tab) => (
           <Link
-            href={tab.href}
+            href={{ pathname: tab.href }}
             key={tab.href}
             className={cn(
               "flex flex-1 flex-col items-center gap-1 px-4 py-2 transition-colors duration-200",

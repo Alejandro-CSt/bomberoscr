@@ -101,7 +101,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     className={cn(!item.enabled && "select-none opacity-30")}
                   >
                     {item.enabled ? (
-                      <Link href={item.url}>
+                      <Link href={{ pathname: item.url }}>
                         {item.icon && <item.icon />}
                         <span>{item.title}</span>
                       </Link>

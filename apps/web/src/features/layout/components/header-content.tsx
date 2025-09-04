@@ -79,7 +79,7 @@ export function HeaderContent() {
                       <BreadcrumbPage>{crumb.title}</BreadcrumbPage>
                     ) : (
                       <BreadcrumbLink asChild>
-                        <Link href={crumb.href}>{crumb.title}</Link>
+                        <Link href={{ pathname: crumb.href }}>{crumb.title}</Link>
                       </BreadcrumbLink>
                     )}
                   </BreadcrumbItem>
