@@ -3,6 +3,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/features/shared/compo
 import { ToggleGroup, ToggleGroupItem } from "@/features/shared/components/ui/toggle-group";
 import { MonitorIcon, MoonIcon, SunIcon } from "lucide-react";
 import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 
 function ThemeSelector({
   value,
@@ -35,9 +36,18 @@ function ThemeSelector({
 }
 
 export default function ThemeToggle() {
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const currentTheme = mounted ? resolvedTheme || theme : "system";
   const selectedTheme: "light" | "dark" | "system" | undefined =
-    theme === "light" || theme === "dark" || theme === "system" ? theme : undefined;
+    currentTheme === "light" || currentTheme === "dark" || currentTheme === "system"
+      ? currentTheme
+      : undefined;
 
   return (
     <div>
@@ -48,15 +58,10 @@ export default function ThemeToggle() {
       <div className="hidden md:block">
         <Popover>
           <PopoverTrigger asChild>
-            <Button
-              suppressHydrationWarning
-              variant="outline"
-              size="icon"
-              aria-label="Cambiar tema"
-            >
-              {theme === "dark" ? (
+            <Button suppressHydrationWarning variant="ghost" size="icon" aria-label="Cambiar tema">
+              {currentTheme === "dark" ? (
                 <MoonIcon size={16} />
-              ) : theme === "light" ? (
+              ) : currentTheme === "light" ? (
                 <SunIcon size={16} />
               ) : (
                 <MonitorIcon size={16} />
