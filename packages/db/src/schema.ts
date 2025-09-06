@@ -2,6 +2,7 @@ import { relations } from "drizzle-orm";
 import {
   type AnyPgColumn,
   boolean,
+  index,
   integer,
   numeric,
   pgTable,
@@ -82,25 +83,33 @@ export const incidentTypes = pgTable("incident_types", {
   parentId: integer("parent_id").references((): AnyPgColumn => incidentTypes.id)
 });
 
-export const incidents = pgTable("incidents", {
-  id: integer().primaryKey(),
-  incidentCode: text().references(() => incidentTypes.incidentCode),
-  specificIncidentCode: text().references(() => incidentTypes.incidentCode),
-  dispatchIncidentCode: text().references(() => incidentTypes.incidentCode),
-  specificDispatchIncidentCode: text().references(() => incidentTypes.incidentCode),
-  EEConsecutive: text().notNull(),
-  address: text().notNull(),
-  responsibleStation: integer().references(() => stations.id),
-  incidentTimestamp: timestamp().notNull(),
-  importantDetails: text().notNull(),
-  latitude: numeric().notNull(),
-  longitude: numeric().notNull(),
-  provinceId: integer().references(() => provinces.id),
-  cantonId: integer().references(() => cantons.id),
-  districtId: integer().references(() => districts.id),
-  isOpen: boolean().notNull(),
-  modifiedAt: timestamp().notNull().defaultNow()
-});
+export const incidents = pgTable(
+  "incidents",
+  {
+    id: integer().primaryKey(),
+    incidentCode: text().references(() => incidentTypes.incidentCode),
+    specificIncidentCode: text().references(() => incidentTypes.incidentCode),
+    dispatchIncidentCode: text().references(() => incidentTypes.incidentCode),
+    specificDispatchIncidentCode: text().references(() => incidentTypes.incidentCode),
+    EEConsecutive: text().notNull(),
+    address: text().notNull(),
+    responsibleStation: integer().references(() => stations.id),
+    incidentTimestamp: timestamp().notNull(),
+    importantDetails: text().notNull(),
+    latitude: numeric().notNull(),
+    longitude: numeric().notNull(),
+    provinceId: integer().references(() => provinces.id),
+    cantonId: integer().references(() => cantons.id),
+    districtId: integer().references(() => districts.id),
+    isOpen: boolean().notNull(),
+    modifiedAt: timestamp().notNull().defaultNow()
+  },
+  (table) => [
+    index("incidents_latitude_idx").on(table.latitude),
+    index("incidents_longitude_idx").on(table.longitude),
+    index("incidents_latitude_longitude_idx").on(table.latitude, table.longitude)
+  ]
+);
 
 export const provinces = pgTable("provinces", {
   id: integer().primaryKey(),

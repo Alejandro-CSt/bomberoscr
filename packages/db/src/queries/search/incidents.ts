@@ -29,8 +29,7 @@ export async function searchIncidentsCoordinates(
 ): Promise<SearchIncidentCoordinate[]> {
   const whereClauses: SQL<unknown>[] = [];
 
-  // Exclude invalid coordinates (0,0)
-  whereClauses.push(sql`${incidents.latitude} <> '0'`);
+  whereClauses.push(sql`${incidents.latitude} <> 0`);
 
   if (filters.start && filters.end) {
     const start = new Date(
@@ -60,7 +59,6 @@ export async function searchIncidentsCoordinates(
     }
   }
 
-  // Station filtering (responsible station or dispatched station)
   if (filters.stationIds && filters.stationIds.length > 0) {
     const dispatched = await db
       .select({ incidentId: dispatchedStations.incidentId })
@@ -82,14 +80,13 @@ export async function searchIncidentsCoordinates(
     }
   }
 
-  // Viewport bounds filtering
   if (filters.bounds) {
     const { minLat, maxLat, minLng, maxLng } = filters.bounds;
     whereClauses.push(
-      sql`(${incidents.latitude})::double precision BETWEEN ${minLat} AND ${maxLat}`
+      between(incidents.latitude, sql`${minLat}::numeric`, sql`${maxLat}::numeric`)
     );
     whereClauses.push(
-      sql`(${incidents.longitude})::double precision BETWEEN ${minLng} AND ${maxLng}`
+      between(incidents.longitude, sql`${minLng}::numeric`, sql`${maxLng}::numeric`)
     );
   }
 
