@@ -20,7 +20,6 @@ import {
   MapTrifoldIcon,
   SirenIcon
 } from "@phosphor-icons/react/dist/ssr";
-import { SearchIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -47,19 +46,6 @@ export const navItems = [
     title: "Estaciones",
     url: "/estaciones",
     icon: GarageIcon,
-    enabled: false
-  },
-  {
-    title: (
-      <span className="flex items-center">
-        Búsqueda
-        {/* <span className="ms-1 hidden rounded-md bg-accent/25 p-0.5 text-xs/snug md:block">
-          <kbd>Ctrl</kbd>+<kbd>K</kbd>
-        </span> */}
-      </span>
-    ),
-    url: "/busqueda",
-    icon: SearchIcon,
     enabled: false
   }
 ];

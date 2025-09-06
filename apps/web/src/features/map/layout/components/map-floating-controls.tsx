@@ -2,7 +2,7 @@
 
 import { Button } from "@/features/shared/components/ui/button";
 import { cn } from "@/features/shared/lib/utils";
-import { CompassIcon, Settings2Icon, ZoomInIcon, ZoomOutIcon } from "lucide-react";
+import { CompassIcon, SearchIcon, Settings2Icon, ZoomInIcon, ZoomOutIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useMap } from "react-map-gl/maplibre";
@@ -18,7 +18,7 @@ export function MapFloatingControls() {
           variant="ghost"
           size="icon"
           onClick={() => map?.zoomIn()}
-          className="rounded-full hover:bg-accent"
+          className="rounded-full transition-[background] hover:bg-accent"
         >
           <ZoomInIcon className="size-4" />
           <span className="sr-only">Acercar</span>
@@ -27,7 +27,7 @@ export function MapFloatingControls() {
           variant="ghost"
           size="icon"
           onClick={() => map?.zoomOut()}
-          className="rounded-full hover:bg-accent"
+          className="rounded-full transition-[background] hover:bg-accent"
         >
           <ZoomOutIcon className="size-4" />
           <span className="sr-only">Alejar</span>
@@ -36,7 +36,7 @@ export function MapFloatingControls() {
           variant="ghost"
           size="icon"
           onClick={() => map?.resetNorthPitch()}
-          className="rounded-full hover:bg-accent"
+          className="rounded-full transition-[background] hover:bg-accent"
         >
           <CompassIcon className="size-4" />
           <span className="sr-only">Centrar norte</span>
@@ -49,13 +49,30 @@ export function MapFloatingControls() {
           size="icon"
           asChild
           className={cn(
-            "rounded-full hover:bg-accent",
+            "rounded-full transition-[background] hover:bg-accent",
             pathname.startsWith("/mapa/ajustes") ? "bg-primary text-primary-foreground" : ""
           )}
         >
           <Link prefetch href="/mapa/ajustes">
             <Settings2Icon className="size-4" />
             <span className="sr-only">Opciones</span>
+          </Link>
+        </Button>
+      </div>
+
+      <div className="flex flex-col items-center rounded-full border bg-background/80 p-0.5 shadow-lg backdrop-blur-lg">
+        <Button
+          variant="ghost"
+          size="icon"
+          asChild
+          className={cn(
+            "rounded-full transition-[background] hover:bg-accent",
+            pathname.startsWith("/mapa/busqueda") ? "bg-primary text-primary-foreground" : ""
+          )}
+        >
+          <Link prefetch href="/mapa/busqueda">
+            <SearchIcon className="size-4" />
+            <span className="sr-only">Buscar</span>
           </Link>
         </Button>
       </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { type ReactNode, createContext, useContext, useState } from "react"; // Removed useEffect
+import { type ReactNode, createContext, useContext, useState } from "react";
 import { z } from "zod";
 
 export type ShowStations = "all" | "operative" | "none";
@@ -31,11 +31,30 @@ function getLocalStorageItem(key: string, fallback: string | undefined): string 
 }
 
 type MapSettingsContextType = {
-  // Removed style and setStyle
   showStations: ShowStations;
   setShowStations: (value: ShowStations) => void;
   incidentTimeRange: IncidentTimeRange;
   setIncidentTimeRange: (value: IncidentTimeRange) => void;
+  hideRegularIncidents: boolean;
+  setHideRegularIncidents: (value: boolean) => void;
+  searchResults: { id: number; latitude: string; longitude: string }[];
+  setSearchResults: (value: { id: number; latitude: string; longitude: string }[]) => void;
+  viewportBounds: {
+    minLat: number;
+    minLng: number;
+    maxLat: number;
+    maxLng: number;
+  } | null;
+  setViewportBounds: (
+    value: {
+      minLat: number;
+      minLng: number;
+      maxLat: number;
+      maxLng: number;
+    } | null
+  ) => void;
+  isSearching: boolean;
+  setIsSearching: (value: boolean) => void;
 };
 
 const MapSettingsContext = createContext<MapSettingsContextType | undefined>(undefined);
@@ -47,6 +66,17 @@ export function MapSettingsProvider({ children }: { children: ReactNode }) {
   const [incidentTimeRange, setIncidentTimeRangeState] = useState<IncidentTimeRange>(() =>
     validateSetting(getLocalStorageItem("mapIncidentTimeRange", undefined), incidentTimeRangeSchema)
   );
+  const [hideRegularIncidents, setHideRegularIncidents] = useState<boolean>(false);
+  const [searchResults, setSearchResults] = useState<
+    { id: number; latitude: string; longitude: string }[]
+  >([]);
+  const [viewportBounds, setViewportBounds] = useState<{
+    minLat: number;
+    minLng: number;
+    maxLat: number;
+    maxLng: number;
+  } | null>(null);
+  const [isSearching, setIsSearching] = useState<boolean>(false);
 
   const setShowStations = (value: ShowStations) => {
     setShowStationsState(value);
@@ -64,7 +94,15 @@ export function MapSettingsProvider({ children }: { children: ReactNode }) {
         showStations,
         setShowStations,
         incidentTimeRange,
-        setIncidentTimeRange
+        setIncidentTimeRange,
+        hideRegularIncidents,
+        setHideRegularIncidents,
+        searchResults,
+        setSearchResults,
+        viewportBounds,
+        setViewportBounds,
+        isSearching,
+        setIsSearching
       }}
     >
       {children}

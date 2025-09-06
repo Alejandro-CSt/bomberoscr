@@ -1,5 +1,6 @@
 import { featuredIncidentsRouter } from "@/features/dashboard/homepage/api/featuredIncidentsRouter";
 import { latestIncidentsRouter } from "@/features/dashboard/homepage/api/latestIncidentsRouter";
+import { searchRouter } from "@/features/map/search/api/searchRouter";
 import { incidentsRouter } from "@/features/trpc/incidents";
 import { router } from "@/features/trpc/init";
 import { stationsRouter } from "@/features/trpc/stations";
@@ -9,7 +10,8 @@ export const appRouter = router({
   stations: stationsRouter,
   incidents: incidentsRouter,
   featuredIncidents: featuredIncidentsRouter,
-  latestIncidents: latestIncidentsRouter
+  latestIncidents: latestIncidentsRouter,
+  search: searchRouter
 });
 
 export type AppRouter = typeof appRouter;
