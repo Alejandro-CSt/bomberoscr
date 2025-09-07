@@ -1,4 +1,4 @@
-import env from "@/features/server/env";
+import env from "@/features/lib/env";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 

@@ -7,8 +7,8 @@ import {
   LIGHT_MAP_STYLE
 } from "@/features/map/constants";
 import { MapFloatingControls } from "@/features/map/layout/components/map-floating-controls";
-import { useMapSettings } from "@/features/map/layout/context/map-settings-context";
 import type { SearchIncidentsResult } from "@/features/map/search/api/searchRouter";
+import { useMapSettings } from "@/features/map/settings/hooks/use-map-settings";
 import { cn, isReducedMotion } from "@/features/shared/lib/utils";
 import type { IncidentWithCoordinates, Station } from "@/features/trpc";
 import { trpc } from "@/features/trpc/client";

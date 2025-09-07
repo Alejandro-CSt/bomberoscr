@@ -11,6 +11,7 @@
   "dependencies": {
     "@bomberoscr/db": "workspace:*",
     "@bomberoscr/lib": "workspace:*",
+    "@bomberoscr/sync-domain": "workspace:*",
     "@deck.gl/layers": "^9.1.14",
     "@deck.gl/mapbox": "^9.1.14",
     "@hookform/resolvers": "^5.1.1",

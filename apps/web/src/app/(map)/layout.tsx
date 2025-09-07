@@ -1,7 +1,7 @@
 import { FloatingPanel } from "@/features/map/layout/components/floating-panel";
 import { FloatingSidebarToggle } from "@/features/map/layout/components/floating-sidebar-toggle";
-import { InteractiveMap } from "@/features/map/layout/components/interactive-map";
-import { MapSettingsProvider } from "@/features/map/layout/context/map-settings-context";
+import { InteractiveMap } from "@/features/map/layout/components/map";
+import { MapSettingsProvider } from "@/features/map/settings/context/map-settings-provider";
 import "maplibre-gl/dist/maplibre-gl.css";
 import type { Metadata } from "next";
 import { Suspense } from "react";

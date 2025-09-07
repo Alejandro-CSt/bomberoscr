@@ -1,11 +1,11 @@
 "use client";
 
 import { FloatingPanelHeader } from "@/features/map/layout/components/floating-panel-header";
-import { useMapSettings } from "@/features/map/layout/context/map-settings-context";
 import { IncidentTypesField } from "@/features/map/search/components/incident-types-field";
 import { StationsField } from "@/features/map/search/components/stations-field";
 import { TimeRangeField } from "@/features/map/search/components/time-range-field";
 import { SearchIncidentsFormSchema } from "@/features/map/search/schemas";
+import { useMapSettings } from "@/features/map/settings/hooks/use-map-settings";
 import { Form } from "@/features/shared/components/ui/form";
 import { trpc } from "@/features/trpc/client";
 import { zodResolver } from "@hookform/resolvers/zod";

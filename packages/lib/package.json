@@ -5,9 +5,7 @@
     "build": "tsc"
   },
   "exports": {
-    "./logger": "./src/logger.ts",
-    "./compare-two-strings": "./src/compare-two-strings.ts",
-    "./time-range": "./src/time-range.ts"
+    "./*": "./src/*.ts"
   },
   "dependencies": {
     "winston": "^3.17.0",
