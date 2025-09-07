@@ -65,7 +65,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <MapSettingsProvider>
       <div className="flex min-h-full">
         <InteractiveMap />
-        <FloatingSidebarToggle />
+        <Suspense fallback={null}>
+          <FloatingSidebarToggle />
+        </Suspense>
         <Suspense fallback={null}>
           <FloatingPanel>{children}</FloatingPanel>
         </Suspense>
