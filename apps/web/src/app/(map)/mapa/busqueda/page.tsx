@@ -88,15 +88,15 @@ export default function SearchMapPage() {
   }, [runSearch, form.getValues]);
 
   return (
-    <>
+    <div className="mx-auto flex h-full max-w-7xl flex-col overflow-y-auto">
       <FloatingPanelHeader
         title="Búsqueda"
         subtitle={(() => {
           if (isSearching) return "Buscando...";
           const count = searchResults.length;
-          if (count === 0) return "No se encontraron resultados";
-          if (count === 500) return "500+ incidentes";
-          return `${count} incidentes.`;
+          if (count === 0) return "No se encontraron resultados.";
+          if (count === 500) return "500+ incidentes encontrados";
+          return `${count} incidentes encontrados.`;
         })()}
       />
       <Form {...form}>
@@ -106,6 +106,6 @@ export default function SearchMapPage() {
           <TimeRangeField name="timeRange" />
         </form>
       </Form>
-    </>
+    </div>
   );
 }

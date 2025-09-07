@@ -56,12 +56,12 @@ export function FloatingPanel({ children }: { children: React.ReactNode }) {
       {pathname !== "/mapa" && (
         <FloatingPanelContext.Provider value={ctx}>
           <motion.div
-            className="fixed top-20 bottom-0 z-50 max-h-dvh w-full overflow-hidden rounded-xl border bg-card shadow-xl max-md:rounded-b-none md:top-4 md:right-4 md:bottom-4 md:w-[450px] md:max-w-[calc(100vw-32px)]"
+            className="fixed top-20 bottom-0 z-50 max-h-[90dvh] w-full overflow-hidden rounded-xl border bg-card shadow-xl max-md:rounded-b-none md:top-4 md:right-4 md:bottom-4 md:max-h-dvh md:w-[320px] md:max-w-[calc(100vw-32px)] lg:w-[360px] xl:w-[380px] 2xl:w-[400px]"
             style={isMobile ? { touchAction: "none" } : undefined}
             initial={isInitialLoad ? false : isMobile ? { y: "100%" } : { x: "110%" }}
             animate={isMobile ? { y: mobileY } : { x: 0 }}
             exit={isMobile ? { y: "100%" } : { x: "110%" }}
-            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
           >
             {children}
           </motion.div>

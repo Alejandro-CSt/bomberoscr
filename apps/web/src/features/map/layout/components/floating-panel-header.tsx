@@ -1,9 +1,10 @@
 "use client";
 
+import { useFloatingPanel } from "@/features/map/layout/components/floating-panel";
+import { Button } from "@/features/shared/components/ui/button";
 import { ChevronDownIcon, ChevronUpIcon, XIcon } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
-import { useFloatingPanel } from "./floating-panel";
 
 export function FloatingPanelHeader({ title, subtitle }: { title: string; subtitle?: string }) {
   const { setHeaderHeight, toggleCollapsed, collapsed, isMobile } = useFloatingPanel();
@@ -34,28 +35,19 @@ export function FloatingPanelHeader({ title, subtitle }: { title: string; subtit
         <h1 className="truncate font-medium text-xl">{title}</h1>
         {subtitle && <p className="line-clamp-2 text-muted-foreground text-xs">{subtitle}</p>}
       </div>
-      <div className="flex shrink-0 items-center gap-2">
+      <div className="flex shrink-0 items-center gap-2 self-start">
         {isMobile && (
-          <button
-            type="button"
-            onClick={toggleCollapsed}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-md border bg-background transition-colors hover:bg-accent hover:text-accent-foreground"
-          >
-            {collapsed ? (
-              <ChevronUpIcon className="size-4" />
-            ) : (
-              <ChevronDownIcon className="size-4" />
-            )}
+          <Button type="button" onClick={toggleCollapsed} variant="ghost" size="icon">
+            {collapsed ? <ChevronUpIcon /> : <ChevronDownIcon />}
             <span className="sr-only">{collapsed ? "Expandir panel" : "Colapsar panel"}</span>
-          </button>
+          </Button>
         )}
-        <Link
-          href="/mapa"
-          className="inline-flex h-8 w-8 items-center justify-center rounded-md border bg-background transition-colors hover:bg-destructive hover:text-destructive-foreground"
-        >
-          <XIcon className="size-4" />
-          <span className="sr-only">Cerrar</span>
-        </Link>
+        <Button asChild variant="ghost" size="icon">
+          <Link href="/mapa">
+            <XIcon />
+            <span className="sr-only">Cerrar</span>
+          </Link>
+        </Button>
       </div>
     </div>
   );
