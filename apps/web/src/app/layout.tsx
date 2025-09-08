@@ -18,7 +18,7 @@ const siteUrl = env.SITE_URL;
 export const metadata: Metadata = {
   title: title,
   description: description,
-  metadataBase: new URL(siteUrl),
+  metadataBase: siteUrl ? new URL(siteUrl) : undefined,
   keywords: [
     "Bomberos de Costa Rica",
     "Bomberos",
@@ -43,13 +43,13 @@ export const metadata: Metadata = {
     url: siteUrl,
     type: "website",
     siteName: title,
-    images: [`${siteUrl}/og.png`]
+    images: siteUrl ? [`${siteUrl}/og.png`] : undefined
   },
   twitter: {
     card: "summary_large_image",
     title: "Mapa y estadísticas de incidentes atendidos por Bomberos de Costa Rica",
     description: description,
-    images: [`${siteUrl}/og.png`]
+    images: siteUrl ? [`${siteUrl}/og.png`] : undefined
   },
   robots: {
     index: true,
