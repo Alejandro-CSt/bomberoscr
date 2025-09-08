@@ -1,4 +1,5 @@
 import { AppSidebar } from "@/features/layout/components/sidebar";
+import env from "@/features/lib/env";
 import { SidebarInset, SidebarProvider } from "@/features/shared/components/ui/sidebar";
 import { ThemeProvider } from "@/features/shared/context/theme-provider";
 import { cn } from "@/features/shared/lib/utils";
@@ -12,7 +13,7 @@ import { Suspense } from "react";
 const title = "Mapa de incidentes atendidos por Bomberos de Costa Rica en tiempo real";
 const description =
   "Mapa interactivo no oficial con estadísticas de incendios, emergencias activas, ubicación de estaciones y detalles de incidentes en tiempo real atendidos por Bomberos de Costa Rica.";
-const siteUrl = "https://bomberos.anifz.com";
+const siteUrl = env.SITE_URL;
 
 export const metadata: Metadata = {
   title: title,

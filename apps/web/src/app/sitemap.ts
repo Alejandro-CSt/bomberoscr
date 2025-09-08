@@ -6,7 +6,7 @@ import type { MetadataRoute } from "next";
 export const dynamic = "force-dynamic";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const siteUrl = env.SITE_URL || "https://bomberos.anifz.com";
+  const siteUrl = env.SITE_URL;
   const stations = await db.query.stations.findMany({
     columns: {
       name: true

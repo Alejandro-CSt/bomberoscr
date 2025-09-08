@@ -1,3 +1,4 @@
+import env from "@/features/lib/env";
 import { FloatingNavigation } from "@/features/map/layout/components/floating-navigation";
 import { FloatingPanel } from "@/features/map/layout/components/floating-panel";
 import { InteractiveMap } from "@/features/map/layout/components/map";
@@ -9,7 +10,7 @@ import { Suspense } from "react";
 const title = "Mapa de incidentes atendidos por Bomberos de Costa Rica en tiempo real";
 const description =
   "Mapa interactivo no oficial con estadísticas de incendios, emergencias activas, ubicación de estaciones y detalles de incidentes en tiempo real atendidos por Bomberos de Costa Rica.";
-const siteUrl = "https://bomberos.anifz.com";
+const siteUrl = env.SITE_URL;
 
 export const metadata: Metadata = {
   title: title,
