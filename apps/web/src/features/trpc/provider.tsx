@@ -11,7 +11,7 @@ export default function TRPCProvider({ children }: { children: React.ReactNode }
     trpc.createClient({
       links: [
         httpBatchLink({
-          url: "/api/trpc"
+          url: process.env.NODE_ENV === "production" ? "/bomberos/api/trpc" : "/api/trpc"
         })
       ]
     })
