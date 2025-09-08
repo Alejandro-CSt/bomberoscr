@@ -92,7 +92,7 @@ function StationIncidents({
     );
 
   return (
-    <div className="space-y-2 px-4 pb-4">
+    <div className="space-y-2 px-4 pt-2 pb-4">
       {incidents.map((incident) => (
         <IncidentCard key={incident.id} incident={incident} />
       ))}

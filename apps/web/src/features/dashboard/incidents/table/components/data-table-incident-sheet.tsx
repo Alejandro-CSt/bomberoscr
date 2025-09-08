@@ -10,14 +10,8 @@ import {
 } from "@/features/shared/components/ui/sheet";
 import { cn } from "@/features/shared/lib/utils";
 import { ArrowRightIcon, ChevronDown, ChevronUp, XIcon } from "lucide-react";
-import { Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import * as React from "react";
-
-const GeistMono = Geist_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"]
-});
 
 export function IncidentSheet() {
   const { rowSelection, setRowSelection, table } = useDataTableContext<IncidentTable, unknown>();
@@ -161,8 +155,7 @@ const IncidentProperty = ({
   return (
     <div
       className={cn(
-        "mx-2 flex justify-between gap-2 border-b py-4 text-xs md:mx-4",
-        GeistMono.className,
+        "mx-2 flex justify-between gap-2 border-b py-4 font-mono text-xs md:mx-4",
         className
       )}
     >

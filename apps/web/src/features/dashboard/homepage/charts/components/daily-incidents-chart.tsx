@@ -15,9 +15,7 @@ import {
   ChartLegendContent,
   ChartTooltip
 } from "@/features/shared/components/ui/chart";
-import { cn } from "@/features/shared/lib/utils";
 import type { getDailyIncidents } from "@bomberoscr/db/queries/charts/dailyIncidents";
-import { Geist_Mono } from "next/font/google";
 import { Area, AreaChart, XAxis, YAxis } from "recharts";
 
 type DailyIncidents = Awaited<ReturnType<typeof getDailyIncidents>>;
@@ -47,10 +45,6 @@ const chartConfig = {
     color: "var(--chart-3)"
   }
 } satisfies ChartConfig;
-
-const GeistMono = Geist_Mono({
-  subsets: ["latin"]
-});
 
 export function DailyIncidentsChart({ incidents, timeRange }: DailyIncidentsChartProps) {
   const { data, summary } = incidents;
@@ -83,10 +77,7 @@ export function DailyIncidentsChart({ incidents, timeRange }: DailyIncidentsChar
         </CardDescription>
       </CardHeader>
       <CardContent className="px-2">
-        <ChartContainer
-          config={chartConfig}
-          className={cn("max-h-[300px] w-full", GeistMono.className)}
-        >
+        <ChartContainer config={chartConfig} className="max-h-[300px] w-full font-mono">
           <AreaChart accessibilityLayer data={data} margin={{ right: 16 }}>
             <XAxis
               dataKey="displayDate"

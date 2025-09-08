@@ -1,18 +1,11 @@
 "use client";
 
 import { Button } from "@/features/shared/components/ui/button";
-import { cn } from "@/features/shared/lib/utils";
 import { ArrowRight } from "lucide-react";
 import { useTheme } from "next-themes";
-import { Bricolage_Grotesque } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-
-const bricolage = Bricolage_Grotesque({
-  subsets: ["latin"],
-  weight: ["400", "700"]
-});
 
 export function MapCTA() {
   const { resolvedTheme } = useTheme();
@@ -48,7 +41,7 @@ export function MapCTA() {
 
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent dark:via-black/20" />
 
-      <div className={cn("absolute right-0 bottom-0 left-0 p-6 lg:p-8", bricolage.className)}>
+      <div className="absolute right-0 bottom-0 left-0 p-6 font-serif lg:p-8">
         <div className="mb-4">
           <h2 className="font-bold text-white text-xl leading-tight lg:text-2xl xl:text-3xl">
             Mapa interactivo con incidentes en tiempo real

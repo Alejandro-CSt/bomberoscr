@@ -12,9 +12,7 @@ import {
   ChartContainer,
   ChartTooltip
 } from "@/features/shared/components/ui/chart";
-import { cn } from "@/features/shared/lib/utils";
 import type { getIncidentsByDayOfWeek } from "@bomberoscr/db/queries/charts/incidentsByDayOfWeek";
-import { Geist_Mono } from "next/font/google";
 import { Bar, BarChart, Cell, LabelList, XAxis, YAxis } from "recharts";
 
 type IncidentsByDayOfWeek = Awaited<ReturnType<typeof getIncidentsByDayOfWeek>>;
@@ -38,10 +36,6 @@ const chartConfig = {
     color: "var(--chart-1)"
   }
 } satisfies ChartConfig;
-
-const GeistMono = Geist_Mono({
-  subsets: ["latin"]
-});
 
 const getDayColor = (count: number, maxCount: number) => {
   if (maxCount === 0) return "var(--chart-1)";
@@ -78,7 +72,7 @@ export function IncidentsByDayOfWeekChart({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className={cn("w-full", GeistMono.className)}>
+        <ChartContainer config={chartConfig} className="w-full font-mono">
           <BarChart accessibilityLayer data={incidents} layout="horizontal">
             <XAxis
               dataKey="dayOfWeek"

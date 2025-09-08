@@ -9,13 +9,9 @@ import {
   SidebarHeader
 } from "@/features/shared/components/ui/sidebar";
 import { Skeleton } from "@/features/shared/components/ui/skeleton";
-import { cn } from "@/features/shared/lib/utils";
 import { trpc } from "@/features/trpc/client";
 import { ArrowRightIcon } from "lucide-react";
-import { Geist_Mono } from "next/font/google";
 import Link from "next/link";
-
-const geist = Geist_Mono({ subsets: ["latin-ext"], weight: ["400", "500", "600", "700"] });
 
 export function LatestIncidentsSidebar() {
   const {
@@ -33,7 +29,7 @@ export function LatestIncidentsSidebar() {
   ];
 
   return (
-    <Sidebar collapsible="none" className={cn("hidden flex-1 md:flex", geist.className)}>
+    <Sidebar collapsible="none" className="hidden flex-1 font-mono md:flex">
       <SidebarHeader className="gap-3.5 border-b p-4">
         <div className="flex w-full items-center justify-between">
           <div className="text-ellipsis whitespace-nowrap font-medium text-base text-foreground">

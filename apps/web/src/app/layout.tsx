@@ -6,7 +6,7 @@ import { cn } from "@/features/shared/lib/utils";
 import "@/features/styles/globals.css";
 import TRPCProvider from "@/features/trpc/provider";
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Suspense } from "react";
 
@@ -67,12 +67,35 @@ export const metadata: Metadata = {
   }
 };
 
-const geist = Geist({ subsets: ["latin-ext"], weight: ["400", "500", "600", "700"] });
+const geist = Geist({
+  subsets: ["latin-ext"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-sans"
+});
+
+const geistMono = Geist_Mono({
+  subsets: ["latin-ext"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-mono"
+});
+
+const bricolageGrotesque = Bricolage_Grotesque({
+  subsets: ["latin-ext"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-serif"
+});
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es" suppressHydrationWarning>
-      <body className={cn("antialiased", geist.className)}>
+      <body
+        className={cn(
+          "antialiased",
+          geist.variable,
+          geistMono.variable,
+          bricolageGrotesque.variable
+        )}
+      >
         <SidebarProvider defaultOpen={false} open={false}>
           <NuqsAdapter>
             <ThemeProvider attribute="class" defaultTheme="system">

@@ -13,14 +13,8 @@ import {
 import { cn, getRelativeTime, isUndefinedDate } from "@/features/shared/lib/utils";
 import { getDetailedIncidentById } from "@bomberoscr/db/queries/incidents";
 import { unstable_cacheLife as cacheLife } from "next/cache";
-import { Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-
-const GeistMono = Geist_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"]
-});
 
 function formatTime(date: Date): string {
   if (isUndefinedDate(date)) return "N/A";
@@ -91,7 +85,7 @@ export default async function IncidentPage({ params }: { params: Promise<{ id: s
             <CardTitle>Estaciones despachadas</CardTitle>
           </CardHeader>
           <CardContent>
-            <Table className={cn(GeistMono.className, "text-sm")}>
+            <Table className="font-mono text-sm">
               <TableHeader>
                 <TableRow>
                   <TableHead>Estación</TableHead>
@@ -127,7 +121,7 @@ export default async function IncidentPage({ params }: { params: Promise<{ id: s
             <CardTitle>Vehículos despachados</CardTitle>
           </CardHeader>
           <CardContent>
-            <Table className={cn(GeistMono.className, "text-sm")}>
+            <Table className="font-mono text-sm">
               <TableHeader>
                 <TableRow>
                   <TableHead>Vehículo</TableHead>

@@ -13,9 +13,8 @@ import {
   ChartContainer,
   ChartTooltip
 } from "@/features/shared/components/ui/chart";
-import { cn, formatMinutesToHMS } from "@/features/shared/lib/utils";
+import { formatMinutesToHMS } from "@/features/shared/lib/utils";
 import type { getTopResponseTimesStations } from "@bomberoscr/db/queries/charts/topResponseTimesStations";
-import { Geist_Mono } from "next/font/google";
 import { Bar, BarChart, Cell, LabelList, XAxis, YAxis } from "recharts";
 
 type TopResponseTimesStations = Awaited<ReturnType<typeof getTopResponseTimesStations>>;
@@ -38,10 +37,6 @@ const chartConfig = {
     color: "var(--chart-1)"
   }
 } satisfies ChartConfig;
-
-const GeistMono = Geist_Mono({
-  subsets: ["latin"]
-});
 
 const getCategoryColor = (category: string) => {
   switch (category) {
@@ -82,7 +77,7 @@ export function TopResponseTimesStationsChart({ stations }: TopResponseTimesStat
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className={cn("w-full", GeistMono.className)}>
+        <ChartContainer config={chartConfig} className="w-full font-mono">
           <BarChart
             accessibilityLayer
             data={sortedStations}

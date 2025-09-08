@@ -16,12 +16,6 @@ import {
 import { cn } from "@/features/shared/lib/utils";
 import { flexRender } from "@tanstack/react-table";
 import { FilterIcon, SearchIcon } from "lucide-react";
-import { Geist_Mono } from "next/font/google";
-
-const GeistMono = Geist_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"]
-});
 
 export function DataTable<TData, TValue>() {
   const { columns, table } = useDataTableContext<TData, TValue>();
@@ -47,7 +41,7 @@ export function DataTable<TData, TValue>() {
       <div className={cn("flex-1 overflow-auto")}>
         <IsOpenIndicatorLegend className={cn("py-2 text-muted-foreground")} />
         <div className={cn("border border-border md:border-r md:border-l")}>
-          <Table className={cn(GeistMono.className)}>
+          <Table className="font-mono">
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>

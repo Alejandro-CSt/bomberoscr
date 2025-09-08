@@ -14,9 +14,7 @@ import {
   ChartLegendContent,
   ChartTooltip
 } from "@/features/shared/components/ui/chart";
-import { cn } from "@/features/shared/lib/utils";
 import type { getTopDispatchedStations } from "@bomberoscr/db/queries/charts/topDispatchedStations";
-import { Geist_Mono } from "next/font/google";
 import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
 
 type TopDispatchedStations = Awaited<ReturnType<typeof getTopDispatchedStations>>;
@@ -44,10 +42,6 @@ const chartConfig = {
   }
 } satisfies ChartConfig;
 
-const GeistMono = Geist_Mono({
-  subsets: ["latin"]
-});
-
 export function TopDispatchedStationsChart({ stations }: TopDispatchedStationsChartProps) {
   return (
     <Card>
@@ -58,7 +52,7 @@ export function TopDispatchedStationsChart({ stations }: TopDispatchedStationsCh
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className={cn("w-full", GeistMono.className)}>
+        <ChartContainer config={chartConfig} className="w-full font-mono">
           <BarChart
             accessibilityLayer
             data={stations}
