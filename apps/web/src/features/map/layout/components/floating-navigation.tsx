@@ -7,7 +7,7 @@ import { MenuIcon, SearchIcon, Settings2Icon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export function FloatingSidebarToggle() {
+export function FloatingNavigation() {
   const { toggleSidebar } = useSidebar();
   const pathname = usePathname();
 

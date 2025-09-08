@@ -1,12 +1,14 @@
+import { publicProcedure, router } from "@/features/trpc/init";
 import {
   getStationDetails,
   getStationIncidents,
+  getStations
+} from "@bomberoscr/db/queries/map/stations";
+import {
   getStationIncidentsByHour,
   getStationIncidentsByTopLevelType,
-  getStationStats,
-  getStations
-} from "@/features/server/queries";
-import { publicProcedure, router } from "@/features/trpc/init";
+  getStationStats
+} from "@bomberoscr/db/queries/map/stationsCharts";
 import { TRPCError, type inferRouterOutputs } from "@trpc/server";
 import { z } from "zod";
 
@@ -74,5 +76,7 @@ export const stationsRouter = router({
     })
 });
 
+export type Station = inferRouterOutputs<typeof stationsRouter>["getStations"][number];
+export type StationDetails = inferRouterOutputs<typeof stationsRouter>["getStationDetails"];
 export type StationIncidents = inferRouterOutputs<typeof stationsRouter>["getStationIncidents"];
 export type StationStats = inferRouterOutputs<typeof stationsRouter>["getStationStats"];

@@ -1,6 +1,5 @@
+import { ErrorPanel } from "@/features/map/layout/components/error-panel";
 import { FloatingPanelHeader } from "@/features/map/layout/components/floating-panel-header";
-import { getDetailedIncidentById } from "@/features/server/queries";
-import { ErrorPanel } from "@/features/shared/components/error-panel";
 import { Button } from "@/features/shared/components/ui/button";
 import {
   Collapsible,
@@ -16,6 +15,7 @@ import {
   TableRow
 } from "@/features/shared/components/ui/table";
 import { cn, getRelativeTime, isUndefinedDate } from "@/features/shared/lib/utils";
+import { getDetailedIncidentById } from "@bomberoscr/db/queries/incidents";
 import {
   ArrowElbowDownRightIcon,
   CaretUpDownIcon,

@@ -1,9 +1,8 @@
-import { StationTabs } from "@/features/map/layout/components/station-tabs";
-import { StationSummary } from "@/features/map/stations/components/station-summary";
-import { getLatestIncidents } from "@/features/server/queries";
-import { ErrorPanel } from "@/features/shared/components/error-panel";
-import { IncidentCard } from "@/features/shared/components/incident-card";
+import { IncidentCard } from "@/features/map/incidents/components/incident-card";
+import { ErrorPanel } from "@/features/map/layout/components/error-panel";
+import { StationHeader } from "@/features/map/stations/components/station-header";
 import db, { and, sql } from "@bomberoscr/db/index";
+import { getLatestIncidents } from "@bomberoscr/db/queries/incidents";
 import { stations } from "@bomberoscr/db/schema";
 import type { Metadata, ResolvingMetadata } from "next";
 import { unstable_cacheLife as cacheLife } from "next/cache";
@@ -76,8 +75,7 @@ export default async function DetailedStationPage({ params }: Props) {
 
   return (
     <div className="flex flex-col py-2">
-      <StationSummary station={{ name: station.name, stationKey: station.stationKey }} />
-      <StationTabs name={station.name} />
+      <StationHeader station={{ name: station.name, stationKey: station.stationKey }} />
       <StationIncidents incidents={incidents} />
     </div>
   );

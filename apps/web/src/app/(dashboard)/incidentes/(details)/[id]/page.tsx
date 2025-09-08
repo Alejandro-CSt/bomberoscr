@@ -1,6 +1,6 @@
 import IncidentMap from "@/features/dashboard/incidents/map/components/incident-map";
 import { VehicleResponseTimeChart } from "@/features/dashboard/incidents/vehicle-response-time-chart";
-import { IncidentStatusIndicator } from "@/features/shared/components/incident-status-indicator";
+import { IncidentStatusIndicator } from "@/features/map/incidents/components/incident-status-indicator";
 import { Card, CardContent, CardHeader, CardTitle } from "@/features/shared/components/ui/card";
 import {
   Table,
@@ -11,7 +11,7 @@ import {
   TableRow
 } from "@/features/shared/components/ui/table";
 import { cn, getRelativeTime, isUndefinedDate } from "@/features/shared/lib/utils";
-import { getDetailedIncidentById } from "@bomberoscr/db/queries/incidentDetails";
+import { getDetailedIncidentById } from "@bomberoscr/db/queries/incidents";
 import { unstable_cacheLife as cacheLife } from "next/cache";
 import { Geist_Mono } from "next/font/google";
 import Link from "next/link";

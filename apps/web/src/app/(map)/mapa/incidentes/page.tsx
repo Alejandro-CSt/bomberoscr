@@ -1,7 +1,7 @@
 "use client";
 
+import { IncidentCard } from "@/features/map/incidents/components/incident-card";
 import { FloatingPanelHeader } from "@/features/map/layout/components/floating-panel-header";
-import { IncidentCard } from "@/features/shared/components/incident-card";
 import { Button } from "@/features/shared/components/ui/button";
 import {
   Select,
@@ -10,8 +10,8 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/features/shared/components/ui/select";
-import type { LatestIncident } from "@/features/trpc";
 import { trpc } from "@/features/trpc/client";
+import type { LatestIncident } from "@/features/trpc/incidents";
 import { Loader2Icon } from "lucide-react";
 import { useEffect, useState } from "react";
 

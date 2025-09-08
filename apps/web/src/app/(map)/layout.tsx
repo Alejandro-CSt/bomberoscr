@@ -1,5 +1,5 @@
+import { FloatingNavigation } from "@/features/map/layout/components/floating-navigation";
 import { FloatingPanel } from "@/features/map/layout/components/floating-panel";
-import { FloatingSidebarToggle } from "@/features/map/layout/components/floating-sidebar-toggle";
 import { InteractiveMap } from "@/features/map/layout/components/map";
 import { MapSettingsProvider } from "@/features/map/settings/context/map-settings-provider";
 import "maplibre-gl/dist/maplibre-gl.css";
@@ -66,7 +66,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <div className="flex min-h-full">
         <InteractiveMap />
         <Suspense fallback={null}>
-          <FloatingSidebarToggle />
+          <FloatingNavigation />
         </Suspense>
         <Suspense fallback={null}>
           <FloatingPanel>{children}</FloatingPanel>

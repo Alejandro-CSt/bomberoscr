@@ -6,12 +6,13 @@ import {
   DARK_MAP_STYLE,
   LIGHT_MAP_STYLE
 } from "@/features/map/constants";
-import { MapFloatingControls } from "@/features/map/layout/components/map-floating-controls";
+import { MapFloatingControls } from "@/features/map/layout/components/floating-map-controls";
 import type { SearchIncidentsResult } from "@/features/map/search/api/searchRouter";
 import { useMapSettings } from "@/features/map/settings/hooks/use-map-settings";
+import type { Station } from "@/features/map/stations/api/stations";
 import { cn, isReducedMotion } from "@/features/shared/lib/utils";
-import type { IncidentWithCoordinates, Station } from "@/features/trpc";
 import { trpc } from "@/features/trpc/client";
+import type { IncidentWithCoordinates } from "@/features/trpc/incidents";
 import { ShieldIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 import Link from "next/link";

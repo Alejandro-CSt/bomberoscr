@@ -15,7 +15,7 @@ import {
   ChartTooltip
 } from "@/features/shared/components/ui/chart";
 import { formatSecondsToHMS, isUndefinedDate } from "@/features/shared/lib/utils";
-import type { DetailedIncident } from "@bomberoscr/db/queries/incidentDetails";
+import type { DetailedIncident } from "@bomberoscr/db/queries/incidents";
 import { Bar, BarChart, XAxis, YAxis } from "recharts";
 
 const chartConfig = {

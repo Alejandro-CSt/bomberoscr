@@ -1,11 +1,12 @@
+import { publicProcedure, router } from "@/features/trpc/init";
 import {
   getDetailedIncidentById,
   getIncidentById,
   getIncidentsCoordinates,
   getLatestIncidents,
   getLatestIncidentsCoordinates
-} from "@/features/server/queries";
-import { publicProcedure, router } from "@/features/trpc/init";
+} from "@bomberoscr/db/queries/incidents";
+import type { inferRouterOutputs } from "@trpc/server";
 import { z } from "zod";
 
 export const incidentsRouter = router({
@@ -86,3 +87,12 @@ export const incidentsRouter = router({
       return await getDetailedIncidentById(input.id);
     })
 });
+
+export type Incident = inferRouterOutputs<typeof incidentsRouter>["getIncidentById"];
+export type LatestIncident = inferRouterOutputs<
+  typeof incidentsRouter
+>["infiniteIncidents"]["items"][number];
+export type IncidentDetails = inferRouterOutputs<typeof incidentsRouter>["getIncidentDetailsById"];
+export type IncidentWithCoordinates = inferRouterOutputs<
+  typeof incidentsRouter
+>["getIncidentsCoordinates"][number];

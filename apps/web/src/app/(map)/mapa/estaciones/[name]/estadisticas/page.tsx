@@ -1,7 +1,6 @@
-import { StationTabs } from "@/features/map/layout/components/station-tabs";
+import { ErrorPanel } from "@/features/map/layout/components/error-panel";
+import { StationHeader } from "@/features/map/stations/components/station-header";
 import { StationStats } from "@/features/map/stations/components/station-stats";
-import { StationSummary } from "@/features/map/stations/components/station-summary";
-import { ErrorPanel } from "@/features/shared/components/error-panel";
 import db, { and, sql } from "@bomberoscr/db/index";
 import { stations } from "@bomberoscr/db/schema";
 import { unstable_cacheLife as cacheLife } from "next/cache";
@@ -34,8 +33,7 @@ export default async function StationIncidents({
 
   return (
     <div className="flex flex-col py-2">
-      <StationSummary station={{ name: station.name, stationKey: station.stationKey }} />
-      <StationTabs name={station.name} />
+      <StationHeader station={{ name: station.name, stationKey: station.stationKey }} />
       <StationStats stationKey={station.stationKey} />
     </div>
   );
