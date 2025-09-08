@@ -1,5 +1,6 @@
 "use client";
 
+import type { LatestIncident } from "@/features/map/incidents/api/incidents";
 import { IncidentCard } from "@/features/map/incidents/components/incident-card";
 import { FloatingPanelHeader } from "@/features/map/layout/components/floating-panel-header";
 import { Button } from "@/features/shared/components/ui/button";
@@ -11,7 +12,6 @@ import {
   SelectValue
 } from "@/features/shared/components/ui/select";
 import { trpc } from "@/features/trpc/client";
-import type { LatestIncident } from "@/features/trpc/incidents";
 import { Loader2Icon } from "lucide-react";
 import { useEffect, useState } from "react";
 

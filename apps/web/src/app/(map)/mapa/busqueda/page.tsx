@@ -8,7 +8,7 @@ import { SearchIncidentsFormSchema } from "@/features/map/search/schemas";
 import { useMapSettings } from "@/features/map/settings/hooks/use-map-settings";
 import { Form } from "@/features/shared/components/ui/form";
 import { trpc } from "@/features/trpc/client";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { useCallback, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import type z from "zod";
@@ -17,7 +17,7 @@ const formSchema = SearchIncidentsFormSchema;
 
 export default function SearchMapPage() {
   const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+    resolver: standardSchemaResolver(formSchema),
     defaultValues: {
       incidentTypeCodes: [],
       stationIds: [],

@@ -1,8 +1,8 @@
 "use client";
 
+import type { LatestIncident } from "@/features/map/incidents/api/incidents";
 import { Badge } from "@/features/shared/components/ui/badge";
 import { getRelativeTime } from "@/features/shared/lib/utils";
-import type { LatestIncident } from "@/features/trpc/incidents";
 import type { getLatestIncidents } from "@bomberoscr/db/queries/incidents";
 import Link from "next/link";
 
