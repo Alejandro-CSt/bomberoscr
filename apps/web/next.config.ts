@@ -5,7 +5,6 @@ const nextConfig: NextConfig = {
   distDir: process.env.NODE_ENV === "production" ? ".next" : ".next-dev",
 
   basePath: process.env.NODE_ENV === "production" ? "/bomberos" : "",
-  assetPrefix: process.env.NODE_ENV === "production" ? "/bomberos" : "",
 
   eslint: {
     ignoreDuringBuilds: true
