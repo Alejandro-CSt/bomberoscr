@@ -63,7 +63,7 @@ export const metadata: Metadata = {
     }
   },
   icons: {
-    icon: "/flame.jpg"
+    icon: "/bomberos/flame.jpg"
   }
 };
 

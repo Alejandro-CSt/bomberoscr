@@ -74,7 +74,7 @@ function IncidentImage({ incident }: { incident: HighlightedIncidentType }) {
   return (
     <div className="relative h-[250px] w-full overflow-hidden">
       <Image
-        src="/map-dark.png"
+        src="/bomberos/map-dark.png"
         alt={`Mapa del incidente: ${incident.importantDetails}`}
         fill
         className="object-cover transition-transform duration-300 group-hover:scale-105"

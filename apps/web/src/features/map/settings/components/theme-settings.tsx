@@ -24,7 +24,7 @@ export const ThemeSettings = () => {
         >
           <div className="relative overflow-hidden rounded-lg">
             <Image
-              src="/light-map.png"
+              src="/bomberos/light-map.png"
               alt="Vista clara del mapa"
               width={160}
               height={112}
@@ -46,7 +46,7 @@ export const ThemeSettings = () => {
         >
           <div className="relative overflow-hidden rounded-lg">
             <Image
-              src="/dark-map.png"
+              src="/bomberos/dark-map.png"
               alt="Vista oscura del mapa"
               width={160}
               height={112}

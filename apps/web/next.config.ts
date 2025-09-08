@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   output: "standalone",
   distDir: process.env.NODE_ENV === "production" ? ".next" : ".next-dev",
 
-  basePath: process.env.NODE_ENV === "production" ? "/bomberos" : "",
+  basePath: "/bomberos",
 
   eslint: {
     ignoreDuringBuilds: true

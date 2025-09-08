@@ -38,7 +38,7 @@ export function MapCTA() {
     >
       <Image
         suppressHydrationWarning
-        src={resolvedTheme === "dark" ? "/map-dark.png" : "/map-light.png"}
+        src={resolvedTheme === "dark" ? "/bomberos/map-dark.png" : "/bomberos/map-light.png"}
         alt="Mapa de incidentes en tiempo real"
         width={1000}
         height={1000}
