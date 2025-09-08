@@ -1,4 +1,4 @@
-import { validateAdminSession } from "@/features/admin/lib/validateSession";
+import { validateAdminSession } from "@/features/dashboard/admin/lib/validateSession";
 import { Suspense } from "react";
 
 function AdminPageSkeleton() {

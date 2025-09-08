@@ -1,5 +1,6 @@
 "use client";
 
+import { navItems } from "@/features/layout/components/sidebar";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,7 +12,6 @@ import {
 import { Separator } from "@/features/shared/components/ui/separator";
 import { SidebarTrigger } from "@/features/shared/components/ui/sidebar";
 import { cn } from "@/features/shared/lib/utils";
-import { navItems } from "@/features/sidebar/components/sidebar";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 

@@ -1,4 +1,4 @@
-import { submitAdminForm } from "@/features/admin/actions/actions";
+import { submitAdminForm } from "@/features/dashboard/admin/actions/actions";
 import { Alert, AlertDescription, AlertTitle } from "@/features/shared/components/ui/alert";
 import { Button } from "@/features/shared/components/ui/button";
 import { Input } from "@/features/shared/components/ui/input";

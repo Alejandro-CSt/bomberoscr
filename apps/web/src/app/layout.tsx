@@ -1,7 +1,7 @@
+import { AppSidebar } from "@/features/layout/components/sidebar";
 import { SidebarInset, SidebarProvider } from "@/features/shared/components/ui/sidebar";
 import { ThemeProvider } from "@/features/shared/context/theme-provider";
 import { cn } from "@/features/shared/lib/utils";
-import { AppSidebar } from "@/features/sidebar/components/sidebar";
 import "@/features/styles/globals.css";
 import TRPCProvider from "@/features/trpc/provider";
 import type { Metadata } from "next";

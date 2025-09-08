@@ -1,5 +1,6 @@
 "use client";
 
+import { LiveRelativeTime } from "@/features/layout/components/live-relative-time";
 import {
   Sidebar,
   SidebarContent,
@@ -9,7 +10,6 @@ import {
 } from "@/features/shared/components/ui/sidebar";
 import { Skeleton } from "@/features/shared/components/ui/skeleton";
 import { cn } from "@/features/shared/lib/utils";
-import { LiveRelativeTime } from "@/features/sidebar/components/live-relative-time";
 import { trpc } from "@/features/trpc/client";
 import { ArrowRightIcon } from "lucide-react";
 import { Geist_Mono } from "next/font/google";

@@ -1,7 +1,7 @@
 "use client";
 
+import { useNow } from "@/features/layout/hooks/use-now";
 import { getRelativeTime } from "@/features/shared/lib/utils";
-import { useNow } from "@/features/sidebar/hooks/use-now";
 import { memo } from "react";
 
 interface Props {
