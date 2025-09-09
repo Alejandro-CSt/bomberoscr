@@ -2,8 +2,11 @@ import { StatCard } from "@/features/dashboard/homepage/components/stat-card";
 // import { DotsLoader } from "@/features/shared/components/ui/dots-loader";
 // import { Button } from "@/features/shared/components/ui/button";
 import { getYearRecap } from "@bomberoscr/db/queries/homepage/yearRecap";
+import { unstable_cacheLife as cacheLife } from "next/cache";
 
 export async function YearRecapHero() {
+  "use cache";
+  cacheLife({ revalidate: 60 * 30, expire: 60 * 30 });
   const year = new Date().getFullYear();
   const data = await getYearRecap(year);
   const currentYear = new Date().getFullYear();
