@@ -27,7 +27,7 @@ const nextConfig: NextConfig = {
   typedRoutes: true,
 
   images: {
-    qualities: [75, 80, 90, 95, 100]
+    qualities: [65, 75, 80, 90, 95, 100]
   },
 
   productionBrowserSourceMaps: true,

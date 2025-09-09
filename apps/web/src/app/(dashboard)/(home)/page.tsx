@@ -4,6 +4,7 @@ import { IncidentsByHourChart } from "@/features/dashboard/homepage/charts/compo
 import { TopDispatchedStationsChart } from "@/features/dashboard/homepage/charts/components/top-stations-chart";
 import { TopResponseTimesStationsChart } from "@/features/dashboard/homepage/charts/components/top-stations-response-time-chart";
 import { MapCTA } from "@/features/dashboard/homepage/components/map-cta";
+import { YearRecapHero } from "@/features/dashboard/homepage/components/year-recap-hero";
 import { Skeleton } from "@/features/shared/components/ui/skeleton";
 import { getDailyIncidents } from "@bomberoscr/db/queries/charts/dailyIncidents";
 import { getIncidentsByDayOfWeek } from "@bomberoscr/db/queries/charts/incidentsByDayOfWeek";
@@ -42,6 +43,7 @@ export default async function Page() {
   return (
     <div className="mx-auto flex max-w-7xl flex-col gap-8 p-4">
       {/* <HighlightedIncidents /> */}
+      <YearRecapHero />
       <MapCTA />
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <TopDispatchedStationsChart stations={dispatchedStations} />

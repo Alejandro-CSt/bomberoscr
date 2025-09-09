@@ -18,7 +18,7 @@ export function LatestIncidentsSidebar() {
     data: incidents,
     dataUpdatedAt,
     isLoading
-  } = trpc.latestIncidents.getLatestIncidents.useQuery({ limit: 20 }, { refetchInterval: 25_000 });
+  } = trpc.homepage.getLatestIncidents.useQuery({ limit: 20 }, { refetchInterval: 25_000 });
 
   const skeletonItems = [
     { id: "skeleton-1", width: "w-32" },

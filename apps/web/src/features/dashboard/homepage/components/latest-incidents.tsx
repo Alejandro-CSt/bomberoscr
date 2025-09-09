@@ -9,7 +9,7 @@ export function LatestIncidents() {
     data: incidents,
     isLoading,
     isError
-  } = trpc.latestIncidents.getLatestIncidents.useQuery({
+  } = trpc.homepage.getLatestIncidents.useQuery({
     limit: 5
   });
 

@@ -7,7 +7,7 @@ import { trpc } from "@/features/trpc/client";
 
 export function FeaturedIncidents() {
   const { timeRange } = useTimeRangeQueryState();
-  const { data, isLoading, isError } = trpc.featuredIncidents.getFeaturedIncidents.useQuery({
+  const { data, isLoading, isError } = trpc.homepage.getFeaturedIncidents.useQuery({
     timeRange,
     limit: 5
   });

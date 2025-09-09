@@ -35,7 +35,7 @@ export function MapCTA() {
         alt="Mapa de incidentes en tiempo real"
         width={1000}
         height={1000}
-        quality={100}
+        quality={65}
         className="size-full object-cover transition-all duration-300 group-hover:scale-105"
       />
 
