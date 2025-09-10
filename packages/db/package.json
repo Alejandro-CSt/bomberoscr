@@ -28,6 +28,6 @@
     "dotenv-expand": "^12.0.2",
     "drizzle-orm": "^0.44.3",
     "drizzle-zod": "^0.8.2",
-    "zod": "^4.0.5"
+    "zod": "catalog:"
   }
 }

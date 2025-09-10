@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "winston": "^3.17.0",
-    "zod": "^4.0.5"
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@bomberoscr/typescript-config": "workspace:*",

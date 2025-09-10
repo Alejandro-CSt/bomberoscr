@@ -9,13 +9,11 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true
   },
-
   experimental: {
     browserDebugInfoInTerminal: {
       showSourceLocation: true,
       depthLimit: 2
     },
-    devtoolSegmentExplorer: true,
     clientSegmentCache: true,
     reactCompiler: true,
     ppr: true,
