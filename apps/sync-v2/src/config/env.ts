@@ -9,7 +9,9 @@ const EnvSchema = z.object({
   SIGAE_IP: z.string(),
   SIGAE_USER: z.string(),
   SIGAE_PASSWORD: z.string(),
-  SIGAE_SYSTEM_CODE: z.string()
+  SIGAE_SYSTEM_CODE: z.string(),
+  OTEL_EXPORTER_OTLP_ENDPOINT: z.string().url().optional(),
+  OTEL_SERVICE_NAME: z.string().optional()
 });
 
 export type EnvSchema = z.infer<typeof EnvSchema>;

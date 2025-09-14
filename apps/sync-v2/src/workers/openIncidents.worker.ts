@@ -1,8 +1,10 @@
 import { redis } from "@/config/redis";
+import { metricsRegistry } from "@/config/telemetry";
 import { openIncidentsQueue } from "@/queues/openIncidents.queue";
 import { ERROR_MESSAGES, closeIncident, updateIncident } from "@/services/openIncidents.service";
 import logger from "@bomberoscr/lib/logger";
 import { Worker } from "bullmq";
+import { BullMQOtel } from "bullmq-otel";
 
 export interface IncidentSyncJobData {
   incidentId: number;
@@ -20,6 +22,7 @@ interface IncidentSyncJobResult {
 const worker = new Worker(
   "open-incidents",
   async (job): Promise<IncidentSyncJobResult> => {
+    const start = Date.now();
     const { incidentId } = job.data as IncidentSyncJobData;
 
     await updateIncident({ id: incidentId }).orTee((error) => {
@@ -37,6 +40,7 @@ const worker = new Worker(
           jobId: `open-incident-${incidentId}-${Date.now()}`
         }
       );
+      metricsRegistry.jobDurationMs.record(Date.now() - start, { job: "open-incidents" });
       return {
         incidentId,
         requeue: {
@@ -45,10 +49,12 @@ const worker = new Worker(
       };
     }
 
+    metricsRegistry.jobDurationMs.record(Date.now() - start, { job: "open-incidents" });
     return { incidentId, requeue: false };
   },
   {
     connection: redis,
+    telemetry: new BullMQOtel("sync-v2"),
     concurrency: 5
   }
 );

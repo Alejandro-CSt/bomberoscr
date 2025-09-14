@@ -1,3 +1,4 @@
+import "@/config/telemetry";
 import { districtsQueue } from "@/queues/districts.queue";
 import { incidentDiscoveryQueue } from "@/queues/incidentDiscovery.queue";
 import { incidentTypesQueue } from "@/queues/incidentTypes.queue";
@@ -12,6 +13,7 @@ import "@/workers/stations.worker";
 import "@/workers/vehicleDisponibility.worker";
 import "@/workers/vehicles.worker";
 import logger from "@bomberoscr/lib/logger";
+import { type Span, SpanStatusCode, trace } from "@opentelemetry/api";
 import { ResultAsync } from "neverthrow";
 
 async function startDiscoveryScheduler() {
@@ -133,15 +135,29 @@ async function startVehiclesScheduler() {
 function main(): ResultAsync<void, Error> {
   logger.info("Starting sync service");
 
+  const tracer = trace.getTracer("sync-v2");
+
   return ResultAsync.fromPromise(
-    Promise.all([
-      startDiscoveryScheduler(),
-      startDistrictsScheduler(),
-      startIncidentTypesScheduler(),
-      startStationsScheduler(),
-      startVehicleDisponibilityScheduler(),
-      startVehiclesScheduler()
-    ]),
+    tracer.startActiveSpan("service.startup", async (span: Span) => {
+      try {
+        await Promise.all([
+          startDiscoveryScheduler(),
+          startDistrictsScheduler(),
+          startIncidentTypesScheduler(),
+          startStationsScheduler(),
+          startVehicleDisponibilityScheduler(),
+          startVehiclesScheduler()
+        ]);
+        span.setStatus({ code: SpanStatusCode.OK });
+      } catch (e: unknown) {
+        const err = e as Error;
+        span.recordException(err);
+        span.setStatus({ code: SpanStatusCode.ERROR, message: err.message });
+        throw err;
+      } finally {
+        span.end();
+      }
+    }),
     (_) => new Error("Failed to start schedulers")
   ).map(() => {
     logger.info("Sync service started successfully");

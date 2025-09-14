@@ -5,6 +5,7 @@ import { syncSingleStation } from "@/services/stations.service";
 import logger from "@bomberoscr/lib/logger";
 import { getOperativeStations, getStationsList } from "@bomberoscr/sync-domain/api";
 import { Worker } from "bullmq";
+import { BullMQOtel } from "bullmq-otel";
 import { ResultAsync } from "neverthrow";
 
 type StationListResponse = {
@@ -72,6 +73,7 @@ export const stationsWorker = new Worker(
   },
   {
     connection: redis,
+    telemetry: new BullMQOtel("sync-v2"),
     concurrency: 5,
     lockDuration: 15 * 60 * 1000
   }

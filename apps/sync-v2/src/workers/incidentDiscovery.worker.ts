@@ -1,13 +1,16 @@
 import { redis } from "@/config/redis";
+import { metricsRegistry } from "@/config/telemetry";
 import { openIncidentsQueue } from "@/queues/openIncidents.queue";
 import { getNewIncidents } from "@/services/incidentDiscovery.service";
 import type { IncidentSyncJobData } from "@/workers/openIncidents.worker";
 import logger from "@bomberoscr/lib/logger";
 import { Worker } from "bullmq";
+import { BullMQOtel } from "bullmq-otel";
 
 export const worker = new Worker(
   "incident-discovery",
   async () => {
+    const start = Date.now();
     const newIncidents = await getNewIncidents();
 
     if (newIncidents.isErr()) {
@@ -18,6 +21,10 @@ export const worker = new Worker(
     const newIncidentsIds = newIncidents.value;
 
     if (newIncidentsIds.length === 0) {
+      metricsRegistry.jobDurationMs.record(Date.now() - start, {
+        job: "incident-discovery"
+      });
+      metricsRegistry.incidentsDiscovered.add(0);
       return { processed: true, discoveredIncidents: 0 };
     }
 
@@ -32,10 +39,15 @@ export const worker = new Worker(
       }))
     );
 
+    metricsRegistry.jobDurationMs.record(Date.now() - start, {
+      job: "incident-discovery"
+    });
+    metricsRegistry.incidentsDiscovered.add(newIncidentsIds.length);
     return { processed: true, discoveredIncidents: newIncidentsIds.length };
   },
   {
-    connection: redis
+    connection: redis,
+    telemetry: new BullMQOtel("sync-v2")
   }
 );
 

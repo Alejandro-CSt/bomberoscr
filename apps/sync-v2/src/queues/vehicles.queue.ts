@@ -1,8 +1,10 @@
 import { redis } from "@/config/redis";
 import { Queue } from "bullmq";
+import { BullMQOtel } from "bullmq-otel";
 
 export const vehiclesQueue = new Queue("vehicles", {
   connection: redis,
+  telemetry: new BullMQOtel("sync-v2"),
   defaultJobOptions: {
     removeOnComplete: true,
     removeOnFail: 5,

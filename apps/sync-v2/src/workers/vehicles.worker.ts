@@ -5,6 +5,7 @@ import { syncSingleVehicle } from "@/services/vehicles.service";
 import logger from "@bomberoscr/lib/logger";
 import { getAllVehicles } from "@bomberoscr/sync-domain/api";
 import { Worker } from "bullmq";
+import { BullMQOtel } from "bullmq-otel";
 
 type VehiclesListResponse = { Items: Array<{ IdVehiculo: number }> };
 
@@ -53,6 +54,7 @@ export const vehiclesWorker = new Worker(
   },
   {
     connection: redis,
+    telemetry: new BullMQOtel("sync-v2"),
     concurrency: 5,
     lockDuration: 15 * 60 * 1000
   }

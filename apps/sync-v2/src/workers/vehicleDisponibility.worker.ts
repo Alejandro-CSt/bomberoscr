@@ -2,6 +2,7 @@ import { redis } from "@/config/redis";
 import { syncVehicleDisponibility } from "@/services/vehicleDisponibility.service";
 import logger from "@bomberoscr/lib/logger";
 import { Worker } from "bullmq";
+import { BullMQOtel } from "bullmq-otel";
 
 export const vehicleDisponibilityWorker = new Worker(
   "vehicleDisponibility",
@@ -23,6 +24,7 @@ export const vehicleDisponibilityWorker = new Worker(
   },
   {
     connection: redis,
+    telemetry: new BullMQOtel("sync-v2"),
     concurrency: 1,
     lockDuration: 15 * 60 * 1000 // 15 minutes
   }

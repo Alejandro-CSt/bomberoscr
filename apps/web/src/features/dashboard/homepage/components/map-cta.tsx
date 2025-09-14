@@ -36,6 +36,7 @@ export function MapCTA() {
         width={1000}
         height={1000}
         quality={65}
+        loading="lazy"
         className="size-full object-cover transition-all duration-300 group-hover:scale-105"
       />
 

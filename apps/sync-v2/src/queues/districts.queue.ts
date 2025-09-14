@@ -1,8 +1,10 @@
 import { redis } from "@/config/redis";
 import { Queue } from "bullmq";
+import { BullMQOtel } from "bullmq-otel";
 
 export const districtsQueue = new Queue("districts", {
   connection: redis,
+  telemetry: new BullMQOtel("sync-v2"),
   defaultJobOptions: {
     removeOnComplete: 10,
     removeOnFail: 5,

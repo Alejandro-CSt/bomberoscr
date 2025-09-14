@@ -1,0 +1,32 @@
+{
+  "name": "gpt-oss-120b-fallback",
+  "request_timeout": 30000,
+  "strategy": {
+    "mode": "fallback",
+    "on_status_codes": [429, 500, 502, 503, 504]
+  },
+  "targets": [
+    {
+      "provider": "groq",
+      "api_key": "...",
+      "override_params": {
+        "model": "openai/gpt-oss-120b"
+      }
+    },
+    {
+      "provider": "groq",
+      "api_key": "...",
+      "override_params": {
+        "model": "openai/gpt-oss-120b"
+      }
+    },
+    {
+      "provider": "openai",
+      "api_key": "...",
+      "custom_host": "custom-host",
+      "override_params": {
+        "model": "openai-gpt-oss-120b"
+      }
+    }
+  ]
+}
