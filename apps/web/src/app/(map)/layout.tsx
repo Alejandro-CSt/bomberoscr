@@ -7,46 +7,42 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
-const title = "Mapa de incidentes atendidos por Bomberos de Costa Rica en tiempo real";
+const siteUrl = env.SITE_URL ? env.SITE_URL.replace(/\/+$/, "") : undefined;
+
+const title = "Mapa y Dashboard de Emergencias — Bomberos de Costa Rica (en tiempo real)";
 const description =
-  "Mapa interactivo no oficial con estadísticas de incendios, emergencias activas, ubicación de estaciones y detalles de incidentes en tiempo real atendidos por Bomberos de Costa Rica.";
-const siteUrl = env.SITE_URL;
+  "Visualiza el mapa interactivo y panel con incidentes activos, historial, estaciones y tiempos de respuesta de Bomberos de Costa Rica en tiempo real.";
 
 export const metadata: Metadata = {
-  title: title,
-  description: description,
   metadataBase: siteUrl ? new URL(siteUrl) : undefined,
+  title,
+  description,
+  alternates: {
+    canonical: siteUrl ? `${siteUrl}/mapa` : undefined
+  },
   keywords: [
-    "Bomberos de Costa Rica",
-    "Bomberos",
-    "incendios",
-    "atención de emergencias",
-    "Costa Rica",
-    "estadísticas",
-    "datos",
-    "análisis",
-    "mapa",
-    "tiempo real",
-    "incidentes",
-    "emergencias",
-    "Costa Rica",
-    "BCBCR",
-    "mapa interactivo",
-    "no oficial"
+    "mapa de emergencias",
+    "mapa bomberos Costa Rica",
+    "incidentes activos",
+    "dashboard en tiempo real",
+    "estadísticas de emergencias",
+    "estaciones de bomberos",
+    "bomberos cr",
+    "BCBCR"
   ],
   openGraph: {
-    title: "Mapa y estadísticas de incidentes atendidos por Bomberos de Costa Rica",
-    description: description,
-    url: siteUrl,
+    title,
+    description,
+    url: siteUrl ? `${siteUrl}/mapa` : undefined,
     type: "website",
-    siteName: title,
-    images: siteUrl ? [`${siteUrl}/og.png`] : undefined
+    siteName: "Dashboard de Emergencias",
+    images: siteUrl ? [new URL("og.png", siteUrl).toString()] : undefined
   },
   twitter: {
     card: "summary_large_image",
-    title: "Mapa y estadísticas de incidentes atendidos por Bomberos de Costa Rica",
-    description: description,
-    images: siteUrl ? [`${siteUrl}/og.png`] : undefined
+    title,
+    description,
+    images: siteUrl ? [new URL("og.png", siteUrl).toString()] : undefined
   },
   robots: {
     index: true,

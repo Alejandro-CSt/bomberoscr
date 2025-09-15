@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from "@/features/shared/components/ui/card";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/features/shared/components/ui/card";
 import {
   type ChartConfig,
   ChartContainer,
@@ -108,58 +102,53 @@ export function VehicleResponseTimeChart({
     );
   }
 
+  const chartHeight = 125 + timeData.length * 35;
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Desglose de tiempos por vehículo</CardTitle>
-        <CardDescription>Tiempo de respuesta, en escena y de regreso a base</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <ChartContainer config={chartConfig} className="h-[300px] w-full">
-          <BarChart accessibilityLayer data={timeData} layout="vertical">
-            <YAxis
-              type="category"
-              dataKey="vehicle"
-              tickLine={false}
-              tickMargin={10}
-              axisLine={false}
-              tickFormatter={(value) => value}
-              width={60}
-            />
-            <XAxis
-              type="number"
-              tickLine={false}
-              tickMargin={10}
-              axisLine={false}
-              tickFormatter={(value) => formatSecondsToHMS(Number(value))}
-            />
-            <ChartTooltip cursor={false} content={<CustomTooltipContent />} />
-            <ChartLegend content={<ChartLegendContent />} />
-            <Bar
-              stackId="a"
-              dataKey="responseTime"
-              fill="var(--color-responseTime)"
-              radius={4}
-              barSize={20}
-            />
-            <Bar
-              stackId="a"
-              dataKey="onSceneTime"
-              fill="var(--color-onSceneTime)"
-              radius={4}
-              barSize={20}
-            />
-            <Bar
-              stackId="a"
-              dataKey="returnTime"
-              fill="var(--color-returnTime)"
-              radius={4}
-              barSize={20}
-            />
-          </BarChart>
-        </ChartContainer>
-      </CardContent>
-    </Card>
+    <ChartContainer config={chartConfig} className="w-full" style={{ height: chartHeight }}>
+      <BarChart accessibilityLayer data={timeData} layout="vertical">
+        <YAxis
+          type="category"
+          dataKey="vehicle"
+          tickLine={false}
+          tickMargin={10}
+          axisLine={false}
+          tickFormatter={(value) => (value.length > 6 ? `${value.slice(0, 6)}...` : value)}
+          width={70}
+          textAnchor="end"
+        />
+        <XAxis
+          type="number"
+          tickLine={false}
+          tickMargin={10}
+          axisLine={false}
+          tickFormatter={(value) => formatSecondsToHMS(Number(value))}
+        />
+        <ChartTooltip cursor={false} content={<CustomTooltipContent />} />
+        <ChartLegend content={<ChartLegendContent />} />
+        <Bar
+          stackId="a"
+          dataKey="responseTime"
+          fill="var(--color-responseTime)"
+          radius={4}
+          barSize={8}
+        />
+        <Bar
+          stackId="a"
+          dataKey="onSceneTime"
+          fill="var(--color-onSceneTime)"
+          radius={4}
+          barSize={8}
+        />
+        <Bar
+          stackId="a"
+          dataKey="returnTime"
+          fill="var(--color-returnTime)"
+          radius={4}
+          barSize={8}
+        />
+      </BarChart>
+    </ChartContainer>
   );
 }
 

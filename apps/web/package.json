@@ -7,7 +7,8 @@
     "dev:turbo": "next dev --turbopack",
     "build": "next build",
     "build:turbo": "next build --turbopack",
-    "start": "next start"
+    "start": "next start",
+    "typegen": "next typegen"
   },
   "dependencies": {
     "@bomberoscr/db": "workspace:*",
@@ -62,7 +63,7 @@
     "lucide-react": "^0.525.0",
     "maplibre-gl": "^5.6.1",
     "motion": "^12.23.6",
-    "next": "15.5.1-canary.38",
+    "next": "15.6.0-canary.6",
     "next-themes": "^0.4.6",
     "nuqs": "^2.4.3",
     "pg": "^8.16.3",

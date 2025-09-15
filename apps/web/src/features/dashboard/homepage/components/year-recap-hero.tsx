@@ -38,10 +38,10 @@ export async function YearRecapHero() {
           </div>
         </div>
       )} */}
-      <h1 className="font-bold text-2xl md:text-3xl lg:text-4xl">{headingText}</h1>
 
       <div className="z-10 grid grid-cols-1 gap-4 md:auto-rows-[140px] md:grid-cols-12 lg:grid-cols-12">
         <div className="hover:-translate-y-0.5 flex flex-col justify-center rounded-lg bg-gradient-to-br from-background/60 to-muted/60 p-6 backdrop-blur-sm transition-all duration-300 ease-out will-change-transform hover:shadow-lg hover:ring-1 hover:ring-ring/30 md:col-span-6 md:row-span-2 lg:col-span-6">
+          <h2 className="mb-4 font-bold text-2xl md:text-3xl lg:text-4xl">{headingText}</h2>
           <p className="text-lg text-muted-foreground leading-relaxed md:text-xl">
             Bomberos atendió en promedio un incidente
             <span className="mt-2 block font-bold text-4xl text-destructive md:text-5xl">
@@ -61,7 +61,6 @@ export async function YearRecapHero() {
           title="Día con más incidentes"
           value={data?.busiestDate?.date ? formatBusiestDate(data.busiestDate.date) : "N/A"}
           secondValue={`${formatNumber(data?.busiestDate?.count ?? 0)} incidentes`}
-          size="small"
           className="md:col-span-3 lg:col-span-3"
         />
 

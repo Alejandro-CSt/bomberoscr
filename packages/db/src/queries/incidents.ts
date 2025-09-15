@@ -6,7 +6,7 @@ import {
   incidents,
   stations
 } from "@bomberoscr/db/schema";
-import { aliasedTable, and, between, desc, eq, inArray, lt, ne, or } from "drizzle-orm";
+import { aliasedTable, and, between, desc, eq, inArray, lt, ne, or, sql } from "drizzle-orm";
 
 export async function getLatestIncidents({
   limit,
@@ -218,3 +218,59 @@ export async function getDetailedIncidentById(id: number) {
 }
 
 export type DetailedIncident = Awaited<ReturnType<typeof getDetailedIncidentById>>;
+
+export async function getSimilarIncidents(incidentId: number) {
+  const source = await db.query.incidents.findFirst({
+    where: eq(incidents.id, incidentId),
+    columns: { latitude: true, longitude: true }
+  });
+
+  if (!source) return [];
+  if (source.latitude === "0" || source.longitude === "0") return [];
+
+  const lat = Number(source.latitude);
+  const lng = Number(source.longitude);
+
+  const thirtyDaysAgo = new Date(Date.now() - 1000 * 60 * 60 * 24 * 30);
+
+  const specificIncidentType = aliasedTable(incidentTypes, "specificIncidentType");
+
+  return await db
+    .select({
+      id: incidents.id,
+      isOpen: incidents.isOpen,
+      EEConsecutive: incidents.EEConsecutive,
+      address: incidents.address,
+      incidentTimestamp: incidents.incidentTimestamp,
+      importantDetails: incidents.importantDetails,
+      specificIncidentCode: incidents.specificIncidentCode,
+      incidentType: incidentTypes.name,
+      responsibleStation: stations.name,
+      specificIncidentType: specificIncidentType.name,
+      dispatchedVehiclesCount: db.$count(
+        dispatchedVehicles,
+        eq(dispatchedVehicles.incidentId, incidents.id)
+      ),
+      dispatchedStationsCount: db.$count(
+        dispatchedStations,
+        eq(dispatchedStations.incidentId, incidents.id)
+      )
+    })
+    .from(incidents)
+    .where(
+      and(
+        between(incidents.incidentTimestamp, thirtyDaysAgo, new Date()),
+        ne(incidents.id, incidentId),
+        ne(incidents.latitude, "0"),
+        ne(incidents.longitude, "0"),
+        sql`(6371 * acos(cos(radians(${lat})) * cos(radians((${incidents.latitude})::double precision)) * cos(radians((${incidents.longitude})::double precision) - radians(${lng})) + sin(radians(${lat})) * sin(radians((${incidents.latitude})::double precision)))) <= 0.5`
+      )
+    )
+    .leftJoin(incidentTypes, eq(incidents.incidentCode, incidentTypes.incidentCode))
+    .leftJoin(
+      specificIncidentType,
+      eq(incidents.specificIncidentCode, specificIncidentType.incidentCode)
+    )
+    .leftJoin(stations, eq(incidents.responsibleStation, stations.id))
+    .orderBy(desc(incidents.incidentTimestamp));
+}

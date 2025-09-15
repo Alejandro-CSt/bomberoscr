@@ -19,7 +19,33 @@ const nextConfig: NextConfig = {
     ppr: true,
     cssChunking: true,
     useCache: true,
-    cacheComponents: true
+    cacheComponents: true,
+    cacheLife: {
+      // 10 minutes, 1 hour, 1 day
+      homepage: {
+        stale: 600,
+        revalidate: 3600,
+        expire: 86400
+      },
+      // 1 minute, 3 minutes, 1 hour
+      openIncident: {
+        stale: 60,
+        revalidate: 180,
+        expire: 3600
+      },
+      // 1 day, 1 week, 1 month
+      closedIncident: {
+        stale: 86400,
+        revalidate: 604800,
+        expire: 2592000
+      },
+      // 10 minutes, 1 hour, 1 day
+      station: {
+        stale: 600,
+        revalidate: 3600,
+        expire: 86400
+      }
+    }
   },
 
   typedRoutes: true,

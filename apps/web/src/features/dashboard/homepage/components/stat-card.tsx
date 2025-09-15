@@ -3,13 +3,11 @@ export function StatCard({
   title,
   value,
   secondValue,
-  size = "normal",
   className = ""
 }: {
   title: string;
   value: string;
   secondValue: string;
-  size?: "normal" | "small";
   className?: string;
 }) {
   return (
@@ -21,22 +19,12 @@ export function StatCard({
         className
       )}
     >
-      <div className="flex justify-end">
+      <div className="flex justify-center">
+        <span className={cn("font-bold text-sm uppercase md:text-base lg:text-lg")}>{value}</span>
+      </div>
+
+      <div className="flex flex-col gap-0.5">
         <span className="font-medium text-sm">{title}</span>
-      </div>
-
-      <div className="flex flex-1 flex-col items-center justify-center">
-        <span
-          className={cn(
-            "font-bold uppercase",
-            size === "small" ? "text-lg md:text-xl lg:text-2xl" : "text-3xl md:text-4xl lg:text-5xl"
-          )}
-        >
-          {value}
-        </span>
-      </div>
-
-      <div className="flex justify-start">
         <span className="font-medium text-sm">{secondValue}</span>
       </div>
     </div>

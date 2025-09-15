@@ -10,46 +10,45 @@ import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Suspense } from "react";
 
-const title = "Mapa de incidentes atendidos por Bomberos de Costa Rica en tiempo real";
-const description =
-  "Mapa interactivo no oficial con estadísticas de incendios, emergencias activas, ubicación de estaciones y detalles de incidentes en tiempo real atendidos por Bomberos de Costa Rica.";
 const siteUrl = env.SITE_URL;
 
+const title = "Dashboard de Emergencias — Bomberos de Costa Rica";
+const description =
+  "Dashboard interactivo con estadísticas, análisis de datos y mapa de incidentes atendidos por Bomberos de Costa Rica en tiempo real. Consulta tendencias, estaciones y tiempos de respuesta.";
+
 export const metadata: Metadata = {
-  title: title,
-  description: description,
   metadataBase: siteUrl ? new URL(siteUrl) : undefined,
+  title,
+  description,
+  applicationName: "Dashboard de Emergencias - Bomberos de Costa Rica",
+  alternates: {
+    canonical: siteUrl
+  },
   keywords: [
     "Bomberos de Costa Rica",
-    "Bomberos",
+    "emergencias Costa Rica",
     "incendios",
-    "atención de emergencias",
-    "Costa Rica",
-    "estadísticas",
-    "datos",
-    "análisis",
-    "mapa",
+    "estadísticas de emergencias",
+    "análisis de datos",
+    "mapa de emergencias",
     "tiempo real",
-    "incidentes",
-    "emergencias",
-    "Costa Rica",
-    "BCBCR",
-    "mapa interactivo",
-    "no oficial"
+    "incidentes activos",
+    "estaciones de bomberos",
+    "BCBCR"
   ],
   openGraph: {
-    title: "Mapa y estadísticas de incidentes atendidos por Bomberos de Costa Rica",
-    description: description,
+    title,
+    description,
     url: siteUrl,
     type: "website",
-    siteName: title,
-    images: siteUrl ? [`${siteUrl}/og.png`] : undefined
+    siteName: "Dashboard de Emergencias",
+    images: siteUrl ? [new URL("og.png", siteUrl).toString()] : undefined
   },
   twitter: {
     card: "summary_large_image",
-    title: "Mapa y estadísticas de incidentes atendidos por Bomberos de Costa Rica",
-    description: description,
-    images: siteUrl ? [`${siteUrl}/og.png`] : undefined
+    title,
+    description,
+    images: siteUrl ? [new URL("og.png", siteUrl).toString()] : undefined
   },
   robots: {
     index: true,
@@ -63,7 +62,7 @@ export const metadata: Metadata = {
     }
   },
   icons: {
-    icon: "/bomberos/flame.jpg"
+    icon: "/bomberos/flame-32.jpg"
   }
 };
 
@@ -87,7 +86,7 @@ const bricolageGrotesque = Bricolage_Grotesque({
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es" suppressHydrationWarning>
+    <html lang="es-CR" suppressHydrationWarning>
       <body
         className={cn(
           "antialiased",
@@ -101,9 +100,9 @@ export default async function Layout({ children }: { children: React.ReactNode }
             <ThemeProvider attribute="class" defaultTheme="system">
               <TRPCProvider>
                 <Suspense fallback={null}>
-                  <AppSidebar />
+                  <AppSidebar variant="sidebar" />
                 </Suspense>
-                <SidebarInset className="overflow-hidden">
+                <SidebarInset>
                   <main className="h-full">{children}</main>
                 </SidebarInset>
               </TRPCProvider>

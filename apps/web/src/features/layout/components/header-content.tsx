@@ -53,7 +53,7 @@ export function HeaderContent() {
   return (
     <header
       className={cn(
-        "sticky top-0 z-10 flex shrink-0 items-center gap-2 border-b bg-background p-4",
+        "flex shrink-0 items-center gap-2 border-b bg-background p-4",
         pathname === "/" && "md:hidden"
       )}
     >
