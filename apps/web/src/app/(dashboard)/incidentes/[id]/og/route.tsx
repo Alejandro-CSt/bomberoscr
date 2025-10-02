@@ -6,16 +6,8 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { z } from "zod";
 
-// Image metadata
-export const alt = "Incidente de Bomberos Costa Rica";
-export const size = {
-  width: 1200,
-  height: 630
-};
+const size = { width: 1200, height: 630 } as const;
 
-export const contentType = "image/png";
-
-// Helper function to format date
 function formatDate(dateString: string | null | undefined) {
   if (!dateString) return "Fecha desconocida";
   const date = new Date(dateString);
@@ -28,25 +20,21 @@ function formatDate(dateString: string | null | undefined) {
   }).format(date);
 }
 
-// Truncate text with ellipsis if needed
 function truncateText(text: string | null | undefined, maxLength: number): string {
   if (!text) return "";
   if (text.length <= maxLength) return text;
   return `${text.substring(0, maxLength)}...`;
 }
 
-// Image generation
-export default async function Image({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-
+export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const idSchema = z.coerce.number().int().positive();
+  const { id } = await params;
   const idResult = idSchema.safeParse(id);
 
   if (!idResult.success) return new NextResponse("Invalid ID", { status: 404 });
 
   const incidentId = idResult.data;
 
-  // Fetch incident data with related information
   const incident = await db.query.incidents.findFirst({
     where: eq(incidents.id, incidentId),
     columns: {
@@ -74,23 +62,22 @@ export default async function Image({ params }: { params: Promise<{ id: string }
     .select({ count: count() })
     .from(dispatchedStations)
     .where(eq(dispatchedStations.incidentId, incidentId));
-
   const stationsCount = stationsResult[0]?.count || 0;
 
   const vehiclesResult = await db
     .select({ count: count() })
     .from(dispatchedVehicles)
     .where(eq(dispatchedVehicles.incidentId, incidentId));
-
   const vehiclesCount = vehiclesResult[0]?.count || 0;
 
   const fontDataRegular = await readFile(
     join(process.cwd(), "public", "assets", "JetBrainsMono-Regular.ttf")
   );
-
   const fontDataBold = await readFile(
     join(process.cwd(), "public", "assets", "JetBrainsMono-Bold.ttf")
   );
+  const fontDataRegularBuffer = fontDataRegular.buffer as ArrayBuffer;
+  const fontDataBoldBuffer = fontDataBold.buffer as ArrayBuffer;
 
   const hasGeoData = incident.provinceId && incident.cantonId && incident.districtId;
   const locationDisplay = hasGeoData
@@ -111,7 +98,6 @@ export default async function Image({ params }: { params: Promise<{ id: string }
         fontFamily: "JetBrains Mono"
       }}
     >
-      {/* Header with logo and ID */}
       <div
         style={{
           display: "flex",
@@ -154,7 +140,6 @@ export default async function Image({ params }: { params: Promise<{ id: string }
         </div>
       </div>
 
-      {/* Main content */}
       <div
         style={{
           flex: 1,
@@ -163,7 +148,6 @@ export default async function Image({ params }: { params: Promise<{ id: string }
           justifyContent: "center"
         }}
       >
-        {/* Incident timestamp */}
         <div
           style={{
             fontSize: "28px",
@@ -175,7 +159,6 @@ export default async function Image({ params }: { params: Promise<{ id: string }
           {formatDate(incident.incidentTimestamp?.toString())}
         </div>
 
-        {/* Incident type */}
         <h2
           style={{
             fontSize: "56px",
@@ -192,7 +175,6 @@ export default async function Image({ params }: { params: Promise<{ id: string }
           )}
         </h2>
 
-        {/* Location - Address or District+Canton+Province */}
         <div
           style={{
             fontSize: "36px",
@@ -214,7 +196,6 @@ export default async function Image({ params }: { params: Promise<{ id: string }
         </div>
       </div>
 
-      {/* Footer with dispatch information */}
       <div
         style={{
           display: "flex",
@@ -224,13 +205,7 @@ export default async function Image({ params }: { params: Promise<{ id: string }
           marginTop: "20px"
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            gap: "30px"
-          }}
-        >
-          {/* Stations count */}
+        <div style={{ display: "flex", gap: "30px" }}>
           <div
             style={{
               display: "flex",
@@ -239,27 +214,14 @@ export default async function Image({ params }: { params: Promise<{ id: string }
               borderRadius: "8px"
             }}
           >
-            <div
-              style={{
-                fontSize: "36px",
-                fontWeight: 700,
-                display: "flex"
-              }}
-            >
+            <div style={{ fontSize: "36px", fontWeight: 700, display: "flex" }}>
               {stationsCount}
             </div>
-            <div
-              style={{
-                fontSize: "18px",
-                opacity: 0.9,
-                display: "flex"
-              }}
-            >
+            <div style={{ fontSize: "18px", opacity: 0.9, display: "flex" }}>
               {stationsCount === 1 ? "Estación" : "Estaciones"}
             </div>
           </div>
 
-          {/* Vehicles count */}
           <div
             style={{
               display: "flex",
@@ -268,58 +230,30 @@ export default async function Image({ params }: { params: Promise<{ id: string }
               borderRadius: "8px"
             }}
           >
-            <div
-              style={{
-                fontSize: "36px",
-                fontWeight: 700,
-                display: "flex"
-              }}
-            >
+            <div style={{ fontSize: "36px", fontWeight: 700, display: "flex" }}>
               {vehiclesCount}
             </div>
-            <div
-              style={{
-                fontSize: "18px",
-                opacity: 0.9,
-                display: "flex"
-              }}
-            >
+            <div style={{ fontSize: "18px", opacity: 0.9, display: "flex" }}>
               {vehiclesCount === 1 ? "Vehículo" : "Vehículos"}
             </div>
           </div>
         </div>
 
-        {/* Responsible station if available */}
         {incident.station && (
           <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              borderRadius: "8px",
-              fontSize: "20px"
-            }}
+            style={{ display: "flex", alignItems: "center", borderRadius: "8px", fontSize: "20px" }}
           >
             <span style={{ display: "flex" }}>Estación responsable: {incident.station.name}</span>
           </div>
         )}
       </div>
     </div>,
-    // ImageResponse options
     {
       ...size,
+      headers: { "Content-Type": "image/png" },
       fonts: [
-        {
-          name: "JetBrains Mono",
-          data: fontDataRegular,
-          style: "normal",
-          weight: 400
-        },
-        {
-          name: "JetBrains Mono",
-          data: fontDataBold,
-          style: "normal",
-          weight: 700
-        }
+        { name: "JetBrains Mono", data: fontDataRegularBuffer, style: "normal", weight: 400 },
+        { name: "JetBrains Mono", data: fontDataBoldBuffer, style: "normal", weight: 700 }
       ]
     }
   );

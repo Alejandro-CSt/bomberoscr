@@ -141,7 +141,7 @@ export default function IncidentMap({ latitude, longitude, stations }: IncidentM
 
   return (
     <MapProvider>
-      <div className="relative overflow-hidden rounded-xl">
+      <div className="relative min-h-[400px] overflow-hidden rounded-xl">
         {!areCoordinatesValid && (
           <div className="absolute inset-0 z-20 flex items-center justify-center backdrop-blur-sm">
             <div className="mx-4 w-fit rounded-md bg-background/60 px-4 py-3 backdrop-blur-3xl">
@@ -178,6 +178,7 @@ export default function IncidentMap({ latitude, longitude, stations }: IncidentM
           }}
           maxBounds={maxBounds as LngLatBoundsLike}
           style={{
+            minHeight: "400px",
             height: "400px",
             display: "flex",
             justifyContent: "center",

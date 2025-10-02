@@ -2,7 +2,7 @@
 
 import { Button } from "@/features/shared/components/ui/button";
 import { cn, getRelativeTime } from "@/features/shared/lib/utils";
-import { SirenIcon, XIcon } from "lucide-react";
+import { SirenIcon } from "lucide-react";
 import { useState } from "react";
 
 interface OpenIncidentBannerProps {
@@ -16,7 +16,12 @@ export default function OpenIncidentBanner({ modifiedAt, className }: OpenIncide
   if (!isVisible) return null;
 
   return (
-    <div className={cn("z-50 rounded-md border bg-background px-4 py-3 shadow-lg", className)}>
+    <aside
+      // biome-ignore lint/a11y/useSemanticElements: banner
+      role="status"
+      aria-live="polite"
+      className={cn("z-50 rounded-md border bg-background px-4 py-3 shadow-lg", className)}
+    >
       <div className="flex flex-col justify-between gap-3 md:flex-row md:items-center">
         <div className="flex items-center gap-3">
           <div
@@ -28,19 +33,22 @@ export default function OpenIncidentBanner({ modifiedAt, className }: OpenIncide
           <div className="space-y-0.5">
             <p className="font-medium text-sm">Incidente en progreso</p>
             <p className="text-muted-foreground text-sm">
-              Actualizado por última vez {getRelativeTime(modifiedAt)}
+              Actualizado por última vez{" "}
+              <time dateTime={modifiedAt} suppressHydrationWarning>
+                {getRelativeTime(modifiedAt)}
+              </time>
             </p>
           </div>
         </div>
         <Button
-          variant="ghost"
+          variant="secondary"
           size="sm"
           onClick={() => setIsVisible(false)}
           aria-label="Cerrar anuncio"
         >
-          <XIcon size={16} aria-hidden="true" />
+          Entendido
         </Button>
       </div>
-    </div>
+    </aside>
   );
 }

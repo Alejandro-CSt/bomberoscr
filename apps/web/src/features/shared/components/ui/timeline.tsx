@@ -1,9 +1,8 @@
 "use client";
 
+import { cn } from "@/features/shared/lib/utils";
 import { Slot } from "radix-ui";
 import * as React from "react";
-
-import { cn } from "@/features/shared/lib/utils";
 
 // Types
 type TimelineContextValue = {

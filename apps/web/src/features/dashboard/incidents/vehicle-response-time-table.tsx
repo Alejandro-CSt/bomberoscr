@@ -33,39 +33,33 @@ export function VehicleResponseTimeTable({
   vehicles: NonNullable<DetailedIncident>["dispatchedVehicles"];
 }) {
   return (
-    <section className="rounded-lg border bg-muted">
-      <Table className="border-collapse text-sm">
-        <TableHeader>
-          <TableRow className="border-b">
-            <TableHead className="border-r">Vehículo</TableHead>
-            <TableHead className="border-r">Estación</TableHead>
-            <TableHead className="border-r">Despacho</TableHead>
-            <TableHead className="border-r">Llegada</TableHead>
-            <TableHead className="border-r">Retiro</TableHead>
-            <TableHead>Tiempo de respuesta</TableHead>
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Vehículo</TableHead>
+          <TableHead>Estación</TableHead>
+          <TableHead>Despacho</TableHead>
+          <TableHead>Llegada</TableHead>
+          <TableHead>Retiro</TableHead>
+          <TableHead>Tiempo de respuesta</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {vehicles.map((vehicle) => (
+          <TableRow key={vehicle.id}>
+            <TableCell>{vehicle.vehicle?.internalNumber || "N/A"}</TableCell>
+            <TableCell>{vehicle.station.name}</TableCell>
+            <TableCell>{formatTime(vehicle.dispatchedTime)}</TableCell>
+            <TableCell>{formatTime(vehicle.arrivalTime)}</TableCell>
+            <TableCell>{formatTime(vehicle.departureTime)}</TableCell>
+            <TableCell>
+              {isUndefinedDate(vehicle.dispatchedTime) || isUndefinedDate(vehicle.arrivalTime)
+                ? "N/A"
+                : calculateResponseTime(vehicle.dispatchedTime, vehicle.arrivalTime)}
+            </TableCell>
           </TableRow>
-        </TableHeader>
-        <TableBody>
-          {vehicles.map((vehicle) => (
-            <TableRow key={vehicle.id} className="border-b">
-              <TableCell className="border-r">{vehicle.vehicle?.internalNumber || "N/A"}</TableCell>
-              <TableCell className="border-r">{vehicle.station.name}</TableCell>
-              <TableCell className="border-r text-xs">
-                {formatTime(vehicle.dispatchedTime)}
-              </TableCell>
-              <TableCell className="border-r text-xs">{formatTime(vehicle.arrivalTime)}</TableCell>
-              <TableCell className="border-r text-xs">
-                {formatTime(vehicle.departureTime)}
-              </TableCell>
-              <TableCell className="text-xs">
-                {isUndefinedDate(vehicle.dispatchedTime) || isUndefinedDate(vehicle.arrivalTime)
-                  ? "N/A"
-                  : calculateResponseTime(vehicle.dispatchedTime, vehicle.arrivalTime)}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </section>
+        ))}
+      </TableBody>
+    </Table>
   );
 }

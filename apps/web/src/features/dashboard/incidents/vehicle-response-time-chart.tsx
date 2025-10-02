@@ -59,17 +59,15 @@ export function VehicleResponseTimeChart({
 
       const responseTime = calculateTimeDiffInSeconds(arrivalTime, dispatchedTime);
 
-      // If the incident is open and the vehicle has not returned, its "on-scene"
-      // time is calculated up to the present moment.
-      const isPendingReturn = isOpen && isUndefinedDate(baseReturnTime);
-      const onSceneEndDate = isPendingReturn ? new Date() : departureTime;
+      const hasDeparture = !!departureTime && !isUndefinedDate(departureTime);
+      const hasReturn = !!baseReturnTime && !isUndefinedDate(baseReturnTime);
 
+      const onSceneEndDate = hasDeparture ? departureTime : isOpen ? new Date() : undefined;
       const onSceneTime = calculateTimeDiffInSeconds(onSceneEndDate, arrivalTime);
 
-      // Return time is 0 if the vehicle is considered pending return.
-      const returnTime = isPendingReturn
-        ? 0
-        : calculateTimeDiffInSeconds(baseReturnTime, departureTime);
+      const isEnRoute = hasDeparture && !hasReturn;
+      const returnTime =
+        hasDeparture && hasReturn ? calculateTimeDiffInSeconds(baseReturnTime, departureTime) : 0;
 
       const totalTime = responseTime + onSceneTime + returnTime;
 
@@ -85,6 +83,7 @@ export function VehicleResponseTimeChart({
           responseTime,
           onSceneTime,
           returnTime,
+          isEnRoute,
           totalTime
         }
       ];
@@ -155,7 +154,7 @@ export function VehicleResponseTimeChart({
 interface TooltipPayloadItem {
   value: number;
   dataKey: string;
-  payload: Record<string, number | string>;
+  payload: Record<string, number | string | boolean>;
 }
 
 interface CustomTooltipContentProps {
@@ -182,17 +181,22 @@ function CustomTooltipContent({ active, payload }: CustomTooltipContentProps) {
       <div className="space-y-1">
         <div className="font-medium">{vehicleLabel}</div>
         <div className="space-y-1">
-          {segments.map((seg) => (
-            <div className="flex items-center justify-between gap-4" key={seg.key}>
-              <div className="flex items-center gap-2">
-                <div className={`h-3 w-1 rounded-[2px] ${seg.className}`} />
-                <span className="text-muted-foreground text-xs">{seg.label}:</span>
+          {segments.map((seg) => {
+            const isReturnSegment = seg.key === "returnTime";
+            const isEnRoute = Boolean(data.isEnRoute);
+            const valueSeconds = Number(data[seg.key]) ?? 0;
+            return (
+              <div className="flex items-center justify-between gap-4" key={seg.key}>
+                <div className="flex items-center gap-2">
+                  <div className={`h-3 w-1 rounded-[2px] ${seg.className}`} />
+                  <span className="text-muted-foreground text-xs">{seg.label}:</span>
+                </div>
+                <span className="font-medium font-mono text-sm">
+                  {isReturnSegment && isEnRoute ? "En camino" : formatSecondsToHMS(valueSeconds)}
+                </span>
               </div>
-              <span className="font-medium font-mono text-sm">
-                {formatSecondsToHMS(Number(data[seg.key]) ?? 0)}
-              </span>
-            </div>
-          ))}
+            );
+          })}
         </div>
         <div className="mt-2 flex items-center justify-between gap-4 border-t pt-2">
           <span className="font-semibold text-xs">Total:</span>

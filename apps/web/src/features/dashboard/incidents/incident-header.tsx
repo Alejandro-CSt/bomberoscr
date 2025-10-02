@@ -12,19 +12,21 @@ export function IncidentHeader({ incident }: { incident: NonNullable<DetailedInc
     title += `, ${incident.province.name}`;
   }
 
+  const formatted = incident.incidentTimestamp.toLocaleString("es-CR", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true
+  });
+
   return (
-    <div className="flex flex-col">
-      <h1 className="font-bold text-xl md:text-3xl">{title}</h1>
-      <p className="text-muted-foreground first-letter:uppercase">
-        {incident.incidentTimestamp.toLocaleString("es-CR", {
-          day: "2-digit",
-          month: "long",
-          year: "numeric",
-          hour: "numeric",
-          minute: "2-digit",
-          hour12: true
-        })}
+    <header className="flex flex-col">
+      <h1 itemProp="headline">{title}</h1>
+      <p>
+        <time dateTime={incident.incidentTimestamp.toISOString()}>{formatted}</time>
       </p>
-    </div>
+    </header>
   );
 }

@@ -89,7 +89,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
     <html lang="es-CR" suppressHydrationWarning>
       <body
         className={cn(
-          "antialiased",
+          "font-sans antialiased",
           geist.variable,
           geistMono.variable,
           bricolageGrotesque.variable
@@ -103,7 +103,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
                   <AppSidebar variant="sidebar" />
                 </Suspense>
                 <SidebarInset>
-                  <main className="h-full">{children}</main>
+                  <div className="h-full">{children}</div>
                 </SidebarInset>
               </TRPCProvider>
             </ThemeProvider>
