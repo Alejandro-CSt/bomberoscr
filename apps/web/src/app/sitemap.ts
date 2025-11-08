@@ -53,7 +53,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         incident.incidentTimestamp
       )}`,
       lastModified: incident.modifiedAt,
-      changeFrequency: incident.isOpen ? "hourly" : "monthly"
+      changeFrequency: incident.isOpen ? ("hourly" as const) : ("monthly" as const)
     })),
     {
       url: `${siteUrl}/estaciones`,
