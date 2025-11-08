@@ -38,9 +38,9 @@ export function DataTable<TData, TValue>() {
         <DataTableViewOptions table={table} />
       </div>
 
-      <div className={cn("flex-1 overflow-auto")}>
+      <div className={cn("flex-1 overflow-y-auto overflow-x-hidden")}>
         <IsOpenIndicatorLegend className={cn("py-2 text-muted-foreground")} />
-        <div className={cn("border border-border md:border-r md:border-l")}>
+        <div className={cn("border border-border")}>
           <Table className="font-mono">
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (

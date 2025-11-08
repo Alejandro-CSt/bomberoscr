@@ -52,7 +52,7 @@ export default async function Page() {
   const incidents = await getIncidents();
 
   return (
-    <div className="flex h-full flex-col p-4">
+    <div className="flex h-full flex-col overflow-x-hidden p-4">
       <DataTableProvider columns={columns} data={incidents}>
         <DataTable />
         <IncidentSheet />

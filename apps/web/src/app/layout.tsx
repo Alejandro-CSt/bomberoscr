@@ -108,8 +108,8 @@ export default async function Layout({ children }: { children: React.ReactNode }
                 <Suspense fallback={null}>
                   <AppSidebar variant="sidebar" />
                 </Suspense>
-                <SidebarInset>
-                  <div className="h-full">{children}</div>
+                <SidebarInset className="overflow-x-hidden">
+                  <div className="h-full min-w-0">{children}</div>
                 </SidebarInset>
               </TRPCProvider>
             </ThemeProvider>
