@@ -2,9 +2,33 @@ import { columns } from "@/features/dashboard/incidents/table/components/columns
 import { DataTable } from "@/features/dashboard/incidents/table/components/data-table";
 import { IncidentSheet } from "@/features/dashboard/incidents/table/components/data-table-incident-sheet";
 import { DataTableProvider } from "@/features/dashboard/incidents/table/components/data-table-provider";
+import env from "@/features/lib/env";
 import { getIncidentsForTable } from "@bomberoscr/db/queries/incidentsTable";
 import { unstable_cacheLife as cacheLife } from "next/cache";
 import { headers } from "next/headers";
+import type { Metadata } from "next";
+
+const incidentsTableDescription =
+  "Lista filtrable de incidentes despachados con detalles de localización, estaciones y tiempos de respuesta.";
+
+export const metadata: Metadata = {
+  title: "Incidentes registrados",
+  description: incidentsTableDescription,
+  alternates: {
+    canonical: env.SITE_URL ? new URL("/incidentes", env.SITE_URL).toString() : undefined
+  },
+  openGraph: {
+    title: "Incidentes registrados",
+    description: incidentsTableDescription,
+    url: env.SITE_URL ? new URL("/incidentes", env.SITE_URL).toString() : undefined,
+    type: "website"
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Incidentes registrados",
+    description: incidentsTableDescription
+  }
+};
 
 async function getIncidents() {
   "use cache";

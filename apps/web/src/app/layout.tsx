@@ -12,41 +12,47 @@ import { Suspense } from "react";
 
 const siteUrl = env.SITE_URL;
 
-const title = "Dashboard de Emergencias — Bomberos de Costa Rica";
+const brandName = "Bomberos de Costa Rica";
+const defaultTitle = "Estadísticas Bomberos";
+const defaultFullTitle = `${defaultTitle} — ${brandName}`;
 const description =
-  "Dashboard interactivo con estadísticas, análisis de datos y mapa de incidentes atendidos por Bomberos de Costa Rica en tiempo real. Consulta tendencias, estaciones y tiempos de respuesta.";
+  "Dashboard interactivo con estadísticas, análisis de datos y mapa de incidentes atendidos por el Benemérito Cuerpo de Bomberos de Costa Rica en tiempo real. Consulta tendencias, estaciones y tiempos de respuesta.";
 
 export const metadata: Metadata = {
   metadataBase: siteUrl ? new URL(siteUrl) : undefined,
-  title,
+  title: {
+    default: defaultFullTitle,
+    template: `%s — ${brandName}`
+  },
   description,
-  applicationName: "Dashboard de Emergencias - Bomberos de Costa Rica",
+  applicationName: defaultFullTitle,
   alternates: {
     canonical: siteUrl
   },
   keywords: [
+    "dashboard de emergencias",
     "Bomberos de Costa Rica",
-    "emergencias Costa Rica",
-    "incendios",
-    "estadísticas de emergencias",
-    "análisis de datos",
-    "mapa de emergencias",
-    "tiempo real",
-    "incidentes activos",
+    "Benemérito Cuerpo de Bomberos",
+    "incidentes en tiempo real",
+    "respuesta de emergencias",
+    "estadísticas de incendios",
+    "mapa de incidentes",
+    "análisis operativo",
     "estaciones de bomberos",
-    "BCBCR"
+    "tiempo de respuesta",
+    "BCR emergencias"
   ],
   openGraph: {
-    title,
+    title: defaultFullTitle,
     description,
     url: siteUrl,
     type: "website",
-    siteName: "Dashboard de Emergencias",
+    siteName: "Estadísticas Bomberos",
     images: siteUrl ? [new URL("og.png", siteUrl).toString()] : undefined
   },
   twitter: {
     card: "summary_large_image",
-    title,
+    title: defaultFullTitle,
     description,
     images: siteUrl ? [new URL("og.png", siteUrl).toString()] : undefined
   },

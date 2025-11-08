@@ -9,7 +9,7 @@ import { Suspense } from "react";
 
 const siteUrl = env.SITE_URL ? env.SITE_URL.replace(/\/+$/, "") : undefined;
 
-const title = "Mapa y Dashboard de Emergencias — Bomberos de Costa Rica (en tiempo real)";
+const title = "Mapa y Estadísticas Bomberos — Bomberos de Costa Rica (en tiempo real)";
 const description =
   "Visualiza el mapa interactivo y panel con incidentes activos, historial, estaciones y tiempos de respuesta de Bomberos de Costa Rica en tiempo real.";
 
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     "mapa de emergencias",
     "mapa bomberos Costa Rica",
     "incidentes activos",
-    "dashboard en tiempo real",
+    "estadísticas en tiempo real",
     "estadísticas de emergencias",
     "estaciones de bomberos",
     "bomberos cr",
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     description,
     url: siteUrl ? `${siteUrl}/mapa` : undefined,
     type: "website",
-    siteName: "Dashboard de Emergencias",
+    siteName: "Estadísticas Bomberos",
     images: siteUrl ? [new URL("og.png", siteUrl).toString()] : undefined
   },
   twitter: {

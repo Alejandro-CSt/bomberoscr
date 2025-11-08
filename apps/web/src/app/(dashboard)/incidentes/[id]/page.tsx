@@ -100,7 +100,10 @@ export async function generateMetadata(props: PageProps<"/incidentes/[id]">): Pr
   if (!idResult.success) {
     return {
       title: "Incidente no encontrado",
-      description: "No se pudo encontrar el incidente especificado."
+      description: "No se pudo encontrar el incidente especificado.",
+      alternates: {
+        canonical: env.SITE_URL ? new URL("/incidentes", env.SITE_URL).toString() : undefined
+      }
     };
   }
 
@@ -109,7 +112,10 @@ export async function generateMetadata(props: PageProps<"/incidentes/[id]">): Pr
   if (!incident) {
     return {
       title: "Incidente no encontrado",
-      description: "No se pudo encontrar el incidente especificado."
+      description: "No se pudo encontrar el incidente especificado.",
+      alternates: {
+        canonical: env.SITE_URL ? new URL("/incidentes", env.SITE_URL).toString() : undefined
+      }
     };
   }
 
@@ -131,9 +137,17 @@ export async function generateMetadata(props: PageProps<"/incidentes/[id]">): Pr
   return {
     title: `${titleWithLocation} | EE-${incident.EEConsecutive}`,
     description,
+    alternates: {
+      canonical: env.SITE_URL
+        ? new URL(`/incidentes/${incident.id}`, env.SITE_URL).toString()
+        : undefined
+    },
     openGraph: {
       title: `${titleWithLocation}`,
       description,
+      url: env.SITE_URL
+        ? new URL(`/incidentes/${incident.id}`, env.SITE_URL).toString()
+        : undefined,
       type: "article",
       images: `${env.SITE_URL}/incidentes/${incident.id}/og`
     },

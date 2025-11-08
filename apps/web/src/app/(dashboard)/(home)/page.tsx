@@ -6,6 +6,7 @@ import { TopResponseTimesStationsChart } from "@/features/dashboard/homepage/cha
 import { MapCTA } from "@/features/dashboard/homepage/components/map-cta";
 import { YearRecapHero } from "@/features/dashboard/homepage/components/year-recap-hero";
 import { Skeleton } from "@/features/shared/components/ui/skeleton";
+import env from "@/features/lib/env";
 import { getDailyIncidents } from "@bomberoscr/db/queries/charts/dailyIncidents";
 import { getIncidentsByDayOfWeek } from "@bomberoscr/db/queries/charts/incidentsByDayOfWeek";
 import { getIncidentsByHour } from "@bomberoscr/db/queries/charts/incidentsByHour";
@@ -13,9 +14,29 @@ import { getTopDispatchedStations } from "@bomberoscr/db/queries/charts/topDispa
 import { getTopResponseTimesStations } from "@bomberoscr/db/queries/charts/topResponseTimesStations";
 import { unstable_cacheLife as cacheLife, unstable_cacheTag as cacheTag } from "next/cache";
 import { headers } from "next/headers";
+import type { Metadata } from "next";
 import { Suspense, lazy } from "react";
 
 const ParticlesMap = lazy(() => import("@/features/dashboard/homepage/components/particles-map"));
+
+const homepageDescription =
+  "Indicadores clave de incidentes en Costa Rica, tendencias recientes y mapa interactivo del cuerpo de bomberos.";
+
+export const metadata: Metadata = {
+  description: homepageDescription,
+  alternates: {
+    canonical: env.SITE_URL ? new URL("/", env.SITE_URL).toString() : undefined
+  },
+  openGraph: {
+    description: homepageDescription,
+    url: env.SITE_URL ? new URL("/", env.SITE_URL).toString() : undefined,
+    type: "website"
+  },
+  twitter: {
+    card: "summary_large_image",
+    description: homepageDescription
+  }
+};
 
 async function getHomepageData(timeRange: number) {
   "use cache";

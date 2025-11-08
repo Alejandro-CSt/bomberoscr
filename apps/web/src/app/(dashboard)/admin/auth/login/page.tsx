@@ -4,6 +4,7 @@ import { Button } from "@/features/shared/components/ui/button";
 import { Input } from "@/features/shared/components/ui/input";
 import { AlertCircle } from "lucide-react";
 import { Suspense } from "react";
+import type { Metadata } from "next";
 
 type Params = Promise<{
   error?: string;
@@ -47,3 +48,14 @@ export default function Page({ searchParams }: { searchParams: Params }) {
     </Suspense>
   );
 }
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+    googleBot: {
+      index: false,
+      follow: false
+    }
+  }
+};

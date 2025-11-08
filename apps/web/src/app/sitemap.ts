@@ -31,6 +31,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: "always"
     },
+    {
+      url: `${siteUrl}/mapa/busqueda`,
+      lastModified: new Date(),
+      changeFrequency: "hourly"
+    },
     ...stations.map((station) => ({
       url: `${siteUrl}/estaciones/${station.name}`,
       lastModified: new Date(),
