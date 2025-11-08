@@ -11,7 +11,7 @@ import {
 } from "@/features/shared/components/ui/breadcrumb";
 import { Separator } from "@/features/shared/components/ui/separator";
 import { SidebarTrigger } from "@/features/shared/components/ui/sidebar";
-import { cn } from "@/features/shared/lib/utils";
+import { cn, extractIncidentId } from "@/features/shared/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -27,7 +27,9 @@ export function HeaderContent() {
 
     const incidentMatch = pathname.match(incidentRegex);
     if (incidentMatch) {
-      const incidentId = incidentMatch[1];
+      const slug = incidentMatch[1];
+      // Extract just the incident ID (e.g., "1548947-serpiente-2025-11-06" -> "1548947")
+      const incidentId = extractIncidentId(pathname);
       return {
         title: `Incidente ${incidentId}`,
         breadcrumbs: [

@@ -2,7 +2,7 @@
 
 import type { LatestIncident } from "@/features/map/incidents/api/incidents";
 import { Badge } from "@/features/shared/components/ui/badge";
-import { getRelativeTime } from "@/features/shared/lib/utils";
+import { buildIncidentUrlFromPartial, getRelativeTime } from "@/features/shared/lib/utils";
 import type { getLatestIncidents } from "@bomberoscr/db/queries/incidents";
 import Link from "next/link";
 
@@ -11,7 +11,15 @@ export function IncidentCard({
 }: { incident: Awaited<ReturnType<typeof getLatestIncidents>>[number] | LatestIncident }) {
   return (
     <Link
-      href={`/incidentes/${incident.id}`}
+      href={
+        buildIncidentUrlFromPartial({
+          id: incident.id,
+          incidentTimestamp: new Date(incident.incidentTimestamp),
+          importantDetails: null,
+          specificIncidentType: incident.specificIncidentType || null,
+          incidentType: incident.incidentType || null
+        }) as `/incidentes/${string}`
+      }
       className="flex w-full cursor-pointer flex-col gap-3 rounded-lg border p-4 text-left transition-colors delay-75 duration-300 hover:bg-accent"
     >
       <div className="flex items-start justify-between">

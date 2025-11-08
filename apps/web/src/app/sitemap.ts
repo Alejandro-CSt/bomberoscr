@@ -1,4 +1,5 @@
 import env from "@/features/lib/env";
+import { buildIncidentUrl } from "@/features/shared/lib/utils";
 import db, { eq } from "@bomberoscr/db/index";
 import { stations as stationsSchema } from "@bomberoscr/db/schema";
 import type { MetadataRoute } from "next";
@@ -15,7 +16,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   });
   const incidents = await db.query.incidents.findMany({
     columns: {
-      id: true
+      id: true,
+      incidentTimestamp: true,
+      importantDetails: true,
+      modifiedAt: true,
+      isOpen: true
     },
     limit: 49900
   });
@@ -42,9 +47,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "hourly" as const
     })),
     ...incidents.map((incident) => ({
-      url: `${siteUrl}/incidentes/${incident.id}`,
-      lastModified: new Date(),
-      changeFrequency: "hourly" as const
+      url: `${siteUrl}${buildIncidentUrl(
+        incident.id,
+        incident.importantDetails ?? "Incidente",
+        incident.incidentTimestamp
+      )}`,
+      lastModified: incident.modifiedAt,
+      changeFrequency: incident.isOpen ? "hourly" : "monthly"
     })),
     {
       url: `${siteUrl}/estaciones`,

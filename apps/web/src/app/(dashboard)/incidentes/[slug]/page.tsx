@@ -14,13 +14,13 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from "@/features/shared/components/ui/tooltip";
+import { buildIncidentUrl, extractIncidentId } from "@/features/shared/lib/utils";
 import { type DetailedIncident, getDetailedIncidentById } from "@bomberoscr/db/queries/incidents";
 import { areCoordinatesValid } from "@bomberoscr/lib/areCoordinatesValid";
 import { BarChartHorizontalIcon, TableIcon, TriangleAlertIcon } from "lucide-react";
 import type { Metadata } from "next";
 import { unstable_cacheLife as cacheLife } from "next/cache";
 import { notFound } from "next/navigation";
-import { z } from "zod";
 
 function getLocation(incident: NonNullable<DetailedIncident>): string | undefined {
   if (incident.province && incident.canton && incident.district) {
@@ -42,6 +42,15 @@ function getIncidentTitle(incident: NonNullable<DetailedIncident>): string {
     title += ` EN ${location}`;
   }
   return title;
+}
+
+function getIncidentTitleWithoutLocation(incident: NonNullable<DetailedIncident>): string {
+  return (
+    incident.importantDetails ||
+    incident.specificDispatchIncidentType?.name ||
+    incident.dispatchIncidentType?.name ||
+    "Incidente"
+  );
 }
 
 function getJsonLd(incident: NonNullable<DetailedIncident>) {
@@ -92,12 +101,17 @@ function getJsonLd(incident: NonNullable<DetailedIncident>) {
   };
 }
 
-export async function generateMetadata(props: PageProps<"/incidentes/[id]">): Promise<Metadata> {
-  const { id } = await props.params;
-  const idSchema = z.coerce.number().int().positive();
-  const idResult = idSchema.safeParse(id);
+export async function generateMetadata({
+  params
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
 
-  if (!idResult.success) {
+  // Extract ID from slug (supports both old format /incidentes/123 and new format /incidentes/123-slug-2025-01-01)
+  const id = extractIncidentId(`/incidentes/${slug}`);
+
+  if (!id) {
     return {
       title: "Incidente no encontrado",
       description: "No se pudo encontrar el incidente especificado.",
@@ -107,7 +121,7 @@ export async function generateMetadata(props: PageProps<"/incidentes/[id]">): Pr
     };
   }
 
-  const incident = await getDetailedIncidentById(idResult.data);
+  const incident = await getDetailedIncidentById(id);
 
   if (!incident) {
     return {
@@ -134,22 +148,24 @@ export async function generateMetadata(props: PageProps<"/incidentes/[id]">): Pr
 
   const description = `Incidente reportado el ${formattedDate}${location ? ` en ${location}` : ""}. EE-${incident.EEConsecutive}. ${incident.dispatchedStations.length} estación(es) y ${incident.dispatchedVehicles.length} unidad(es) despachadas.`;
 
+  const canonicalUrl = buildIncidentUrl(
+    incident.id,
+    getIncidentTitleWithoutLocation(incident),
+    incident.incidentTimestamp
+  );
+
   return {
     title: `${titleWithLocation} | EE-${incident.EEConsecutive}`,
     description,
     alternates: {
-      canonical: env.SITE_URL
-        ? new URL(`/incidentes/${incident.id}`, env.SITE_URL).toString()
-        : undefined
+      canonical: env.SITE_URL ? new URL(canonicalUrl, env.SITE_URL).toString() : undefined
     },
     openGraph: {
       title: `${titleWithLocation}`,
       description,
-      url: env.SITE_URL
-        ? new URL(`/incidentes/${incident.id}`, env.SITE_URL).toString()
-        : undefined,
+      url: env.SITE_URL ? new URL(canonicalUrl, env.SITE_URL).toString() : undefined,
       type: "article",
-      images: `${env.SITE_URL}/incidentes/${incident.id}/og`
+      images: `${env.SITE_URL}${canonicalUrl}/og`
     },
     twitter: {
       card: "summary_large_image",
@@ -159,9 +175,19 @@ export async function generateMetadata(props: PageProps<"/incidentes/[id]">): Pr
   };
 }
 
-export default async function IncidentPage(props: PageProps<"/incidentes/[id]">) {
-  const { id } = await props.params;
-  const incident = await getDetailedIncidentById(Number(id));
+export default async function IncidentPage({
+  params
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+
+  // Extract ID from slug (supports both old format /incidentes/123 and new format /incidentes/123-slug-2025-01-01)
+  const id = extractIncidentId(`/incidentes/${slug}`);
+
+  if (!id) notFound();
+
+  const incident = await getDetailedIncidentById(id);
 
   if (!incident) notFound();
 

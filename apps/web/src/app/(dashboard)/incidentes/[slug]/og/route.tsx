@@ -26,10 +26,15 @@ function truncateText(text: string | null | undefined, maxLength: number): strin
   return `${text.substring(0, maxLength)}...`;
 }
 
-export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(_req: Request, { params }: { params: Promise<{ slug: string }> }) {
   const idSchema = z.coerce.number().int().positive();
-  const { id } = await params;
-  const idResult = idSchema.safeParse(id);
+  const { slug } = await params;
+
+  // Extract ID from slug (first part before the first hyphen)
+  const idMatch = slug.match(/^(\d+)/);
+  if (!idMatch) return new NextResponse("Invalid slug format", { status: 404 });
+
+  const idResult = idSchema.safeParse(idMatch[1]);
 
   if (!idResult.success) return new NextResponse("Invalid ID", { status: 404 });
 

@@ -9,6 +9,7 @@ import {
   SidebarHeader
 } from "@/features/shared/components/ui/sidebar";
 import { Skeleton } from "@/features/shared/components/ui/skeleton";
+import { buildIncidentUrlFromPartial } from "@/features/shared/lib/utils";
 import { trpc } from "@/features/trpc/client";
 import { ArrowRightIcon } from "lucide-react";
 import Link from "next/link";
@@ -74,7 +75,15 @@ export function LatestIncidentsSidebar() {
                 {incidents?.map((incident) => (
                   <Link
                     key={incident.id}
-                    href={`/incidentes/${incident.id}`}
+                    href={
+                      buildIncidentUrlFromPartial({
+                        id: incident.id,
+                        incidentTimestamp: new Date(incident.incidentTimestamp),
+                        importantDetails: incident.importantDetails || null,
+                        specificIncidentType: null,
+                        incidentType: incident.incidentType || null
+                      }) as `/incidentes/${string}`
+                    }
                     className="flex flex-col gap-3 border-b p-4 text-sm leading-tight last:border-b-0 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                   >
                     <div className="flex w-full justify-between gap-2">

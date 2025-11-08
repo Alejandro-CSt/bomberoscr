@@ -8,7 +8,7 @@ import {
   SheetHeader,
   SheetTitle
 } from "@/features/shared/components/ui/sheet";
-import { cn } from "@/features/shared/lib/utils";
+import { buildIncidentUrl, cn } from "@/features/shared/lib/utils";
 import { ArrowRightIcon, ChevronDown, ChevronUp, XIcon } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
@@ -135,7 +135,17 @@ export function IncidentSheet() {
           <IncidentProperty label="Ubicación" value={selectedIncident?.address ?? "N/A"} />
 
           <Link
-            href={`/incidentes/${selectedIncident?.id}`}
+            href={
+              selectedIncident
+                ? (buildIncidentUrl(
+                    selectedIncident.id,
+                    selectedIncident.importantDetails ??
+                      selectedIncident.specificIncidentType?.name ??
+                      "Incidente",
+                    selectedIncident.incidentTimestamp
+                  ) as `/incidentes/${string}`)
+                : "#"
+            }
             className="group flex w-full items-center justify-center gap-2 p-8 text-primary underline-offset-4 hover:underline"
           >
             Ver detalles{" "}

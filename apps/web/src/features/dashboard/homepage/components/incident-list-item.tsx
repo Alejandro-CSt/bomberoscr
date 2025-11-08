@@ -1,5 +1,5 @@
 import { Skeleton } from "@/features/shared/components/ui/skeleton";
-import { cn, getRelativeTime } from "@/features/shared/lib/utils";
+import { cn, getRelativeTime, buildIncidentUrl } from "@/features/shared/lib/utils";
 import Link from "next/link";
 
 interface IncidentData {
@@ -46,7 +46,15 @@ export function IncidentListItem({
 
   return (
     <li className={cn("group", shouldShowBorder && "border-b")}>
-      <Link href={`/incidentes/${incident.id}`}>
+      <Link
+        href={
+          buildIncidentUrl(
+            incident.id,
+            incident.importantDetails || "Incidente",
+            new Date(incident.incidentTimestamp)
+          ) as `/incidentes/${string}`
+        }
+      >
         <div className="grid h-12 grid-cols-[110px_minmax(100px,1fr)_100px] gap-1 p-2 transition-colors duration-200 group-hover:bg-foreground/10">
           <div className="flex flex-col text-xs">
             <p className="overflow-hidden overflow-ellipsis font-semibold text-muted-foreground">

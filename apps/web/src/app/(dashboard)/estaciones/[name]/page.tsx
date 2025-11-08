@@ -14,10 +14,12 @@ async function findStationByName(rawName: string) {
   };
 }
 
-export async function generateMetadata(
-  props: PageProps<"/estaciones/[name]">
-): Promise<Metadata> {
-  const { name } = await props.params;
+export async function generateMetadata({
+  params
+}: {
+  params: Promise<{ name: string }>;
+}): Promise<Metadata> {
+  const { name } = await params;
   const { decodedName, station } = await findStationByName(name);
 
   if (!station) {
@@ -64,10 +66,14 @@ export async function generateMetadata(
   };
 }
 
-export default async function StationContent(props: PageProps<"/estaciones/[name]">) {
+export default async function StationContent({
+  params
+}: {
+  params: Promise<{ name: string }>;
+}) {
   "use cache";
   cacheLife({ revalidate: 60 * 10, expire: 60 * 10 });
-  const { name } = await props.params;
+  const { name } = await params;
   const { station } = await findStationByName(name);
   return (
     <div className="mx-auto max-w-5xl">

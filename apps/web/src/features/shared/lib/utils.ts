@@ -1,6 +1,15 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
+// Regex patterns for performance (defined at top level)
+// biome-ignore lint/suspicious/noMisleadingCharacterClass: Unicode combining characters range is intentional for diacritic removal
+const diacriticRegex = /[\u0300-\u036f]/g;
+const specialCharRegex = /[^a-z0-9\s-]/g;
+const locationPatternRegex = / EN [^,]+,/i;
+const extractIdRegex = /\/incidentes\/(\d+)/;
+const multipleHyphensRegex = /-+/g;
+const multipleSpacesRegex = /\s+/g;
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -165,4 +174,120 @@ export function formatMinutesToHMS(totalMinutes: number): string {
   }
 
   return formattedTime.trim();
+}
+
+/**
+ * Converts a string to a URL-friendly slug.
+ * Removes location information (EN ...), special characters, and formats for URLs.
+ * Only removes location when "EN" is followed by a comma (indicating a place name).
+ *
+ * @example
+ * createIncidentSlug("COLISION DE VEHICULO EN San José, Central, San José")
+ * // "colision-de-vehiculo"
+ *
+ * @example
+ * createIncidentSlug("RESCATE DE FELINO ATRAPADO EN MEDIO DE DOS PAREDES")
+ * // "rescate-de-felino-atrapado-en-medio-de-dos-paredes"
+ *
+ * @example
+ * createIncidentSlug("INCENDIO ESTRUCTURAL")
+ * // "incendio-estructural"
+ *
+ * @param title - The incident title to convert to a slug.
+ * @returns A URL-friendly slug without location information.
+ */
+export function createIncidentSlug(title: string): string {
+  // Remove location part only if "EN" is followed by a comma pattern (e.g., "EN District, Canton, Province")
+  // This preserves descriptions like "ATRAPADO EN MEDIO DE" while removing "EN San José, Central, San José"
+  let titleWithoutLocation = title;
+
+  if (locationPatternRegex.test(title)) {
+    // Find the last occurrence of " EN " followed by comma-separated location
+    const lastEnIndex = title.lastIndexOf(" EN ");
+    if (lastEnIndex !== -1) {
+      const afterEn = title.substring(lastEnIndex + 4);
+      // Only remove if it contains a comma (location format)
+      if (afterEn.includes(",")) {
+        titleWithoutLocation = title.substring(0, lastEnIndex);
+      }
+    }
+  }
+
+  return titleWithoutLocation
+    .toLowerCase()
+    .normalize("NFD") // Decompose accented characters
+    .replace(diacriticRegex, "") // Remove diacritics
+    .replace(specialCharRegex, "") // Remove special characters
+    .trim()
+    .replace(multipleSpacesRegex, "-") // Replace spaces with hyphens
+    .replace(multipleHyphensRegex, "-"); // Replace multiple hyphens with single hyphen
+}
+
+/**
+ * Builds a complete incident URL path in the format: /incidentes/{id}-{slug}-{yyyy-mm-dd}
+ *
+ * @example
+ * buildIncidentUrl(1549092, "COLISION DE VEHICULO EN ...", new Date("2025-01-01"))
+ * // "/incidentes/1549092-colision-de-vehiculo-2025-01-01"
+ *
+ * @param id - The incident ID.
+ * @param title - The incident title.
+ * @param date - The incident date.
+ * @returns The complete URL path for the incident.
+ */
+export function buildIncidentUrl(id: number, title: string, date: Date): string {
+  const slug = createIncidentSlug(title);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const dateString = `${year}-${month}-${day}`;
+
+  return `/incidentes/${id}-${slug}-${dateString}`;
+}
+
+/**
+ * Extracts the incident ID from a URL path.
+ * Supports both old format (/incidentes/{id}) and new format (/incidentes/{id}-{slug}-{date})
+ *
+ * @example
+ * extractIncidentId("/incidentes/1549092-colision-de-vehiculo-2025-01-01")
+ * // 1549092
+ *
+ * @example
+ * extractIncidentId("/incidentes/1549092")
+ * // 1549092
+ *
+ * @param path - The URL path to extract the ID from.
+ * @returns The incident ID or null if not found.
+ */
+export function extractIncidentId(path: string): number | null {
+  const match = path.match(extractIdRegex);
+  if (!match || !match[1]) return null;
+  return Number.parseInt(match[1], 10);
+}
+
+/**
+ * Builds an incident URL from partial incident data (for lists/cards).
+ * This is a simplified version that works with data from list queries.
+ *
+ * @example
+ * buildIncidentUrlFromPartial({ id: 1549092, incidentTimestamp: new Date("2025-01-01"), importantDetails: "COLISION DE VEHICULO", incidentType: "Colisión" })
+ * // "/incidentes/1549092-colision-de-vehiculo-2025-01-01"
+ *
+ * @param incident - Partial incident data with at least id, incidentTimestamp, and some form of title
+ * @returns The URL path for the incident
+ */
+export function buildIncidentUrlFromPartial(incident: {
+  id: number;
+  incidentTimestamp: Date;
+  importantDetails?: string | null;
+  specificIncidentType?: string | null;
+  incidentType?: string | null;
+}): string {
+  const title =
+    incident.importantDetails ||
+    incident.specificIncidentType ||
+    incident.incidentType ||
+    "Incidente";
+  return buildIncidentUrl(incident.id, title, incident.incidentTimestamp);
 }

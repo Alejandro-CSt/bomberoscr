@@ -1,4 +1,4 @@
-import { cn } from "@/features/shared/lib/utils";
+import { buildIncidentUrlFromPartial, cn } from "@/features/shared/lib/utils";
 import type { HighlightedIncident as HighlightedIncidentType } from "@bomberoscr/db/queries/highlightedIncidents";
 import { ArrowRightIcon, ImageIcon } from "lucide-react";
 import Image from "next/image";
@@ -7,7 +7,15 @@ import Link from "next/link";
 export function HighlightedIncident({ incident }: { incident: HighlightedIncidentType }) {
   return (
     <Link
-      href={`/incidentes/${incident.id}`}
+      href={
+        buildIncidentUrlFromPartial({
+          id: incident.id,
+          incidentTimestamp: new Date(incident.incidentTimestamp),
+          importantDetails: incident.importantDetails || null,
+          specificIncidentType: null,
+          incidentType: incident.incidentType || null
+        }) as `/incidentes/${string}`
+      }
       className="group flex h-full flex-col justify-between overflow-hidden rounded-2xl not-dark:border bg-card font-serif"
       aria-label={`Ver detalles del incidente: ${incident.importantDetails}`}
     >

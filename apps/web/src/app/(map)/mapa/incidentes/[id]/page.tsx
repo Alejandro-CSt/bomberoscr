@@ -14,7 +14,12 @@ import {
   TableHeader,
   TableRow
 } from "@/features/shared/components/ui/table";
-import { cn, getRelativeTime, isUndefinedDate } from "@/features/shared/lib/utils";
+import {
+  cn,
+  getRelativeTime,
+  isUndefinedDate,
+  buildIncidentUrl
+} from "@/features/shared/lib/utils";
 import { getDetailedIncidentById } from "@bomberoscr/db/queries/incidents";
 import {
   ArrowElbowDownRightIcon,
@@ -196,7 +201,20 @@ export default async function DetailedIncidentPanel({
 
         <section>
           <Button asChild className="w-full">
-            <Link href={`/incidentes/${incident.id}`}>Ver detalles</Link>
+            <Link
+              href={
+                buildIncidentUrl(
+                  incident.id,
+                  incident.importantDetails ||
+                    incident.specificDispatchIncidentType?.name ||
+                    incident.dispatchIncidentType?.name ||
+                    "Incidente",
+                  incident.incidentTimestamp
+                ) as `/incidentes/${string}`
+              }
+            >
+              Ver detalles
+            </Link>
           </Button>
         </section>
 
