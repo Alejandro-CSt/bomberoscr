@@ -1,7 +1,7 @@
 import env from "@/features/lib/env";
 import db, { eq } from "@bomberoscr/db/index";
 import { stations } from "@bomberoscr/db/schema";
-import { unstable_cacheLife as cacheLife } from "next/cache";
+import { cacheLife } from "next/cache";
 import type { Metadata } from "next";
 
 async function findStationByName(rawName: string) {

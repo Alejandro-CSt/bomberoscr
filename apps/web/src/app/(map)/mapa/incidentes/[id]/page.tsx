@@ -27,7 +27,7 @@ import {
   FireTruckIcon
 } from "@phosphor-icons/react/dist/ssr";
 import type { Metadata } from "next";
-import { unstable_cacheLife as cacheLife } from "next/cache";
+import { cacheLife } from "next/cache";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { z } from "zod";

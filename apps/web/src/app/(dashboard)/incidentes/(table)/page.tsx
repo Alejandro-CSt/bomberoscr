@@ -4,7 +4,7 @@ import { IncidentSheet } from "@/features/dashboard/incidents/table/components/d
 import { DataTableProvider } from "@/features/dashboard/incidents/table/components/data-table-provider";
 import env from "@/features/lib/env";
 import { getIncidentsForTable } from "@bomberoscr/db/queries/incidentsTable";
-import { unstable_cacheLife as cacheLife } from "next/cache";
+import { cacheLife } from "next/cache";
 import { headers } from "next/headers";
 import type { Metadata } from "next";
 

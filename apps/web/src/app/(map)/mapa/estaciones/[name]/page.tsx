@@ -5,7 +5,7 @@ import db, { and, sql } from "@bomberoscr/db/index";
 import { getLatestIncidents } from "@bomberoscr/db/queries/incidents";
 import { stations } from "@bomberoscr/db/schema";
 import type { Metadata, ResolvingMetadata } from "next";
-import { unstable_cacheLife as cacheLife } from "next/cache";
+import { cacheLife } from "next/cache";
 
 type Props = {
   params: Promise<{ name: string }>;

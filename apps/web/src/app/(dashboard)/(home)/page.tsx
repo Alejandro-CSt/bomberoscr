@@ -12,7 +12,7 @@ import { getIncidentsByDayOfWeek } from "@bomberoscr/db/queries/charts/incidents
 import { getIncidentsByHour } from "@bomberoscr/db/queries/charts/incidentsByHour";
 import { getTopDispatchedStations } from "@bomberoscr/db/queries/charts/topDispatchedStations";
 import { getTopResponseTimesStations } from "@bomberoscr/db/queries/charts/topResponseTimesStations";
-import { unstable_cacheLife as cacheLife, unstable_cacheTag as cacheTag } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import { headers } from "next/headers";
 import type { Metadata } from "next";
 import { Suspense, lazy } from "react";

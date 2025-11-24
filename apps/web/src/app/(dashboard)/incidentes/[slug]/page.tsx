@@ -19,7 +19,7 @@ import { type DetailedIncident, getDetailedIncidentById } from "@bomberoscr/db/q
 import { areCoordinatesValid } from "@bomberoscr/lib/areCoordinatesValid";
 import { BarChartHorizontalIcon, TableIcon, TriangleAlertIcon } from "lucide-react";
 import type { Metadata } from "next";
-import { unstable_cacheLife as cacheLife } from "next/cache";
+import { cacheLife } from "next/cache";
 import { notFound } from "next/navigation";
 
 function getLocation(incident: NonNullable<DetailedIncident>): string | undefined {

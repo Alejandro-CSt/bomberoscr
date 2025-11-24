@@ -3,7 +3,7 @@ import { StationHeader } from "@/features/map/stations/components/station-header
 import { StationStats } from "@/features/map/stations/components/station-stats";
 import db, { and, sql } from "@bomberoscr/db/index";
 import { stations } from "@bomberoscr/db/schema";
-import { unstable_cacheLife as cacheLife } from "next/cache";
+import { cacheLife } from "next/cache";
 
 async function getStation(name: string) {
   "use cache";

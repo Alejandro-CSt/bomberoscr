@@ -4,7 +4,7 @@ import { buildIncidentUrl, extractIncidentId } from "./features/shared/lib/utils
 
 const staticFileRegex = /\.(jpg|png|svg|ico|webp)$/;
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (!pathname.startsWith("/incidentes/")) {
@@ -48,6 +48,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  runtime: "nodejs",
   matcher: ["/incidentes/:path*"]
 };
