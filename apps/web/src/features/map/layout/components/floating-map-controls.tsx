@@ -8,7 +8,10 @@ export function MapFloatingControls() {
   const { current: map } = useMap();
 
   return (
-    <div className="absolute top-4 right-4 z-10 flex flex-col gap-1 md:top-16 md:right-auto md:left-4">
+    <div
+      className="absolute right-4 z-10 flex flex-col gap-1 md:right-auto md:left-4"
+      style={{ top: "calc(var(--app-top-offset) + 0.5rem)" }}
+    >
       <div className="flex flex-col items-center rounded-full border bg-background/80 p-0.5 shadow-lg backdrop-blur-lg">
         <Button
           variant="ghost"

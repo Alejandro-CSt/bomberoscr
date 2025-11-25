@@ -12,6 +12,7 @@
     "typegen": "next typegen"
   },
   "dependencies": {
+    "@base-ui-components/react": "1.0.0-beta.6",
     "@bomberoscr/db": "workspace:*",
     "@bomberoscr/lib": "workspace:*",
     "@bomberoscr/sync-domain": "workspace:*",

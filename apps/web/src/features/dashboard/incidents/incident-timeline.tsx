@@ -48,17 +48,21 @@ function formatEventDate(date: Date, incidentDate: Date): string {
 
 export function IncidentTimeline({ incident }: Props) {
   type Kind = "dispatch" | "arrival" | "departure";
-  type VehicleEvent = { date: Date; vehicle: string };
+  type VehicleEvent = { date: Date; vehicle: string; station: string };
   const byKindStation = new Map<Kind, Map<string, VehicleEvent[]>>();
-  const thresholdMs = 2 * 60 * 1000;
+  const thresholdMs = 10 * 60 * 1000;
 
   const pushEvent = (kind: Kind, date: Date, station: string, vehicle: string) => {
+    const stationKey =
+      kind === "arrival" || kind === "dispatch" || kind === "departure"
+        ? `all-${kind === "dispatch" ? "dispatches" : kind === "arrival" ? "arrivals" : "departures"}`
+        : station;
     const existingStationMap = byKindStation.get(kind);
     const stationMap = existingStationMap ?? new Map<string, VehicleEvent[]>();
     if (!existingStationMap) byKindStation.set(kind, stationMap);
-    const list = stationMap.get(station) ?? [];
-    list.push({ date, vehicle });
-    stationMap.set(station, list);
+    const list = stationMap.get(stationKey) ?? [];
+    list.push({ date, vehicle, station });
+    stationMap.set(stationKey, list);
   };
 
   const events: TimelineEvent[] = [];
@@ -85,15 +89,24 @@ export function IncidentTimeline({ incident }: Props) {
   }
 
   for (const [kind, stationMap] of byKindStation) {
-    for (const [station, list] of stationMap) {
+    for (const [stationKey, list] of stationMap) {
       list.sort((a, b) => a.date.getTime() - b.date.getTime());
 
-      let groupStart: Date | undefined = list[0]?.date;
+      let groupStart: Date | undefined;
       let groupVehicles: string[] = [];
+      let groupStations = new Set<string>();
 
       const flush = () => {
         if (!groupStart || groupVehicles.length === 0) return;
-        const idBase = `${kind}|${station}|${groupStart.getTime()}|${groupVehicles.join("-")}`;
+        const uniqueStations = Array.from(groupStations);
+        const stationDescription =
+          kind === "arrival" || kind === "dispatch" || kind === "departure"
+            ? uniqueStations.length === 1
+              ? uniqueStations[0]
+              : uniqueStations.join(", ")
+            : stationKey;
+
+        const idBase = `${kind}|${stationKey}|${groupStart.getTime()}|${groupVehicles.join("-")}`;
         const count = groupVehicles.length;
         if (kind === "dispatch") {
           events.push({
@@ -103,7 +116,7 @@ export function IncidentTimeline({ incident }: Props) {
               count > 1
                 ? `Despachados: ${groupVehicles.join(", ")}`
                 : `Despachado: ${groupVehicles[0]}`,
-            description: station
+            description: stationDescription
           });
         } else if (kind === "arrival") {
           events.push({
@@ -113,7 +126,7 @@ export function IncidentTimeline({ incident }: Props) {
               count > 1
                 ? `Llegada a escena: ${groupVehicles.join(", ")}`
                 : `Llegada a escena: ${groupVehicles[0]}`,
-            description: station
+            description: stationDescription
           });
         } else if (kind === "departure") {
           events.push({
@@ -127,20 +140,22 @@ export function IncidentTimeline({ incident }: Props) {
         }
       };
 
-      groupVehicles = [];
       for (const e of list) {
         if (!groupStart) {
           groupStart = e.date;
           groupVehicles = [e.vehicle];
+          groupStations = new Set([e.station]);
           continue;
         }
         const diff = e.date.getTime() - groupStart.getTime();
         if (diff <= thresholdMs) {
           groupVehicles.push(e.vehicle);
+          groupStations.add(e.station);
         } else {
           flush();
           groupStart = e.date;
           groupVehicles = [e.vehicle];
+          groupStations = new Set([e.station]);
         }
       }
       flush();

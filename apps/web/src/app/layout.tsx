@@ -1,14 +1,15 @@
-import { AppSidebar } from "@/features/layout/components/sidebar";
+import { Header } from "@/features/layout/components/header";
+import { HeaderBackdrop } from "@/features/layout/components/header-backdrop";
+import { SubHeader } from "@/features/layout/components/sub-header";
 import env from "@/features/lib/env";
-import { SidebarInset, SidebarProvider } from "@/features/shared/components/ui/sidebar";
 import { ThemeProvider } from "@/features/shared/context/theme-provider";
 import { cn } from "@/features/shared/lib/utils";
 import "@/features/styles/globals.css";
 import TRPCProvider from "@/features/trpc/provider";
 import type { Metadata } from "next";
 import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
-import { Suspense } from "react";
 
 const siteUrl = env.SITE_URL;
 
@@ -93,6 +94,16 @@ const bricolageGrotesque = Bricolage_Grotesque({
 export default async function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es-CR" suppressHydrationWarning>
+      <head>
+        {process.env.NODE_ENV === "development" && (
+          <Script
+            src="//unpkg.com/react-grab/dist/index.global.js"
+            crossOrigin="anonymous"
+            strategy="beforeInteractive"
+            data-enabled="true"
+          />
+        )}
+      </head>
       <body
         className={cn(
           "font-sans antialiased",
@@ -101,20 +112,18 @@ export default async function Layout({ children }: { children: React.ReactNode }
           bricolageGrotesque.variable
         )}
       >
-        <SidebarProvider defaultOpen={false} open={false}>
-          <NuqsAdapter>
-            <ThemeProvider attribute="class" defaultTheme="system">
-              <TRPCProvider>
-                <Suspense fallback={null}>
-                  <AppSidebar variant="sidebar" />
-                </Suspense>
-                <SidebarInset className="overflow-x-hidden">
-                  <div className="h-full min-w-0">{children}</div>
-                </SidebarInset>
-              </TRPCProvider>
-            </ThemeProvider>
-          </NuqsAdapter>
-        </SidebarProvider>
+        <NuqsAdapter>
+          <ThemeProvider attribute="class" defaultTheme="system">
+            <TRPCProvider>
+              <div className="flex min-h-dvh min-w-0 flex-col overflow-x-hidden pt-[var(--app-header-height)]">
+                <Header />
+                <HeaderBackdrop />
+                <SubHeader />
+                <main className="min-h-0 w-full flex-1">{children}</main>
+              </div>
+            </TRPCProvider>
+          </ThemeProvider>
+        </NuqsAdapter>
       </body>
     </html>
   );

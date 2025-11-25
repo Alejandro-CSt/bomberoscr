@@ -20,7 +20,7 @@ export default function OpenIncidentBanner({ modifiedAt, className }: OpenIncide
       // biome-ignore lint/a11y/useSemanticElements: banner
       role="status"
       aria-live="polite"
-      className={cn("z-50 rounded-md border bg-background px-4 py-3 shadow-lg", className)}
+      className={cn("rounded-md border bg-background px-4 py-3 shadow-lg", className)}
     >
       <div className="flex flex-col justify-between gap-3 md:flex-row md:items-center">
         <div className="flex items-center gap-3">

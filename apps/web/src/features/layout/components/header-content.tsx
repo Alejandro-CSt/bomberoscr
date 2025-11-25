@@ -1,6 +1,6 @@
 "use client";
 
-import { navItems } from "@/features/layout/components/sidebar";
+import { navItems } from "@/features/layout/components/nav-items";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -9,8 +9,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from "@/features/shared/components/ui/breadcrumb";
-import { Separator } from "@/features/shared/components/ui/separator";
-import { SidebarTrigger } from "@/features/shared/components/ui/sidebar";
 import { cn, extractIncidentId } from "@/features/shared/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -27,7 +25,6 @@ export function HeaderContent() {
 
     const incidentMatch = pathname.match(incidentRegex);
     if (incidentMatch) {
-      const slug = incidentMatch[1];
       // Extract just the incident ID (e.g., "1548947-serpiente-2025-11-06" -> "1548947")
       const incidentId = extractIncidentId(pathname);
       return {
@@ -54,52 +51,46 @@ export function HeaderContent() {
 
   return (
     <header
-      className={cn(
-        "flex shrink-0 items-center gap-2 border-b bg-background p-4",
-        pathname === "/" && "md:hidden"
-      )}
+      className={cn("app-subheader flex shrink-0 items-center gap-2 bg-background px-4 py-2")}
     >
-      <SidebarTrigger className="-ml-1 md:hidden" />
-      <Separator
-        orientation="vertical"
-        className="mr-2 data-[orientation=vertical]:h-4 md:hidden"
-      />
-      <Breadcrumb>
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link href="/">Inicio</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          {breadcrumbs.length > 0 && (
-            <>
-              <BreadcrumbSeparator />
-              {breadcrumbs.map((crumb, index) => (
-                <div key={crumb.href} className="flex items-center">
-                  <BreadcrumbItem>
-                    {crumb.isActive ? (
-                      <BreadcrumbPage>{crumb.title}</BreadcrumbPage>
-                    ) : (
-                      <BreadcrumbLink asChild>
-                        <Link href={{ pathname: crumb.href }}>{crumb.title}</Link>
-                      </BreadcrumbLink>
-                    )}
-                  </BreadcrumbItem>
-                  {index < breadcrumbs.length - 1 && <BreadcrumbSeparator />}
-                </div>
-              ))}
-            </>
-          )}
-          {title && breadcrumbs.length === 0 && (
-            <>
-              <BreadcrumbSeparator className="hidden md:block" />
-              <BreadcrumbItem>
-                <BreadcrumbPage>{title}</BreadcrumbPage>
-              </BreadcrumbItem>
-            </>
-          )}
-        </BreadcrumbList>
-      </Breadcrumb>
+      <div className="mx-auto w-full max-w-4xl">
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <Link href="/">Inicio</Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            {breadcrumbs.length > 0 && (
+              <>
+                <BreadcrumbSeparator />
+                {breadcrumbs.map((crumb, index) => (
+                  <div key={crumb.href} className="flex items-center">
+                    <BreadcrumbItem>
+                      {crumb.isActive ? (
+                        <BreadcrumbPage>{crumb.title}</BreadcrumbPage>
+                      ) : (
+                        <BreadcrumbLink asChild>
+                          <Link href={{ pathname: crumb.href }}>{crumb.title}</Link>
+                        </BreadcrumbLink>
+                      )}
+                    </BreadcrumbItem>
+                    {index < breadcrumbs.length - 1 && <BreadcrumbSeparator />}
+                  </div>
+                ))}
+              </>
+            )}
+            {title && breadcrumbs.length === 0 && (
+              <>
+                <BreadcrumbSeparator className="hidden md:block" />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>{title}</BreadcrumbPage>
+                </BreadcrumbItem>
+              </>
+            )}
+          </BreadcrumbList>
+        </Breadcrumb>
+      </div>
     </header>
   );
 }

@@ -82,7 +82,13 @@ export const InteractiveMap = () => {
   );
 
   return (
-    <div className="flex-1">
+    <div
+      className="flex-1"
+      style={{
+        height: "calc(100dvh - var(--app-top-offset))",
+        minHeight: "calc(100dvh - var(--app-top-offset))"
+      }}
+    >
       <MapProvider>
         <ReactMap
           maxBounds={
