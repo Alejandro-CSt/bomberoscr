@@ -1,11 +1,11 @@
 "use client";
 
+import { useMap } from "@/features/map/context/map-context";
 import { Button } from "@/features/shared/components/ui/button";
 import { CompassIcon, ZoomInIcon, ZoomOutIcon } from "lucide-react";
-import { useMap } from "react-map-gl/maplibre";
 
 export function MapFloatingControls() {
-  const { current: map } = useMap();
+  const { map } = useMap();
 
   return (
     <div
