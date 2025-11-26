@@ -43,8 +43,8 @@ export async function generateMetadata({
     : undefined;
 
   const description = station.address
-    ? `Detalles de la estación ${decodedName} del Benemérito Cuerpo de Bomberos: ${station.address}.`
-    : `Detalles de la estación ${decodedName} del Benemérito Cuerpo de Bomberos.`;
+    ? `Detalles de la estación ${decodedName}: ${station.address}.`
+    : `Detalles de la estación ${decodedName}.`;
 
   return {
     title: `Estación ${decodedName}`,

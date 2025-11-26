@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import SearchMapPageClient from "./search-map-client";
 
 const description =
-  "Busca incidentes atendidos por los Bomberos de Costa Rica filtrando por tipo, estación y rango de tiempo sobre un mapa interactivo.";
+  "Busca incidentes atendidos por Bomberos de Costa Rica filtrando por tipo, estación y rango de tiempo sobre un mapa interactivo.";
 const canonicalUrl = env.SITE_URL ? new URL("/mapa/busqueda", env.SITE_URL).toString() : undefined;
 
 export const metadata: Metadata = {

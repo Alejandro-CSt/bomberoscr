@@ -2,7 +2,7 @@ import env from "@/features/lib/env";
 import type { Metadata } from "next";
 
 const stationsDescription =
-  "Directorio de estaciones del Benemérito Cuerpo de Bomberos con información de cobertura y ubicación.";
+  "Directorio de estaciones de bomberos con información de cobertura y ubicación.";
 
 export const metadata: Metadata = {
   title: "Estaciones de bomberos",

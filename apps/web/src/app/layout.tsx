@@ -13,11 +13,11 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 const siteUrl = env.SITE_URL;
 
-const brandName = "Bomberos de Costa Rica";
-const defaultTitle = "Estadísticas Bomberos";
-const defaultFullTitle = `${defaultTitle} — ${brandName}`;
+const brandName = "Emergencias CR";
+const defaultTitle = "Emergencias CR";
+const defaultFullTitle = `${defaultTitle} — Incidentes en tiempo real`;
 const description =
-  "Dashboard interactivo con estadísticas, análisis de datos y mapa de incidentes atendidos por el Benemérito Cuerpo de Bomberos de Costa Rica en tiempo real. Consulta tendencias, estaciones y tiempos de respuesta.";
+  "Dashboard interactivo con estadísticas, análisis de datos y mapa de incidentes atendidos por Bomberos de Costa Rica en tiempo real. Consulta tendencias, estaciones y tiempos de respuesta.";
 
 export const metadata: Metadata = {
   metadataBase: siteUrl ? new URL(siteUrl) : undefined,
@@ -33,22 +33,21 @@ export const metadata: Metadata = {
   keywords: [
     "dashboard de emergencias",
     "Bomberos de Costa Rica",
-    "Benemérito Cuerpo de Bomberos",
     "incidentes en tiempo real",
     "respuesta de emergencias",
-    "estadísticas de incendios",
+    "estadísticas de incidentes",
     "mapa de incidentes",
     "análisis operativo",
     "estaciones de bomberos",
     "tiempo de respuesta",
-    "BCR emergencias"
+    "emergencias CR"
   ],
   openGraph: {
     title: defaultFullTitle,
     description,
     url: siteUrl,
     type: "website",
-    siteName: "Estadísticas Bomberos",
+    siteName: "Emergencias CR",
     images: siteUrl ? [new URL("og.png", siteUrl).toString()] : undefined
   },
   twitter: {
@@ -69,7 +68,7 @@ export const metadata: Metadata = {
     }
   },
   icons: {
-    icon: "/bomberos/flame-32.jpg"
+    icon: "/bomberos/favicon.svg"
   }
 };
 

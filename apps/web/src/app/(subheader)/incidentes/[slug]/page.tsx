@@ -95,7 +95,7 @@ function getJsonLd(incident: NonNullable<DetailedIncident>) {
     },
     organizer: {
       "@type": "EmergencyService",
-      name: "Benemérito Cuerpo de Bomberos de Costa Rica"
+      name: "Emergencias CR"
     },
     eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode"
   };

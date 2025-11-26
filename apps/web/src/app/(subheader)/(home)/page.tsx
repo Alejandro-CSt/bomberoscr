@@ -20,7 +20,7 @@ import { Suspense, lazy } from "react";
 const ParticlesMap = lazy(() => import("@/features/dashboard/homepage/components/particles-map"));
 
 const homepageDescription =
-  "Indicadores clave de incidentes en Costa Rica, tendencias recientes y mapa interactivo del cuerpo de bomberos.";
+  "Indicadores clave de incidentes en Costa Rica, tendencias recientes y mapa interactivo de emergencias.";
 
 export const metadata: Metadata = {
   description: homepageDescription,

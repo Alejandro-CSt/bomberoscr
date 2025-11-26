@@ -7,7 +7,7 @@ const dashboardDescription =
 export const metadata: Metadata = {
   title: {
     default: "Panel de incidentes",
-    template: "%s | Estadísticas Bomberos"
+    template: "%s | Emergencias CR"
   },
   description: dashboardDescription,
   openGraph: {
