@@ -8,7 +8,7 @@ import {
   ChartLegendContent,
   ChartTooltip
 } from "@/features/shared/components/ui/chart";
-import { formatSecondsToHMS, isUndefinedDate } from "@/features/shared/lib/utils";
+import { cn, formatSecondsToHMS, isUndefinedDate } from "@/features/shared/lib/utils";
 import type { DetailedIncident } from "@bomberoscr/db/queries/incidents";
 import { Bar, BarChart, XAxis, YAxis } from "recharts";
 
@@ -188,7 +188,7 @@ function CustomTooltipContent({ active, payload }: CustomTooltipContentProps) {
             return (
               <div className="flex items-center justify-between gap-4" key={seg.key}>
                 <div className="flex items-center gap-2">
-                  <div className={`h-3 w-1 rounded-[2px] ${seg.className}`} />
+                  <div className={cn("h-3 w-1 rounded-[2px]", seg.className)} />
                   <span className="text-muted-foreground text-xs">{seg.label}:</span>
                 </div>
                 <span className="font-medium font-mono text-sm">
