@@ -44,6 +44,7 @@ function HeaderNavInner({ className }: { className?: string }) {
               className="relative border-none hover:bg-accent hover:text-foreground data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:hover:bg-accent"
               key={item.url}
               render={<Link href={item.url as "/"} />}
+              nativeButton={false}
               value={tabValue}
             >
               <Icon size={16} />

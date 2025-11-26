@@ -2,7 +2,7 @@
 
 import { HeaderContent } from "@/features/layout/components/header-content";
 import { usePathname } from "next/navigation";
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 
 function SubHeaderSkeleton() {
   return (
@@ -16,8 +16,23 @@ function SubHeaderSkeleton() {
 
 function SubHeaderInner() {
   const pathname = usePathname();
+  const shouldHideSubheader = pathname === "/" || pathname.startsWith("/mapa");
 
-  if (pathname === "/" || pathname.startsWith("/mapa")) {
+  useEffect(() => {
+    // Conditionally add/remove the no-subheader class to adjust CSS variable
+    if (shouldHideSubheader) {
+      document.body.classList.add("no-subheader");
+    } else {
+      document.body.classList.remove("no-subheader");
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.classList.remove("no-subheader");
+    };
+  }, [shouldHideSubheader]);
+
+  if (shouldHideSubheader) {
     return null;
   }
 

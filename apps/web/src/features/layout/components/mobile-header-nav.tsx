@@ -4,6 +4,7 @@ import { navItems } from "@/features/layout/components/nav-items";
 import { Button } from "@/features/shared/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/features/shared/components/ui/popover";
 import { cn } from "@/features/shared/lib/utils";
+import { AnimatePresence, motion } from "motion/react";
 import Link, { type LinkProps } from "next/link";
 import { usePathname } from "next/navigation";
 import React, { Suspense } from "react";
@@ -13,11 +14,6 @@ const enabledNavItems = navItems.filter((item) => item.enabled);
 function MobileHeaderNavInner({ className }: { className?: string }) {
   const [open, setOpen] = React.useState(false);
   const pathname = usePathname();
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: We need pathname to trigger on route changes
-  React.useEffect(() => {
-    setOpen(false);
-  }, [pathname]);
 
   React.useEffect(() => {
     const handleScroll = () => {
@@ -77,12 +73,7 @@ function MobileHeaderNavInner({ className }: { className?: string }) {
           <div className="flex flex-col gap-6 overflow-auto px-6 py-6">
             <div className="flex flex-col gap-3">
               {enabledNavItems.map((item) => (
-                <MobileLink
-                  href={item.url as "/"}
-                  isActive={isActive(item.url)}
-                  key={item.url}
-                  onOpenChange={setOpen}
-                >
+                <MobileLink href={item.url as "/"} isActive={isActive(item.url)} key={item.url}>
                   {item.title}
                 </MobileLink>
               ))}
@@ -104,28 +95,29 @@ export function MobileHeaderNav({ className }: { className?: string }) {
 
 function MobileLink({
   href,
-  onOpenChange,
   className,
   children,
   isActive,
   ...props
 }: LinkProps<string> & {
-  onOpenChange?: (open: boolean) => void;
   children: React.ReactNode;
   className?: string;
   isActive?: boolean;
 }) {
   return (
-    <Link
-      className={cn("relative font-medium text-2xl", className)}
-      href={href}
-      onClick={() => {
-        onOpenChange?.(false);
-      }}
-      {...props}
-    >
+    <Link className={cn("relative font-medium text-2xl", className)} href={href} {...props}>
       {children}
-      {isActive && <span className="-bottom-1 absolute left-0 h-0.5 w-6 bg-primary" />}
+      <AnimatePresence>
+        {isActive && (
+          <motion.span
+            className="-bottom-1 absolute left-0 h-0.5 w-6 bg-primary"
+            initial={{ scaleX: 0, originX: 0 }}
+            animate={{ scaleX: 1, originX: 0 }}
+            exit={{ scaleX: 0, originX: 0 }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+          />
+        )}
+      </AnimatePresence>
     </Link>
   );
 }
