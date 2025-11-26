@@ -12,7 +12,7 @@ type Params = Promise<{
 
 function LoginSkeleton() {
   return (
-    <form className="flex flex-col gap-4 p-4">
+    <form className="flex flex-col gap-4">
       <Input type="password" placeholder="Password" name="adminToken" disabled />
       <Button type="submit" disabled>
         Loading...
@@ -25,7 +25,7 @@ async function LoginForm({ searchParams }: { searchParams: Params }) {
   const { error } = await searchParams;
 
   return (
-    <form className="flex flex-col gap-4 p-4" action={submitAdminForm}>
+    <form className="flex flex-col gap-4" action={submitAdminForm}>
       <Input type="password" placeholder="Password" name="adminToken" />
       <Button type="submit">Login</Button>
       {error && (

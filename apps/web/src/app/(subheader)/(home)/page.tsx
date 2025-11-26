@@ -62,7 +62,7 @@ export default async function Page() {
     await getHomepageData(timeRange);
 
   return (
-    <div className="mx-auto flex max-w-7xl flex-col gap-8 p-4">
+    <div className="flex flex-col gap-8">
       {/* <HighlightedIncidents /> */}
       <YearRecapHero />
       <MapCTA />

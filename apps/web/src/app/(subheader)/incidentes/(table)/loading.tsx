@@ -6,7 +6,7 @@ import { FilterIcon, SearchIcon, SlidersHorizontalIcon } from "lucide-react";
 
 export default function Loading() {
   return (
-    <div className="flex h-full flex-col p-4">
+    <div className="flex h-full flex-col">
       <div className="flex items-center justify-between gap-6 bg-background pb-2">
         <div className="flex items-stretch overflow-hidden rounded-lg border">
           <div className="flex items-center justify-center border-r px-3 py-2">
