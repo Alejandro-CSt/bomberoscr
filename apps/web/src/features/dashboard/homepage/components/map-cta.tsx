@@ -1,37 +1,16 @@
-"use client";
-
 import { Button } from "@/features/shared/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 
 export function MapCTA() {
-  const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return (
-      <Link
-        href="/mapa"
-        className="group relative col-span-2 block h-[300px] w-full overflow-hidden rounded-xl bg-gray-200 transition-all duration-300 hover:shadow-xl dark:bg-gray-800"
-      />
-    );
-  }
-
   return (
     <Link
       href="/mapa"
       className="group relative block h-[300px] w-full overflow-hidden rounded-xl transition-all duration-300 hover:shadow-xl"
     >
       <Image
-        suppressHydrationWarning
-        src={resolvedTheme === "dark" ? "/bomberos/map-dark.png" : "/bomberos/map-light.png"}
+        src="/bomberos/map-dark.png"
         alt="Mapa de incidentes en tiempo real"
         width={1000}
         height={1000}
@@ -40,7 +19,7 @@ export function MapCTA() {
         className="size-full object-cover transition-all duration-300 group-hover:scale-105"
       />
 
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent dark:via-black/20" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
       <div className="absolute right-0 bottom-0 left-0 p-6 font-serif lg:p-8">
         <div className="mb-4">

@@ -10,10 +10,9 @@ import {
   calculateMaxBounds
 } from "@/features/dashboard/incidents/map/lib/bounds";
 import { calculateDynamicZoom } from "@/features/dashboard/incidents/map/lib/zoom";
-import { DARK_MAP_STYLE, LIGHT_MAP_STYLE } from "@/features/map/constants";
+import { DARK_MAP_STYLE } from "@/features/map/constants";
 import { TriangleAlertIcon } from "lucide-react";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { useTheme } from "next-themes";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   type LngLatBoundsLike,
@@ -35,7 +34,6 @@ interface IncidentMapProps {
 }
 
 export default function IncidentMap({ latitude, longitude, stations }: IncidentMapProps) {
-  const { resolvedTheme } = useTheme();
   const [activeStation, setActiveStation] = useState<Station | null>(null);
   const mapRef = useRef<MapRef | null>(null);
   const animationRef = useRef<number | null>(null);
@@ -46,7 +44,7 @@ export default function IncidentMap({ latitude, longitude, stations }: IncidentM
   const animationStartRef = useRef<number | null>(null);
   const baseBearingRef = useRef<number>(0);
 
-  const mapStyleUrl = resolvedTheme === "light" ? LIGHT_MAP_STYLE : DARK_MAP_STYLE;
+  const mapStyleUrl = DARK_MAP_STYLE;
 
   const areCoordinatesValid = latitude !== 0 && longitude !== 0;
 

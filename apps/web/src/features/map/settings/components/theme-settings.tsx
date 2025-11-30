@@ -1,12 +1,12 @@
 "use client";
 
+import { useMapSettings } from "@/features/map/settings/hooks/use-map-settings";
 import { Label } from "@/features/shared/components/ui/label";
 import { cn } from "@/features/shared/lib/utils";
-import { useTheme } from "next-themes";
 import Image from "next/image";
 
 export const ThemeSettings = () => {
-  const { theme, setTheme } = useTheme();
+  const { mapTheme, setMapTheme } = useMapSettings();
 
   return (
     <div>
@@ -16,10 +16,10 @@ export const ThemeSettings = () => {
           type="button"
           className={cn(
             "flex flex-1 flex-col items-center gap-2 rounded-lg p-2 transition-all",
-            theme === "light" ? "ring-2 ring-primary" : "hover:bg-muted"
+            mapTheme === "light" ? "ring-2 ring-primary" : "hover:bg-muted"
           )}
           onClick={() => {
-            setTheme("light");
+            setMapTheme("light");
           }}
         >
           <div className="relative overflow-hidden rounded-lg">
@@ -38,10 +38,10 @@ export const ThemeSettings = () => {
           type="button"
           className={cn(
             "gtransition-all flex flex-1 flex-col items-center gap-2 rounded-lg p-2",
-            theme === "dark" ? "ring-2 ring-primary" : "hover:bg-muted"
+            mapTheme === "dark" ? "ring-2 ring-primary" : "hover:bg-muted"
           )}
           onClick={() => {
-            setTheme("dark");
+            setMapTheme("dark");
           }}
         >
           <div className="relative overflow-hidden rounded-lg">

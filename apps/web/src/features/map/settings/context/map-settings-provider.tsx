@@ -3,9 +3,11 @@
 import {
   type IncidentTimeRange,
   type MapSettingsContextType,
+  type MapTheme,
   type ShowStations,
   getLocalStorageItem,
   incidentTimeRangeSchema,
+  mapThemeSchema,
   showStationsSchema,
   validateSetting
 } from "@/features/map/settings/types";
@@ -19,6 +21,9 @@ export function MapSettingsProvider({ children }: { children: ReactNode }) {
   );
   const [incidentTimeRange, setIncidentTimeRangeState] = useState<IncidentTimeRange>(() =>
     validateSetting(getLocalStorageItem("mapIncidentTimeRange", undefined), incidentTimeRangeSchema)
+  );
+  const [mapTheme, setMapThemeState] = useState<MapTheme>(() =>
+    validateSetting(getLocalStorageItem("mapTheme", undefined), mapThemeSchema)
   );
   const [hideRegularIncidents, setHideRegularIncidents] = useState<boolean>(false);
   const [searchResults, setSearchResults] = useState<
@@ -42,6 +47,11 @@ export function MapSettingsProvider({ children }: { children: ReactNode }) {
     if (typeof window !== "undefined") localStorage.setItem("mapIncidentTimeRange", value);
   };
 
+  const setMapTheme = (value: MapTheme) => {
+    setMapThemeState(value);
+    if (typeof window !== "undefined") localStorage.setItem("mapTheme", value);
+  };
+
   return (
     <MapSettingsContext.Provider
       value={{
@@ -49,6 +59,8 @@ export function MapSettingsProvider({ children }: { children: ReactNode }) {
         setShowStations,
         incidentTimeRange,
         setIncidentTimeRange,
+        mapTheme,
+        setMapTheme,
         hideRegularIncidents,
         setHideRegularIncidents,
         searchResults,

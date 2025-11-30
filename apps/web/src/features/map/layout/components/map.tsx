@@ -16,13 +16,12 @@ import { cn } from "@/features/shared/lib/utils";
 import { trpc } from "@/features/trpc/client";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 
 export const InteractiveMap = () => {
-  const { resolvedTheme } = useTheme();
   const {
+    mapTheme,
     showStations,
     incidentTimeRange,
     hideRegularIncidents,
@@ -44,7 +43,7 @@ export const InteractiveMap = () => {
         ? operativeStations.data
         : allStations.data;
 
-  const mapStyleUrl = resolvedTheme === "light" ? LIGHT_MAP_STYLE : DARK_MAP_STYLE;
+  const mapStyleUrl = mapTheme === "light" ? LIGHT_MAP_STYLE : DARK_MAP_STYLE;
 
   return (
     <div

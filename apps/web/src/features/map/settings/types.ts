@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export type ShowStations = "all" | "operative" | "none";
 export type IncidentTimeRange = "24h" | "48h" | "disabled";
+export type MapTheme = "light" | "dark";
 
 export const showStationsSchema = z
   .enum(["all", "operative", "none"])
@@ -9,6 +10,7 @@ export const showStationsSchema = z
 export const incidentTimeRangeSchema = z
   .enum(["24h", "48h", "disabled"])
   .default("24h") as z.ZodType<IncidentTimeRange>;
+export const mapThemeSchema = z.enum(["light", "dark"]).default("dark") as z.ZodType<MapTheme>;
 
 export function validateSetting<T>(value: unknown, schema: z.ZodType<T>): T {
   try {
@@ -32,6 +34,8 @@ export type MapSettingsContextType = {
   setShowStations: (value: ShowStations) => void;
   incidentTimeRange: IncidentTimeRange;
   setIncidentTimeRange: (value: IncidentTimeRange) => void;
+  mapTheme: MapTheme;
+  setMapTheme: (value: MapTheme) => void;
   hideRegularIncidents: boolean;
   setHideRegularIncidents: (value: boolean) => void;
   searchResults: { id: number; latitude: string; longitude: string }[];

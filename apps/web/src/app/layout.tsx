@@ -2,7 +2,6 @@ import { Header } from "@/features/layout/components/header";
 import { HeaderBackdrop } from "@/features/layout/components/header-backdrop";
 import { SubHeader } from "@/features/layout/components/sub-header";
 import env from "@/features/lib/env";
-import { ThemeProvider } from "@/features/shared/context/theme-provider";
 import { cn } from "@/features/shared/lib/utils";
 import "@/features/styles/globals.css";
 import TRPCProvider from "@/features/trpc/provider";
@@ -92,7 +91,7 @@ const bricolageGrotesque = Bricolage_Grotesque({
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es-CR" suppressHydrationWarning>
+    <html lang="es-CR" className="dark">
       <head>
         {process.env.NODE_ENV === "development" && (
           <Script
@@ -112,16 +111,14 @@ export default async function Layout({ children }: { children: React.ReactNode }
         )}
       >
         <NuqsAdapter>
-          <ThemeProvider attribute="class" defaultTheme="system">
-            <TRPCProvider>
-              <div className="flex min-h-dvh min-w-0 flex-col overflow-x-hidden pt-[var(--app-header-height)]">
-                <Header />
-                <HeaderBackdrop />
-                <SubHeader />
-                <main className="min-h-0 w-full flex-1">{children}</main>
-              </div>
-            </TRPCProvider>
-          </ThemeProvider>
+          <TRPCProvider>
+            <div className="flex min-h-dvh min-w-0 flex-col overflow-x-hidden pt-(--app-header-height)">
+              <Header />
+              <HeaderBackdrop />
+              <SubHeader />
+              <main className="min-h-0 w-full flex-1">{children}</main>
+            </div>
+          </TRPCProvider>
         </NuqsAdapter>
       </body>
     </html>
