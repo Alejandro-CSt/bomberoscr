@@ -75,9 +75,5 @@ export default async function StationContent({
   cacheLife({ revalidate: 60 * 10, expire: 60 * 10 });
   const { name } = await params;
   const { station } = await findStationByName(name);
-  return (
-    <div className="mx-auto max-w-5xl">
-      {Date.now()}Estación {station?.address}
-    </div>
-  );
+  return <div className="mx-auto max-w-6xl">Estación {station?.address}</div>;
 }

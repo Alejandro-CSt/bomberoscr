@@ -88,7 +88,7 @@ export default function SearchMapPageClient() {
   }, [runSearch, form.getValues]);
 
   return (
-    <div className="mx-auto flex h-full max-w-7xl flex-col overflow-y-auto">
+    <div className="mx-auto flex h-full max-w-6xl flex-col overflow-y-auto">
       <FloatingPanelHeader
         title="Búsqueda"
         subtitle={(() => {
