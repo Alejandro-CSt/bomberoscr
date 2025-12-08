@@ -27,6 +27,10 @@ jobs:
           push: true
           tags: ${{ secrets.REGISTRY }}/${{ secrets.WEB_IMAGE_NAME }}:latest
 
-      - name: Trigger deploy
+      - name: Trigger deploy via Dokploy API
         run: |
-          curl --request GET '${{ secrets.WEB_DEPLOY_WEBHOOK_URL }}'      
+          curl -X POST "${{ secrets.DOKPLOY_API_URL }}/api/application.deploy" \
+            -H "accept: application/json" \
+            -H "Content-Type: application/json" \
+            -H "x-api-key: ${{ secrets.DOKPLOY_API_KEY }}" \
+            -d "{\"applicationId\":\"${{ secrets.DOKPLOY_APP_ID }}\"}"
