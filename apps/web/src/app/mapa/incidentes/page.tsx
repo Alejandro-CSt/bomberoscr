@@ -36,8 +36,9 @@ export default function Incidents() {
     }
   }, [data]);
 
-  const handleStationChange = (value: string) => {
-    setSelectedStation(value);
+  const handleStationChange = (value: string | null) => {
+    const nextValue = value ?? "all";
+    setSelectedStation(nextValue);
     setResults([]);
   };
 
@@ -49,7 +50,7 @@ export default function Incidents() {
           <span className="mr-2 text-muted-foreground text-sm">Filtrar</span>
           <Select onValueChange={handleStationChange} defaultValue="all">
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Todas las estaciones" />
+              <SelectValue />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todas las estaciones</SelectItem>
