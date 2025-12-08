@@ -137,5 +137,3 @@ export async function getYearRecap(year: number) {
     mostPopularIncidentType
   };
 }
-
-export type YearRecap = Awaited<ReturnType<typeof getYearRecap>>;

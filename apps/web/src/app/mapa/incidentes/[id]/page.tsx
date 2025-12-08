@@ -124,7 +124,7 @@ export default async function DetailedIncidentPanel({
       <ErrorPanel
         title="Detalles del incidente"
         message="ID de incidente inválido"
-        backHref="/mapa/incidentes"
+        backHref="/mapa"
       />
     );
   }

@@ -1,15 +1,11 @@
 import { publicProcedure, router } from "@/features/trpc/init";
-import {
-  getStationDetails,
-  getStationIncidents,
-  getStations
-} from "@bomberoscr/db/queries/map/stations";
+import { getStations } from "@bomberoscr/db/queries/map/stations";
 import {
   getStationIncidentsByHour,
   getStationIncidentsByTopLevelType,
   getStationStats
 } from "@bomberoscr/db/queries/map/stationsCharts";
-import { TRPCError, type inferRouterOutputs } from "@trpc/server";
+import type { inferRouterOutputs } from "@trpc/server";
 import { z } from "zod";
 
 export const stationsRouter = router({
@@ -21,28 +17,6 @@ export const stationsRouter = router({
     )
     .query(async ({ input }) => {
       return await getStations(input.filter === "all");
-    }),
-  getStationDetails: publicProcedure
-    .input(
-      z.object({
-        key: z.string().nullable()
-      })
-    )
-    .query(async ({ input }) => {
-      if (!input.key) return null;
-      return await getStationDetails(input.key);
-    }),
-  getStationIncidents: publicProcedure
-    .input(
-      z.object({
-        id: z.number().nullable()
-      })
-    )
-    .query(async ({ input }) => {
-      if (!input.id) throw new TRPCError({ code: "BAD_REQUEST" });
-      const incidents = await getStationIncidents(input.id);
-      if (!incidents) throw new TRPCError({ code: "NOT_FOUND" });
-      return incidents;
     }),
   getStationStats: publicProcedure
     .input(
@@ -77,6 +51,4 @@ export const stationsRouter = router({
 });
 
 export type Station = inferRouterOutputs<typeof stationsRouter>["getStations"][number];
-export type StationDetails = inferRouterOutputs<typeof stationsRouter>["getStationDetails"];
-export type StationIncidents = inferRouterOutputs<typeof stationsRouter>["getStationIncidents"];
 export type StationStats = inferRouterOutputs<typeof stationsRouter>["getStationStats"];

@@ -1,6 +1,5 @@
 "use client";
 
-import type { LatestIncident } from "@/features/map/incidents/api/incidents";
 import { Badge } from "@/features/shared/components/ui/badge";
 import { buildIncidentUrlFromPartial, getRelativeTime } from "@/features/shared/lib/utils";
 import type { getLatestIncidents } from "@bomberoscr/db/queries/incidents";
@@ -8,7 +7,7 @@ import Link from "next/link";
 
 export function IncidentCard({
   incident
-}: { incident: Awaited<ReturnType<typeof getLatestIncidents>>[number] | LatestIncident }) {
+}: { incident: Awaited<ReturnType<typeof getLatestIncidents>>[number] }) {
   return (
     <Link
       href={
