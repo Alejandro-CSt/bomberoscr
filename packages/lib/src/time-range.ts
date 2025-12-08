@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const ALLOWED_TIME_RANGE_VALUES = [7, 30, 90, 365];
-export const DEFAULT_TIME_RANGE = 7;
+export const DEFAULT_TIME_RANGE = 30;
 
 export const TIME_RANGE_LABELS = {
   7: "7 días",

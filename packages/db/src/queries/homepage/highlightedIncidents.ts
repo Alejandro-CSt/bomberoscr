@@ -1,27 +1,29 @@
 import { db } from "@bomberoscr/db/index";
-import {
-  dispatchedStations,
-  dispatchedVehicles,
-  districts,
-  incidentTypes,
-  incidents,
-  stations
-} from "@bomberoscr/db/schema";
-import { desc, eq, sql } from "drizzle-orm";
+import { dispatchedStations, dispatchedVehicles, incidents, stations } from "@bomberoscr/db/schema";
+import { DEFAULT_TIME_RANGE } from "@bomberoscr/lib/time-range";
+import { between, desc, eq, sql } from "drizzle-orm";
 
 /**
- * Get the latest incidents for the homepage
+ * Get highlighted incidents for the homepage, sorted by total emergency response deployment
  *
- * Returns the most recent incidents ordered by timestamp descending.
+ * Returns incidents from the specified time range, each with a calculated `totalDispatched`
+ * field representing the sum of dispatched vehicles and stations. Results are ordered by
+ * highest deployment first.
  *
+ * @param timeRange - Number of days to look back for incidents (7, 30, 90, or 365 days, default: 30)
  * @param limit - Number of incidents to return (default: 5, max: 30)
- * @returns Array of latest incidents with all fields, sorted by timestamp descending
+ * @returns Array of incidents with all fields plus `totalDispatched` count, sorted by deployment size descending
  */
-export async function getLatestIncidents({
+export async function getHighlightedIncidents({
+  timeRange = DEFAULT_TIME_RANGE,
   limit = 5
 }: {
+  timeRange?: number;
   limit?: number;
 } = {}) {
+  const startDate = new Date(Date.now() - timeRange * 24 * 60 * 60 * 1000);
+  const endDate = new Date();
+
   // Pre-aggregate counts in subqueries instead of correlated subqueries per row
   const vehicleCounts = db
     .select({
@@ -45,22 +47,25 @@ export async function getLatestIncidents({
     .select({
       id: incidents.id,
       incidentTimestamp: incidents.incidentTimestamp,
+      details: incidents.importantDetails,
       address: incidents.address,
-      importantDetails: incidents.importantDetails,
-      districtName: districts.name,
       responsibleStation: stations.name,
-      incidentType: incidentTypes.name,
+      latitude: incidents.latitude,
+      longitude: incidents.longitude,
       dispatchedVehiclesCount: sql<number>`COALESCE(${vehicleCounts.vehicleCount}, 0)`,
       dispatchedStationsCount: sql<number>`COALESCE(${stationCounts.stationCount}, 0)`
     })
     .from(incidents)
-    .leftJoin(districts, eq(incidents.districtId, districts.id))
     .leftJoin(stations, eq(incidents.responsibleStation, stations.id))
-    .leftJoin(incidentTypes, eq(incidents.specificIncidentCode, incidentTypes.incidentCode))
     .leftJoin(vehicleCounts, eq(incidents.id, vehicleCounts.incidentId))
     .leftJoin(stationCounts, eq(incidents.id, stationCounts.incidentId))
-    .orderBy(desc(incidents.incidentTimestamp))
+    .where(between(incidents.incidentTimestamp, startDate, endDate))
+    .orderBy(
+      desc(
+        sql`COALESCE(${vehicleCounts.vehicleCount}, 0) + COALESCE(${stationCounts.stationCount}, 0)`
+      )
+    )
     .limit(limit);
 }
 
-export type LatestIncident = Awaited<ReturnType<typeof getLatestIncidents>>[number];
+export type HighlightedIncident = Awaited<ReturnType<typeof getHighlightedIncidents>>[number];

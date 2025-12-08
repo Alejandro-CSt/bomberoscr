@@ -3,6 +3,8 @@ import { IncidentsByDayOfWeekChart } from "@/features/dashboard/homepage/charts/
 import { IncidentsByHourChart } from "@/features/dashboard/homepage/charts/components/incidents-by-hour-chart";
 import { TopDispatchedStationsChart } from "@/features/dashboard/homepage/charts/components/top-stations-chart";
 import { TopResponseTimesStationsChart } from "@/features/dashboard/homepage/charts/components/top-stations-response-time-chart";
+import { HighlightedIncidents } from "@/features/dashboard/homepage/components/highlighted-incidents";
+import { LatestIncidents } from "@/features/dashboard/homepage/components/latest-incidents";
 import { MapCTA } from "@/features/dashboard/homepage/components/map-cta";
 import { YearRecapHero } from "@/features/dashboard/homepage/components/year-recap-hero";
 import env from "@/features/lib/env";
@@ -63,12 +65,15 @@ export default async function Page() {
 
   return (
     <div className="flex flex-col gap-8">
-      {/* <HighlightedIncidents /> */}
-      <YearRecapHero />
+      <HighlightedIncidents />
+      <LatestIncidents />
       <MapCTA />
+      <YearRecapHero />
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <TopDispatchedStationsChart stations={dispatchedStations} />
         <TopResponseTimesStationsChart stations={responseTimes} />
+      </div>
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <IncidentsByDayOfWeekChart incidents={incidentsByDayOfWeek} timeRange={timeRange} />
         <IncidentsByHourChart incidents={incidentsByHour} timeRange={timeRange} />
         <DailyIncidentsChart incidents={dailyIncidents} timeRange={timeRange} />
@@ -76,7 +81,7 @@ export default async function Page() {
       <Suspense
         fallback={
           <div className="flex w-full items-center justify-center p-8">
-            <Skeleton className="aspect-[600/600] w-full max-w-[600px]" />
+            <Skeleton className="aspect-600/600 w-full max-w-[600px]" />
           </div>
         }
       >

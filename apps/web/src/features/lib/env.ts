@@ -18,7 +18,12 @@ const EnvSchema = z.object({
   UMAMI_URL: z.string().url(),
   UMAMI_WEBSITE_ID: z.string(),
   SITE_URL: z.string().url(),
-  ADMIN_TOKEN: z.string()
+  ADMIN_TOKEN: z.string(),
+  MAPBOX_API_KEY: z.string(),
+  R2_ENDPOINT: z.string().url(),
+  R2_ACCESS_KEY_ID: z.string(),
+  R2_SECRET_ACCESS_KEY: z.string(),
+  R2_BUCKET_NAME: z.string()
 });
 
 export type EnvSchema = z.infer<typeof EnvSchema>;

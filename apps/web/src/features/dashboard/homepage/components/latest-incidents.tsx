@@ -1,8 +1,36 @@
 "use client";
 
-import { IncidentListItem } from "@/features/dashboard/homepage/components/incident-list-item";
-import { LatestIncidentsHeader } from "@/features/dashboard/homepage/components/latest-incidents-header";
+import type { LatestIncident } from "@/features/dashboard/homepage/api/homepageRouter";
+import {
+  type BaseIncidentCard,
+  IncidentCard,
+  IncidentCardSkeleton
+} from "@/features/shared/components/incident-card";
+import { buildIncidentUrl, cn } from "@/features/shared/lib/utils";
 import { trpc } from "@/features/trpc/client";
+import { ArrowRightIcon } from "lucide-react";
+import type { Route } from "next";
+import Link from "next/link";
+
+type SerializedLatestIncident = Omit<LatestIncident, "incidentTimestamp"> & {
+  incidentTimestamp: string;
+};
+
+function mapToIncidentCard(incident: SerializedLatestIncident): BaseIncidentCard {
+  return {
+    url: buildIncidentUrl(
+      incident.id,
+      incident.importantDetails || "Incidente",
+      new Date(incident.incidentTimestamp)
+    ) as Route,
+    details: incident.importantDetails || "Incidente",
+    address: incident.address || "Ubicación pendiente",
+    dispatchedStationsCount: incident.dispatchedStationsCount ?? 0,
+    dispatchedVehiclesCount: incident.dispatchedVehiclesCount ?? 0,
+    responsibleStation: incident.responsibleStation || "Estación pendiente",
+    incidentTimestamp: new Date(incident.incidentTimestamp).toISOString()
+  };
+}
 
 export function LatestIncidents() {
   const {
@@ -10,59 +38,42 @@ export function LatestIncidents() {
     isLoading,
     isError
   } = trpc.homepage.getLatestIncidents.useQuery({
-    limit: 5
+    limit: 6
   });
 
-  if (isLoading) {
-    return (
-      <div className="overflow-hidden whitespace-nowrap rounded-lg border bg-card shadow-2xl">
-        <LatestIncidentsHeader />
-        <div className="relative">
-          <ul>
-            {Array.from({ length: 5 }, (_, index) => ({
-              id: `loading-${index}`,
-              index
-            })).map(({ id, index }) => (
-              <IncidentListItem key={id} isLoading={true} isLast={index === 4} />
-            ))}
-          </ul>
-        </div>
-      </div>
-    );
-  }
-
-  if (isError || !incidents) {
-    return (
-      <div className="overflow-hidden whitespace-nowrap rounded-lg border bg-card shadow-2xl">
-        <LatestIncidentsHeader />
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm">
-            <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-4 text-center">
-              <p className="font-semibold text-destructive text-sm">Error al cargar</p>
-              <p className="mt-1 text-muted-foreground text-xs">
-                No se pudieron cargar los incidentes recientes
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="overflow-hidden whitespace-nowrap rounded-lg border bg-card shadow-2xl">
-      <LatestIncidentsHeader />
-      <div className="relative">
-        <ul>
-          {incidents?.map((incident, index) => (
-            <IncidentListItem
-              key={incident.id}
-              incident={incident}
-              isLast={index === incidents.length - 1}
-            />
-          ))}
-        </ul>
+    <section className="flex flex-col gap-4">
+      <div className="flex items-center gap-3">
+        <h2 className="font-semibold text-xl lg:text-2xl">Recientes</h2>
+        <Link
+          className={cn(
+            "flex items-center gap-1",
+            "font-medium text-muted-foreground text-sm hover:text-foreground",
+            "group"
+          )}
+          href="/incidentes"
+        >
+          Ver todos
+          <ArrowRightIcon className="size-3.5 transition-transform group-hover:translate-x-1" />
+        </Link>
       </div>
-    </div>
+
+      {isError ? (
+        <div className="rounded border border-destructive/20 bg-destructive/10 p-3 text-sm">
+          <p className="font-semibold text-destructive">Error al cargar</p>
+          <p className="text-muted-foreground">No se pudieron cargar los incidentes recientes</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-4">
+          {isLoading || !incidents
+            ? ["one", "two", "three", "four", "five", "six"].map((key) => (
+                <IncidentCardSkeleton key={key} />
+              ))
+            : incidents.map((incident) => (
+                <IncidentCard key={incident.id} incident={mapToIncidentCard(incident)} />
+              ))}
+        </div>
+      )}
+    </section>
   );
 }

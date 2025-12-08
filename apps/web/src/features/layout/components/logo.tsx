@@ -1,8 +1,8 @@
 "use client";
 
+import { cn } from "@/features/shared/lib/utils";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { cn } from "@/features/shared/lib/utils";
 
 const RAY_ANGLES = [90, 45, 0, 315, 270, 225, 180, 135];
 

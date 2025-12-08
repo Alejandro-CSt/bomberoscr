@@ -38,7 +38,8 @@ const nextConfig: NextConfig = {
   reactCompiler: true,
 
   images: {
-    qualities: [65, 75, 80, 90, 95, 100]
+    qualities: [65, 75, 80, 90, 95, 100],
+    formats: ["image/avif", "image/webp"]
   },
 
   productionBrowserSourceMaps: true,
