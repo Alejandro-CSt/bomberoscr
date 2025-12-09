@@ -4,7 +4,7 @@ import { Button } from "@/features/shared/components/ui/button";
 import { cn } from "@/features/shared/lib/utils";
 import { CompassIcon, VideoIcon, VideoOffIcon, ZoomInIcon, ZoomOutIcon } from "lucide-react";
 import { useCallback } from "react";
-import type { MapRef } from "react-map-gl/maplibre";
+import type { MapRef } from "react-map-gl/mapbox";
 
 interface IncidentMapControlsProps {
   mapRef: React.RefObject<MapRef | null>;

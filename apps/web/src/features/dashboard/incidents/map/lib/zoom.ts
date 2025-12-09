@@ -14,13 +14,13 @@ export function calculateDynamicZoom(
 ): number {
   const nearestDistance = calculateNearestStationDistance(incidentLat, incidentLng, stations);
 
-  if (nearestDistance <= 300) return 17;
-  if (nearestDistance <= 800) return 16;
-  if (nearestDistance <= 1500) return 15.5;
-  if (nearestDistance <= 5000) return 14.5;
-  if (nearestDistance <= 15000) return 13;
+  if (nearestDistance <= 300) return 18;
+  if (nearestDistance <= 800) return 17;
+  if (nearestDistance <= 1500) return 16.5;
+  if (nearestDistance <= 5000) return 15.5;
+  if (nearestDistance <= 15000) return 14;
 
-  return 12;
+  return 13;
 }
 
 /**

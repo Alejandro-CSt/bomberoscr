@@ -2,7 +2,7 @@
 
 import type { Station } from "@/features/dashboard/incidents/map/components/incident-map";
 import { X as XIcon } from "lucide-react";
-import { Popup } from "react-map-gl/maplibre";
+import { Popup } from "react-map-gl/mapbox";
 
 interface StationPopupProps {
   station: Station | null;

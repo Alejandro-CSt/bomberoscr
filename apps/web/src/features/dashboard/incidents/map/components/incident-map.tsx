@@ -10,16 +10,16 @@ import {
   calculateMaxBounds
 } from "@/features/dashboard/incidents/map/lib/bounds";
 import { calculateDynamicZoom } from "@/features/dashboard/incidents/map/lib/zoom";
-import { DARK_MAP_STYLE } from "@/features/map/constants";
 import { TriangleAlertIcon } from "lucide-react";
-import "maplibre-gl/dist/maplibre-gl.css";
+import "mapbox-gl/dist/mapbox-gl.css";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   type LngLatBoundsLike,
   MapProvider,
   type MapRef,
-  Map as ReactMap
-} from "react-map-gl/maplibre";
+  Map as ReactMap,
+  type ViewStateChangeEvent
+} from "react-map-gl/mapbox";
 
 export interface Station {
   latitude: number;
@@ -34,6 +34,7 @@ interface IncidentMapProps {
 }
 
 export default function IncidentMap({ latitude, longitude, stations }: IncidentMapProps) {
+  const [mapKey, setMapKey] = useState(() => Date.now());
   const [activeStation, setActiveStation] = useState<Station | null>(null);
   const mapRef = useRef<MapRef | null>(null);
   const animationRef = useRef<number | null>(null);
@@ -44,7 +45,8 @@ export default function IncidentMap({ latitude, longitude, stations }: IncidentM
   const animationStartRef = useRef<number | null>(null);
   const baseBearingRef = useRef<number>(0);
 
-  const mapStyleUrl = DARK_MAP_STYLE;
+  const mapStyleUrl = "mapbox://styles/mapbox/standard";
+  const mapboxAccessToken = process.env.NEXT_PUBLIC_MAPBOX_MAP_API_KEY;
 
   const areCoordinatesValid = latitude !== 0 && longitude !== 0;
 
@@ -52,26 +54,21 @@ export default function IncidentMap({ latitude, longitude, stations }: IncidentM
     setIsAnimating((prev) => (prev ? false : prev));
   }, []);
 
+  const isMapSurface = (target?: EventTarget | null) =>
+    target instanceof Element &&
+    (target.classList.contains("mapboxgl-canvas") ||
+      target.classList.contains("mapboxgl-map") ||
+      target.classList.contains("maplibregl-canvas") ||
+      target.classList.contains("maplibregl-map"));
+
   const handleMapClick = (event: { originalEvent?: { target?: EventTarget | null } }) => {
-    if (event.originalEvent?.target) {
-      const target = event.originalEvent.target;
-      if (
-        target instanceof Element &&
-        (target.classList.contains("maplibregl-canvas") ||
-          target.classList.contains("maplibregl-map"))
-      ) {
-        setActiveStation(null);
-      }
+    if (isMapSurface(event.originalEvent?.target)) {
+      setActiveStation(null);
     }
   };
 
   const handleMapClickWithStop = (event: { originalEvent?: { target?: EventTarget | null } }) => {
-    const target = event.originalEvent?.target;
-    if (
-      target instanceof Element &&
-      (target.classList.contains("maplibregl-canvas") ||
-        target.classList.contains("maplibregl-map"))
-    ) {
+    if (isMapSurface(event.originalEvent?.target)) {
       stopAnimation();
     }
     handleMapClick(event);
@@ -117,7 +114,7 @@ export default function IncidentMap({ latitude, longitude, stations }: IncidentM
       animationStartRef.current = null;
     }
     return () => {
-      if (animationRef.current && !isAnimating) {
+      if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
         animationRef.current = null;
         animationStartRef.current = null;
@@ -125,12 +122,17 @@ export default function IncidentMap({ latitude, longitude, stations }: IncidentM
     };
   }, [isAnimating, areCoordinatesValid, mapLoaded]);
 
-  interface PossiblyUserEvent {
-    originalEvent?: unknown;
-  }
+  // Reset mapLoaded on unmount and generate new key to force fresh map
+  useEffect(() => {
+    return () => {
+      setMapLoaded(false);
+      setMapKey(Date.now());
+    };
+  }, []);
+
   const userInteractionStop = useCallback(
-    (e: PossiblyUserEvent) => {
-      if (e && Object.prototype.hasOwnProperty.call(e, "originalEvent") && e.originalEvent) {
+    (e: ViewStateChangeEvent) => {
+      if ("originalEvent" in e && (e as { originalEvent?: unknown }).originalEvent) {
         stopAnimation();
       }
     },
@@ -155,6 +157,7 @@ export default function IncidentMap({ latitude, longitude, stations }: IncidentM
           </div>
         )}
         <ReactMap
+          key={mapKey}
           ref={mapRef}
           onDragStart={userInteractionStop}
           onRotateStart={userInteractionStop}
@@ -165,7 +168,12 @@ export default function IncidentMap({ latitude, longitude, stations }: IncidentM
           onLoad={() => {
             const map = mapRef.current?.getMap();
             if (!map) return;
-            setMapLoaded(true);
+
+            // Force resize to ensure proper dimensions after navigation
+            requestAnimationFrame(() => {
+              map.resize();
+              setMapLoaded(true);
+            });
           }}
           initialViewState={{
             latitude: centerCoords.lat,
@@ -178,19 +186,27 @@ export default function IncidentMap({ latitude, longitude, stations }: IncidentM
           style={{
             minHeight: "400px",
             height: "400px",
-            display: "flex",
-            justifyContent: "center",
-            zIndex: 10
+            width: "100%"
+          }}
+          config={{
+            basemap: {
+              lightPreset: "dusk",
+              showPointOfInterestLabels: true
+            }
           }}
           mapStyle={mapStyleUrl}
+          mapboxAccessToken={mapboxAccessToken}
+          projection="mercator"
         >
-          <ArcLayerOverlay
-            mapRef={mapRef}
-            stations={stations}
-            incidentLatitude={latitude}
-            incidentLongitude={longitude}
-            areCoordinatesValid={areCoordinatesValid}
-          />
+          {mapLoaded && (
+            <ArcLayerOverlay
+              mapRef={mapRef}
+              stations={stations}
+              incidentLatitude={latitude}
+              incidentLongitude={longitude}
+              areCoordinatesValid={areCoordinatesValid}
+            />
+          )}
           {areCoordinatesValid && (
             <IncidentMapControls
               mapRef={mapRef}
@@ -239,7 +255,7 @@ export default function IncidentMap({ latitude, longitude, stations }: IncidentM
                     bearing: 0,
                     pitch: ANIMATION_PITCH,
                     duration: 800,
-                    easing: (t) => 1 - (1 - t) ** 3
+                    easing: (t: number) => 1 - (1 - t) ** 3
                   });
                 }
               }}
@@ -258,31 +274,43 @@ export default function IncidentMap({ latitude, longitude, stations }: IncidentM
           )}
           <style>
             {`
+              .station-popup .mapboxgl-popup-content,
               .station-popup .maplibregl-popup-content {
                 padding: 0 !important;
                 background: transparent !important;
                 box-shadow: none !important;
                 border: none !important;
               }
+              .station-popup .mapboxgl-popup-tip,
               .station-popup .maplibregl-popup-tip {
                 display: none !important;
               }
+              /* Keep Mapbox attribution/logo at standard sizing */
+              .mapboxgl-ctrl-logo {
+                width: 90px !important;
+                height: 23px !important;
+                background-size: contain !important;
+              }
             `}
           </style>
-          <IncidentMarker
-            latitude={latitude}
-            longitude={longitude}
-            areCoordinatesValid={areCoordinatesValid}
-          />
-          {stations.map((station) => (
-            <StationMarker
-              key={station.latitude + station.longitude}
-              station={station}
-              onStationClick={setActiveStation}
-              onStopAnimation={stopAnimation}
-            />
-          ))}
-          <StationPopup station={activeStation} onClose={() => setActiveStation(null)} />
+          {mapLoaded && (
+            <>
+              <IncidentMarker
+                latitude={latitude}
+                longitude={longitude}
+                areCoordinatesValid={areCoordinatesValid}
+              />
+              {stations.map((station) => (
+                <StationMarker
+                  key={station.latitude + station.longitude}
+                  station={station}
+                  onStationClick={setActiveStation}
+                  onStopAnimation={stopAnimation}
+                />
+              ))}
+              <StationPopup station={activeStation} onClose={() => setActiveStation(null)} />
+            </>
+          )}
         </ReactMap>
       </div>
     </MapProvider>

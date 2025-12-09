@@ -2,7 +2,7 @@
 
 import type { Station } from "@/features/dashboard/incidents/map/components/incident-map";
 import { GarageIcon } from "@phosphor-icons/react/dist/ssr";
-import { Marker } from "react-map-gl/maplibre";
+import { Marker } from "react-map-gl/mapbox";
 
 interface StationMarkerProps {
   station: Station;

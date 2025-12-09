@@ -51,7 +51,9 @@ export function HeaderContent() {
 
   return (
     <header
-      className={cn("app-subheader flex shrink-0 items-center gap-2 bg-background px-4 py-2")}
+      className={cn(
+        "app-subheader flex shrink-0 items-center gap-2 bg-background px-6 py-2 xl:px-0"
+      )}
     >
       <div className="mx-auto w-full max-w-6xl">
         <Breadcrumb>

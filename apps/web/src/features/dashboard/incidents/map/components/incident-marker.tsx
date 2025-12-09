@@ -1,6 +1,6 @@
 "use client";
 
-import { Marker } from "react-map-gl/maplibre";
+import { Marker } from "react-map-gl/mapbox";
 
 interface IncidentMarkerProps {
   latitude: number;
