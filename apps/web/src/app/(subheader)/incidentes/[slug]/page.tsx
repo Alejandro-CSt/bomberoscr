@@ -219,7 +219,7 @@ export default async function IncidentPage({
         }}
       />
       <article
-        className="typography grid w-full max-w-none grid-cols-1 gap-6 md:gap-8 lg:grid-cols-3"
+        className="typography grid w-full max-w-none grid-cols-1 gap-6 pb-24 md:gap-8 lg:grid-cols-3"
         itemScope
         itemType="https://schema.org/Event"
       >
