@@ -29,6 +29,10 @@ RUN pnpm install --frozen-lockfile
 
 # Build the project
 COPY --from=builder /app/out/full/ .
+
+ARG NEXT_PUBLIC_MAPBOX_MAP_API_KEY
+ENV NEXT_PUBLIC_MAPBOX_MAP_API_KEY=$NEXT_PUBLIC_MAPBOX_MAP_API_KEY
+
 RUN SKIP_ENV_CHECK=true pnpm turbo run build --env-mode=loose
 RUN pnpm prune
 

@@ -26,6 +26,8 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: ${{ secrets.REGISTRY }}/${{ secrets.WEB_IMAGE_NAME }}:latest
+          build-args: |
+            NEXT_PUBLIC_MAPBOX_MAP_API_KEY=${{ secrets.NEXT_PUBLIC_MAPBOX_MAP_API_KEY }}
 
       - name: Trigger deploy via Dokploy API
         run: |
