@@ -15,17 +15,41 @@ import {
 } from "@/features/shared/components/ui/select";
 import { trpc } from "@/features/trpc/client";
 import { ALLOWED_TIME_RANGE_VALUES, TIME_RANGE_LABELS } from "@bomberoscr/lib/time-range";
+import { keepPreviousData } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 
 export function HighlightedIncidents() {
   const { timeRange, setTimeRange } = useTimeRangeQueryState();
   const {
     data: incidents,
-    isLoading,
+    isFetching,
     isError
-  } = trpc.homepage.getHighlightedIncidents.useQuery({
-    timeRange,
-    limit: 6
-  });
+  } = trpc.homepage.getHighlightedIncidents.useQuery(
+    {
+      timeRange,
+      limit: 6
+    },
+    {
+      placeholderData: keepPreviousData
+    }
+  );
+
+  const [showSkeleton, setShowSkeleton] = useState(false);
+
+  useEffect(() => {
+    if (!isFetching) {
+      setShowSkeleton(false);
+      return;
+    }
+
+    if (!incidents) {
+      setShowSkeleton(true);
+      return;
+    }
+
+    const timeout = setTimeout(() => setShowSkeleton(true), 500);
+    return () => clearTimeout(timeout);
+  }, [isFetching, incidents]);
 
   const minimalIncidents: MinimalIncident[] = incidents ?? [];
 
@@ -61,7 +85,7 @@ export function HighlightedIncidents() {
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          {isLoading || !incidents
+          {showSkeleton
             ? ["one", "two", "three", "four", "five", "six"].map((key) => (
                 <HighlightedIncidentCardSkeleton key={key} />
               ))
