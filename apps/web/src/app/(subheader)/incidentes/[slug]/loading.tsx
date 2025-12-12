@@ -22,7 +22,7 @@ export default function Loading() {
         </div>
 
         {/* Map placeholder */}
-        <div className="min-h-[400px] w-full rounded-xl border-2 bg-muted" />
+        <Skeleton className="aspect-video w-full rounded-xl" />
 
         {/* Timestamp */}
         <Skeleton className="h-5 w-56" />

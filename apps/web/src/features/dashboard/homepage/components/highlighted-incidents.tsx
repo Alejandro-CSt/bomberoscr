@@ -34,7 +34,7 @@ export function HighlightedIncidents() {
     }
   );
 
-  const [showSkeleton, setShowSkeleton] = useState(false);
+  const [showSkeleton, setShowSkeleton] = useState(() => isFetching && !incidents);
 
   useEffect(() => {
     if (!isFetching) {

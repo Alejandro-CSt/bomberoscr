@@ -200,21 +200,24 @@ export default async function DetailedIncidentPanel({
         </section>
 
         <section>
-          <Button asChild className="w-full">
-            <Link
-              href={
-                buildIncidentUrl(
-                  incident.id,
-                  incident.importantDetails ||
-                    incident.specificDispatchIncidentType?.name ||
-                    incident.dispatchIncidentType?.name ||
-                    "Incidente",
-                  incident.incidentTimestamp
-                ) as `/incidentes/${string}`
-              }
-            >
-              Ver detalles
-            </Link>
+          <Button
+            render={
+              <Link
+                href={
+                  buildIncidentUrl(
+                    incident.id,
+                    incident.importantDetails ||
+                      incident.specificDispatchIncidentType?.name ||
+                      incident.dispatchIncidentType?.name ||
+                      "Incidente",
+                    incident.incidentTimestamp
+                  ) as `/incidentes/${string}`
+                }
+              />
+            }
+            className="w-full"
+          >
+            Ver detalles
           </Button>
         </section>
 

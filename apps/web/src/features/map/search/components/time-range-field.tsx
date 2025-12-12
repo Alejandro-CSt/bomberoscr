@@ -81,7 +81,7 @@ export function TimeRangeField({ name, label = "Rango de tiempo", className }: P
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                className="w-full justify-start max-sm:h-8 max-sm:text-xs"
+                                className="w-full justify-start border-0 max-sm:h-8 max-sm:text-xs"
                                 onClick={() => {
                                   field.onChange({ start: today, end: today });
                                   setMonth(today);
@@ -92,7 +92,7 @@ export function TimeRangeField({ name, label = "Rango de tiempo", className }: P
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                className="w-full justify-start max-sm:h-8 max-sm:text-xs"
+                                className="w-full justify-start border-0 max-sm:h-8 max-sm:text-xs"
                                 onClick={() => {
                                   field.onChange({ start: yesterday.from, end: yesterday.to });
                                   setMonth(yesterday.to);
@@ -103,7 +103,7 @@ export function TimeRangeField({ name, label = "Rango de tiempo", className }: P
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                className="w-full justify-start max-sm:h-8 max-sm:text-xs"
+                                className="w-full justify-start border-0 max-sm:h-8 max-sm:text-xs"
                                 onClick={() => {
                                   field.onChange({ start: last7Days.from, end: last7Days.to });
                                   setMonth(last7Days.to);
@@ -114,7 +114,7 @@ export function TimeRangeField({ name, label = "Rango de tiempo", className }: P
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                className="w-full justify-start max-sm:h-8 max-sm:text-xs"
+                                className="w-full justify-start border-0 max-sm:h-8 max-sm:text-xs"
                                 onClick={() => {
                                   field.onChange({ start: last30Days.from, end: last30Days.to });
                                   setMonth(last30Days.to);
@@ -125,7 +125,7 @@ export function TimeRangeField({ name, label = "Rango de tiempo", className }: P
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                className="w-full justify-start max-sm:h-8 max-sm:text-xs"
+                                className="w-full justify-start border-0 max-sm:h-8 max-sm:text-xs"
                                 onClick={() => {
                                   field.onChange({ start: monthToDate.from, end: monthToDate.to });
                                   setMonth(monthToDate.to);
@@ -136,7 +136,7 @@ export function TimeRangeField({ name, label = "Rango de tiempo", className }: P
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                className="w-full justify-start max-sm:h-8 max-sm:text-xs"
+                                className="w-full justify-start border-0 max-sm:h-8 max-sm:text-xs"
                                 onClick={() => {
                                   field.onChange({ start: lastMonth.from, end: lastMonth.to });
                                   setMonth(lastMonth.to);
@@ -147,7 +147,7 @@ export function TimeRangeField({ name, label = "Rango de tiempo", className }: P
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                className="w-full justify-start max-sm:h-8 max-sm:text-xs"
+                                className="w-full justify-start border-0 max-sm:h-8 max-sm:text-xs"
                                 onClick={() => {
                                   field.onChange({ start: yearToDate.from, end: yearToDate.to });
                                   setMonth(yearToDate.to);
@@ -158,7 +158,7 @@ export function TimeRangeField({ name, label = "Rango de tiempo", className }: P
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                className="w-full justify-start max-sm:h-8 max-sm:text-xs"
+                                className="w-full justify-start border-0 max-sm:h-8 max-sm:text-xs"
                                 onClick={() => {
                                   field.onChange({ start: lastYear.from, end: lastYear.to });
                                   setMonth(lastYear.to);

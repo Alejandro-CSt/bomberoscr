@@ -9,6 +9,7 @@
     "baseColor": "zinc",
     "cssVariables": true
   },
+  "iconLibrary": "lucide",
   "aliases": {
     "components": "@/features/shared/components",
     "utils": "@/features/shared/lib/utils",
@@ -16,5 +17,7 @@
     "lib": "@/features/shared/lib",
     "hooks": "@/features/shared/hooks"
   },
-  "iconLibrary": "lucide"
+  "registries": {
+    "@coss": "https://coss.com/ui/r/{name}.json"
+  }
 }

@@ -17,31 +17,31 @@ export function FloatingNavigation() {
       <div className="flex items-center gap-1">
         <Button
           variant="ghost"
-          asChild
+          render={
+            <Link prefetch href="/mapa/ajustes">
+              <Settings2Icon className="size-4" />
+              <span className="font-medium text-sm">Opciones</span>
+            </Link>
+          }
           className={cn(
             "flex items-center gap-2 rounded-full border bg-background/80 px-3 py-1 shadow-lg backdrop-blur-lg transition-[background] hover:bg-accent",
             pathname.startsWith("/mapa/ajustes") ? "bg-primary text-primary-foreground" : ""
           )}
-        >
-          <Link prefetch href="/mapa/ajustes">
-            <Settings2Icon className="size-4" />
-            <span className="font-medium text-sm">Opciones</span>
-          </Link>
-        </Button>
+        />
 
         <Button
           variant="ghost"
-          asChild
+          render={
+            <Link prefetch href="/mapa/busqueda">
+              <SearchIcon className="size-4" />
+              <span className="font-medium text-sm">Buscar</span>
+            </Link>
+          }
           className={cn(
             "flex items-center gap-2 rounded-full border bg-background/80 px-3 py-1 shadow-lg backdrop-blur-lg transition-[background] hover:bg-accent",
             pathname.startsWith("/mapa/busqueda") ? "bg-primary text-primary-foreground" : ""
           )}
-        >
-          <Link prefetch href="/mapa/busqueda">
-            <SearchIcon className="size-4" />
-            <span className="font-medium text-sm">Buscar</span>
-          </Link>
-        </Button>
+        />
       </div>
     </div>
   );

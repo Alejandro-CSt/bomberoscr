@@ -101,8 +101,13 @@ export default function IncidentNarrative({
 
   const supportingStations = incident.dispatchedStations.filter((s) => s.serviceTypeId !== 1);
 
+  // Deduplicate supporting stations by name to avoid duplicate keys
+  const uniqueSupportingStations = Array.from(
+    new Map(supportingStations.map((s) => [s.station.name, s])).values()
+  );
+
   const supportingVehiclesCount = incident.dispatchedVehicles.filter((v) =>
-    supportingStations.some((s) => s.station.name === v.station.name)
+    uniqueSupportingStations.some((s) => s.station.name === v.station.name)
   ).length;
 
   const totalVehiclesDispatched = incident.dispatchedVehicles.filter(
@@ -170,13 +175,15 @@ export default function IncidentNarrative({
         </p>
       )}
 
-      {supportingStations.length > 0 && supportingVehiclesCount > 0 && (
+      {uniqueSupportingStations.length > 0 && supportingVehiclesCount > 0 && (
         <p>
           Adicionalmente, se{" "}
-          {supportingStations.length > 1 ? "despachan las estaciones" : "despacha la estación"}{" "}
-          {supportingStations.map((s, index) => {
-            const isLast = index === supportingStations.length - 1;
-            const isSecondLast = index === supportingStations.length - 2;
+          {uniqueSupportingStations.length > 1
+            ? "despachan las estaciones"
+            : "despacha la estación"}{" "}
+          {uniqueSupportingStations.map((s, index) => {
+            const isLast = index === uniqueSupportingStations.length - 1;
+            const isSecondLast = index === uniqueSupportingStations.length - 2;
 
             return (
               <span key={s.station.name}>
@@ -185,8 +192,8 @@ export default function IncidentNarrative({
               </span>
             );
           })}{" "}
-          que {supportingStations.length === 1 ? "apoya" : "apoyan"} con {supportingVehiclesCount}{" "}
-          {supportingVehiclesCount === 1 ? "unidad" : "unidades"}{" "}
+          que {uniqueSupportingStations.length === 1 ? "apoya" : "apoyan"} con{" "}
+          {supportingVehiclesCount} {supportingVehiclesCount === 1 ? "unidad" : "unidades"}{" "}
           {supportingVehiclesCount === 1 ? "adicional" : "adicionales"}.
         </p>
       )}

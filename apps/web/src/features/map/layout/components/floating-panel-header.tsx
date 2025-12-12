@@ -42,11 +42,9 @@ export function FloatingPanelHeader({ title, subtitle }: { title: string; subtit
             <span className="sr-only">{collapsed ? "Expandir panel" : "Colapsar panel"}</span>
           </Button>
         )}
-        <Button asChild variant="ghost" size="icon">
-          <Link href="/mapa">
-            <XIcon />
-            <span className="sr-only">Cerrar</span>
-          </Link>
+        <Button render={<Link href="/mapa" />} variant="ghost" size="icon">
+          <XIcon />
+          <span className="sr-only">Cerrar</span>
         </Button>
       </div>
     </div>

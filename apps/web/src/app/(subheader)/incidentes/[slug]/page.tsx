@@ -2,12 +2,12 @@
 
 import IncidentNarrative from "@/features/dashboard/incidents/incident-narrative";
 import IncidentTimeline from "@/features/dashboard/incidents/incident-timeline";
-import IncidentMap from "@/features/dashboard/incidents/map/components/incident-map";
+// import IncidentMap from "@/features/dashboard/incidents/map/components/incident-map";
 import OpenIncidentBanner from "@/features/dashboard/incidents/open-incident-banner";
 import { VehicleResponseTimeChart } from "@/features/dashboard/incidents/vehicle-response-time-chart";
 import { VehicleResponseTimeTable } from "@/features/dashboard/incidents/vehicle-response-time-table";
 import env from "@/features/lib/env";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/features/shared/components/ui/tabs";
+import { Tabs, TabsList, TabsPanel, TabsTab } from "@/features/shared/components/ui/tabs";
 import {
   Tooltip,
   TooltipContent,
@@ -20,6 +20,7 @@ import { areCoordinatesValid } from "@bomberoscr/lib/areCoordinatesValid";
 import { BarChartHorizontalIcon, TableIcon, TriangleAlertIcon } from "lucide-react";
 import type { Metadata } from "next";
 import { cacheLife } from "next/cache";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 
 function getLocation(incident: NonNullable<DetailedIncident>): string | undefined {
@@ -232,17 +233,29 @@ export default async function IncidentPage({
 
         <div className="order-1 flex flex-col gap-4 md:gap-6 lg:order-1 lg:col-span-2">
           <h1 itemProp="headline">{getIncidentTitle(incident)}</h1>
-          <figure>
+          <figure className="not-typography">
             {areCoordinatesValid(incident.latitude, incident.longitude) ? (
-              <IncidentMap
-                latitude={Number(incident.latitude)}
-                longitude={Number(incident.longitude)}
-                stations={incident.dispatchedStations.map((station) => ({
-                  latitude: Number(station.station.latitude),
-                  longitude: Number(station.station.longitude),
-                  name: station.station.name
-                }))}
-              />
+              // TODO: Re-enable interactive map when ready
+              // <IncidentMap
+              //   latitude={Number(incident.latitude)}
+              //   longitude={Number(incident.longitude)}
+              //   stations={incident.dispatchedStations.map((station) => ({
+              //     latitude: Number(station.station.latitude),
+              //     longitude: Number(station.station.longitude),
+              //     name: station.station.name
+              //   }))}
+              // />
+              <div className="relative aspect-video w-full overflow-hidden rounded-xl">
+                <Image
+                  src={`/bomberos/api/incidents/${incident.id}/map`}
+                  alt="Mapa del incidente"
+                  referrerPolicy="origin"
+                  className="h-full w-full object-cover"
+                  fill
+                  quality={100}
+                  priority
+                />
+              </div>
             ) : (
               <div className="relative flex min-h-[400px] flex-col gap-4 overflow-hidden rounded-xl border-2 bg-muted">
                 <div className="absolute inset-0 z-20 flex items-center justify-center backdrop-blur-sm">
@@ -281,9 +294,9 @@ export default async function IncidentPage({
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <span>
-                          <TabsTrigger value="chart" className="py-3" aria-label="Ver gráfico">
+                          <TabsTab value="chart" className="py-3" aria-label="Ver gráfico">
                             <BarChartHorizontalIcon size={16} aria-hidden="true" />
-                          </TabsTrigger>
+                          </TabsTab>
                         </span>
                       </TooltipTrigger>
                       <TooltipContent className="px-2 py-1 text-xs">Gráfico</TooltipContent>
@@ -293,9 +306,9 @@ export default async function IncidentPage({
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <span>
-                          <TabsTrigger value="table" className="py-3" aria-label="Ver tabla">
+                          <TabsTab value="table" className="py-3" aria-label="Ver tabla">
                             <TableIcon size={16} aria-hidden="true" />
-                          </TabsTrigger>
+                          </TabsTab>
                         </span>
                       </TooltipTrigger>
                       <TooltipContent className="px-2 py-1 text-xs">Tabla</TooltipContent>
@@ -304,16 +317,16 @@ export default async function IncidentPage({
                 </TabsList>
               </div>
 
-              <TabsContent value="chart">
+              <TabsPanel value="chart">
                 <VehicleResponseTimeChart
                   vehicles={incident.dispatchedVehicles}
                   isOpen={incident.isOpen}
                 />
-              </TabsContent>
+              </TabsPanel>
 
-              <TabsContent value="table">
+              <TabsPanel value="table">
                 <VehicleResponseTimeTable vehicles={incident.dispatchedVehicles} />
-              </TabsContent>
+              </TabsPanel>
             </Tabs>
           </section>
 

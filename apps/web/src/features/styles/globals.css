@@ -1,4 +1,6 @@
 @import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
 @plugin 'tailwindcss-animate';
 
 :root {
@@ -102,6 +104,12 @@
   --shadow-lg: var(--shadow-lg);
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
+  --animate-skeleton: skeleton 2s -1s infinite linear;
+  @keyframes skeleton {
+  to {
+    background-position: -200% 0;
+    }
+  }
 }
 
 body {
@@ -422,4 +430,8 @@ body {
   animation-name: logo-ray-bounce;
   animation-duration: 220ms;
   animation-timing-function: ease-out;
+}
+
+.dark {
+  --destructive-foreground: var(--color-red-400);
 }
