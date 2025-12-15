@@ -37,12 +37,23 @@ export function FloatingPanelHeader({ title, subtitle }: { title: string; subtit
       </div>
       <div className="flex shrink-0 items-center gap-2 self-start">
         {isMobile && (
-          <Button type="button" onClick={toggleCollapsed} variant="ghost" size="icon">
+          <Button
+            type="button"
+            onClick={toggleCollapsed}
+            variant="ghost"
+            size="icon"
+            className="border-0 shadow-none before:hidden"
+          >
             {collapsed ? <ChevronUpIcon /> : <ChevronDownIcon />}
             <span className="sr-only">{collapsed ? "Expandir panel" : "Colapsar panel"}</span>
           </Button>
         )}
-        <Button render={<Link href="/mapa" />} variant="ghost" size="icon">
+        <Button
+          render={<Link href="/mapa" />}
+          variant="ghost"
+          size="icon"
+          className="border-0 shadow-none before:hidden"
+        >
           <XIcon />
           <span className="sr-only">Cerrar</span>
         </Button>

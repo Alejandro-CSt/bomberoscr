@@ -85,7 +85,7 @@ export function IncidentSheet() {
               <Button
                 size="icon"
                 variant="ghost"
-                className="h-7 w-7"
+                className="h-7 w-7 border-0 shadow-none before:hidden"
                 onClick={handlePrev}
                 disabled={!prevRow}
               >
@@ -95,7 +95,7 @@ export function IncidentSheet() {
               <Button
                 size="icon"
                 variant="ghost"
-                className="h-7 w-7"
+                className="h-7 w-7 border-0 shadow-none before:hidden"
                 onClick={handleNext}
                 disabled={!nextRow}
               >
@@ -105,7 +105,7 @@ export function IncidentSheet() {
               <Button
                 size="icon"
                 variant="ghost"
-                className="h-7 w-7"
+                className="h-7 w-7 border-0 shadow-none before:hidden"
                 onClick={() => setOpen(false)}
               >
                 <XIcon className="h-4 w-4" />

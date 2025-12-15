@@ -1,8 +1,7 @@
 "use client";
 
-import { HeaderContent } from "@/features/layout/components/header-content";
-import { usePathname } from "next/navigation";
-import { Suspense, useEffect } from "react";
+import { HeaderContent } from "@/features/layout/components/subheader-content";
+import { Suspense } from "react";
 
 function SubHeaderSkeleton() {
   return (
@@ -14,35 +13,10 @@ function SubHeaderSkeleton() {
   );
 }
 
-function SubHeaderInner() {
-  const pathname = usePathname();
-  const shouldHideSubheader = pathname === "/" || pathname.startsWith("/mapa");
-
-  useEffect(() => {
-    // Conditionally add/remove the no-subheader class to adjust CSS variable
-    if (shouldHideSubheader) {
-      document.body.classList.add("no-subheader");
-    } else {
-      document.body.classList.remove("no-subheader");
-    }
-
-    // Cleanup on unmount
-    return () => {
-      document.body.classList.remove("no-subheader");
-    };
-  }, [shouldHideSubheader]);
-
-  if (shouldHideSubheader) {
-    return null;
-  }
-
-  return <HeaderContent />;
-}
-
 export function SubHeader() {
   return (
     <Suspense fallback={<SubHeaderSkeleton />}>
-      <SubHeaderInner />
+      <HeaderContent />
     </Suspense>
   );
 }
