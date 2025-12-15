@@ -20,6 +20,7 @@ import { getTopDispatchedStations } from "@bomberoscr/db/queries/charts/topDispa
 import { getTopResponseTimesStations } from "@bomberoscr/db/queries/charts/topResponseTimesStations";
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
+import { headers } from "next/headers";
 import type { SearchParams } from "nuqs/server";
 import { Suspense, lazy } from "react";
 
@@ -120,6 +121,8 @@ function IncidentDistributionChartsSkeleton() {
 }
 
 export default async function Page({ searchParams }: { searchParams: Promise<SearchParams> }) {
+  await headers(); // disable prerendering
+
   return (
     <div className="flex flex-col gap-8">
       <HighlightedIncidents searchParams={searchParams} />
