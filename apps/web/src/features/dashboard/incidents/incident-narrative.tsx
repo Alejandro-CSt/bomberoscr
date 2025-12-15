@@ -134,7 +134,7 @@ export default function IncidentNarrative({
         {responsibleStation && (
           <>
             Se asigna la estación{" "}
-            <Link href={`/mapa/estaciones/${responsibleStation.station.name}`}>
+            <Link href={`/mapa/estaciones/${responsibleStation.station.name}`} prefetch={false}>
               {responsibleStation.station.name}
             </Link>{" "}
             como responsable
@@ -187,7 +187,9 @@ export default function IncidentNarrative({
 
             return (
               <span key={s.station.name}>
-                <Link href={`/mapa/estaciones/${s.station.name}`}>{s.station.name}</Link>
+                <Link href={`/mapa/estaciones/${s.station.name}`} prefetch={false}>
+                  {s.station.name}
+                </Link>
                 {!isLast && (isSecondLast ? " y " : ", ")}
               </span>
             );

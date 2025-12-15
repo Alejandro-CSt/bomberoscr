@@ -33,7 +33,7 @@ export function Logo() {
   }, []);
 
   return (
-    <Link href="/" className="group flex items-center gap-2">
+    <Link href="/" prefetch={false} className="group flex items-center gap-2">
       <svg aria-hidden="true" viewBox="0 0 41 41" className="size-6">
         <g>
           {RAY_ANGLES.map((angle, index) => (

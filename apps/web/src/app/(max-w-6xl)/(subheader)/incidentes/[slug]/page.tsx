@@ -243,14 +243,16 @@ export default async function IncidentPage({
               <div className="relative aspect-video w-full overflow-hidden rounded-xl">
                 <Image
                   src={`/bomberos/incidentes/${slug}/map`}
-                  alt="Mapa del incidente"
+                  alt={`Imagen satelital del incidente por ${getIncidentTitleWithoutLocation(incident)} en ${getLocation(incident) ?? "ubicación desconocida"}`}
                   referrerPolicy="origin"
                   className="h-full w-full object-cover"
                   fill
-                  sizes="(max-width: 1024px) 100vw, 66vw"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 672px"
+                  quality={65}
                   placeholder="blur"
                   blurDataURL={MAP_BLUR_DATA_URL}
                   priority
+                  fetchPriority="high"
                 />
               </div>
             ) : (

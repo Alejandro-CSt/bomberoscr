@@ -52,7 +52,7 @@ export function HighlightedIncidentCard({ incident }: { incident: MinimalInciden
           <div className="h-full w-full overflow-hidden rounded-lg">
             <Image
               src={mapUrl}
-              alt=""
+              alt="Imagen satelital del incidente"
               referrerPolicy="origin"
               className="h-full w-full scale-125 object-cover transition-transform duration-300 ease-out group-hover:scale-150"
               loading="lazy"

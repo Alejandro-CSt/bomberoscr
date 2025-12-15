@@ -46,7 +46,12 @@ function HeaderNavInner({ className }: { className?: string }) {
               <TabsTab
                 className="relative border-none hover:bg-accent hover:text-foreground focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 data-active:bg-transparent data-active:shadow-none data-active:hover:bg-accent"
                 key={item.url}
-                render={<Link href={item.url as "/"} />}
+                render={
+                  <Link
+                    href={item.url as "/"}
+                    prefetch={item.url !== "/mapa" && item.url !== "/"}
+                  />
+                }
                 nativeButton={false}
                 value={tabValue}
               >

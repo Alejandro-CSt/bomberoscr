@@ -70,7 +70,12 @@ function MobileHeaderNavInner({ className }: { className?: string }) {
           <div className="flex flex-col gap-6 overflow-auto px-6 py-6">
             <div className="flex flex-col gap-3">
               {enabledNavItems.map((item) => (
-                <MobileLink href={item.url as "/"} isActive={isActive(item.url)} key={item.url}>
+                <MobileLink
+                  href={item.url as "/"}
+                  isActive={isActive(item.url)}
+                  key={item.url}
+                  prefetch={item.url !== "/mapa" && item.url !== "/"}
+                >
                   {item.title}
                 </MobileLink>
               ))}
