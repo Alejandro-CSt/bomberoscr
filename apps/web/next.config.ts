@@ -1,3 +1,4 @@
+import path from "path";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
@@ -49,6 +50,10 @@ const nextConfig: NextConfig = {
       fullUrl: true
     },
     incomingRequests: true
+  },
+
+  turbopack: {
+    root: path.resolve(__dirname, "..", "..")
   },
 
   experimental: {
