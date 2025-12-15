@@ -1,22 +1,23 @@
 import { GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import env from "./env";
 
-const r2Client = new S3Client({
-  region: "auto",
-  endpoint: env.R2_ENDPOINT,
+const s3Client = new S3Client({
+  region: "garage",
+  endpoint: env.S3_ENDPOINT,
+  forcePathStyle: true,
   credentials: {
-    accessKeyId: env.R2_ACCESS_KEY_ID,
-    secretAccessKey: env.R2_SECRET_ACCESS_KEY
+    accessKeyId: env.S3_KEY_ID,
+    secretAccessKey: env.S3_SECRET_KEY
   }
 });
 
-export async function getFromR2(key: string): Promise<Buffer | null> {
+export async function getFromS3(key: string): Promise<Buffer | null> {
   try {
     const command = new GetObjectCommand({
-      Bucket: env.R2_BUCKET_NAME,
+      Bucket: env.S3_BUCKET_NAME,
       Key: key
     });
-    const response = await r2Client.send(command);
+    const response = await s3Client.send(command);
     if (!response.Body) return null;
     const bytes = await response.Body.transformToByteArray();
     return Buffer.from(bytes);
@@ -26,18 +27,18 @@ export async function getFromR2(key: string): Promise<Buffer | null> {
   }
 }
 
-export async function uploadToR2(
+export async function uploadToS3(
   key: string,
   body: Buffer | ArrayBuffer,
   contentType: string
 ): Promise<void> {
   const command = new PutObjectCommand({
-    Bucket: env.R2_BUCKET_NAME,
+    Bucket: env.S3_BUCKET_NAME,
     Key: key,
     Body: body instanceof Buffer ? body : new Uint8Array(body),
     ContentType: contentType
   });
-  await r2Client.send(command);
+  await s3Client.send(command);
 }
 
-export default r2Client;
+export default s3Client;

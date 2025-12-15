@@ -60,7 +60,6 @@ export function HighlightedIncidentCard({ incident }: { incident: MinimalInciden
               height={360}
               placeholder="blur"
               blurDataURL={MAP_BLUR_DATA_URL}
-              unoptimized
             />
           </div>
         ) : (

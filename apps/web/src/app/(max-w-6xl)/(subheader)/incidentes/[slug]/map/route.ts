@@ -1,5 +1,5 @@
 import env from "@/features/lib/env";
-import { getFromR2, uploadToR2 } from "@/features/lib/r2";
+import { getFromS3, uploadToS3 } from "@/features/lib/s3";
 import { db, eq } from "@bomberoscr/db/index";
 import { incidents } from "@bomberoscr/db/schema";
 import { NextResponse, after } from "next/server";
@@ -21,13 +21,13 @@ function buildMapboxUrl(latitude: number, longitude: number): string {
   return `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${marker}/${longitude},${latitude},${zoom},${bearing},${pitch}/${width}x${height}@2x?access_token=${env.MAPBOX_API_KEY}`;
 }
 
-function getR2Key(incidentId: number): string {
+function getS3Key(incidentId: number): string {
   return `incidents/${incidentId}/map.png`;
 }
 
 /**
  * Returns a static map image for an incident location.
- * Images are cached in R2; on cache miss, fetches from Mapbox and stores in R2 asynchronously.
+ * Images are cached in S3; on cache miss, fetches from Mapbox and stores in S3 asynchronously.
  * @param params.slug - The incident slug (e.g., "123-incident-title")
  * @returns PNG image response with 1-year cache headers
  */
@@ -42,9 +42,9 @@ export async function GET(_request: Request, { params }: { params: Promise<{ slu
   if (!idResult.success) return new NextResponse("Invalid ID", { status: 404 });
 
   const incidentId = idResult.data;
-  const r2Key = getR2Key(incidentId);
+  const s3Key = getS3Key(incidentId);
 
-  const cachedImage = await getFromR2(r2Key);
+  const cachedImage = await getFromS3(s3Key);
   if (cachedImage) {
     return new NextResponse(new Uint8Array(cachedImage), {
       headers: {
@@ -89,9 +89,9 @@ export async function GET(_request: Request, { params }: { params: Promise<{ slu
 
   after(async () => {
     try {
-      await uploadToR2(r2Key, imageBuffer, "image/png");
+      await uploadToS3(s3Key, imageBuffer, "image/png");
     } catch (error) {
-      console.error("Failed to upload map image to R2:", error);
+      console.error("Failed to upload map image to S3:", error);
     }
   });
 

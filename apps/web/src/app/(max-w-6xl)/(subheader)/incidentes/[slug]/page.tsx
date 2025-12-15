@@ -250,7 +250,6 @@ export default async function IncidentPage({
                   sizes="(max-width: 1024px) 100vw, 66vw"
                   placeholder="blur"
                   blurDataURL={MAP_BLUR_DATA_URL}
-                  unoptimized
                   priority
                 />
               </div>
