@@ -1,6 +1,7 @@
 import type { MinimalIncident } from "@/features/dashboard/homepage/api/homepageRouter";
 import { RelativeTime } from "@/features/shared/components/ui/relative-time";
 import { Skeleton } from "@/features/shared/components/ui/skeleton";
+import { MAP_BLUR_DATA_URL } from "@/features/shared/lib/constants";
 import { cn } from "@/features/shared/lib/utils";
 import { FireTruckIcon, GarageIcon } from "@phosphor-icons/react/dist/ssr";
 import { TriangleAlertIcon } from "lucide-react";
@@ -57,6 +58,8 @@ export function HighlightedIncidentCard({ incident }: { incident: MinimalInciden
               loading="lazy"
               width={640}
               height={360}
+              placeholder="blur"
+              blurDataURL={MAP_BLUR_DATA_URL}
               unoptimized
             />
           </div>

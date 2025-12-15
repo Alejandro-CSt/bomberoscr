@@ -8,6 +8,7 @@ import { VehicleResponseTimeChart } from "@/features/dashboard/incidents/vehicle
 import { VehicleResponseTimeTable } from "@/features/dashboard/incidents/vehicle-response-time-table";
 import env from "@/features/lib/env";
 import { Tabs, TabsList, TabsPanel, TabsTab } from "@/features/shared/components/ui/tabs";
+import { MAP_BLUR_DATA_URL } from "@/features/shared/lib/constants";
 import { buildIncidentUrl, extractIncidentId } from "@/features/shared/lib/utils";
 import { type DetailedIncident, getDetailedIncidentById } from "@bomberoscr/db/queries/incidents";
 import { areCoordinatesValid } from "@bomberoscr/lib/areCoordinatesValid";
@@ -247,6 +248,8 @@ export default async function IncidentPage({
                   className="h-full w-full object-cover"
                   fill
                   sizes="(max-width: 1024px) 100vw, 66vw"
+                  placeholder="blur"
+                  blurDataURL={MAP_BLUR_DATA_URL}
                   unoptimized
                   priority
                 />
