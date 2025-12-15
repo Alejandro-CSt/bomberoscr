@@ -8,6 +8,7 @@ import { IncidentsByHourChart } from "@/features/dashboard/homepage/charts/compo
 import { TopDispatchedStationsChart } from "@/features/dashboard/homepage/charts/components/top-stations-chart";
 import { TopResponseTimesStationsChart } from "@/features/dashboard/homepage/charts/components/top-stations-response-time-chart";
 import { HighlightedIncidents } from "@/features/dashboard/homepage/components/highlighted-incidents";
+import { HomepageSkeleton } from "@/features/dashboard/homepage/components/homepage-skeleton";
 import { LatestIncidents } from "@/features/dashboard/homepage/components/latest-incidents";
 import { MapCTA } from "@/features/dashboard/homepage/components/map-cta";
 import { YearRecapHero } from "@/features/dashboard/homepage/components/year-recap-hero";
@@ -20,7 +21,7 @@ import { getTopDispatchedStations } from "@bomberoscr/db/queries/charts/topDispa
 import { getTopResponseTimesStations } from "@bomberoscr/db/queries/charts/topResponseTimesStations";
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
-import { headers } from "next/headers";
+import { connection } from "next/server";
 import type { SearchParams } from "nuqs/server";
 import { Suspense, lazy } from "react";
 
@@ -120,8 +121,8 @@ function IncidentDistributionChartsSkeleton() {
   );
 }
 
-export default async function Page({ searchParams }: { searchParams: Promise<SearchParams> }) {
-  await headers(); // disable prerendering
+async function HomepageContent({ searchParams }: { searchParams: Promise<SearchParams> }) {
+  await connection(); // disable prerendering
 
   return (
     <div className="flex flex-col gap-8">
@@ -149,5 +150,13 @@ export default async function Page({ searchParams }: { searchParams: Promise<Sea
         <ParticlesMap />
       </Suspense>
     </div>
+  );
+}
+
+export default function Page({ searchParams }: { searchParams: Promise<SearchParams> }) {
+  return (
+    <Suspense fallback={<HomepageSkeleton />}>
+      <HomepageContent searchParams={searchParams} />
+    </Suspense>
   );
 }
