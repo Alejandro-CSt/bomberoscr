@@ -38,7 +38,7 @@ function MobileHeaderNavInner({ className }: { className?: string }) {
       <Popover onOpenChange={setOpen} open={open}>
         <PopoverTrigger asChild>
           <Button
-            className="extend-touch-target !p-0 h-8 touch-manipulation items-center justify-start gap-2.5 hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 active:bg-transparent dark:hover:bg-transparent"
+            className="extend-touch-target !p-0 h-8 touch-manipulation items-center justify-start gap-2.5 border-none hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 active:bg-transparent dark:hover:bg-transparent"
             variant="ghost"
           >
             <div className="relative flex h-8 w-4 items-center justify-center">

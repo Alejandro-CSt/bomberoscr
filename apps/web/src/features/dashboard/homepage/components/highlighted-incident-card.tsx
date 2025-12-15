@@ -1,6 +1,7 @@
 import type { MinimalIncident } from "@/features/dashboard/homepage/api/homepageRouter";
+import { RelativeTime } from "@/features/shared/components/ui/relative-time";
 import { Skeleton } from "@/features/shared/components/ui/skeleton";
-import { cn, getRelativeTime } from "@/features/shared/lib/utils";
+import { cn } from "@/features/shared/lib/utils";
 import { FireTruckIcon, GarageIcon } from "@phosphor-icons/react/dist/ssr";
 import { TriangleAlertIcon } from "lucide-react";
 import Image from "next/image";
@@ -38,25 +39,25 @@ export function HighlightedIncidentCard({ incident }: { incident: MinimalInciden
   const total = Number(incident.dispatchedStationsCount) + Number(incident.dispatchedVehiclesCount);
   const heat = Math.max(0, Math.min((total - 2) / 13, 1));
   const hasMap = hasValidCoordinates(incident.latitude, incident.longitude);
-  const mapUrl = `/bomberos/api/incidents/${incident.id}/map`;
+  const mapUrl = `/bomberos${incident.url}/map`;
 
   return (
     <Link
       href={incident.url}
       className="group flex flex-col overflow-hidden rounded-lg bg-card md:flex-row"
     >
-      <div className="relative flex aspect-video w-full items-center justify-center p-1.5 md:aspect-4/3 md:w-[40%] md:p-2">
+      <div className="relative flex aspect-video w-full items-center justify-center p-1.5 md:aspect-4/3 md:w-[50%] md:p-2">
         {hasMap ? (
           <div className="h-full w-full overflow-hidden rounded-lg">
             <Image
               src={mapUrl}
               alt=""
               referrerPolicy="origin"
-              className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-110"
+              className="h-full w-full scale-125 object-cover transition-transform duration-300 ease-out group-hover:scale-150"
               loading="lazy"
               width={640}
               height={360}
-              quality={100}
+              unoptimized
             />
           </div>
         ) : (
@@ -81,9 +82,7 @@ export function HighlightedIncidentCard({ incident }: { incident: MinimalInciden
       </div>
       <div className="flex flex-col gap-2 p-3 md:flex-1 md:py-3 md:pr-3 md:pl-1">
         <div className="flex flex-col gap-0.5">
-          <h3 className="line-clamp-1 font-medium text-base group-hover:underline">
-            {incident.details}
-          </h3>
+          <h3 className="line-clamp-1 font-medium text-base">{incident.details}</h3>
           <span className="text-muted-foreground text-sm">{incident.responsibleStation}</span>
           <p className="line-clamp-1 text-muted-foreground text-xs md:line-clamp-2">
             {incident.address}
@@ -100,9 +99,10 @@ export function HighlightedIncidentCard({ incident }: { incident: MinimalInciden
               <span className="font-medium text-sm">{incident.dispatchedVehiclesCount}</span>
             </div>
           </div>
-          <span className="text-muted-foreground text-sm first-letter:uppercase">
-            {getRelativeTime(incident.incidentTimestamp)}
-          </span>
+          <RelativeTime
+            date={incident.incidentTimestamp}
+            className="text-muted-foreground text-sm first-letter:uppercase"
+          />
         </div>
       </div>
     </Link>
@@ -112,7 +112,7 @@ export function HighlightedIncidentCard({ incident }: { incident: MinimalInciden
 export function HighlightedIncidentCardSkeleton() {
   return (
     <div className="flex flex-col overflow-hidden rounded-lg bg-card md:flex-row">
-      <div className="relative aspect-video w-full p-1.5 md:aspect-4/3 md:w-[40%] md:p-2">
+      <div className="relative aspect-video w-full p-1.5 md:aspect-4/3 md:w-[50%] md:p-2">
         <Skeleton className="h-full w-full rounded-lg" />
       </div>
       <div className="flex flex-col gap-2 p-3 md:flex-1 md:py-3 md:pr-3 md:pl-1">

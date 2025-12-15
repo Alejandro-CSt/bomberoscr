@@ -1,12 +1,12 @@
 import { Header } from "@/features/layout/components/header";
 import { HeaderBackdrop } from "@/features/layout/components/header-backdrop";
+import { ScrollToTop } from "@/features/layout/components/scroll-to-top";
 import env from "@/features/lib/env";
 import { cn } from "@/features/shared/lib/utils";
 import "@/features/styles/globals.css";
 import TRPCProvider from "@/features/trpc/provider";
 import type { Metadata } from "next";
 import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
-import Script from "next/script";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 const siteUrl = env.SITE_URL;
@@ -91,16 +91,6 @@ const bricolageGrotesque = Bricolage_Grotesque({
 export default async function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es-CR" className="dark">
-      <head>
-        {process.env.NODE_ENV === "development" && (
-          <Script
-            src="//unpkg.com/react-grab/dist/index.global.js"
-            crossOrigin="anonymous"
-            strategy="beforeInteractive"
-            data-enabled="true"
-          />
-        )}
-      </head>
       <body
         className={cn(
           "font-sans antialiased",
@@ -111,6 +101,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
       >
         <NuqsAdapter>
           <TRPCProvider>
+            <ScrollToTop />
             <div className="flex min-h-dvh min-w-0 flex-col overflow-x-hidden pt-(--app-header-height)">
               <Header />
               <HeaderBackdrop />

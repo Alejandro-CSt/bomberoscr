@@ -1,5 +1,6 @@
+import { RelativeTime } from "@/features/shared/components/ui/relative-time";
 import { Skeleton } from "@/features/shared/components/ui/skeleton";
-import { buildIncidentUrl, cn, getRelativeTime } from "@/features/shared/lib/utils";
+import { buildIncidentUrl, cn } from "@/features/shared/lib/utils";
 import Link from "next/link";
 
 interface IncidentData {
@@ -60,7 +61,7 @@ export function IncidentListItem({
             <p className="overflow-hidden overflow-ellipsis font-semibold text-muted-foreground">
               {incident.districtName || "UBIC. PENDIENTE"}
             </p>
-            <p>{getRelativeTime(incident.incidentTimestamp)}</p>
+            <RelativeTime date={incident.incidentTimestamp} />
           </div>
           <h3 className="line-clamp-2 text-wrap font-medium text-xs">
             {incident.importantDetails}

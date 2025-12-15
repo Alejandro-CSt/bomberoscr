@@ -1,23 +1,23 @@
-"use client";
-
-import type { LatestIncident } from "@/features/dashboard/homepage/api/homepageRouter";
 import {
   type BaseIncidentCard,
   IncidentCard,
   IncidentCardSkeleton
 } from "@/features/shared/components/incident-card";
 import { buildIncidentUrl, cn } from "@/features/shared/lib/utils";
-import { trpc } from "@/features/trpc/client";
+import { getLatestIncidents } from "@bomberoscr/db/queries/homepage/latestIncidents";
 import { ArrowRightIcon } from "lucide-react";
+import { cacheLife } from "next/cache";
 import type { Route } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 
-type SerializedLatestIncident = Omit<LatestIncident, "incidentTimestamp"> & {
-  incidentTimestamp: string;
-};
+async function LatestIncidentsList() {
+  "use cache";
+  cacheLife("homepage");
 
-function mapToIncidentCard(incident: SerializedLatestIncident): BaseIncidentCard {
-  return {
+  const incidents = await getLatestIncidents({ limit: 6 });
+
+  const cards: BaseIncidentCard[] = incidents.map((incident) => ({
     url: buildIncidentUrl(
       incident.id,
       incident.importantDetails || "Incidente",
@@ -29,18 +29,28 @@ function mapToIncidentCard(incident: SerializedLatestIncident): BaseIncidentCard
     dispatchedVehiclesCount: incident.dispatchedVehiclesCount ?? 0,
     responsibleStation: incident.responsibleStation || "Estación pendiente",
     incidentTimestamp: new Date(incident.incidentTimestamp).toISOString()
-  };
+  }));
+
+  return (
+    <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-4">
+      {cards.map((incident) => (
+        <IncidentCard key={incident.url} incident={incident} />
+      ))}
+    </div>
+  );
+}
+
+function LatestIncidentsListSkeleton() {
+  return (
+    <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-4">
+      {[1, 2, 3, 4, 5, 6].map((key) => (
+        <IncidentCardSkeleton key={key} />
+      ))}
+    </div>
+  );
 }
 
 export function LatestIncidents() {
-  const {
-    data: incidents,
-    isLoading,
-    isError
-  } = trpc.homepage.getLatestIncidents.useQuery({
-    limit: 6
-  });
-
   return (
     <section className="flex flex-col gap-4">
       <div className="flex items-center gap-3">
@@ -58,22 +68,9 @@ export function LatestIncidents() {
         </Link>
       </div>
 
-      {isError ? (
-        <div className="rounded border border-destructive/20 bg-destructive/10 p-3 text-sm">
-          <p className="font-semibold text-destructive">Error al cargar</p>
-          <p className="text-muted-foreground">No se pudieron cargar los incidentes recientes</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-4">
-          {isLoading || !incidents
-            ? ["one", "two", "three", "four", "five", "six"].map((key) => (
-                <IncidentCardSkeleton key={key} />
-              ))
-            : incidents.map((incident) => (
-                <IncidentCard key={incident.id} incident={mapToIncidentCard(incident)} />
-              ))}
-        </div>
-      )}
+      <Suspense fallback={<LatestIncidentsListSkeleton />}>
+        <LatestIncidentsList />
+      </Suspense>
     </section>
   );
 }

@@ -1,3 +1,7 @@
+import {
+  ChartSkeleton,
+  ChartSkeletonWithFooter
+} from "@/features/dashboard/homepage/charts/components/chart-skeleton";
 import { DailyIncidentsChart } from "@/features/dashboard/homepage/charts/components/daily-incidents-chart";
 import { IncidentsByDayOfWeekChart } from "@/features/dashboard/homepage/charts/components/incidents-by-day-of-week-chart";
 import { IncidentsByHourChart } from "@/features/dashboard/homepage/charts/components/incidents-by-hour-chart";
@@ -16,7 +20,7 @@ import { getTopDispatchedStations } from "@bomberoscr/db/queries/charts/topDispa
 import { getTopResponseTimesStations } from "@bomberoscr/db/queries/charts/topResponseTimesStations";
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
-import { headers } from "next/headers";
+import type { SearchParams } from "nuqs/server";
 import { Suspense, lazy } from "react";
 
 const ParticlesMap = lazy(() => import("@/features/dashboard/homepage/components/particles-map"));
@@ -40,48 +44,102 @@ export const metadata: Metadata = {
   }
 };
 
-async function getHomepageData(timeRange: number) {
+const TIME_RANGE = 30;
+
+async function TopStationsCharts() {
   "use cache";
   cacheLife({ revalidate: 10 * 60 });
   cacheTag("homepage");
 
-  const result = await Promise.all([
-    getTopResponseTimesStations({ timeRange }),
-    getTopDispatchedStations({ timeRange }),
-    getDailyIncidents({ timeRange }),
-    getIncidentsByDayOfWeek({ timeRange }),
-    getIncidentsByHour({ timeRange })
+  const [dispatchedStations, responseTimes] = await Promise.all([
+    getTopDispatchedStations({ timeRange: TIME_RANGE }),
+    getTopResponseTimesStations({ timeRange: TIME_RANGE })
   ]);
 
-  return result;
+  return (
+    <>
+      <TopDispatchedStationsChart stations={dispatchedStations} />
+      <TopResponseTimesStationsChart stations={responseTimes} />
+    </>
+  );
 }
 
-export default async function Page() {
-  await headers();
-  const timeRange = 30;
+async function IncidentDistributionCharts() {
+  "use cache";
+  cacheLife({ revalidate: 10 * 60 });
+  cacheTag("homepage");
 
-  const [responseTimes, dispatchedStations, dailyIncidents, incidentsByDayOfWeek, incidentsByHour] =
-    await getHomepageData(timeRange);
+  const [incidentsByDayOfWeek, incidentsByHour, dailyIncidents] = await Promise.all([
+    getIncidentsByDayOfWeek({ timeRange: TIME_RANGE }),
+    getIncidentsByHour({ timeRange: TIME_RANGE }),
+    getDailyIncidents({ timeRange: TIME_RANGE })
+  ]);
 
   return (
+    <>
+      <IncidentsByDayOfWeekChart incidents={incidentsByDayOfWeek} timeRange={TIME_RANGE} />
+      <IncidentsByHourChart incidents={incidentsByHour} timeRange={TIME_RANGE} />
+      <DailyIncidentsChart incidents={dailyIncidents} timeRange={TIME_RANGE} />
+    </>
+  );
+}
+
+function TopStationsChartsSkeleton() {
+  return (
+    <>
+      <ChartSkeleton
+        title="Estaciones más despachadas"
+        description="Estaciones con más despachos (responsable y apoyo) - Últimos 30 días"
+      />
+      <ChartSkeletonWithFooter
+        title="Tiempos de respuesta"
+        description="Las 3 estaciones más rápidas, más lentas y promedio nacional - Últimos 365 días"
+      />
+    </>
+  );
+}
+
+function IncidentDistributionChartsSkeleton() {
+  return (
+    <>
+      <ChartSkeleton
+        title="Incidentes por día de la semana"
+        description="Distribución de incidentes por día - Últimos 30 días"
+      />
+      <ChartSkeleton
+        title="Incidentes por hora del día"
+        description="Distribución de incidentes por hora - Últimos 30 días"
+      />
+      <ChartSkeletonWithFooter
+        title="Incidentes diarios"
+        description="Comparación de incidentes por día - 30 días actual vs anterior"
+        className="col-span-full"
+      />
+    </>
+  );
+}
+
+export default async function Page({ searchParams }: { searchParams: Promise<SearchParams> }) {
+  return (
     <div className="flex flex-col gap-8">
-      <HighlightedIncidents />
+      <HighlightedIncidents searchParams={searchParams} />
       <LatestIncidents />
       <MapCTA />
       <YearRecapHero />
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <TopDispatchedStationsChart stations={dispatchedStations} />
-        <TopResponseTimesStationsChart stations={responseTimes} />
+        <Suspense fallback={<TopStationsChartsSkeleton />}>
+          <TopStationsCharts />
+        </Suspense>
       </div>
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <IncidentsByDayOfWeekChart incidents={incidentsByDayOfWeek} timeRange={timeRange} />
-        <IncidentsByHourChart incidents={incidentsByHour} timeRange={timeRange} />
-        <DailyIncidentsChart incidents={dailyIncidents} timeRange={timeRange} />
+        <Suspense fallback={<IncidentDistributionChartsSkeleton />}>
+          <IncidentDistributionCharts />
+        </Suspense>
       </div>
       <Suspense
         fallback={
           <div className="flex w-full items-center justify-center p-8">
-            <Skeleton className="aspect-600/600 w-full max-w-[600px]" />
+            <Skeleton className="aspect-square w-full max-w-[600px]" />
           </div>
         }
       >

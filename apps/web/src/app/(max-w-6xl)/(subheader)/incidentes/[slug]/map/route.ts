@@ -2,7 +2,8 @@ import env from "@/features/lib/env";
 import { getFromR2, uploadToR2 } from "@/features/lib/r2";
 import { db, eq } from "@bomberoscr/db/index";
 import { incidents } from "@bomberoscr/db/schema";
-import { type NextRequest, NextResponse, after } from "next/server";
+import { NextResponse, after } from "next/server";
+import { z } from "zod";
 
 const MAPBOX_CONFIG = {
   zoom: 15.73,
@@ -11,6 +12,8 @@ const MAPBOX_CONFIG = {
   width: 640,
   height: 360
 };
+
+const INCIDENT_ID_REGEX = /^(\d+)/;
 
 function buildMapboxUrl(latitude: number, longitude: number): string {
   const { zoom, bearing, pitch, width, height } = MAPBOX_CONFIG;
@@ -25,37 +28,20 @@ function getR2Key(incidentId: number): string {
 /**
  * Returns a static map image for an incident location.
  * Images are cached in R2; on cache miss, fetches from Mapbox and stores in R2 asynchronously.
- * @param params.id - The incident ID
+ * @param params.slug - The incident slug (e.g., "123-incident-title")
  * @returns PNG image response with 1-year cache headers
  */
-export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  const incidentId = Number.parseInt(id, 10);
+export async function GET(_request: Request, { params }: { params: Promise<{ slug: string }> }) {
+  const idSchema = z.coerce.number().int().positive();
+  const { slug } = await params;
 
-  if (Number.isNaN(incidentId)) {
-    return NextResponse.json({ error: "Invalid incident ID" }, { status: 400 });
-  }
+  const idMatch = slug.match(INCIDENT_ID_REGEX);
+  if (!idMatch) return new NextResponse("Invalid slug format", { status: 404 });
 
-  const incident = await db.query.incidents.findFirst({
-    where: eq(incidents.id, incidentId),
-    columns: {
-      id: true,
-      latitude: true,
-      longitude: true
-    }
-  });
+  const idResult = idSchema.safeParse(idMatch[1]);
+  if (!idResult.success) return new NextResponse("Invalid ID", { status: 404 });
 
-  if (!incident) {
-    return NextResponse.json({ error: "Incident not found" }, { status: 404 });
-  }
-
-  const latitude = Number(incident.latitude);
-  const longitude = Number(incident.longitude);
-
-  if (!latitude || !longitude || latitude === 0 || longitude === 0) {
-    return NextResponse.json({ error: "Invalid coordinates" }, { status: 400 });
-  }
-
+  const incidentId = idResult.data;
   const r2Key = getR2Key(incidentId);
 
   const cachedImage = await getFromR2(r2Key);
@@ -68,6 +54,26 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
     });
   }
 
+  const incident = await db.query.incidents.findFirst({
+    where: eq(incidents.id, incidentId),
+    columns: {
+      id: true,
+      latitude: true,
+      longitude: true
+    }
+  });
+
+  if (!incident) {
+    return new NextResponse("Incident not found", { status: 404 });
+  }
+
+  const latitude = Number(incident.latitude);
+  const longitude = Number(incident.longitude);
+
+  if (!latitude || !longitude || latitude === 0 || longitude === 0) {
+    return new NextResponse("Invalid coordinates", { status: 400 });
+  }
+
   const mapboxUrl = buildMapboxUrl(latitude, longitude);
   const mapboxResponse = await fetch(mapboxUrl, {
     headers: {
@@ -76,10 +82,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
   });
 
   if (!mapboxResponse.ok) {
-    return NextResponse.json(
-      { error: "Failed to fetch map image" },
-      { status: mapboxResponse.status }
-    );
+    return new NextResponse("Failed to fetch map image", { status: mapboxResponse.status });
   }
 
   const imageBuffer = await mapboxResponse.arrayBuffer();

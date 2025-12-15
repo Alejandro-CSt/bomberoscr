@@ -1,7 +1,8 @@
 "use client";
 
 import { Badge } from "@/features/shared/components/ui/badge";
-import { buildIncidentUrlFromPartial, getRelativeTime } from "@/features/shared/lib/utils";
+import { RelativeTime } from "@/features/shared/components/ui/relative-time";
+import { buildIncidentUrlFromPartial } from "@/features/shared/lib/utils";
 import type { getLatestIncidents } from "@bomberoscr/db/queries/incidents";
 import Link from "next/link";
 
@@ -26,9 +27,10 @@ export function IncidentCard({
           <h3 className="font-semibold">
             {incident.specificIncidentType || incident.incidentType || "Incidente Desconocido"}
           </h3>
-          <p className="text-muted-foreground text-sm first-letter:capitalize">
-            {getRelativeTime(incident.incidentTimestamp.toString())}
-          </p>
+          <RelativeTime
+            date={incident.incidentTimestamp.toString()}
+            className="text-muted-foreground text-sm first-letter:capitalize"
+          />
         </div>
         <div className="flex shrink-0 flex-col items-end gap-1">
           <Badge variant={incident.isOpen ? "destructive" : "default"}>

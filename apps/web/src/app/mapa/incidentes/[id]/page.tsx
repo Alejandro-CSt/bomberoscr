@@ -14,12 +14,8 @@ import {
   TableHeader,
   TableRow
 } from "@/features/shared/components/ui/table";
-import {
-  buildIncidentUrl,
-  cn,
-  getRelativeTime,
-  isUndefinedDate
-} from "@/features/shared/lib/utils";
+import { buildIncidentUrl, cn, isUndefinedDate } from "@/features/shared/lib/utils";
+import { RelativeTime } from "@/features/shared/components/ui/relative-time";
 import { getDetailedIncidentById } from "@bomberoscr/db/queries/incidents";
 import {
   ArrowElbowDownRightIcon,
@@ -161,9 +157,14 @@ export default async function DetailedIncidentPanel({
           </div>
           <div className="flex flex-col text-end">
             <p className="font-semibold text-muted-foreground">Última actualización</p>
-            <p className="text-sm first-letter:uppercase">
-              {incident.modifiedAt ? getRelativeTime(incident.modifiedAt.toString()) : "N/A"}
-            </p>
+            {incident.modifiedAt ? (
+              <RelativeTime
+                date={incident.modifiedAt.toString()}
+                className="text-sm first-letter:uppercase"
+              />
+            ) : (
+              <p className="text-sm">N/A</p>
+            )}
           </div>
         </section>
 

@@ -1,7 +1,8 @@
 "use client";
 
 import { Button } from "@/features/shared/components/ui/button";
-import { cn, getRelativeTime } from "@/features/shared/lib/utils";
+import { RelativeTime } from "@/features/shared/components/ui/relative-time";
+import { cn } from "@/features/shared/lib/utils";
 import { SirenIcon } from "lucide-react";
 import { useState } from "react";
 
@@ -33,10 +34,7 @@ export default function OpenIncidentBanner({ modifiedAt, className }: OpenIncide
           <div className="space-y-0.5">
             <p className="font-medium text-sm">Incidente en progreso</p>
             <p className="text-muted-foreground text-sm">
-              Actualizado por última vez{" "}
-              <time dateTime={modifiedAt} suppressHydrationWarning>
-                {getRelativeTime(modifiedAt)}
-              </time>
+              Actualizado por última vez <RelativeTime date={modifiedAt} />
             </p>
           </div>
         </div>

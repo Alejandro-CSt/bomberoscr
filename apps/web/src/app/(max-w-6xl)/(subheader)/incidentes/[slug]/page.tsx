@@ -8,12 +8,6 @@ import { VehicleResponseTimeChart } from "@/features/dashboard/incidents/vehicle
 import { VehicleResponseTimeTable } from "@/features/dashboard/incidents/vehicle-response-time-table";
 import env from "@/features/lib/env";
 import { Tabs, TabsList, TabsPanel, TabsTab } from "@/features/shared/components/ui/tabs";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger
-} from "@/features/shared/components/ui/tooltip";
 import { buildIncidentUrl, extractIncidentId } from "@/features/shared/lib/utils";
 import { type DetailedIncident, getDetailedIncidentById } from "@bomberoscr/db/queries/incidents";
 import { areCoordinatesValid } from "@bomberoscr/lib/areCoordinatesValid";
@@ -247,12 +241,13 @@ export default async function IncidentPage({
               // />
               <div className="relative aspect-video w-full overflow-hidden rounded-xl">
                 <Image
-                  src={`/bomberos/api/incidents/${incident.id}/map`}
+                  src={`/bomberos/incidentes/${slug}/map`}
                   alt="Mapa del incidente"
                   referrerPolicy="origin"
                   className="h-full w-full object-cover"
                   fill
-                  quality={100}
+                  sizes="(max-width: 1024px) 100vw, 66vw"
+                  unoptimized
                   priority
                 />
               </div>
@@ -288,34 +283,16 @@ export default async function IncidentPage({
           <section className="mt-6">
             <h2>Desglose de tiempos de vehículos despachados</h2>
             <Tabs defaultValue="chart" className="w-full">
-              <div className="flex items-center justify-between">
-                <TabsList className="mt-2">
-                  <TooltipProvider delayDuration={0}>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <span>
-                          <TabsTab value="chart" className="py-3" aria-label="Ver gráfico">
-                            <BarChartHorizontalIcon size={16} aria-hidden="true" />
-                          </TabsTab>
-                        </span>
-                      </TooltipTrigger>
-                      <TooltipContent className="px-2 py-1 text-xs">Gráfico</TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                  <TooltipProvider delayDuration={0}>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <span>
-                          <TabsTab value="table" className="py-3" aria-label="Ver tabla">
-                            <TableIcon size={16} aria-hidden="true" />
-                          </TabsTab>
-                        </span>
-                      </TooltipTrigger>
-                      <TooltipContent className="px-2 py-1 text-xs">Tabla</TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </TabsList>
-              </div>
+              <TabsList variant="underline" className="mt-2 h-auto">
+                <TabsTab value="chart" className="border-none" aria-label="Ver gráfico">
+                  <BarChartHorizontalIcon size={16} aria-hidden="true" />
+                  Gráfico
+                </TabsTab>
+                <TabsTab value="table" className="border-none" aria-label="Ver tabla">
+                  <TableIcon size={16} aria-hidden="true" />
+                  Tabla
+                </TabsTab>
+              </TabsList>
 
               <TabsPanel value="chart">
                 <VehicleResponseTimeChart

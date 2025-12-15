@@ -50,49 +50,43 @@ export function HeaderContent() {
   const { title, breadcrumbs } = getCurrentPageInfo();
 
   return (
-    <header
-      className={cn(
-        "app-subheader flex shrink-0 items-center gap-2 bg-background px-6 py-2 xl:px-0"
-      )}
-    >
-      <div className="mx-auto w-full max-w-6xl">
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link href="/">Inicio</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            {breadcrumbs.length > 0 && (
-              <>
-                <BreadcrumbSeparator />
-                {breadcrumbs.map((crumb, index) => (
-                  <div key={crumb.href} className="flex items-center">
-                    <BreadcrumbItem>
-                      {crumb.isActive ? (
-                        <BreadcrumbPage>{crumb.title}</BreadcrumbPage>
-                      ) : (
-                        <BreadcrumbLink asChild>
-                          <Link href={{ pathname: crumb.href }}>{crumb.title}</Link>
-                        </BreadcrumbLink>
-                      )}
-                    </BreadcrumbItem>
-                    {index < breadcrumbs.length - 1 && <BreadcrumbSeparator />}
-                  </div>
-                ))}
-              </>
-            )}
-            {title && breadcrumbs.length === 0 && (
-              <>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>{title}</BreadcrumbPage>
-                </BreadcrumbItem>
-              </>
-            )}
-          </BreadcrumbList>
-        </Breadcrumb>
-      </div>
+    <header className={cn("app-subheader flex shrink-0 items-center gap-2 bg-background py-2")}>
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link href="/">Inicio</Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          {breadcrumbs.length > 0 && (
+            <>
+              <BreadcrumbSeparator />
+              {breadcrumbs.map((crumb, index) => (
+                <div key={crumb.href} className="flex items-center">
+                  <BreadcrumbItem>
+                    {crumb.isActive ? (
+                      <BreadcrumbPage>{crumb.title}</BreadcrumbPage>
+                    ) : (
+                      <BreadcrumbLink asChild>
+                        <Link href={{ pathname: crumb.href }}>{crumb.title}</Link>
+                      </BreadcrumbLink>
+                    )}
+                  </BreadcrumbItem>
+                  {index < breadcrumbs.length - 1 && <BreadcrumbSeparator />}
+                </div>
+              ))}
+            </>
+          )}
+          {title && breadcrumbs.length === 0 && (
+            <>
+              <BreadcrumbSeparator className="hidden md:block" />
+              <BreadcrumbItem>
+                <BreadcrumbPage>{title}</BreadcrumbPage>
+              </BreadcrumbItem>
+            </>
+          )}
+        </BreadcrumbList>
+      </Breadcrumb>
     </header>
   );
 }

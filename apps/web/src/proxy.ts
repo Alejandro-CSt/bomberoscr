@@ -11,7 +11,7 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  if (pathname.includes("/og") || pathname.match(staticFileRegex)) {
+  if (pathname.includes("/og") || pathname.includes("/map") || pathname.match(staticFileRegex)) {
     return NextResponse.next();
   }
 
@@ -40,7 +40,7 @@ export async function proxy(request: NextRequest) {
     const redirectUrl = new URL(`${basePath}${correctUrl}`, request.url);
 
     return NextResponse.redirect(redirectUrl, {
-      status: 308
+      status: incident.isOpen ? 307 : 308
     });
   }
 

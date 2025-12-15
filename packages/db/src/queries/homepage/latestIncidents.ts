@@ -1,21 +1,15 @@
 import { db } from "@bomberoscr/db/index";
-import {
-  dispatchedStations,
-  dispatchedVehicles,
-  districts,
-  incidentTypes,
-  incidents,
-  stations
-} from "@bomberoscr/db/schema";
+import { dispatchedStations, dispatchedVehicles, incidents, stations } from "@bomberoscr/db/schema";
 import { desc, eq, sql } from "drizzle-orm";
 
 /**
  * Get the latest incidents for the homepage
  *
- * Returns the most recent incidents ordered by timestamp descending.
+ * Returns the most recent incidents ordered by incident ID descending.
+ * We use ID instead of timestamp because operators sometimes enter incorrect dates.
  *
  * @param limit - Number of incidents to return (default: 5, max: 30)
- * @returns Array of latest incidents with all fields, sorted by timestamp descending
+ * @returns Array of latest incidents sorted by ID descending
  */
 export async function getLatestIncidents({
   limit = 5
@@ -47,19 +41,15 @@ export async function getLatestIncidents({
       incidentTimestamp: incidents.incidentTimestamp,
       address: incidents.address,
       importantDetails: incidents.importantDetails,
-      districtName: districts.name,
       responsibleStation: stations.name,
-      incidentType: incidentTypes.name,
       dispatchedVehiclesCount: sql<number>`COALESCE(${vehicleCounts.vehicleCount}, 0)`,
       dispatchedStationsCount: sql<number>`COALESCE(${stationCounts.stationCount}, 0)`
     })
     .from(incidents)
-    .leftJoin(districts, eq(incidents.districtId, districts.id))
     .leftJoin(stations, eq(incidents.responsibleStation, stations.id))
-    .leftJoin(incidentTypes, eq(incidents.specificIncidentCode, incidentTypes.incidentCode))
     .leftJoin(vehicleCounts, eq(incidents.id, vehicleCounts.incidentId))
     .leftJoin(stationCounts, eq(incidents.id, stationCounts.incidentId))
-    .orderBy(desc(incidents.incidentTimestamp))
+    .orderBy(desc(incidents.id))
     .limit(limit);
 }
 

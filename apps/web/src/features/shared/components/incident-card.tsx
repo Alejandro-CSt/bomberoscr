@@ -1,5 +1,5 @@
+import { RelativeTime } from "@/features/shared/components/ui/relative-time";
 import { Skeleton } from "@/features/shared/components/ui/skeleton";
-import { getRelativeTime } from "@/features/shared/lib/utils";
 import { FireTruckIcon, GarageIcon } from "@phosphor-icons/react/dist/ssr";
 import type { Route } from "next";
 import Link from "next/link";
@@ -34,9 +34,10 @@ export function IncidentCard({ incident }: { incident: BaseIncidentCard }) {
             <span>{incident.dispatchedVehiclesCount}</span>
           </div>
         </div>
-        <span className="whitespace-nowrap text-muted-foreground text-xs first-letter:uppercase">
-          {getRelativeTime(incident.incidentTimestamp)}
-        </span>
+        <RelativeTime
+          date={incident.incidentTimestamp}
+          className="whitespace-nowrap text-muted-foreground text-xs first-letter:uppercase"
+        />
       </div>
     </Link>
   );
