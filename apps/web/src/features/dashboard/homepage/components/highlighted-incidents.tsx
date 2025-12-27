@@ -17,8 +17,8 @@ import {
 } from "@bomberoscr/lib/time-range";
 import type { Route } from "next";
 import { cacheLife } from "next/cache";
-import type { SearchParams } from "nuqs/server";
 import Link from "next/link";
+import type { SearchParams } from "nuqs/server";
 import { Suspense } from "react";
 
 interface HighlightedIncidentsListProps {

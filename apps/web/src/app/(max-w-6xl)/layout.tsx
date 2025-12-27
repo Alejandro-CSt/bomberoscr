@@ -1,3 +1,4 @@
+import { Footer } from "@/features/layout/components/footer";
 import env from "@/features/lib/env";
 import type { Metadata } from "next";
 
@@ -27,6 +28,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="w-full px-6 xl:px-0">
       <div className="mx-auto w-full max-w-6xl">{children}</div>
+      <Footer />
     </div>
   );
 }

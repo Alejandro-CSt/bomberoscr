@@ -6,6 +6,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger
 } from "@/features/shared/components/ui/collapsible";
+import { RelativeTime } from "@/features/shared/components/ui/relative-time";
 import {
   Table,
   TableBody,
@@ -15,7 +16,6 @@ import {
   TableRow
 } from "@/features/shared/components/ui/table";
 import { buildIncidentUrl, cn, isUndefinedDate } from "@/features/shared/lib/utils";
-import { RelativeTime } from "@/features/shared/components/ui/relative-time";
 import { getDetailedIncidentById } from "@bomberoscr/db/queries/incidents";
 import {
   ArrowElbowDownRightIcon,

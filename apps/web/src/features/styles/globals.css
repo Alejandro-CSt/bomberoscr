@@ -106,8 +106,8 @@
   --shadow-2xl: var(--shadow-2xl);
   --animate-skeleton: skeleton 2s -1s infinite linear;
   @keyframes skeleton {
-  to {
-    background-position: -200% 0;
+    to {
+      background-position: -200% 0;
     }
   }
 }
@@ -434,4 +434,14 @@ body {
 
 .dark {
   --destructive-foreground: var(--color-red-400);
+}
+
+html {
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+}
+
+html body[data-scroll-locked] {
+  --removed-body-scroll-bar-size: 0 !important;
+  margin-right: 0 !important;
 }

@@ -6,8 +6,8 @@ import {
 import { buildIncidentUrl, cn } from "@/features/shared/lib/utils";
 import { getLatestIncidents } from "@bomberoscr/db/queries/homepage/latestIncidents";
 import { ArrowRightIcon } from "lucide-react";
-import { cacheLife } from "next/cache";
 import type { Route } from "next";
+import { cacheLife } from "next/cache";
 import Link from "next/link";
 import { Suspense } from "react";
 

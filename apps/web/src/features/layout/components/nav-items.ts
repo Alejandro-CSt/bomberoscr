@@ -28,6 +28,6 @@ export const navItems = [
     title: "Estaciones",
     url: "/estaciones",
     icon: GarageIcon,
-    enabled: false
+    enabled: true
   }
 ];
