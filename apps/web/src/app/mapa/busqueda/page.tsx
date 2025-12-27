@@ -1,6 +1,5 @@
 import env from "@/features/lib/env";
 import type { Metadata } from "next";
-import SearchMapPageClient from "./search-map-client";
 
 const description =
   "Busca incidentes atendidos por Bomberos de Costa Rica filtrando por tipo, estación y rango de tiempo sobre un mapa interactivo.";
@@ -26,5 +25,13 @@ export const metadata: Metadata = {
 };
 
 export default function SearchMapPage() {
-  return <SearchMapPageClient />;
+  return (
+    <section className="mx-auto flex max-w-2xl flex-col items-center gap-4 px-6 py-16 text-center">
+      <h1 className="font-semibold text-3xl">Búsqueda geoespacial no disponible</h1>
+      <p className="text-base text-muted-foreground">
+        Estamos trabajando en mejoras para esta herramienta. Vuelve más adelante para acceder a la
+        búsqueda de incidentes en el mapa.
+      </p>
+    </section>
+  );
 }

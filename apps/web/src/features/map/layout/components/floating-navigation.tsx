@@ -28,20 +28,6 @@ export function FloatingNavigation() {
             pathname.startsWith("/mapa/ajustes") ? "bg-primary text-primary-foreground" : ""
           )}
         />
-
-        <Button
-          variant="ghost"
-          render={
-            <Link prefetch href="/mapa/busqueda">
-              <SearchIcon className="size-4" />
-              <span className="font-medium text-sm">Buscar</span>
-            </Link>
-          }
-          className={cn(
-            "flex items-center gap-2 rounded-full border bg-background/80 px-3 py-1 shadow-lg backdrop-blur-lg transition-[background] hover:bg-accent",
-            pathname.startsWith("/mapa/busqueda") ? "bg-primary text-primary-foreground" : ""
-          )}
-        />
       </div>
     </div>
   );

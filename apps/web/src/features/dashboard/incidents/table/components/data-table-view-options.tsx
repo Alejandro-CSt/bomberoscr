@@ -29,10 +29,8 @@ const COLUMN_LABELS: Record<string, string> = {
 export function DataTableViewOptions<TData>({ table }: DataTableViewOptionsProps<TData>) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon">
-          <SlidersHorizontalIcon />
-        </Button>
+      <DropdownMenuTrigger render={<Button variant="outline" size="icon" />}>
+        <SlidersHorizontalIcon />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[150px]">
         <DropdownMenuLabel>Mostrar columnas</DropdownMenuLabel>

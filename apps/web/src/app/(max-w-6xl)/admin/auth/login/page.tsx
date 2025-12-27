@@ -29,7 +29,7 @@ async function LoginForm({ searchParams }: { searchParams: Params }) {
       <Input type="password" placeholder="Password" name="adminToken" />
       <Button type="submit">Login</Button>
       {error && (
-        <Alert variant="destructive">
+        <Alert variant="error">
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Error</AlertTitle>
           <AlertDescription>

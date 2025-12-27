@@ -75,7 +75,11 @@ export function IncidentSheet() {
 
   return (
     <Sheet open={open} onOpenChange={handleOpenChange}>
-      <SheetContent side="right" className="overflow-x-auto pb-8 sm:max-w-lg">
+      <SheetContent
+        showCloseButton={false}
+        side="right"
+        className="overflow-x-auto pb-8 sm:max-w-lg"
+      >
         <SheetHeader>
           <div className="flex items-start justify-between gap-2">
             <SheetTitle className="font-semibold text-lg">

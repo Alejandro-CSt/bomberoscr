@@ -36,29 +36,31 @@ function MobileHeaderNavInner({ className }: { className?: string }) {
   return (
     <nav className={className}>
       <Popover onOpenChange={setOpen} open={open}>
-        <PopoverTrigger asChild>
-          <Button
-            className="extend-touch-target !p-0 h-8 touch-manipulation items-center justify-start gap-2.5 border-none hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 active:bg-transparent dark:hover:bg-transparent"
-            variant="ghost"
-          >
-            <div className="relative flex h-8 w-4 items-center justify-center">
-              <div className="relative size-4">
-                <span
-                  className={cn(
-                    "absolute left-0 block h-0.5 w-4 bg-foreground transition-all duration-100",
-                    open ? "-rotate-45 top-[0.4rem]" : "top-1"
-                  )}
-                />
-                <span
-                  className={cn(
-                    "absolute left-0 block h-0.5 w-4 bg-foreground transition-all duration-100",
-                    open ? "top-[0.4rem] rotate-45" : "top-2.5"
-                  )}
-                />
-              </div>
-              <span className="sr-only">Toggle Menu</span>
+        <PopoverTrigger
+          render={
+            <Button
+              className="extend-touch-target !p-0 h-8 touch-manipulation items-center justify-start gap-2.5 border-none hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 active:bg-transparent dark:hover:bg-transparent"
+              variant="ghost"
+            />
+          }
+        >
+          <div className="relative flex h-8 w-4 items-center justify-center">
+            <div className="relative size-4">
+              <span
+                className={cn(
+                  "absolute left-0 block h-0.5 w-4 bg-foreground transition-all duration-100",
+                  open ? "-rotate-45 top-[0.4rem]" : "top-1"
+                )}
+              />
+              <span
+                className={cn(
+                  "absolute left-0 block h-0.5 w-4 bg-foreground transition-all duration-100",
+                  open ? "top-[0.4rem] rotate-45" : "top-2.5"
+                )}
+              />
             </div>
-          </Button>
+            <span className="sr-only">Toggle Menu</span>
+          </div>
         </PopoverTrigger>
         <PopoverContent
           align="start"

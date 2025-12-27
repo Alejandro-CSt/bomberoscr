@@ -101,9 +101,13 @@ export default function SearchMapPageClient() {
       />
       <Form {...form}>
         <form className="space-y-4 p-4">
-          <IncidentTypesField name="incidentTypeCodes" />
-          <StationsField name="stationIds" />
-          <TimeRangeField name="timeRange" />
+          <IncidentTypesField
+            control={form.control}
+            errors={form.formState.errors}
+            name="incidentTypeCodes"
+          />
+          <StationsField control={form.control} errors={form.formState.errors} name="stationIds" />
+          <TimeRangeField control={form.control} errors={form.formState.errors} name="timeRange" />
         </form>
       </Form>
     </div>

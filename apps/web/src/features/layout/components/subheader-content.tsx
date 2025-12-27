@@ -54,9 +54,7 @@ export function HeaderContent() {
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link href="/">Inicio</Link>
-            </BreadcrumbLink>
+            <BreadcrumbLink render={<Link href="/" />}>Inicio</BreadcrumbLink>
           </BreadcrumbItem>
           {breadcrumbs.length > 0 && (
             <>
@@ -67,8 +65,8 @@ export function HeaderContent() {
                     {crumb.isActive ? (
                       <BreadcrumbPage>{crumb.title}</BreadcrumbPage>
                     ) : (
-                      <BreadcrumbLink asChild>
-                        <Link href={{ pathname: crumb.href }}>{crumb.title}</Link>
+                      <BreadcrumbLink render={<Link href={{ pathname: crumb.href }} />}>
+                        {crumb.title}
                       </BreadcrumbLink>
                     )}
                   </BreadcrumbItem>

@@ -2,13 +2,7 @@
 
 import { Button } from "@/features/shared/components/ui/button";
 import { Calendar } from "@/features/shared/components/ui/calendar";
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage
-} from "@/features/shared/components/ui/form";
+import { Field, FieldError, FieldLabel } from "@/features/shared/components/ui/field";
 import { Popover, PopoverContent, PopoverTrigger } from "@/features/shared/components/ui/popover";
 import { cn } from "@/features/shared/lib/utils";
 import {
@@ -22,14 +16,24 @@ import {
 } from "date-fns";
 import { es } from "date-fns/locale";
 import * as React from "react";
+import type { Control, FieldErrors } from "react-hook-form";
+import { Controller } from "react-hook-form";
 
 type Props = {
   name: string;
   label?: string;
   className?: string;
+  control: Control<any>;
+  errors?: FieldErrors<any>;
 };
 
-export function TimeRangeField({ name, label = "Rango de tiempo", className }: Props) {
+export function TimeRangeField({
+  name,
+  label = "Rango de tiempo",
+  className,
+  control,
+  errors
+}: Props) {
   const today = new Date();
   const yesterday = { from: subDays(today, 1), to: subDays(today, 1) };
   const last7Days = { from: subDays(today, 6), to: today };
@@ -43,9 +47,11 @@ export function TimeRangeField({ name, label = "Rango de tiempo", className }: P
   const lastYear = { from: startOfYear(subYears(today, 1)), to: endOfYear(subYears(today, 1)) };
 
   const [month, setMonth] = React.useState(today);
+  const errorBag = (errors ?? {}) as Record<string, { message?: string } | undefined>;
 
   return (
-    <FormField
+    <Controller
+      control={control}
       name={name as never}
       render={({ field }) => {
         const selectedRange = {
@@ -61,15 +67,17 @@ export function TimeRangeField({ name, label = "Rango de tiempo", className }: P
           return "Selecciona rango";
         })();
 
+        const errorMessage = errorBag[name]?.message;
+
         return (
-          <FormItem className={cn(className)}>
-            {label ? <FormLabel>{label}</FormLabel> : null}
-            <FormControl>
+          <Field className={cn(className)}>
+            {label ? <FieldLabel>{label}</FieldLabel> : null}
+            <div data-slot="field-control">
               <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" className="w-full justify-between">
-                    {rangeLabel}
-                  </Button>
+                <PopoverTrigger
+                  render={<Button variant="outline" className="w-full justify-between" />}
+                >
+                  {rangeLabel}
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="center">
                   <div className="rounded-md border">
@@ -195,9 +203,9 @@ export function TimeRangeField({ name, label = "Rango de tiempo", className }: P
                   </div>
                 </PopoverContent>
               </Popover>
-            </FormControl>
-            <FormMessage />
-          </FormItem>
+            </div>
+            {errorMessage ? <FieldError>{errorMessage}</FieldError> : null}
+          </Field>
         );
       }}
     />

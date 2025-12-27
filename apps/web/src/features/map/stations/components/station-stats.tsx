@@ -61,7 +61,7 @@ export function StationStats({ stationKey }: { stationKey: string }) {
   if (error || !data)
     return (
       <div className="p-4">
-        <Alert variant="destructive">
+        <Alert variant="error">
           <AlertCircleIcon className="h-4 w-4" />
           <AlertTitle>Error al cargar las estadísticas de la estación {stationKey}</AlertTitle>
           <AlertDescription>{error?.message}</AlertDescription>
