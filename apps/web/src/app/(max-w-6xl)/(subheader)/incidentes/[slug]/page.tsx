@@ -11,7 +11,11 @@ import { Tabs, TabsList, TabsPanel, TabsTab } from "@/features/shared/components
 import { MAP_BLUR_DATA_URL } from "@/features/shared/lib/constants";
 import { buildIncidentUrl, extractIncidentId } from "@/features/shared/lib/utils";
 import { StationCard } from "@/features/stations/components/station-card";
-import { type DetailedIncident, getDetailedIncidentById } from "@bomberoscr/db/queries/incidents";
+import {
+  type DetailedIncident,
+  getDetailedIncidentById,
+  getIncidentStatistics
+} from "@bomberoscr/db/queries/incidents";
 import { areCoordinatesValid } from "@bomberoscr/lib/areCoordinatesValid";
 import { BarChartHorizontalIcon, TableIcon, TriangleAlertIcon } from "lucide-react";
 import type { Metadata } from "next";
@@ -194,7 +198,7 @@ export default async function IncidentPage({
     cacheLife("closedIncident");
   }
 
-  // const similar = await getSimilarIncidents(Number(id));
+  const statistics = await getIncidentStatistics(incident);
   const jsonLd = getJsonLd(incident);
 
   // Remove undefined properties from jsonLd
@@ -283,7 +287,7 @@ export default async function IncidentPage({
               hour12: true
             })}
           </time>
-          <IncidentNarrative incident={incident} />
+          <IncidentNarrative incident={incident} statistics={statistics} />
 
           <section className="mt-6">
             <h2>Desglose de tiempos de vehículos despachados</h2>

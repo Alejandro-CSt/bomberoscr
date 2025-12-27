@@ -1,5 +1,5 @@
 import { isUndefinedDate } from "@/features/shared/lib/utils";
-import type { DetailedIncident } from "@bomberoscr/db/queries/incidents";
+import type { DetailedIncident, IncidentStatistics } from "@bomberoscr/db/queries/incidents";
 import Link from "next/link";
 
 function formatTime(date: Date) {
@@ -44,9 +44,11 @@ function calculateDuration(arrivalTime: Date, departureTime: Date): string {
 }
 
 export default function IncidentNarrative({
-  incident
+  incident,
+  statistics
 }: {
   incident: NonNullable<DetailedIncident>;
+  statistics: IncidentStatistics;
 }) {
   const dispatchTypes: string[] = [];
   if (incident.dispatchIncidentType?.name) {
@@ -134,7 +136,7 @@ export default function IncidentNarrative({
         {responsibleStation && (
           <>
             Se asigna la estación{" "}
-            <Link href={`/mapa/estaciones/${responsibleStation.station.name}`} prefetch={false}>
+            <Link href={`/estaciones/${responsibleStation.station.name}`} prefetch={false}>
               {responsibleStation.station.name}
             </Link>{" "}
             como responsable
@@ -187,7 +189,7 @@ export default function IncidentNarrative({
 
             return (
               <span key={s.station.name}>
-                <Link href={`/mapa/estaciones/${s.station.name}`} prefetch={false}>
+                <Link href={`/estaciones/${s.station.name}`} prefetch={false}>
                   {s.station.name}
                 </Link>
                 {!isLast && (isSecondLast ? " y " : ", ")}
@@ -213,6 +215,32 @@ export default function IncidentNarrative({
             <em className="lowercase">{actualTypeDisplay}</em>".
           </p>
         ))}
+
+      {statistics.typeRankInYear > 0 && (
+        <p>
+          En el {statistics.year} se han reportado{" "}
+          {statistics.typeRankInYear.toLocaleString("es-CR")} incidente
+          {statistics.typeRankInYear !== 1 ? "s" : ""} de tipo "
+          <em className="lowercase">{actualTypeDisplay || dispatchTypeDisplay}</em>"
+          {statistics.typeRankInCanton > 0 && incident.canton && (
+            <>
+              {", "}
+              {statistics.typeRankInCanton === 1
+                ? `siendo este el primero en el cantón de ${incident.canton.name}`
+                : `${statistics.typeRankInCanton.toLocaleString("es-CR")} de ellos en ${incident.canton.name}`}
+            </>
+          )}
+          .
+          {statistics.typeCountPreviousYear > 0 && (
+            <>
+              {" "}
+              En {statistics.year - 1} hubo{" "}
+              {statistics.typeCountPreviousYear.toLocaleString("es-CR")} incidente
+              {statistics.typeCountPreviousYear !== 1 ? "s" : ""} de este tipo.
+            </>
+          )}
+        </p>
+      )}
     </section>
   );
 }
