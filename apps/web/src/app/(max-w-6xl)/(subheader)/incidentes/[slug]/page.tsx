@@ -10,6 +10,7 @@ import env from "@/features/lib/env";
 import { Tabs, TabsList, TabsPanel, TabsTab } from "@/features/shared/components/ui/tabs";
 import { MAP_BLUR_DATA_URL } from "@/features/shared/lib/constants";
 import { buildIncidentUrl, extractIncidentId } from "@/features/shared/lib/utils";
+import { StationCard } from "@/features/stations/components/station-card";
 import { type DetailedIncident, getDetailedIncidentById } from "@bomberoscr/db/queries/incidents";
 import { areCoordinatesValid } from "@bomberoscr/lib/areCoordinatesValid";
 import { BarChartHorizontalIcon, TableIcon, TriangleAlertIcon } from "lucide-react";
@@ -310,6 +311,29 @@ export default async function IncidentPage({
               </TabsPanel>
             </Tabs>
           </section>
+
+          {incident.dispatchedStations.length > 0 && (
+            <section className="mt-6">
+              <h2>Estaciones despachadas</h2>
+              <ul className="not-typography mt-4 ml-0 grid list-none grid-cols-1 gap-4 pl-0 sm:grid-cols-2">
+                {[...incident.dispatchedStations]
+                  .sort((a, b) => {
+                    const aIsResponsible = a.station.id === incident.responsibleStation;
+                    const bIsResponsible = b.station.id === incident.responsibleStation;
+                    if (aIsResponsible && !bIsResponsible) return -1;
+                    if (!aIsResponsible && bIsResponsible) return 1;
+                    return a.station.stationKey.localeCompare(b.station.stationKey, undefined, {
+                      numeric: true
+                    });
+                  })
+                  .map((dispatched) => (
+                    <li key={dispatched.id}>
+                      <StationCard station={dispatched.station} />
+                    </li>
+                  ))}
+              </ul>
+            </section>
+          )}
 
           {/* {similar.length > 0 && (
             <section aria-labelledby="nearby-heading">

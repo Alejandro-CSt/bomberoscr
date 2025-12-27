@@ -124,7 +124,10 @@ export async function getDetailedIncidentById(id: number) {
         with: {
           station: {
             columns: {
+              id: true,
               name: true,
+              stationKey: true,
+              address: true,
               latitude: true,
               longitude: true
             }
