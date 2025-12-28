@@ -102,7 +102,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
         <NuqsAdapter>
           <TRPCProvider>
             <ScrollToTop />
-            <div className="flex min-h-dvh min-w-0 flex-col overflow-x-hidden pt-(--app-header-height)">
+            <div className="flex min-h-dvh min-w-0 flex-col overflow-x-clip pt-(--app-header-height)">
               <Header />
               <HeaderBackdrop />
 

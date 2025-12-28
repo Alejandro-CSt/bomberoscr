@@ -356,7 +356,7 @@ export default async function IncidentPage({
         </div>
 
         <aside
-          className="not-typography order-2 self-start lg:sticky lg:top-4 lg:order-2 lg:col-span-1"
+          className="not-typography order-2 self-start lg:sticky lg:top-(--app-top-offset) lg:order-2 lg:col-span-1"
           aria-label="Cronología del incidente"
         >
           <IncidentTimeline incident={incident} />

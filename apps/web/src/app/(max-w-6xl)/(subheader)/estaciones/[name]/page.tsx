@@ -89,13 +89,13 @@ export default function StationPage(props: PageProps<"/estaciones/[name]">) {
 
   return (
     <div className="grid w-full grid-cols-1 gap-6 md:gap-8 lg:grid-cols-3">
-      <div className="sticky top-4 self-start">
+      <aside className="sticky top-(--app-top-offset) self-start">
         <Suspense fallback={<StationProfileHeaderSkeleton />}>
           <StationProfileHeader params={params} />
         </Suspense>
-      </div>
+      </aside>
 
-      <aside className="flex flex-col gap-6 lg:col-span-2">
+      <div className="flex flex-col gap-6 lg:col-span-2">
         <Suspense fallback={<StationHighlightedIncidentsSkeleton />}>
           <StationHighlightedIncidents params={params} />
         </Suspense>
@@ -105,7 +105,7 @@ export default function StationPage(props: PageProps<"/estaciones/[name]">) {
         <Suspense fallback={<StationRecentIncidentsSkeleton />}>
           <StationRecentIncidents params={params} />
         </Suspense>
-      </aside>
+      </div>
     </div>
   );
 }
