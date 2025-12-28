@@ -89,7 +89,11 @@ export function StationProfileHeaderSkeleton() {
 
       <div className="pt-14 sm:pt-16">
         <Skeleton className="h-10 w-64 rounded-md sm:h-12" />
-        <Skeleton className="mt-2 h-5 w-full max-w-md rounded-md" />
+        <div className="mt-2 flex flex-col gap-1">
+          <Skeleton className="h-4 w-full max-w-md rounded-md" />
+          <Skeleton className="h-4 w-full max-w-sm rounded-md" />
+          <Skeleton className="h-4 w-48 rounded-md" />
+        </div>
         <div className="mt-4 flex gap-5">
           <Skeleton className="h-5 w-32 rounded-md" />
           <Skeleton className="h-5 w-48 rounded-md" />
