@@ -27,7 +27,7 @@ export function HeaderBackdrop() {
     <div
       className={cn(
         "pointer-events-none fixed inset-x-0 z-40 h-8 bg-gradient-to-b from-background to-transparent transition-opacity duration-300",
-        !show && "hidden"
+        show ? "opacity-100" : "opacity-0"
       )}
       style={{ top: "var(--app-header-height)" }}
     />

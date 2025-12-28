@@ -103,7 +103,7 @@ async function StationsDirectory({ searchParamsPromise }: StationsDirectoryProps
   );
 
   const totalPages = Math.ceil(filteredStations.length / STATIONS_PER_PAGE);
-  const safePage = Math.min(page, Math.max(0, totalPages - 1));
+  const safePage = Math.max(0, Math.min(page, totalPages - 1));
   const startIndex = safePage * STATIONS_PER_PAGE;
   const currentStations = filteredStations.slice(startIndex, startIndex + STATIONS_PER_PAGE);
 

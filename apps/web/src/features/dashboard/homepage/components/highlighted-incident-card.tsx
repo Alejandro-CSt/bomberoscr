@@ -103,7 +103,7 @@ export function HighlightedIncidentCard({ incident }: { incident: MinimalInciden
           </div>
           <RelativeTime
             date={incident.incidentTimestamp}
-            className="text-muted-foreground text-sm first-letter:uppercase"
+            className="shrink-0 whitespace-nowrap text-muted-foreground text-sm first-letter:uppercase"
           />
         </div>
       </div>
@@ -119,16 +119,16 @@ export function HighlightedIncidentCardSkeleton() {
       </div>
       <div className="flex flex-col gap-2 p-3 md:flex-1 md:py-3 md:pr-3 md:pl-1">
         <div className="flex flex-col gap-0.5">
-          <Skeleton className="h-[24px] w-3/4" />
-          <Skeleton className="h-[20px] w-1/3" />
-          <Skeleton className="h-[16px] w-full md:h-[32px]" />
+          <Skeleton className="h-6 w-3/4" />
+          <Skeleton className="h-5 w-1/3" />
+          <Skeleton className="h-4 w-full md:h-8" />
         </div>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Skeleton className="h-[18px] w-12" />
-            <Skeleton className="h-[18px] w-12" />
+            <Skeleton className="h-5 w-10" />
+            <Skeleton className="h-5 w-10" />
           </div>
-          <Skeleton className="h-[20px] w-20" />
+          <Skeleton className="h-5 w-24" />
         </div>
       </div>
     </div>

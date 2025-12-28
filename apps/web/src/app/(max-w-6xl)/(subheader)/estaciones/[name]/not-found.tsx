@@ -10,10 +10,10 @@ import Link from "next/link";
 
 const navigationLinks = [
   {
-    title: "Incidentes recientes",
-    description: "Consulta los últimos incidentes atendidos",
-    url: "/incidentes",
-    icon: SirenIcon
+    title: "Directorio de estaciones",
+    description: "Explora todas las estaciones de bomberos del país",
+    url: "/estaciones",
+    icon: GarageIcon
   },
   {
     title: "Mapa interactivo",
@@ -22,10 +22,10 @@ const navigationLinks = [
     icon: MapTrifoldIcon
   },
   {
-    title: "Directorio de estaciones",
-    description: "Explora todas las estaciones de bomberos del país",
-    url: "/estaciones",
-    icon: GarageIcon
+    title: "Incidentes recientes",
+    description: "Consulta los últimos incidentes atendidos",
+    url: "/incidentes",
+    icon: SirenIcon
   },
   {
     title: "Página principal",
@@ -35,23 +35,19 @@ const navigationLinks = [
   }
 ];
 
-export default function IncidentNotFound() {
+export default function StationNotFound() {
   return (
     <div className="flex flex-col items-center justify-center py-16 text-center">
       <div className="mb-6 flex size-20 items-center justify-center rounded-full bg-muted">
         <MagnifyingGlassIcon className="size-10 text-muted-foreground" />
       </div>
 
-      <h1 className="font-bold text-2xl">Incidente no encontrado</h1>
-      <p className="mt-2 max-w-md text-muted-foreground">
-        No pudimos encontrar información para el incidente que buscas. Es posible que haya sido
-        archivado o que el enlace sea incorrecto.
-      </p>
+      <h1 className="font-bold text-2xl">Estación no encontrada</h1>
 
       <div className="mt-8 flex flex-wrap justify-center gap-3">
-        <Button render={<Link href="/incidentes" />} variant="default">
-          <SirenIcon />
-          Ver incidentes recientes
+        <Button render={<Link href="/estaciones" />} variant="default">
+          <GarageIcon />
+          Ver todas las estaciones
         </Button>
         <Button render={<Link href="/" />} variant="outline">
           <HouseLineIcon />

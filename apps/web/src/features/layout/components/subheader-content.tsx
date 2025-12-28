@@ -12,8 +12,10 @@ import {
 import { cn, extractIncidentId } from "@/features/shared/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Fragment } from "react";
 
 const incidentRegex = /^\/incidentes\/(.+)$/;
+const stationRegex = /^\/estaciones\/(.+)$/;
 
 export function HeaderContent() {
   const pathname = usePathname();
@@ -32,6 +34,18 @@ export function HeaderContent() {
         breadcrumbs: [
           { title: "Incidentes", href: "/incidentes" },
           { title: `Incidente ${incidentId}`, href: pathname, isActive: true }
+        ]
+      };
+    }
+
+    const stationMatch = pathname.match(stationRegex);
+    if (stationMatch?.[1]) {
+      const stationName = decodeURIComponent(stationMatch[1]);
+      return {
+        title: stationName,
+        breadcrumbs: [
+          { title: "Estaciones", href: "/estaciones" },
+          { title: stationName, href: pathname, isActive: true }
         ]
       };
     }
@@ -60,7 +74,7 @@ export function HeaderContent() {
             <>
               <BreadcrumbSeparator />
               {breadcrumbs.map((crumb, index) => (
-                <div key={crumb.href} className="flex items-center">
+                <Fragment key={crumb.href}>
                   <BreadcrumbItem>
                     {crumb.isActive ? (
                       <BreadcrumbPage>{crumb.title}</BreadcrumbPage>
@@ -71,7 +85,7 @@ export function HeaderContent() {
                     )}
                   </BreadcrumbItem>
                   {index < breadcrumbs.length - 1 && <BreadcrumbSeparator />}
-                </div>
+                </Fragment>
               ))}
             </>
           )}

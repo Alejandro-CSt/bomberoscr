@@ -12,6 +12,7 @@ export {
   isNull,
   like,
   lt,
+  gte,
   ne,
   not,
   or,
