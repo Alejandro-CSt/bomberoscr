@@ -19,6 +19,7 @@ import { getSystemOverview } from "@bomberoscr/db/queries/systemOverview";
 import { FireTruckIcon, ShieldIcon, TimerIcon } from "@phosphor-icons/react/dist/ssr";
 import type { Metadata } from "next";
 import { cacheLife } from "next/cache";
+import { connection } from "next/server";
 import type { SearchParams } from "nuqs/server";
 import { Suspense } from "react";
 
@@ -142,7 +143,9 @@ interface PageProps {
   searchParams: Promise<SearchParams>;
 }
 
-export default function EstacionesPage({ searchParams }: PageProps) {
+async function EstacionesContent({ searchParams }: PageProps) {
+  await connection(); // disable prerendering
+
   return (
     <div className="flex flex-col gap-6">
       <Suspense fallback={<StationsStatsSkeleton />}>
@@ -152,5 +155,22 @@ export default function EstacionesPage({ searchParams }: PageProps) {
         <StationsDirectory searchParamsPromise={searchParams} />
       </Suspense>
     </div>
+  );
+}
+
+function EstacionesPageSkeleton() {
+  return (
+    <div className="flex flex-col gap-6">
+      <StationsStatsSkeleton />
+      <StationsDirectorySkeleton />
+    </div>
+  );
+}
+
+export default function EstacionesPage({ searchParams }: PageProps) {
+  return (
+    <Suspense fallback={<EstacionesPageSkeleton />}>
+      <EstacionesContent searchParams={searchParams} />
+    </Suspense>
   );
 }
