@@ -39,8 +39,8 @@ function MobileHeaderNavInner({ className }: { className?: string }) {
         <PopoverTrigger
           render={
             <Button
-              className="extend-touch-target !p-0 h-8 touch-manipulation items-center justify-start gap-2.5 border-none hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 active:bg-transparent dark:hover:bg-transparent"
-              variant="ghost"
+              className="extend-touch-target h-8 touch-manipulation items-center justify-start gap-2.5 border-none p-0! hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 active:bg-transparent dark:hover:bg-transparent"
+              variant="link"
             />
           }
         >
@@ -64,8 +64,10 @@ function MobileHeaderNavInner({ className }: { className?: string }) {
         </PopoverTrigger>
         <PopoverContent
           align="start"
-          alignOffset={-8}
-          className="no-scrollbar h-[calc(100dvh-var(--app-header-height))] w-screen max-w-none overflow-y-auto rounded-none border-none bg-background/90 p-0 shadow-none backdrop-blur duration-100"
+          alignOffset={0}
+          className="h-[calc(100dvh-var(--app-header-height))] w-screen overflow-y-auto rounded-none border-none bg-background/90 shadow-none backdrop-blur duration-100 before:rounded-none"
+          noPadding
+          positionerClassName="!h-auto !w-auto !max-w-none left-0!"
           side="bottom"
           sideOffset={8}
         >

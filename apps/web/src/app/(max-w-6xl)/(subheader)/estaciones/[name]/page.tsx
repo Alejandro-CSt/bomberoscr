@@ -89,7 +89,7 @@ export default function StationPage(props: PageProps<"/estaciones/[name]">) {
 
   return (
     <div className="grid w-full grid-cols-1 gap-6 md:gap-8 lg:grid-cols-3">
-      <aside className="sticky top-(--app-top-offset) self-start">
+      <aside className="top-(--app-top-offset) self-start md:sticky">
         <Suspense fallback={<StationProfileHeaderSkeleton />}>
           <StationProfileHeader params={params} />
         </Suspense>
