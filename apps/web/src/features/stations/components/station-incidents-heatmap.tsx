@@ -70,7 +70,7 @@ export function StationIncidentsHeatmap({ data }: StationIncidentsHeatmapProps) 
   };
 
   const intensityColor = {
-    0: "bg-muted/20",
+    0: "bg-muted",
     1: "bg-primary/20",
     2: "bg-primary/40",
     3: "bg-primary/70",
@@ -153,6 +153,14 @@ export function StationIncidentsHeatmap({ data }: StationIncidentsHeatmapProps) 
 }
 
 export function StationIncidentsHeatmapSkeleton() {
+  const intensityColor = {
+    0: "bg-muted",
+    1: "bg-primary/20",
+    2: "bg-primary/40",
+    3: "bg-primary/70",
+    4: "bg-primary"
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <div className="w-full overflow-x-auto">
@@ -162,14 +170,16 @@ export function StationIncidentsHeatmapSkeleton() {
           <div className="h-2" />
         </div>
       </div>
-      <div className="flex items-center justify-end gap-2">
-        <Skeleton className="h-4 w-8" />
+      <div className="flex items-center justify-end gap-2 text-muted-foreground text-xs">
+        <span>Menos</span>
         <div className="flex gap-1">
-          {[0, 1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} className="h-2.5 w-2.5 rounded-sm" />
-          ))}
+          <div className={cn("h-2.5 w-2.5 rounded-sm", intensityColor[0])} />
+          <div className={cn("h-2.5 w-2.5 rounded-sm", intensityColor[1])} />
+          <div className={cn("h-2.5 w-2.5 rounded-sm", intensityColor[2])} />
+          <div className={cn("h-2.5 w-2.5 rounded-sm", intensityColor[3])} />
+          <div className={cn("h-2.5 w-2.5 rounded-sm", intensityColor[4])} />
         </div>
-        <Skeleton className="h-4 w-6" />
+        <span>Más</span>
       </div>
     </div>
   );
