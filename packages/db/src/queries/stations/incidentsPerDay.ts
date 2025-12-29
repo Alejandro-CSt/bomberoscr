@@ -13,7 +13,7 @@ export async function getStationIncidentsPerDay({
 
   const counts = await db
     .select({
-      date: sql<string>`date_trunc('day', ${incidents.incidentTimestamp})::date::text`,
+      date: sql<string>`date_trunc('day', ${incidents.incidentTimestamp} - interval '6 hours')::date::text`,
       count: sql<number>`count(*)::int`
     })
     .from(dispatchedStations)
@@ -21,7 +21,7 @@ export async function getStationIncidentsPerDay({
     .where(
       and(eq(dispatchedStations.stationId, stationId), gte(incidents.incidentTimestamp, cutoffDate))
     )
-    .groupBy(sql`date_trunc('day', ${incidents.incidentTimestamp})`);
+    .groupBy(sql`date_trunc('day', ${incidents.incidentTimestamp} - interval '6 hours')`);
 
   return counts;
 }
