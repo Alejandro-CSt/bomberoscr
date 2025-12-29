@@ -1,5 +1,9 @@
 import env from "@/features/lib/env";
 import {
+  StationCollaborations,
+  StationCollaborationsSkeleton
+} from "@/features/stations/components/station-collaborations";
+import {
   StationHeatmapSection,
   StationHeatmapSkeleton
 } from "@/features/stations/components/station-heatmap-section";
@@ -112,6 +116,9 @@ export default function StationPage(props: PageProps<"/estaciones/[name]">) {
           </Suspense>
         </div>
       </div>
+      <Suspense fallback={<StationCollaborationsSkeleton />}>
+        <StationCollaborations params={params} />
+      </Suspense>
       <Suspense fallback={<StationVehiclesSkeleton />}>
         <StationVehicles params={params} />
       </Suspense>
