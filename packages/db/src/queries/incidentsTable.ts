@@ -25,6 +25,6 @@ export async function getIncidentsForTable({ limit }: { limit: number }) {
       }
     },
     limit,
-    orderBy: [desc(incidents.incidentTimestamp)]
+    orderBy: [desc(incidents.id)]
   });
 }

@@ -1,6 +1,5 @@
 "use client";
 
-import { DataTableColumnHeader } from "@/features/dashboard/incidents/table/components/data-table-column-header";
 import DataTableDate from "@/features/dashboard/incidents/table/components/data-table-date";
 import { DataTableIsOpenIndicator } from "@/features/dashboard/incidents/table/components/data-table-is-open-column";
 import type { getIncidentsForTable } from "@bomberoscr/db/queries/incidentsTable";
@@ -25,20 +24,21 @@ export const columns: ColumnDef<IncidentTable>[] = [
   },
   {
     accessorKey: "EEConsecutive",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Consecutivo" />,
+    header: "Consecutivo",
     cell: ({ row }) => {
       const EEConsecutive = row.getValue<IncidentTable["EEConsecutive"]>("EEConsecutive");
       return <div className="whitespace-nowrap">EE-{EEConsecutive}</div>;
     },
     enableHiding: true,
     enableResizing: true,
+    enableSorting: false,
     size: 120,
     maxSize: 150,
     minSize: 100
   },
   {
     accessorKey: "incidentTimestamp",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Fecha" />,
+    header: "Fecha",
     cell: ({ row }) => {
       const incidentTimestamp =
         row.getValue<IncidentTable["incidentTimestamp"]>("incidentTimestamp");
@@ -46,13 +46,14 @@ export const columns: ColumnDef<IncidentTable>[] = [
     },
     enableHiding: true,
     enableResizing: true,
+    enableSorting: false,
     size: 120,
     maxSize: 150,
     minSize: 100
   },
   {
     accessorKey: "station",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Estación" />,
+    header: "Estación",
     cell: ({ row }) => {
       const station = row.getValue<IncidentTable["station"]>("station");
       return <div className="truncate">{station?.name ?? "-"}</div>;
@@ -66,7 +67,7 @@ export const columns: ColumnDef<IncidentTable>[] = [
   },
   {
     accessorKey: "specificIncidentType",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Tipo de incidente" />,
+    header: "Tipo de incidente",
     cell: ({ row }) => {
       const specificIncidentType =
         row.getValue<IncidentTable["specificIncidentType"]>("specificIncidentType");
@@ -81,7 +82,7 @@ export const columns: ColumnDef<IncidentTable>[] = [
   },
   {
     accessorKey: "importantDetails",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Detalles" />,
+    header: "Detalles",
     cell: ({ row }) => {
       const importantDetails = row.getValue<IncidentTable["importantDetails"]>("importantDetails");
       return <div className="truncate">{importantDetails}</div>;
@@ -95,7 +96,7 @@ export const columns: ColumnDef<IncidentTable>[] = [
   },
   {
     accessorKey: "address",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Dirección" />,
+    header: "Dirección",
     cell: ({ row }) => {
       const address = row.getValue<IncidentTable["address"]>("address");
       return <div className="max-w-xs truncate">{address}</div>;

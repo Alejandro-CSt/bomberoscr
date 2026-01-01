@@ -36,8 +36,10 @@ export async function getYearRecap(year: number) {
 
   const totalIncidents = totalIncidentsResult?.count || 0;
 
-  const minutesInYear = 365 * 24 * 60;
-  const frequency = totalIncidents > 0 ? Math.round(minutesInYear / totalIncidents) : null;
+  const now = new Date();
+  const effectiveEnd = now < endOfYear ? now : endOfYear;
+  const elapsedMinutes = Math.floor((effectiveEnd.getTime() - startOfYear.getTime()) / (1000 * 60));
+  const frequency = totalIncidents > 0 ? Math.round(elapsedMinutes / totalIncidents) : null;
 
   const [busiestDateResult] = await db
     .select({

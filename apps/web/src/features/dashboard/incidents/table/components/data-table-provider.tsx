@@ -1,3 +1,4 @@
+"use no memo";
 "use client";
 
 import {
@@ -49,7 +50,10 @@ export function DataTableProvider<TData, TValue>({
     columns,
     getCoreRowModel: getCoreRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
-    state: { columnVisibility, rowSelection },
+    state: {
+      columnVisibility,
+      rowSelection
+    },
     onRowSelectionChange: setRowSelection,
     enableRowSelection: true,
     enableMultiRowSelection: false
