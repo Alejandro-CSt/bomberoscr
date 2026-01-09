@@ -1,5 +1,6 @@
 {
   "name": "@bomberoscr/db",
+  "type": "module",
   "scripts": {
     "build": "tsc",
     "drizzle:migrate": "drizzle-kit migrate",
@@ -15,7 +16,15 @@
     "./utils": "./src/utils.ts",
     "./index": "./src/index.ts",
     "./schema": "./src/schema.ts",
-    "./queries/*": "./src/queries/*.ts"
+    "./queries/incidents": "./src/queries/incidents.ts",
+    "./queries/stations": "./src/queries/stations.ts",
+    "./queries/incidentsTable": "./src/queries/incidentsTable.ts",
+    "./queries/systemOverview": "./src/queries/systemOverview.ts",
+    "./queries/homepage/*": "./src/queries/homepage/*.ts",
+    "./queries/stations/*": "./src/queries/stations/*.ts",
+    "./queries/charts/*": "./src/queries/charts/*.ts",
+    "./queries/search/*": "./src/queries/search/*.ts",
+    "./queries/map/*": "./src/queries/map/*.ts"
   },
   "devDependencies": {
     "@bomberoscr/typescript-config": "workspace:*",
