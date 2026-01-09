@@ -1,11 +1,10 @@
-import { createRouter } from "@/lib/create-app.js";
+import { createRouter } from "@/lib/create-app";
 
-import * as handlers from "./incidents.handlers.js";
-import * as routes from "./incidents.routes.js";
+import * as handlers from "@/routes/incidents/incidents.handlers";
+import * as routes from "@/routes/incidents/incidents.routes";
 
 const router = createRouter()
   .openapi(routes.list, handlers.list)
-  .openapi(routes.geometry, handlers.geometry)
   .openapi(routes.getOne, handlers.getOne)
   .openapi(routes.getOgImage, handlers.getOgImage);
 

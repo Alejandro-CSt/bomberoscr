@@ -5,9 +5,9 @@ import { requestId } from "hono/request-id";
 import { notFound, onError, serveEmojiFavicon } from "stoker/middlewares";
 import { defaultHook } from "stoker/openapi";
 
-import { pinoLogger } from "@/middlewares/pino-logger.js";
+import { pinoLogger } from "@/middlewares/pino-logger";
 
-import type { AppBindings, AppOpenAPI } from "./types.js";
+import type { AppBindings, AppOpenAPI } from "@/lib/types";
 
 export function createRouter() {
   return new OpenAPIHono<AppBindings>({

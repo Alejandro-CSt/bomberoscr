@@ -4,3 +4,4 @@ packages:
 
 catalog:
   zod: ^4.0.5
+  drizzle-orm: ^0.44.3

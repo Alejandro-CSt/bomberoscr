@@ -1,6 +1,6 @@
 import { Scalar } from "@scalar/hono-api-reference";
 
-import type { AppOpenAPI } from "./types.js";
+import type { AppOpenAPI } from "@/lib/types";
 
 const BASE_PATH = "/bomberos/hono";
 

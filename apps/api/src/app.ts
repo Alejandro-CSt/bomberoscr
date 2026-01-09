@@ -1,6 +1,6 @@
-import configureOpenAPI from "@/lib/configure-open-api.js";
-import createApp from "@/lib/create-app.js";
-import incidents from "@/routes/incidents/incidents.index.js";
+import configureOpenAPI from "@/lib/configure-open-api";
+import createApp from "@/lib/create-app";
+import incidents from "@/routes/incidents/incidents.index";
 
 const app = createApp();
 
