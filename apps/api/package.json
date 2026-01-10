@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@bomberoscr/db": "workspace:*",
+    "@bomberoscr/sync-domain": "workspace:*",
     "@hono/node-server": "^1.18.1",
     "@hono/zod-openapi": "^1.0.2",
     "@scalar/hono-api-reference": "^0.9.13",

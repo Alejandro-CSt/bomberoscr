@@ -32,6 +32,9 @@ importers:
       '@bomberoscr/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@bomberoscr/sync-domain':
+        specifier: workspace:*
+        version: link:../../packages/sync-domain
       '@hono/node-server':
         specifier: ^1.18.1
         version: 1.19.7(hono@4.11.3)

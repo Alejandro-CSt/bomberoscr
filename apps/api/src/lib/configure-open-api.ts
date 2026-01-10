@@ -25,9 +25,11 @@ export default function configureOpenAPI(app: AppOpenAPI) {
       url: `${BASE_PATH}/doc`,
       theme: "laserwave",
       layout: "modern",
+      defaultOpenAllTags: true,
+      hideClientButton: true,
       defaultHttpClient: {
-        targetKey: "js",
-        clientKey: "fetch"
+        targetKey: "shell",
+        clientKey: "curl"
       }
     })
   );

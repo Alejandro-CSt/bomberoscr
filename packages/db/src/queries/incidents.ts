@@ -8,6 +8,15 @@ import {
 } from "@bomberoscr/db/schema";
 import { aliasedTable, and, between, desc, eq, inArray, lt, ne, or, sql } from "drizzle-orm";
 
+export async function getExistingIncidentIds(ids: number[]) {
+  if (ids.length === 0) return [] as number[];
+  const rows = await db
+    .select({ id: incidents.id })
+    .from(incidents)
+    .where(inArray(incidents.id, ids));
+  return rows.map((r) => r.id);
+}
+
 export async function getLatestIncidents({
   limit,
   cursor,

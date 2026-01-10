@@ -1,5 +1,6 @@
 import configureOpenAPI from "@/lib/configure-open-api";
 import createApp from "@/lib/create-app";
+import admin from "@/routes/admin/admin.index";
 import incidents from "@/routes/incidents/incidents.index";
 
 const app = createApp();
@@ -8,7 +9,7 @@ const api = createApp();
 
 configureOpenAPI(api);
 
-const routes = [incidents] as const;
+const routes = [incidents, admin] as const;
 
 for (const route of routes) {
   api.route("/", route);
