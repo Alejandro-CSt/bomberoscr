@@ -18,7 +18,13 @@ const EnvSchema = z.object({
   SIGAE_PASSWORD: z.string().optional(),
   SIGAE_USER: z.string().optional(),
   SIGAE_COD_SYS: z.string().optional(),
-  ADMIN_TOKEN: z.string().optional()
+  ADMIN_TOKEN: z.string().optional(),
+  MAPBOX_API_KEY: z.string(),
+  SITE_URL: z.string().url(),
+  S3_ENDPOINT: z.string().url(),
+  S3_KEY_ID: z.string(),
+  S3_SECRET_KEY: z.string(),
+  S3_BUCKET_NAME: z.string()
 });
 
 export type env = z.infer<typeof EnvSchema>;

@@ -73,6 +73,41 @@ export const getOgImage = createRoute({
   }
 });
 
+export const getMapImage = createRoute({
+  tags: ["Incidents"],
+  method: "get",
+  path: "/incidents/{id}/map",
+  request: {
+    params: IncidentIdParamSchema
+  },
+  responses: {
+    [HttpStatusCodes.OK]: {
+      description: "Map image for the incident",
+      content: {
+        "image/png": {
+          schema: {
+            type: "string",
+            format: "binary"
+          }
+        }
+      }
+    },
+    [HttpStatusCodes.BAD_REQUEST]: jsonContent(
+      createMessageObjectSchema("Invalid coordinates"),
+      "Invalid coordinates"
+    ),
+    [HttpStatusCodes.NOT_FOUND]: jsonContent(
+      createMessageObjectSchema("Incident not found"),
+      "Incident not found"
+    ),
+    [HttpStatusCodes.BAD_GATEWAY]: jsonContent(
+      createMessageObjectSchema("Failed to fetch map image"),
+      "Failed to fetch map image"
+    )
+  }
+});
+
 export type ListRoute = typeof list;
 export type GetOneRoute = typeof getOne;
 export type GetOgImageRoute = typeof getOgImage;
+export type GetMapImageRoute = typeof getMapImage;

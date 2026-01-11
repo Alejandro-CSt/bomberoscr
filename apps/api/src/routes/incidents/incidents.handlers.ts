@@ -1,4 +1,6 @@
 import type { AppRouteHandler } from "@/lib/types";
+import env from "@/env";
+import { getFromS3, uploadToS3 } from "@/lib/s3";
 import { db } from "@bomberoscr/db/index";
 import {
   dispatchedStations,
@@ -24,7 +26,30 @@ import {
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import * as HttpStatusPhrases from "stoker/http-status-phrases";
 import { generateOgImage } from "@/routes/incidents/incidents.og";
-import type { GetOgImageRoute, GetOneRoute, ListRoute } from "@/routes/incidents/incidents.routes";
+import type {
+  GetMapImageRoute,
+  GetOgImageRoute,
+  GetOneRoute,
+  ListRoute
+} from "@/routes/incidents/incidents.routes";
+
+const MAPBOX_CONFIG = {
+  zoom: 15.73,
+  bearing: 0,
+  pitch: 39,
+  width: 640,
+  height: 360
+};
+
+function buildMapboxUrl(latitude: number, longitude: number): string {
+  const { zoom, bearing, pitch, width, height } = MAPBOX_CONFIG;
+  const marker = `pin-s+ff3b30(${longitude},${latitude})`;
+  return `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${marker}/${longitude},${latitude},${zoom},${bearing},${pitch}/${width}x${height}@2x?access_token=${env.MAPBOX_API_KEY}`;
+}
+
+function getS3Key(incidentId: number): string {
+  return `incidents/${incidentId}/map.png`;
+}
 
 export const list: AppRouteHandler<ListRoute> = async (c) => {
   const { limit, cursor, station, view, startTime, endTime, sortBy, sortOrder } =
@@ -349,6 +374,61 @@ export const getOgImage: AppRouteHandler<GetOgImageRoute> = async (c) => {
 
   const statistics = await getIncidentStatistics(incident);
   return generateOgImage(incident, statistics);
+};
+
+export const getMapImage: AppRouteHandler<GetMapImageRoute> = async (c) => {
+  const { id } = c.req.valid("param");
+  const s3Key = getS3Key(id);
+
+  const cachedImage = await getFromS3(s3Key);
+  if (cachedImage) {
+    return c.body(new Uint8Array(cachedImage), HttpStatusCodes.OK, {
+      "Content-Type": "image/png",
+      "Cache-Control": "public, max-age=31536000, immutable"
+    });
+  }
+
+  const incident = await db.query.incidents.findFirst({
+    where: eq(incidents.id, id),
+    columns: {
+      id: true,
+      latitude: true,
+      longitude: true
+    }
+  });
+
+  if (!incident) {
+    return c.json({ message: HttpStatusPhrases.NOT_FOUND }, HttpStatusCodes.NOT_FOUND);
+  }
+
+  const latitude = Number(incident.latitude);
+  const longitude = Number(incident.longitude);
+
+  if (!latitude || !longitude || latitude === 0 || longitude === 0) {
+    return c.json({ message: "Invalid coordinates" }, HttpStatusCodes.BAD_REQUEST);
+  }
+
+  const mapboxUrl = buildMapboxUrl(latitude, longitude);
+  const mapboxResponse = await fetch(mapboxUrl, {
+    headers: {
+      Referer: env.SITE_URL
+    }
+  });
+
+  if (!mapboxResponse.ok) {
+    return c.json({ message: "Failed to fetch map image" }, HttpStatusCodes.BAD_GATEWAY);
+  }
+
+  const imageBuffer = await mapboxResponse.arrayBuffer();
+
+  void uploadToS3(s3Key, imageBuffer, "image/png").catch((error) => {
+    console.error("Failed to upload map image to S3:", error);
+  });
+
+  return c.body(new Uint8Array(imageBuffer), HttpStatusCodes.OK, {
+    "Content-Type": "image/png",
+    "Cache-Control": "public, max-age=31536000, immutable"
+  });
 };
 
 type DetailedIncident = NonNullable<Awaited<ReturnType<typeof db.query.incidents.findFirst>>>;
