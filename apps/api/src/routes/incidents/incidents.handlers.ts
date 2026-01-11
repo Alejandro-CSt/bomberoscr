@@ -1,6 +1,7 @@
 import type { AppRouteHandler } from "@/lib/types";
 import env from "@/env";
 import { getFromS3, uploadToS3 } from "@/lib/s3";
+import { buildIncidentSlug, buildIncidentSlugFromPartial } from "@/lib/slug";
 import { db } from "@bomberoscr/db/index";
 import {
   dispatchedStations,
@@ -27,6 +28,7 @@ import * as HttpStatusCodes from "stoker/http-status-codes";
 import * as HttpStatusPhrases from "stoker/http-status-phrases";
 import { generateOgImage } from "@/routes/incidents/incidents.og";
 import type {
+  GetHighlightedRoute,
   GetMapImageRoute,
   GetOgImageRoute,
   GetOneRoute,
@@ -59,7 +61,15 @@ export const list: AppRouteHandler<ListRoute> = async (c) => {
     return handleMapView(c, { station, startTime, endTime, sortBy, sortOrder });
   }
 
-  return handleDefaultView(c, { limit, cursor, station, startTime, endTime, sortBy, sortOrder });
+  return handleDefaultView(c, {
+    limit,
+    cursor,
+    station,
+    startTime,
+    endTime,
+    sortBy,
+    sortOrder
+  });
 };
 
 type SortBy = "id" | "incidentTimestamp";
@@ -155,6 +165,13 @@ async function handleDefaultView(
       view: "default" as const,
       incidents: data.map((incident) => ({
         ...incident,
+        slug: buildIncidentSlugFromPartial({
+          id: incident.id,
+          incidentTimestamp: incident.incidentTimestamp,
+          importantDetails: incident.importantDetails,
+          specificIncidentType: incident.specificIncidentType,
+          incidentType: incident.incidentType
+        }),
         incidentTimestamp: incident.incidentTimestamp.toISOString()
       })),
       nextCursor
@@ -205,6 +222,8 @@ async function handleMapView(
   const results = await db.query.incidents.findMany({
     columns: {
       id: true,
+      incidentTimestamp: true,
+      importantDetails: true,
       latitude: true,
       longitude: true
     },
@@ -212,7 +231,22 @@ async function handleMapView(
     orderBy: [orderFn(sortColumn), orderFn(incidents.id)]
   });
 
-  return c.json({ view: "map" as const, incidents: results }, HttpStatusCodes.OK);
+  return c.json(
+    {
+      view: "map" as const,
+      incidents: results.map((incident) => ({
+        id: incident.id,
+        slug: buildIncidentSlugFromPartial({
+          id: incident.id,
+          incidentTimestamp: incident.incidentTimestamp,
+          importantDetails: incident.importantDetails
+        }),
+        latitude: incident.latitude,
+        longitude: incident.longitude
+      }))
+    },
+    HttpStatusCodes.OK
+  );
 }
 
 export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
@@ -507,3 +541,68 @@ async function getIncidentStatistics(incident: DetailedIncident) {
 }
 
 export type IncidentStatistics = Awaited<ReturnType<typeof getIncidentStatistics>>;
+
+export const getHighlighted: AppRouteHandler<GetHighlightedRoute> = async (c) => {
+  const { timeRange } = c.req.valid("query");
+  const limit = 6;
+
+  const startDate = new Date(Date.now() - timeRange * 24 * 60 * 60 * 1000);
+  const endDate = new Date();
+
+  // Pre-aggregate counts in subqueries instead of correlated subqueries per row
+  const vehicleCounts = db
+    .select({
+      incidentId: dispatchedVehicles.incidentId,
+      vehicleCount: sql<number>`count(*)::int`.as("vehicle_count")
+    })
+    .from(dispatchedVehicles)
+    .groupBy(dispatchedVehicles.incidentId)
+    .as("vehicle_counts");
+
+  const stationCounts = db
+    .select({
+      incidentId: dispatchedStations.incidentId,
+      stationCount: sql<number>`count(*)::int`.as("station_count")
+    })
+    .from(dispatchedStations)
+    .groupBy(dispatchedStations.incidentId)
+    .as("station_counts");
+
+  const results = await db
+    .select({
+      id: incidents.id,
+      incidentTimestamp: incidents.incidentTimestamp,
+      details: incidents.importantDetails,
+      address: incidents.address,
+      responsibleStation: stations.name,
+      dispatchedVehiclesCount: sql<number>`COALESCE(${vehicleCounts.vehicleCount}, 0)`,
+      dispatchedStationsCount: sql<number>`COALESCE(${stationCounts.stationCount}, 0)`
+    })
+    .from(incidents)
+    .leftJoin(stations, eq(incidents.responsibleStation, stations.id))
+    .leftJoin(vehicleCounts, eq(incidents.id, vehicleCounts.incidentId))
+    .leftJoin(stationCounts, eq(incidents.id, stationCounts.incidentId))
+    .where(between(incidents.incidentTimestamp, startDate, endDate))
+    .orderBy(
+      desc(
+        sql`COALESCE(${vehicleCounts.vehicleCount}, 0) + COALESCE(${stationCounts.stationCount}, 0)`
+      )
+    )
+    .limit(limit);
+
+  return c.json(
+    {
+      incidents: results.map((incident) => ({
+        id: incident.id,
+        slug: buildIncidentSlug(incident.id, incident.details, incident.incidentTimestamp),
+        incidentTimestamp: incident.incidentTimestamp.toISOString(),
+        details: incident.details || "Incidente",
+        address: incident.address || "Ubicación pendiente",
+        responsibleStation: incident.responsibleStation || "Estación pendiente",
+        dispatchedVehiclesCount: incident.dispatchedVehiclesCount,
+        dispatchedStationsCount: incident.dispatchedStationsCount
+      }))
+    },
+    HttpStatusCodes.OK
+  );
+};

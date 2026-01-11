@@ -21,6 +21,7 @@ export async function getFromS3(key: string): Promise<Buffer | null> {
     if (!response.Body) return null;
     const bytes = await response.Body.transformToByteArray();
     return Buffer.from(bytes);
+    // oxlint-disable-next-line no-unused-vars
   } catch (_error) {
     return null;
   }

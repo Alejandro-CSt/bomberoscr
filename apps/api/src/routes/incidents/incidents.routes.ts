@@ -3,6 +3,8 @@ import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
 import { createMessageObjectSchema } from "stoker/openapi/schemas";
 import {
+  HighlightedIncidentsQuerySchema,
+  HighlightedIncidentsResponseSchema,
   IncidentDetailResponseSchema,
   IncidentIdParamSchema,
   IncidentsQuerySchema,
@@ -111,3 +113,20 @@ export type ListRoute = typeof list;
 export type GetOneRoute = typeof getOne;
 export type GetOgImageRoute = typeof getOgImage;
 export type GetMapImageRoute = typeof getMapImage;
+
+export const getHighlighted = createRoute({
+  tags: ["Incidents"],
+  method: "get",
+  path: "/incidents/highlighted",
+  request: {
+    query: HighlightedIncidentsQuerySchema
+  },
+  responses: {
+    [HttpStatusCodes.OK]: jsonContent(
+      HighlightedIncidentsResponseSchema,
+      "List of highlighted incidents sorted by total emergency response deployment"
+    )
+  }
+});
+
+export type GetHighlightedRoute = typeof getHighlighted;

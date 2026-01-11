@@ -3,15 +3,29 @@
 import type { Client, Options as Options2, TDataShape } from "./client";
 import { client } from "./client.gen";
 import type {
+  GetAdminIncidentsData,
+  GetAdminIncidentsErrors,
+  GetAdminIncidentsResponses,
   GetIncidentsByIdData,
   GetIncidentsByIdErrors,
+  GetIncidentsByIdMapData,
+  GetIncidentsByIdMapErrors,
+  GetIncidentsByIdMapResponses,
   GetIncidentsByIdOgData,
   GetIncidentsByIdOgErrors,
   GetIncidentsByIdOgResponses,
   GetIncidentsByIdResponses,
   GetIncidentsData,
   GetIncidentsErrors,
-  GetIncidentsResponses
+  GetIncidentsHighlightedData,
+  GetIncidentsHighlightedResponses,
+  GetIncidentsResponses,
+  PostAdminIncidentsByIdData,
+  PostAdminIncidentsByIdErrors,
+  PostAdminIncidentsByIdResponses,
+  PostAdminIncidentsData,
+  PostAdminIncidentsErrors,
+  PostAdminIncidentsResponses
 } from "./types.gen";
 
 export type Options<
@@ -39,6 +53,14 @@ export const getIncidents = <ThrowOnError extends boolean = false>(
     ...options
   });
 
+export const getIncidentsHighlighted = <ThrowOnError extends boolean = false>(
+  options?: Options<GetIncidentsHighlightedData, ThrowOnError>
+) =>
+  (options?.client ?? client).get<GetIncidentsHighlightedResponses, unknown, ThrowOnError>({
+    url: "/incidents/highlighted",
+    ...options
+  });
+
 export const getIncidentsById = <ThrowOnError extends boolean = false>(
   options: Options<GetIncidentsByIdData, ThrowOnError>
 ) =>
@@ -55,3 +77,44 @@ export const getIncidentsByIdOg = <ThrowOnError extends boolean = false>(
     GetIncidentsByIdOgErrors,
     ThrowOnError
   >({ url: "/incidents/{id}/og", ...options });
+
+export const getIncidentsByIdMap = <ThrowOnError extends boolean = false>(
+  options: Options<GetIncidentsByIdMapData, ThrowOnError>
+) =>
+  (options.client ?? client).get<
+    GetIncidentsByIdMapResponses,
+    GetIncidentsByIdMapErrors,
+    ThrowOnError
+  >({ url: "/incidents/{id}/map", ...options });
+
+export const getAdminIncidents = <ThrowOnError extends boolean = false>(
+  options: Options<GetAdminIncidentsData, ThrowOnError>
+) =>
+  (options.client ?? client).get<GetAdminIncidentsResponses, GetAdminIncidentsErrors, ThrowOnError>(
+    { url: "/admin/incidents", ...options }
+  );
+
+export const postAdminIncidents = <ThrowOnError extends boolean = false>(
+  options?: Options<PostAdminIncidentsData, ThrowOnError>
+) =>
+  (options?.client ?? client).post<
+    PostAdminIncidentsResponses,
+    PostAdminIncidentsErrors,
+    ThrowOnError
+  >({
+    url: "/admin/incidents",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options?.headers
+    }
+  });
+
+export const postAdminIncidentsById = <ThrowOnError extends boolean = false>(
+  options: Options<PostAdminIncidentsByIdData, ThrowOnError>
+) =>
+  (options.client ?? client).post<
+    PostAdminIncidentsByIdResponses,
+    PostAdminIncidentsByIdErrors,
+    ThrowOnError
+  >({ url: "/admin/incidents/{id}", ...options });

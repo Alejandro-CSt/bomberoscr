@@ -37,6 +37,7 @@ export const IncidentIdParamSchema = z.object({
 
 export const IncidentListItemSchema = z.object({
   id: z.number(),
+  slug: z.string(),
   isOpen: z.boolean(),
   EEConsecutive: z.string().nullable(),
   address: z.string().nullable(),
@@ -52,6 +53,7 @@ export const IncidentListItemSchema = z.object({
 
 export const IncidentMapItemSchema = z.object({
   id: z.number(),
+  slug: z.string(),
   latitude: z.string(),
   longitude: z.string()
 });
@@ -157,3 +159,30 @@ export const IncidentDetailResponseSchema = z.object({
 
 export type IncidentListItem = z.infer<typeof IncidentListItemSchema>;
 export type IncidentMapItem = z.infer<typeof IncidentMapItemSchema>;
+
+// Highlighted incidents schemas
+export const HighlightedIncidentsQuerySchema = z.object({
+  timeRange: z.coerce
+    .number()
+    .refine((val) => val === 7 || val === 30 || val === 90 || val === 365, {
+      message: "Time range must be one of: 7, 30, 90, 365"
+    })
+    .default(30)
+});
+
+export const HighlightedIncidentItemSchema = z.object({
+  id: z.number(),
+  slug: z.string(),
+  incidentTimestamp: z.string(),
+  details: z.string(),
+  address: z.string(),
+  responsibleStation: z.string(),
+  dispatchedVehiclesCount: z.number(),
+  dispatchedStationsCount: z.number()
+});
+
+export const HighlightedIncidentsResponseSchema = z.object({
+  incidents: z.array(HighlightedIncidentItemSchema)
+});
+
+export type HighlightedIncidentItem = z.infer<typeof HighlightedIncidentItemSchema>;

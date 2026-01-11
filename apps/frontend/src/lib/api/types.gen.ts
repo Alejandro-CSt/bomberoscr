@@ -40,6 +40,7 @@ export type GetIncidentsResponses = {
         view: "default";
         incidents: Array<{
           id: number;
+          slug: string;
           isOpen: boolean;
           EEConsecutive: string | null;
           address: string | null;
@@ -58,6 +59,7 @@ export type GetIncidentsResponses = {
         view: "map";
         incidents: Array<{
           id: number;
+          slug: string;
           latitude: string;
           longitude: string;
         }>;
@@ -65,6 +67,36 @@ export type GetIncidentsResponses = {
 };
 
 export type GetIncidentsResponse = GetIncidentsResponses[keyof GetIncidentsResponses];
+
+export type GetIncidentsHighlightedData = {
+  body?: never;
+  path?: never;
+  query?: {
+    timeRange?: number;
+  };
+  url: "/incidents/highlighted";
+};
+
+export type GetIncidentsHighlightedResponses = {
+  /**
+   * List of highlighted incidents sorted by total emergency response deployment
+   */
+  200: {
+    incidents: Array<{
+      id: number;
+      slug: string;
+      incidentTimestamp: string;
+      details: string;
+      address: string;
+      responsibleStation: string;
+      dispatchedVehiclesCount: number;
+      dispatchedStationsCount: number;
+    }>;
+  };
+};
+
+export type GetIncidentsHighlightedResponse =
+  GetIncidentsHighlightedResponses[keyof GetIncidentsHighlightedResponses];
 
 export type GetIncidentsByIdData = {
   body?: never;
@@ -209,3 +241,186 @@ export type GetIncidentsByIdOgResponses = {
 
 export type GetIncidentsByIdOgResponse =
   GetIncidentsByIdOgResponses[keyof GetIncidentsByIdOgResponses];
+
+export type GetIncidentsByIdMapData = {
+  body?: never;
+  path: {
+    id: number | null;
+  };
+  query?: never;
+  url: "/incidents/{id}/map";
+};
+
+export type GetIncidentsByIdMapErrors = {
+  /**
+   * Invalid coordinates
+   */
+  400: {
+    message: string;
+  };
+  /**
+   * Incident not found
+   */
+  404: {
+    message: string;
+  };
+  /**
+   * Failed to fetch map image
+   */
+  502: {
+    message: string;
+  };
+};
+
+export type GetIncidentsByIdMapError = GetIncidentsByIdMapErrors[keyof GetIncidentsByIdMapErrors];
+
+export type GetIncidentsByIdMapResponses = {
+  /**
+   * Map image for the incident
+   */
+  200: Blob | File;
+};
+
+export type GetIncidentsByIdMapResponse =
+  GetIncidentsByIdMapResponses[keyof GetIncidentsByIdMapResponses];
+
+export type GetAdminIncidentsData = {
+  body?: never;
+  path?: never;
+  query: {
+    from: string;
+    to: string;
+  };
+  url: "/admin/incidents";
+};
+
+export type GetAdminIncidentsErrors = {
+  /**
+   * Missing or invalid admin-token cookie
+   */
+  401: {
+    message: string;
+  };
+  /**
+   * Failed to fetch incident list from SIGAE
+   */
+  500: {
+    message: string;
+  };
+  /**
+   * Admin synchronization is disabled
+   */
+  503: {
+    message: string;
+  };
+};
+
+export type GetAdminIncidentsError = GetAdminIncidentsErrors[keyof GetAdminIncidentsErrors];
+
+export type GetAdminIncidentsResponses = {
+  /**
+   * List of incidents from SIGAE within the date range
+   */
+  200: {
+    incidents: Array<{
+      id: number;
+      consecutivo: string;
+      fecha: string;
+      hora: string;
+      direccion: string;
+      tipoIncidente: string;
+      estacionResponsable: string;
+      synced: boolean;
+    }>;
+  };
+};
+
+export type GetAdminIncidentsResponse =
+  GetAdminIncidentsResponses[keyof GetAdminIncidentsResponses];
+
+export type PostAdminIncidentsData = {
+  body?: {
+    incidentIds: Array<number>;
+  };
+  path?: never;
+  query?: never;
+  url: "/admin/incidents";
+};
+
+export type PostAdminIncidentsErrors = {
+  /**
+   * Missing or invalid admin-token cookie
+   */
+  401: {
+    message: string;
+  };
+  /**
+   * Admin synchronization is disabled
+   */
+  503: {
+    message: string;
+  };
+};
+
+export type PostAdminIncidentsError = PostAdminIncidentsErrors[keyof PostAdminIncidentsErrors];
+
+export type PostAdminIncidentsResponses = {
+  /**
+   * Sync results for the provided incident IDs
+   */
+  200: {
+    success: boolean;
+    totalIncidents: number;
+    syncedIncidents: number;
+    failedIncidents: number;
+    failedResults: Array<{
+      incidentId: number;
+      success: boolean;
+      error?: string;
+    }>;
+  };
+};
+
+export type PostAdminIncidentsResponse =
+  PostAdminIncidentsResponses[keyof PostAdminIncidentsResponses];
+
+export type PostAdminIncidentsByIdData = {
+  body?: never;
+  path: {
+    id: number | null;
+  };
+  query?: never;
+  url: "/admin/incidents/{id}";
+};
+
+export type PostAdminIncidentsByIdErrors = {
+  /**
+   * Missing or invalid admin-token cookie
+   */
+  401: {
+    message: string;
+  };
+  /**
+   * Admin synchronization is disabled
+   */
+  503: {
+    message: string;
+  };
+};
+
+export type PostAdminIncidentsByIdError =
+  PostAdminIncidentsByIdErrors[keyof PostAdminIncidentsByIdErrors];
+
+export type PostAdminIncidentsByIdResponses = {
+  /**
+   * Sync result for the incident
+   */
+  200: {
+    incidentId: number;
+    success: boolean;
+    error?: string;
+  };
+};
+
+export type PostAdminIncidentsByIdResponse =
+  PostAdminIncidentsByIdResponses[keyof PostAdminIncidentsByIdResponses];
