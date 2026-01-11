@@ -1,5 +1,5 @@
 {
   "$schema": "../../node_modules/oxlint/configuration_schema.json",
   "extends": ["../../.oxlintrc.json"],
-  "ignorePatterns": ["dist/**", "src/components/ui/**", "src/routeTree.gen.ts"]
+  "ignorePatterns": ["dist/**", "src/components/ui/**", "src/routeTree.gen.ts", "src/lib/api"]
 }
