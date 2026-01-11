@@ -8,185 +8,177 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as MapRouteImport } from './routes/_map'
-import { Route as DashboardRouteImport } from './routes/_dashboard'
-import { Route as DashboardIndexRouteImport } from './routes/_dashboard/index'
-import { Route as MapMapaIndexRouteImport } from './routes/_map/mapa/index'
-import { Route as DashboardIncidentesIndexRouteImport } from './routes/_dashboard/incidentes/index'
-import { Route as DashboardEstacionesIndexRouteImport } from './routes/_dashboard/estaciones/index'
-import { Route as DashboardIncidentesSlugRouteImport } from './routes/_dashboard/incidentes/$slug'
-import { Route as DashboardEstacionesNameRouteImport } from './routes/_dashboard/estaciones/$name'
+import { Route as rootRouteImport } from "./routes/__root";
+import { Route as MapRouteImport } from "./routes/_map";
+import { Route as DashboardRouteImport } from "./routes/_dashboard";
+import { Route as DashboardIndexRouteImport } from "./routes/_dashboard/index";
+import { Route as MapMapaIndexRouteImport } from "./routes/_map/mapa/index";
+import { Route as DashboardIncidentesIndexRouteImport } from "./routes/_dashboard/incidentes/index";
+import { Route as DashboardEstacionesIndexRouteImport } from "./routes/_dashboard/estaciones/index";
+import { Route as DashboardIncidentesSlugRouteImport } from "./routes/_dashboard/incidentes/$slug";
+import { Route as DashboardEstacionesNameRouteImport } from "./routes/_dashboard/estaciones/$name";
 
 const MapRoute = MapRouteImport.update({
-  id: '/_map',
-  getParentRoute: () => rootRouteImport,
-} as any)
+  id: "/_map",
+  getParentRoute: () => rootRouteImport
+} as any);
 const DashboardRoute = DashboardRouteImport.update({
-  id: '/_dashboard',
-  getParentRoute: () => rootRouteImport,
-} as any)
+  id: "/_dashboard",
+  getParentRoute: () => rootRouteImport
+} as any);
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => DashboardRoute,
-} as any)
+  id: "/",
+  path: "/",
+  getParentRoute: () => DashboardRoute
+} as any);
 const MapMapaIndexRoute = MapMapaIndexRouteImport.update({
-  id: '/mapa/',
-  path: '/mapa/',
-  getParentRoute: () => MapRoute,
-} as any)
-const DashboardIncidentesIndexRoute =
-  DashboardIncidentesIndexRouteImport.update({
-    id: '/incidentes/',
-    path: '/incidentes/',
-    getParentRoute: () => DashboardRoute,
-  } as any)
-const DashboardEstacionesIndexRoute =
-  DashboardEstacionesIndexRouteImport.update({
-    id: '/estaciones/',
-    path: '/estaciones/',
-    getParentRoute: () => DashboardRoute,
-  } as any)
+  id: "/mapa/",
+  path: "/mapa/",
+  getParentRoute: () => MapRoute
+} as any);
+const DashboardIncidentesIndexRoute = DashboardIncidentesIndexRouteImport.update({
+  id: "/incidentes/",
+  path: "/incidentes/",
+  getParentRoute: () => DashboardRoute
+} as any);
+const DashboardEstacionesIndexRoute = DashboardEstacionesIndexRouteImport.update({
+  id: "/estaciones/",
+  path: "/estaciones/",
+  getParentRoute: () => DashboardRoute
+} as any);
 const DashboardIncidentesSlugRoute = DashboardIncidentesSlugRouteImport.update({
-  id: '/incidentes/$slug',
-  path: '/incidentes/$slug',
-  getParentRoute: () => DashboardRoute,
-} as any)
+  id: "/incidentes/$slug",
+  path: "/incidentes/$slug",
+  getParentRoute: () => DashboardRoute
+} as any);
 const DashboardEstacionesNameRoute = DashboardEstacionesNameRouteImport.update({
-  id: '/estaciones/$name',
-  path: '/estaciones/$name',
-  getParentRoute: () => DashboardRoute,
-} as any)
+  id: "/estaciones/$name",
+  path: "/estaciones/$name",
+  getParentRoute: () => DashboardRoute
+} as any);
 
 export interface FileRoutesByFullPath {
-  '/': typeof DashboardIndexRoute
-  '/estaciones/$name': typeof DashboardEstacionesNameRoute
-  '/incidentes/$slug': typeof DashboardIncidentesSlugRoute
-  '/estaciones': typeof DashboardEstacionesIndexRoute
-  '/incidentes': typeof DashboardIncidentesIndexRoute
-  '/mapa': typeof MapMapaIndexRoute
+  "/": typeof DashboardIndexRoute;
+  "/estaciones/$name": typeof DashboardEstacionesNameRoute;
+  "/incidentes/$slug": typeof DashboardIncidentesSlugRoute;
+  "/estaciones": typeof DashboardEstacionesIndexRoute;
+  "/incidentes": typeof DashboardIncidentesIndexRoute;
+  "/mapa": typeof MapMapaIndexRoute;
 }
 export interface FileRoutesByTo {
-  '/': typeof DashboardIndexRoute
-  '/estaciones/$name': typeof DashboardEstacionesNameRoute
-  '/incidentes/$slug': typeof DashboardIncidentesSlugRoute
-  '/estaciones': typeof DashboardEstacionesIndexRoute
-  '/incidentes': typeof DashboardIncidentesIndexRoute
-  '/mapa': typeof MapMapaIndexRoute
+  "/": typeof DashboardIndexRoute;
+  "/estaciones/$name": typeof DashboardEstacionesNameRoute;
+  "/incidentes/$slug": typeof DashboardIncidentesSlugRoute;
+  "/estaciones": typeof DashboardEstacionesIndexRoute;
+  "/incidentes": typeof DashboardIncidentesIndexRoute;
+  "/mapa": typeof MapMapaIndexRoute;
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport
-  '/_dashboard': typeof DashboardRouteWithChildren
-  '/_map': typeof MapRouteWithChildren
-  '/_dashboard/': typeof DashboardIndexRoute
-  '/_dashboard/estaciones/$name': typeof DashboardEstacionesNameRoute
-  '/_dashboard/incidentes/$slug': typeof DashboardIncidentesSlugRoute
-  '/_dashboard/estaciones/': typeof DashboardEstacionesIndexRoute
-  '/_dashboard/incidentes/': typeof DashboardIncidentesIndexRoute
-  '/_map/mapa/': typeof MapMapaIndexRoute
+  __root__: typeof rootRouteImport;
+  "/_dashboard": typeof DashboardRouteWithChildren;
+  "/_map": typeof MapRouteWithChildren;
+  "/_dashboard/": typeof DashboardIndexRoute;
+  "/_dashboard/estaciones/$name": typeof DashboardEstacionesNameRoute;
+  "/_dashboard/incidentes/$slug": typeof DashboardIncidentesSlugRoute;
+  "/_dashboard/estaciones/": typeof DashboardEstacionesIndexRoute;
+  "/_dashboard/incidentes/": typeof DashboardIncidentesIndexRoute;
+  "/_map/mapa/": typeof MapMapaIndexRoute;
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
+  fileRoutesByFullPath: FileRoutesByFullPath;
   fullPaths:
-    | '/'
-    | '/estaciones/$name'
-    | '/incidentes/$slug'
-    | '/estaciones'
-    | '/incidentes'
-    | '/mapa'
-  fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/estaciones/$name'
-    | '/incidentes/$slug'
-    | '/estaciones'
-    | '/incidentes'
-    | '/mapa'
+    | "/"
+    | "/estaciones/$name"
+    | "/incidentes/$slug"
+    | "/estaciones"
+    | "/incidentes"
+    | "/mapa";
+  fileRoutesByTo: FileRoutesByTo;
+  to: "/" | "/estaciones/$name" | "/incidentes/$slug" | "/estaciones" | "/incidentes" | "/mapa";
   id:
-    | '__root__'
-    | '/_dashboard'
-    | '/_map'
-    | '/_dashboard/'
-    | '/_dashboard/estaciones/$name'
-    | '/_dashboard/incidentes/$slug'
-    | '/_dashboard/estaciones/'
-    | '/_dashboard/incidentes/'
-    | '/_map/mapa/'
-  fileRoutesById: FileRoutesById
+    | "__root__"
+    | "/_dashboard"
+    | "/_map"
+    | "/_dashboard/"
+    | "/_dashboard/estaciones/$name"
+    | "/_dashboard/incidentes/$slug"
+    | "/_dashboard/estaciones/"
+    | "/_dashboard/incidentes/"
+    | "/_map/mapa/";
+  fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  DashboardRoute: typeof DashboardRouteWithChildren
-  MapRoute: typeof MapRouteWithChildren
+  DashboardRoute: typeof DashboardRouteWithChildren;
+  MapRoute: typeof MapRouteWithChildren;
 }
 
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
-    '/_map': {
-      id: '/_map'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof MapRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_dashboard': {
-      id: '/_dashboard'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof DashboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_dashboard/': {
-      id: '/_dashboard/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof DashboardIndexRouteImport
-      parentRoute: typeof DashboardRoute
-    }
-    '/_map/mapa/': {
-      id: '/_map/mapa/'
-      path: '/mapa'
-      fullPath: '/mapa'
-      preLoaderRoute: typeof MapMapaIndexRouteImport
-      parentRoute: typeof MapRoute
-    }
-    '/_dashboard/incidentes/': {
-      id: '/_dashboard/incidentes/'
-      path: '/incidentes'
-      fullPath: '/incidentes'
-      preLoaderRoute: typeof DashboardIncidentesIndexRouteImport
-      parentRoute: typeof DashboardRoute
-    }
-    '/_dashboard/estaciones/': {
-      id: '/_dashboard/estaciones/'
-      path: '/estaciones'
-      fullPath: '/estaciones'
-      preLoaderRoute: typeof DashboardEstacionesIndexRouteImport
-      parentRoute: typeof DashboardRoute
-    }
-    '/_dashboard/incidentes/$slug': {
-      id: '/_dashboard/incidentes/$slug'
-      path: '/incidentes/$slug'
-      fullPath: '/incidentes/$slug'
-      preLoaderRoute: typeof DashboardIncidentesSlugRouteImport
-      parentRoute: typeof DashboardRoute
-    }
-    '/_dashboard/estaciones/$name': {
-      id: '/_dashboard/estaciones/$name'
-      path: '/estaciones/$name'
-      fullPath: '/estaciones/$name'
-      preLoaderRoute: typeof DashboardEstacionesNameRouteImport
-      parentRoute: typeof DashboardRoute
-    }
+    "/_map": {
+      id: "/_map";
+      path: "";
+      fullPath: "";
+      preLoaderRoute: typeof MapRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/_dashboard": {
+      id: "/_dashboard";
+      path: "";
+      fullPath: "";
+      preLoaderRoute: typeof DashboardRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/_dashboard/": {
+      id: "/_dashboard/";
+      path: "/";
+      fullPath: "/";
+      preLoaderRoute: typeof DashboardIndexRouteImport;
+      parentRoute: typeof DashboardRoute;
+    };
+    "/_map/mapa/": {
+      id: "/_map/mapa/";
+      path: "/mapa";
+      fullPath: "/mapa";
+      preLoaderRoute: typeof MapMapaIndexRouteImport;
+      parentRoute: typeof MapRoute;
+    };
+    "/_dashboard/incidentes/": {
+      id: "/_dashboard/incidentes/";
+      path: "/incidentes";
+      fullPath: "/incidentes";
+      preLoaderRoute: typeof DashboardIncidentesIndexRouteImport;
+      parentRoute: typeof DashboardRoute;
+    };
+    "/_dashboard/estaciones/": {
+      id: "/_dashboard/estaciones/";
+      path: "/estaciones";
+      fullPath: "/estaciones";
+      preLoaderRoute: typeof DashboardEstacionesIndexRouteImport;
+      parentRoute: typeof DashboardRoute;
+    };
+    "/_dashboard/incidentes/$slug": {
+      id: "/_dashboard/incidentes/$slug";
+      path: "/incidentes/$slug";
+      fullPath: "/incidentes/$slug";
+      preLoaderRoute: typeof DashboardIncidentesSlugRouteImport;
+      parentRoute: typeof DashboardRoute;
+    };
+    "/_dashboard/estaciones/$name": {
+      id: "/_dashboard/estaciones/$name";
+      path: "/estaciones/$name";
+      fullPath: "/estaciones/$name";
+      preLoaderRoute: typeof DashboardEstacionesNameRouteImport;
+      parentRoute: typeof DashboardRoute;
+    };
   }
 }
 
 interface DashboardRouteChildren {
-  DashboardIndexRoute: typeof DashboardIndexRoute
-  DashboardEstacionesNameRoute: typeof DashboardEstacionesNameRoute
-  DashboardIncidentesSlugRoute: typeof DashboardIncidentesSlugRoute
-  DashboardEstacionesIndexRoute: typeof DashboardEstacionesIndexRoute
-  DashboardIncidentesIndexRoute: typeof DashboardIncidentesIndexRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute;
+  DashboardEstacionesNameRoute: typeof DashboardEstacionesNameRoute;
+  DashboardIncidentesSlugRoute: typeof DashboardIncidentesSlugRoute;
+  DashboardEstacionesIndexRoute: typeof DashboardEstacionesIndexRoute;
+  DashboardIncidentesIndexRoute: typeof DashboardIncidentesIndexRoute;
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
@@ -194,36 +186,34 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardEstacionesNameRoute: DashboardEstacionesNameRoute,
   DashboardIncidentesSlugRoute: DashboardIncidentesSlugRoute,
   DashboardEstacionesIndexRoute: DashboardEstacionesIndexRoute,
-  DashboardIncidentesIndexRoute: DashboardIncidentesIndexRoute,
-}
+  DashboardIncidentesIndexRoute: DashboardIncidentesIndexRoute
+};
 
-const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
-  DashboardRouteChildren,
-)
+const DashboardRouteWithChildren = DashboardRoute._addFileChildren(DashboardRouteChildren);
 
 interface MapRouteChildren {
-  MapMapaIndexRoute: typeof MapMapaIndexRoute
+  MapMapaIndexRoute: typeof MapMapaIndexRoute;
 }
 
 const MapRouteChildren: MapRouteChildren = {
-  MapMapaIndexRoute: MapMapaIndexRoute,
-}
+  MapMapaIndexRoute: MapMapaIndexRoute
+};
 
-const MapRouteWithChildren = MapRoute._addFileChildren(MapRouteChildren)
+const MapRouteWithChildren = MapRoute._addFileChildren(MapRouteChildren);
 
 const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRouteWithChildren,
-  MapRoute: MapRouteWithChildren,
-}
+  MapRoute: MapRouteWithChildren
+};
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+  ._addFileTypes<FileRouteTypes>();
 
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
+import type { getRouter } from "./router.tsx";
+import type { createStart } from "@tanstack/react-start";
+declare module "@tanstack/react-start" {
   interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
+    ssr: true;
+    router: Awaited<ReturnType<typeof getRouter>>;
   }
 }

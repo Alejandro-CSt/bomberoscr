@@ -3,57 +3,55 @@
 import type { Client, Options as Options2, TDataShape } from "./client";
 import { client } from "./client.gen";
 import type {
-	GetIncidentsByIdData,
-	GetIncidentsByIdErrors,
-	GetIncidentsByIdOgData,
-	GetIncidentsByIdOgErrors,
-	GetIncidentsByIdOgResponses,
-	GetIncidentsByIdResponses,
-	GetIncidentsData,
-	GetIncidentsErrors,
-	GetIncidentsResponses,
+  GetIncidentsByIdData,
+  GetIncidentsByIdErrors,
+  GetIncidentsByIdOgData,
+  GetIncidentsByIdOgErrors,
+  GetIncidentsByIdOgResponses,
+  GetIncidentsByIdResponses,
+  GetIncidentsData,
+  GetIncidentsErrors,
+  GetIncidentsResponses
 } from "./types.gen";
 
 export type Options<
-	TData extends TDataShape = TDataShape,
-	ThrowOnError extends boolean = boolean,
+  TData extends TDataShape = TDataShape,
+  ThrowOnError extends boolean = boolean
 > = Options2<TData, ThrowOnError> & {
-	/**
-	 * You can provide a client instance returned by `createClient()` instead of
-	 * individual options. This might be also useful if you want to implement a
-	 * custom client.
-	 */
-	client?: Client;
-	/**
-	 * You can pass arbitrary values through the `meta` object. This can be
-	 * used to access values that aren't defined as part of the SDK function.
-	 */
-	meta?: Record<string, unknown>;
+  /**
+   * You can provide a client instance returned by `createClient()` instead of
+   * individual options. This might be also useful if you want to implement a
+   * custom client.
+   */
+  client?: Client;
+  /**
+   * You can pass arbitrary values through the `meta` object. This can be
+   * used to access values that aren't defined as part of the SDK function.
+   */
+  meta?: Record<string, unknown>;
 };
 
 export const getIncidents = <ThrowOnError extends boolean = false>(
-	options?: Options<GetIncidentsData, ThrowOnError>,
+  options?: Options<GetIncidentsData, ThrowOnError>
 ) =>
-	(options?.client ?? client).get<
-		GetIncidentsResponses,
-		GetIncidentsErrors,
-		ThrowOnError
-	>({ url: "/incidents", ...options });
+  (options?.client ?? client).get<GetIncidentsResponses, GetIncidentsErrors, ThrowOnError>({
+    url: "/incidents",
+    ...options
+  });
 
 export const getIncidentsById = <ThrowOnError extends boolean = false>(
-	options: Options<GetIncidentsByIdData, ThrowOnError>,
+  options: Options<GetIncidentsByIdData, ThrowOnError>
 ) =>
-	(options.client ?? client).get<
-		GetIncidentsByIdResponses,
-		GetIncidentsByIdErrors,
-		ThrowOnError
-	>({ url: "/incidents/{id}", ...options });
+  (options.client ?? client).get<GetIncidentsByIdResponses, GetIncidentsByIdErrors, ThrowOnError>({
+    url: "/incidents/{id}",
+    ...options
+  });
 
 export const getIncidentsByIdOg = <ThrowOnError extends boolean = false>(
-	options: Options<GetIncidentsByIdOgData, ThrowOnError>,
+  options: Options<GetIncidentsByIdOgData, ThrowOnError>
 ) =>
-	(options.client ?? client).get<
-		GetIncidentsByIdOgResponses,
-		GetIncidentsByIdOgErrors,
-		ThrowOnError
-	>({ url: "/incidents/{id}/og", ...options });
+  (options.client ?? client).get<
+    GetIncidentsByIdOgResponses,
+    GetIncidentsByIdOgErrors,
+    ThrowOnError
+  >({ url: "/incidents/{id}/og", ...options });

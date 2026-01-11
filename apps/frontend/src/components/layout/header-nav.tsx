@@ -27,12 +27,13 @@ export function HeaderNav({ className }: { className?: string }) {
   };
 
   return (
-    <Tabs className={cn("py-2", className)} value={getActiveTab()}>
+    <Tabs
+      className={cn("py-2", className)}
+      value={getActiveTab()}>
       <div>
         <TabsList
           variant="underline"
-          className="h-auto gap-0 rounded-none bg-transparent px-1 py-1 text-foreground outline-none *:shrink-0 focus:outline-none focus-visible:outline-none"
-        >
+          className="h-auto gap-0 rounded-none bg-transparent px-1 py-1 text-foreground outline-none *:shrink-0 focus:outline-none focus-visible:outline-none">
           {enabledNavItems.map((item) => {
             const value = item.title
               .toLowerCase()
@@ -45,8 +46,7 @@ export function HeaderNav({ className }: { className?: string }) {
                 className="relative border-none hover:bg-accent hover:text-foreground focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 data-active:bg-transparent data-active:shadow-none data-active:hover:bg-accent"
                 key={item.url}
                 render={<Link to={item.url} />}
-                value={tabValue}
-              >
+                value={tabValue}>
                 <Icon size={16} />
                 {item.title}
               </TabsTab>

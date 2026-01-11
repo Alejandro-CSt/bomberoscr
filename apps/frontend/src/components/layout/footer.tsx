@@ -27,14 +27,14 @@ export function Footer() {
             <div className="-ml-2 w-fit">
               <Logo />
             </div>
-            <p className="max-w-xs text-muted-foreground text-sm leading-relaxed">
+            <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
               Monitoreo en tiempo real de incidentes atendidos por el Benemérito Cuerpo de Bomberos
               de Costa Rica.
             </p>
           </div>
 
           <div className="flex flex-col gap-4">
-            <h3 className="font-semibold text-sm tracking-tight">Navegación</h3>
+            <h3 className="text-sm font-semibold tracking-tight">Navegación</h3>
             <nav className="flex flex-col gap-3">
               {navItems
                 .filter((item) => item.enabled)
@@ -42,8 +42,7 @@ export function Footer() {
                   <Link
                     key={item.url}
                     to={item.url}
-                    className="w-fit text-muted-foreground text-sm transition-colors hover:text-foreground"
-                  >
+                    className="w-fit text-sm text-muted-foreground transition-colors hover:text-foreground">
                     {item.title}
                   </Link>
                 ))}
@@ -51,7 +50,7 @@ export function Footer() {
           </div>
 
           <div className="flex flex-col gap-4">
-            <h3 className="font-semibold text-sm tracking-tight">Enlaces</h3>
+            <h3 className="text-sm font-semibold tracking-tight">Enlaces</h3>
             <nav className="flex flex-col gap-3">
               {SOCIAL_LINKS.map((link) => (
                 <a
@@ -59,9 +58,11 @@ export function Footer() {
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex w-fit items-center gap-2 text-muted-foreground text-sm transition-colors hover:text-foreground"
-                >
-                  <link.icon size={16} weight="duotone" />
+                  className="flex w-fit items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
+                  <link.icon
+                    size={16}
+                    weight="duotone"
+                  />
                   <span>{link.title}</span>
                 </a>
               ))}
@@ -70,7 +71,7 @@ export function Footer() {
         </div>
 
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t pt-8 md:flex-row">
-          <p className="text-muted-foreground text-xs">
+          <p className="text-xs text-muted-foreground">
             © {currentYear} Emergencias CR. No afiliado oficialmente al Benemérito Cuerpo de
             Bomberos de Costa Rica.
           </p>

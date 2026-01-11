@@ -1,11 +1,11 @@
 {
   "name": "@bomberoscr/lib",
   "version": "0.0.0",
-  "scripts": {
-    "build": "tsc"
-  },
   "exports": {
     "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "build": "tsc"
   },
   "dependencies": {
     "winston": "^3.17.0",

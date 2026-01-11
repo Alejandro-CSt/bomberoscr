@@ -1,17 +1,6 @@
 {
   "name": "@bomberoscr/db",
   "type": "module",
-  "scripts": {
-    "build": "tsc",
-    "drizzle:migrate": "drizzle-kit migrate",
-    "drizzle:generate": "drizzle-kit generate",
-    "drizzle:push": "drizzle-kit push",
-    "drizzle:pull": "drizzle-kit pull",
-    "drizzle:studio": "drizzle-kit studio"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
   "exports": {
     "./utils": "./src/utils.ts",
     "./index": "./src/index.ts",
@@ -26,10 +15,16 @@
     "./queries/search/*": "./src/queries/search/*.ts",
     "./queries/map/*": "./src/queries/map/*.ts"
   },
-  "devDependencies": {
-    "@bomberoscr/typescript-config": "workspace:*",
-    "drizzle-kit": "^0.31.4",
-    "typescript": "^5.8.3"
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc",
+    "drizzle:migrate": "drizzle-kit migrate",
+    "drizzle:generate": "drizzle-kit generate",
+    "drizzle:push": "drizzle-kit push",
+    "drizzle:pull": "drizzle-kit pull",
+    "drizzle:studio": "drizzle-kit studio"
   },
   "dependencies": {
     "@bomberoscr/lib": "workspace:*",
@@ -38,5 +33,10 @@
     "drizzle-orm": "catalog:",
     "drizzle-zod": "^0.8.2",
     "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@bomberoscr/typescript-config": "workspace:*",
+    "drizzle-kit": "^0.31.4",
+    "typescript": "^5.8.3"
   }
 }

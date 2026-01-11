@@ -1,11 +1,11 @@
 {
   "name": "@bomberoscr/sync-core",
-  "scripts": {
-    "build": "tsc"
-  },
   "exports": {
     "./upsert-incident": "./src/upsert-incident.ts",
     "./transform": "./src/transform.ts"
+  },
+  "scripts": {
+    "build": "tsc"
   },
   "dependencies": {
     "@bomberoscr/db": "workspace:*",

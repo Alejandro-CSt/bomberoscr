@@ -3,6 +3,13 @@
   "version": "0.0.1",
   "private": true,
   "type": "module",
+  "exports": {
+    "./api": "./src/api.ts",
+    "./fetcher": "./src/fetcher.ts",
+    "./persist/*": "./src/persist/*.ts",
+    "./transform/*": "./src/transform/*.ts",
+    "./types": "./src/types.ts"
+  },
   "dependencies": {
     "@bomberoscr/db": "workspace:*",
     "@bomberoscr/lib": "workspace:*",
@@ -14,12 +21,5 @@
   "devDependencies": {
     "@bomberoscr/typescript-config": "workspace:*",
     "typescript": "^5.8.3"
-  },
-  "exports": {
-    "./api": "./src/api.ts",
-    "./fetcher": "./src/fetcher.ts",
-    "./persist/*": "./src/persist/*.ts",
-    "./transform/*": "./src/transform/*.ts",
-    "./types": "./src/types.ts"
   }
 }

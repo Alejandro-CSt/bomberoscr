@@ -30,8 +30,7 @@ export async function getSystemOverview() {
         `
       })
       .from(dispatchedVehicles)
-      .innerJoin(incidents, eq(dispatchedVehicles.incidentId, incidents.id))
-      .where(sql`
+      .innerJoin(incidents, eq(dispatchedVehicles.incidentId, incidents.id)).where(sql`
         ${incidents.incidentTimestamp} BETWEEN ${startDate} AND ${endDate}
         AND ${dispatchedVehicles.arrivalTime} IS NOT NULL
         AND ${dispatchedVehicles.dispatchedTime} IS NOT NULL

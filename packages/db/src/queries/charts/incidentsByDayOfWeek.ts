@@ -41,8 +41,7 @@ export async function getIncidentsByDayOfWeek(
       count: sql<number>`count(*)::int`
     })
     .from(incidents)
-    .where(sql`${incidents.incidentTimestamp} BETWEEN ${startDate} AND ${endDate}`)
-    .groupBy(sql`
+    .where(sql`${incidents.incidentTimestamp} BETWEEN ${startDate} AND ${endDate}`).groupBy(sql`
       CASE 
         WHEN EXTRACT(DOW FROM ${incidents.incidentTimestamp}) = 1 THEN 'Lunes'
         WHEN EXTRACT(DOW FROM ${incidents.incidentTimestamp}) = 2 THEN 'Martes'

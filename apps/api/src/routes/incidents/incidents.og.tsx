@@ -61,8 +61,7 @@ export async function generateOgImage(
         padding: "40px",
         color: "white",
         fontFamily: "JetBrains Mono"
-      }}
-    >
+      }}>
       <div
         style={{
           display: "flex",
@@ -70,16 +69,14 @@ export async function generateOgImage(
           justifyContent: "space-between",
           borderBottom: "2px solid rgba(255, 255, 255, 0.3)",
           paddingBottom: "20px"
-        }}
-      >
+        }}>
         <div
           style={{
             fontSize: "36px",
             fontWeight: 700,
             display: "flex",
             alignItems: "center"
-          }}
-        >
+          }}>
           <div
             style={{
               background: "white",
@@ -88,8 +85,7 @@ export async function generateOgImage(
               borderRadius: "6px",
               marginRight: "12px",
               display: "flex"
-            }}
-          >
+            }}>
             EE-{incident.EEConsecutive}
           </div>
         </div>
@@ -99,8 +95,7 @@ export async function generateOgImage(
             fontWeight: 400,
             opacity: 0.9,
             display: "flex"
-          }}
-        >
+          }}>
           #{incident.id}
         </div>
       </div>
@@ -111,16 +106,14 @@ export async function generateOgImage(
           display: "flex",
           flexDirection: "column",
           justifyContent: "center"
-        }}
-      >
+        }}>
         <div
           style={{
             fontSize: "28px",
             marginBottom: "10px",
             opacity: 0.9,
             display: "flex"
-          }}
-        >
+          }}>
           {formatDate(incident.incidentTimestamp)}
         </div>
 
@@ -130,8 +123,7 @@ export async function generateOgImage(
             fontWeight: 700,
             display: "flex",
             textShadow: "0 2px 4px rgba(0,0,0,0.2)"
-          }}
-        >
+          }}>
           {truncateText(incidentTitle, 50)}
         </h2>
 
@@ -142,15 +134,13 @@ export async function generateOgImage(
             display: "flex",
             marginTop: "10px",
             maxWidth: "90%"
-          }}
-        >
+          }}>
           <div
             style={{
               display: "flex",
               alignItems: "center",
               borderRadius: "8px"
-            }}
-          >
+            }}>
             <span style={{ display: "flex" }}>{locationDisplay || "Sin ubicación"}</span>
           </div>
         </div>
@@ -163,8 +153,7 @@ export async function generateOgImage(
           borderTop: "2px solid rgba(255, 255, 255, 0.3)",
           paddingTop: "20px",
           marginTop: "20px"
-        }}
-      >
+        }}>
         <div style={{ display: "flex", gap: "30px" }}>
           <div
             style={{
@@ -172,8 +161,7 @@ export async function generateOgImage(
               flexDirection: "column",
               alignItems: "center",
               borderRadius: "8px"
-            }}
-          >
+            }}>
             <div style={{ fontSize: "36px", fontWeight: 700, display: "flex" }}>
               {stationsCount}
             </div>
@@ -188,8 +176,7 @@ export async function generateOgImage(
               flexDirection: "column",
               alignItems: "center",
               borderRadius: "8px"
-            }}
-          >
+            }}>
             <div style={{ fontSize: "36px", fontWeight: 700, display: "flex" }}>
               {vehiclesCount}
             </div>
@@ -201,8 +188,12 @@ export async function generateOgImage(
 
         {responsibleStation && (
           <div
-            style={{ display: "flex", alignItems: "center", borderRadius: "8px", fontSize: "20px" }}
-          >
+            style={{
+              display: "flex",
+              alignItems: "center",
+              borderRadius: "8px",
+              fontSize: "20px"
+            }}>
             <span style={{ display: "flex" }}>Estación responsable: {responsibleStation}</span>
           </div>
         )}

@@ -8,15 +8,15 @@ Rewrite of [sync (v1)](../sync/) that heavily uses `neverthrow` for explicit, pr
 
 The service keeps several entities up to date on a schedule.
 
-| Task | Frequency |
-| --- | --- |
-| Incident discovery | Every minute (discovers newly opened incidents) |
-| Open incident follow-up | Every 3 minutes per incident until it closes* |
-| Incident types sync | Twice daily |
-| Station sync (per station) | Twice daily (limited concurrency) |
-| Vehicle sync (per vehicle) | Twice daily (limited concurrency) |
-| Districts/Geo data sync | Twice daily |
-| Vehicle disponibility sync | Twice daily |
+| Task                       | Frequency                                       |
+| -------------------------- | ----------------------------------------------- |
+| Incident discovery         | Every minute (discovers newly opened incidents) |
+| Open incident follow-up    | Every 3 minutes per incident until it closes\*  |
+| Incident types sync        | Twice daily                                     |
+| Station sync (per station) | Twice daily (limited concurrency)               |
+| Vehicle sync (per vehicle) | Twice daily (limited concurrency)               |
+| Districts/Geo data sync    | Twice daily                                     |
+| Vehicle disponibility sync | Twice daily                                     |
 
 \* An incident is considered closed/resolved when SIGAE marks it as closed and exact coordinates are available for the incident.
 

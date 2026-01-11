@@ -8,8 +8,7 @@ function Meter({ className, children, ...props }: MeterPrimitive.Root.Props) {
   return (
     <MeterPrimitive.Root
       className={cn("flex w-full flex-col gap-2", className)}
-      {...props}
-    >
+      {...props}>
       {children ? (
         children
       ) : (
@@ -24,7 +23,7 @@ function Meter({ className, children, ...props }: MeterPrimitive.Root.Props) {
 function MeterLabel({ className, ...props }: MeterPrimitive.Label.Props) {
   return (
     <MeterPrimitive.Label
-      className={cn("font-medium text-sm", className)}
+      className={cn("text-sm font-medium", className)}
       data-slot="meter-label"
       {...props}
     />
@@ -41,10 +40,7 @@ function MeterTrack({ className, ...props }: MeterPrimitive.Track.Props) {
   );
 }
 
-function MeterIndicator({
-  className,
-  ...props
-}: MeterPrimitive.Indicator.Props) {
+function MeterIndicator({ className, ...props }: MeterPrimitive.Indicator.Props) {
   return (
     <MeterPrimitive.Indicator
       className={cn("bg-primary transition-all duration-500", className)}

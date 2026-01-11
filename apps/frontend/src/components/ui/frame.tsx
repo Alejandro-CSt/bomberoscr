@@ -8,7 +8,7 @@ function Frame({ className, ...props }: React.ComponentProps<"div">) {
       className={cn(
         "relative flex flex-col rounded-2xl bg-muted/72 p-1",
         "*:[[data-slot=frame-panel]+[data-slot=frame-panel]]:mt-1",
-        className,
+        className
       )}
       data-slot="frame"
       {...props}
@@ -21,7 +21,7 @@ function FramePanel({ className, ...props }: React.ComponentProps<"div">) {
     <div
       className={cn(
         "relative rounded-xl border bg-background bg-clip-padding p-5 shadow-xs/5 before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-xl)-1px)] before:shadow-[0_1px_--theme(--color-black/6%)] dark:before:shadow-[0_-1px_--theme(--color-white/6%)]",
-        className,
+        className
       )}
       data-slot="frame-panel"
       {...props}
@@ -42,20 +42,17 @@ function FrameHeader({ className, ...props }: React.ComponentProps<"header">) {
 function FrameTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("font-semibold text-sm", className)}
+      className={cn("text-sm font-semibold", className)}
       data-slot="frame-panel-title"
       {...props}
     />
   );
 }
 
-function FrameDescription({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+function FrameDescription({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("text-muted-foreground text-sm", className)}
+      className={cn("text-sm text-muted-foreground", className)}
       data-slot="frame-panel-description"
       {...props}
     />
@@ -72,11 +69,4 @@ function FrameFooter({ className, ...props }: React.ComponentProps<"footer">) {
   );
 }
 
-export {
-  Frame,
-  FramePanel,
-  FrameHeader,
-  FrameTitle,
-  FrameDescription,
-  FrameFooter,
-};
+export { Frame, FramePanel, FrameHeader, FrameTitle, FrameDescription, FrameFooter };

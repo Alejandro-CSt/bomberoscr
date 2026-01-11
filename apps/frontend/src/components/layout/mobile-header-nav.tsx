@@ -33,21 +33,22 @@ export function MobileHeaderNav({ className }: { className?: string }) {
 
   return (
     <nav className={className}>
-      <Popover onOpenChange={setOpen} open={open}>
+      <Popover
+        onOpenChange={setOpen}
+        open={open}>
         <PopoverTrigger
           render={
             <Button
               className="extend-touch-target h-8 touch-manipulation items-center justify-start gap-2.5 border-none p-0! hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 active:bg-transparent dark:hover:bg-transparent"
               variant="link"
             />
-          }
-        >
+          }>
           <div className="relative flex h-8 w-4 items-center justify-center">
             <div className="relative size-4">
               <span
                 className={cn(
                   "absolute left-0 block h-0.5 w-4 bg-foreground transition-all duration-100",
-                  open ? "-rotate-45 top-[0.4rem]" : "top-1"
+                  open ? "top-[0.4rem] -rotate-45" : "top-1"
                 )}
               />
               <span
@@ -67,8 +68,7 @@ export function MobileHeaderNav({ className }: { className?: string }) {
           noPadding
           positionerClassName="!h-auto !w-auto !max-w-none left-0!"
           side="bottom"
-          sideOffset={8}
-        >
+          sideOffset={8}>
           <div className="flex flex-col gap-6 overflow-auto px-6 py-6">
             <div className="flex flex-col gap-3">
               {enabledNavItems.map((item) => (
@@ -76,8 +76,7 @@ export function MobileHeaderNav({ className }: { className?: string }) {
                   href={item.url}
                   isActive={isActive(item.url)}
                   key={item.url}
-                  onClick={() => setOpen(false)}
-                >
+                  onClick={() => setOpen(false)}>
                   {item.title}
                 </MobileLink>
               ))}
@@ -103,11 +102,14 @@ function MobileLink({
   onClick?: () => void;
 }) {
   return (
-    <Link to={href} className={cn("relative font-medium text-2xl", className)} onClick={onClick}>
+    <Link
+      to={href}
+      className={cn("relative text-2xl font-medium", className)}
+      onClick={onClick}>
       {children}
       <span
         className={cn(
-          "-bottom-1 absolute left-0 h-0.5 w-6 bg-primary transition-transform duration-200 ease-in-out origin-left",
+          "absolute -bottom-1 left-0 h-0.5 w-6 origin-left bg-primary transition-transform duration-200 ease-in-out",
           isActive ? "scale-x-100" : "scale-x-0"
         )}
       />

@@ -7,9 +7,11 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "format": "biome format",
-    "lint": "biome lint",
-    "check": "biome check",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "check": "pnpm run lint && pnpm run format:check",
     "openapi-ts": "openapi-ts"
   },
   "dependencies": {
@@ -38,7 +40,6 @@
     "vite-tsconfig-paths": "^6.0.2"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.2.4",
     "@fontsource-variable/bricolage-grotesque": "^5.2.10",
     "@fontsource-variable/geist": "^5.2.8",
     "@fontsource-variable/geist-mono": "^5.2.7",

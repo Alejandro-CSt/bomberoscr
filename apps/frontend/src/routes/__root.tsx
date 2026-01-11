@@ -70,7 +70,9 @@ function RootComponent() {
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es-CR" className="dark">
+    <html
+      lang="es-CR"
+      className="dark">
       <head>
         <HeadContent />
       </head>

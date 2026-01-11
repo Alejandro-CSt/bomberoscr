@@ -2,11 +2,7 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  MoreHorizontalIcon,
-} from "lucide-react";
+import { ChevronLeftIcon, ChevronRightIcon, MoreHorizontalIcon } from "lucide-react";
 import type * as React from "react";
 
 import { cn } from "@/lib/utils";
@@ -23,10 +19,7 @@ function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
   );
 }
 
-function PaginationContent({
-  className,
-  ...props
-}: React.ComponentProps<"ul">) {
+function PaginationContent({ className, ...props }: React.ComponentProps<"ul">) {
   return (
     <ul
       className={cn("flex flex-row items-center gap-1", className)}
@@ -37,7 +30,12 @@ function PaginationContent({
 }
 
 function PaginationItem({ ...props }: React.ComponentProps<"li">) {
-  return <li data-slot="pagination-item" {...props} />;
+  return (
+    <li
+      data-slot="pagination-item"
+      {...props}
+    />
+  );
 }
 
 type PaginationLinkProps = {
@@ -59,66 +57,54 @@ function PaginationLink({
       : cn(
           buttonVariants({
             size,
-            variant: isActive ? "outline" : "ghost",
+            variant: isActive ? "outline" : "ghost"
           }),
-          className,
+          className
         ),
     "data-active": isActive,
-    "data-slot": "pagination-link",
+    "data-slot": "pagination-link"
   };
 
   return useRender({
     defaultTagName: "a",
     props: mergeProps<"a">(defaultProps, props),
-    render,
+    render
   });
 }
 
-function PaginationPrevious({
-  className,
-  ...props
-}: React.ComponentProps<typeof PaginationLink>) {
+function PaginationPrevious({ className, ...props }: React.ComponentProps<typeof PaginationLink>) {
   return (
     <PaginationLink
       aria-label="Go to previous page"
       className={cn("max-sm:aspect-square max-sm:p-0", className)}
       size="default"
-      {...props}
-    >
+      {...props}>
       <ChevronLeftIcon className="sm:-ms-1" />
       <span className="max-sm:hidden">Previous</span>
     </PaginationLink>
   );
 }
 
-function PaginationNext({
-  className,
-  ...props
-}: React.ComponentProps<typeof PaginationLink>) {
+function PaginationNext({ className, ...props }: React.ComponentProps<typeof PaginationLink>) {
   return (
     <PaginationLink
       aria-label="Go to next page"
       className={cn("max-sm:aspect-square max-sm:p-0", className)}
       size="default"
-      {...props}
-    >
+      {...props}>
       <span className="max-sm:hidden">Next</span>
       <ChevronRightIcon className="sm:-me-1" />
     </PaginationLink>
   );
 }
 
-function PaginationEllipsis({
-  className,
-  ...props
-}: React.ComponentProps<"span">) {
+function PaginationEllipsis({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
       aria-hidden
       className={cn("flex min-w-7 justify-center", className)}
       data-slot="pagination-ellipsis"
-      {...props}
-    >
+      {...props}>
       <MoreHorizontalIcon className="size-5 sm:size-4" />
       <span className="sr-only">More pages</span>
     </span>
@@ -132,5 +118,5 @@ export {
   PaginationItem,
   PaginationPrevious,
   PaginationNext,
-  PaginationEllipsis,
+  PaginationEllipsis
 };

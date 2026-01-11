@@ -56,7 +56,9 @@ export const ERROR_MESSAGES: Record<CloseIncidentError["type"], string> = {
  */
 export async function closeIncident({
   id
-}: { id: number }): Promise<ResultAsync<void, CloseIncidentError>> {
+}: {
+  id: number;
+}): Promise<ResultAsync<void, CloseIncidentError>> {
   const incidentQuery = db.query.incidents.findFirst({
     where: eq(incidents.id, id),
     columns: {
