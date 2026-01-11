@@ -1,13 +1,14 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@import "@fontsource-variable/geist";
+@import "@fontsource-variable/geist-mono";
+@import "@fontsource-variable/bricolage-grotesque";
+
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --font-sans: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-mono: "Geist Mono", "Fira Code", "Source Code Pro", monospace;
-  --font-serif: "Bricolage Grotesque", Georgia, serif;
-
+  --app-header-height: 3rem;
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.147 0.004 49.25);
@@ -91,6 +92,10 @@
 }
 
 @theme inline {
+  --font-sans: "Geist Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "Geist Mono Variable", "Fira Code", monospace;
+  --font-serif: "Bricolage Grotesque Variable", Georgia, serif;
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -149,4 +154,39 @@
   code {
     font-family: var(--font-mono);
   }
+}
+
+/* Header styles */
+.app-header {
+  height: var(--app-header-height);
+}
+
+/* Logo animation */
+@keyframes logo-ray-bounce {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(3px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.logo-ray {
+  transform-origin: center;
+}
+
+.group:hover .logo-ray,
+.logo-ray-animate {
+  animation-name: logo-ray-bounce;
+  animation-duration: 220ms;
+  animation-timing-function: ease-out;
+}
+
+/* Scrollbar */
+html {
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
 }

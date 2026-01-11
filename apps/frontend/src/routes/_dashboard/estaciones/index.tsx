@@ -1,8 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/estaciones/")({
-  component: EstacionesPage
-});
+export const Route = createFileRoute("/_dashboard/estaciones/")({ component: EstacionesPage });
 
 function EstacionesPage() {
   return (

@@ -9,159 +9,211 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as MapaRouteImport } from './routes/mapa'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as IncidentesIndexRouteImport } from './routes/incidentes/index'
-import { Route as EstacionesIndexRouteImport } from './routes/estaciones/index'
-import { Route as IncidentesSlugRouteImport } from './routes/incidentes/$slug'
-import { Route as EstacionesNameRouteImport } from './routes/estaciones/$name'
+import { Route as MapRouteImport } from './routes/_map'
+import { Route as DashboardRouteImport } from './routes/_dashboard'
+import { Route as DashboardIndexRouteImport } from './routes/_dashboard/index'
+import { Route as MapMapaIndexRouteImport } from './routes/_map/mapa/index'
+import { Route as DashboardIncidentesIndexRouteImport } from './routes/_dashboard/incidentes/index'
+import { Route as DashboardEstacionesIndexRouteImport } from './routes/_dashboard/estaciones/index'
+import { Route as DashboardIncidentesSlugRouteImport } from './routes/_dashboard/incidentes/$slug'
+import { Route as DashboardEstacionesNameRouteImport } from './routes/_dashboard/estaciones/$name'
 
-const MapaRoute = MapaRouteImport.update({
-  id: '/mapa',
-  path: '/mapa',
+const MapRoute = MapRouteImport.update({
+  id: '/_map',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/_dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => DashboardRoute,
 } as any)
-const IncidentesIndexRoute = IncidentesIndexRouteImport.update({
-  id: '/incidentes/',
-  path: '/incidentes/',
-  getParentRoute: () => rootRouteImport,
+const MapMapaIndexRoute = MapMapaIndexRouteImport.update({
+  id: '/mapa/',
+  path: '/mapa/',
+  getParentRoute: () => MapRoute,
 } as any)
-const EstacionesIndexRoute = EstacionesIndexRouteImport.update({
-  id: '/estaciones/',
-  path: '/estaciones/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const IncidentesSlugRoute = IncidentesSlugRouteImport.update({
+const DashboardIncidentesIndexRoute =
+  DashboardIncidentesIndexRouteImport.update({
+    id: '/incidentes/',
+    path: '/incidentes/',
+    getParentRoute: () => DashboardRoute,
+  } as any)
+const DashboardEstacionesIndexRoute =
+  DashboardEstacionesIndexRouteImport.update({
+    id: '/estaciones/',
+    path: '/estaciones/',
+    getParentRoute: () => DashboardRoute,
+  } as any)
+const DashboardIncidentesSlugRoute = DashboardIncidentesSlugRouteImport.update({
   id: '/incidentes/$slug',
   path: '/incidentes/$slug',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => DashboardRoute,
 } as any)
-const EstacionesNameRoute = EstacionesNameRouteImport.update({
+const DashboardEstacionesNameRoute = DashboardEstacionesNameRouteImport.update({
   id: '/estaciones/$name',
   path: '/estaciones/$name',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => DashboardRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/mapa': typeof MapaRoute
-  '/estaciones/$name': typeof EstacionesNameRoute
-  '/incidentes/$slug': typeof IncidentesSlugRoute
-  '/estaciones': typeof EstacionesIndexRoute
-  '/incidentes': typeof IncidentesIndexRoute
+  '/': typeof DashboardIndexRoute
+  '/estaciones/$name': typeof DashboardEstacionesNameRoute
+  '/incidentes/$slug': typeof DashboardIncidentesSlugRoute
+  '/estaciones': typeof DashboardEstacionesIndexRoute
+  '/incidentes': typeof DashboardIncidentesIndexRoute
+  '/mapa': typeof MapMapaIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/mapa': typeof MapaRoute
-  '/estaciones/$name': typeof EstacionesNameRoute
-  '/incidentes/$slug': typeof IncidentesSlugRoute
-  '/estaciones': typeof EstacionesIndexRoute
-  '/incidentes': typeof IncidentesIndexRoute
+  '/': typeof DashboardIndexRoute
+  '/estaciones/$name': typeof DashboardEstacionesNameRoute
+  '/incidentes/$slug': typeof DashboardIncidentesSlugRoute
+  '/estaciones': typeof DashboardEstacionesIndexRoute
+  '/incidentes': typeof DashboardIncidentesIndexRoute
+  '/mapa': typeof MapMapaIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/mapa': typeof MapaRoute
-  '/estaciones/$name': typeof EstacionesNameRoute
-  '/incidentes/$slug': typeof IncidentesSlugRoute
-  '/estaciones/': typeof EstacionesIndexRoute
-  '/incidentes/': typeof IncidentesIndexRoute
+  '/_dashboard': typeof DashboardRouteWithChildren
+  '/_map': typeof MapRouteWithChildren
+  '/_dashboard/': typeof DashboardIndexRoute
+  '/_dashboard/estaciones/$name': typeof DashboardEstacionesNameRoute
+  '/_dashboard/incidentes/$slug': typeof DashboardIncidentesSlugRoute
+  '/_dashboard/estaciones/': typeof DashboardEstacionesIndexRoute
+  '/_dashboard/incidentes/': typeof DashboardIncidentesIndexRoute
+  '/_map/mapa/': typeof MapMapaIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/mapa'
     | '/estaciones/$name'
     | '/incidentes/$slug'
     | '/estaciones'
     | '/incidentes'
+    | '/mapa'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/mapa'
     | '/estaciones/$name'
     | '/incidentes/$slug'
     | '/estaciones'
     | '/incidentes'
+    | '/mapa'
   id:
     | '__root__'
-    | '/'
-    | '/mapa'
-    | '/estaciones/$name'
-    | '/incidentes/$slug'
-    | '/estaciones/'
-    | '/incidentes/'
+    | '/_dashboard'
+    | '/_map'
+    | '/_dashboard/'
+    | '/_dashboard/estaciones/$name'
+    | '/_dashboard/incidentes/$slug'
+    | '/_dashboard/estaciones/'
+    | '/_dashboard/incidentes/'
+    | '/_map/mapa/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  MapaRoute: typeof MapaRoute
-  EstacionesNameRoute: typeof EstacionesNameRoute
-  IncidentesSlugRoute: typeof IncidentesSlugRoute
-  EstacionesIndexRoute: typeof EstacionesIndexRoute
-  IncidentesIndexRoute: typeof IncidentesIndexRoute
+  DashboardRoute: typeof DashboardRouteWithChildren
+  MapRoute: typeof MapRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/mapa': {
-      id: '/mapa'
-      path: '/mapa'
-      fullPath: '/mapa'
-      preLoaderRoute: typeof MapaRouteImport
+    '/_map': {
+      id: '/_map'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof MapRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
+    '/_dashboard': {
+      id: '/_dashboard'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_dashboard/': {
+      id: '/_dashboard/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof DashboardRoute
     }
-    '/incidentes/': {
-      id: '/incidentes/'
+    '/_map/mapa/': {
+      id: '/_map/mapa/'
+      path: '/mapa'
+      fullPath: '/mapa'
+      preLoaderRoute: typeof MapMapaIndexRouteImport
+      parentRoute: typeof MapRoute
+    }
+    '/_dashboard/incidentes/': {
+      id: '/_dashboard/incidentes/'
       path: '/incidentes'
       fullPath: '/incidentes'
-      preLoaderRoute: typeof IncidentesIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof DashboardIncidentesIndexRouteImport
+      parentRoute: typeof DashboardRoute
     }
-    '/estaciones/': {
-      id: '/estaciones/'
+    '/_dashboard/estaciones/': {
+      id: '/_dashboard/estaciones/'
       path: '/estaciones'
       fullPath: '/estaciones'
-      preLoaderRoute: typeof EstacionesIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof DashboardEstacionesIndexRouteImport
+      parentRoute: typeof DashboardRoute
     }
-    '/incidentes/$slug': {
-      id: '/incidentes/$slug'
+    '/_dashboard/incidentes/$slug': {
+      id: '/_dashboard/incidentes/$slug'
       path: '/incidentes/$slug'
       fullPath: '/incidentes/$slug'
-      preLoaderRoute: typeof IncidentesSlugRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof DashboardIncidentesSlugRouteImport
+      parentRoute: typeof DashboardRoute
     }
-    '/estaciones/$name': {
-      id: '/estaciones/$name'
+    '/_dashboard/estaciones/$name': {
+      id: '/_dashboard/estaciones/$name'
       path: '/estaciones/$name'
       fullPath: '/estaciones/$name'
-      preLoaderRoute: typeof EstacionesNameRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof DashboardEstacionesNameRouteImport
+      parentRoute: typeof DashboardRoute
     }
   }
 }
 
+interface DashboardRouteChildren {
+  DashboardIndexRoute: typeof DashboardIndexRoute
+  DashboardEstacionesNameRoute: typeof DashboardEstacionesNameRoute
+  DashboardIncidentesSlugRoute: typeof DashboardIncidentesSlugRoute
+  DashboardEstacionesIndexRoute: typeof DashboardEstacionesIndexRoute
+  DashboardIncidentesIndexRoute: typeof DashboardIncidentesIndexRoute
+}
+
+const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardIndexRoute: DashboardIndexRoute,
+  DashboardEstacionesNameRoute: DashboardEstacionesNameRoute,
+  DashboardIncidentesSlugRoute: DashboardIncidentesSlugRoute,
+  DashboardEstacionesIndexRoute: DashboardEstacionesIndexRoute,
+  DashboardIncidentesIndexRoute: DashboardIncidentesIndexRoute,
+}
+
+const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
+  DashboardRouteChildren,
+)
+
+interface MapRouteChildren {
+  MapMapaIndexRoute: typeof MapMapaIndexRoute
+}
+
+const MapRouteChildren: MapRouteChildren = {
+  MapMapaIndexRoute: MapMapaIndexRoute,
+}
+
+const MapRouteWithChildren = MapRoute._addFileChildren(MapRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  MapaRoute: MapaRoute,
-  EstacionesNameRoute: EstacionesNameRoute,
-  IncidentesSlugRoute: IncidentesSlugRoute,
-  EstacionesIndexRoute: EstacionesIndexRoute,
-  IncidentesIndexRoute: IncidentesIndexRoute,
+  DashboardRoute: DashboardRouteWithChildren,
+  MapRoute: MapRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

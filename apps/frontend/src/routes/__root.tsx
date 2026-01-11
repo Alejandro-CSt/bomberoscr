@@ -2,6 +2,7 @@ import { HeadContent, Outlet, Scripts, createRootRoute } from "@tanstack/react-r
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 
+import { Header } from "@/components/layout/header";
 import appCss from "../styles.css?url";
 
 export const Route = createRootRoute({
@@ -44,7 +45,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body className="font-sans antialiased">
-        {children}
+        <Header />
+        <main className="pt-[var(--app-header-height)]">{children}</main>
         <TanStackDevtools
           config={{
             position: "bottom-right"

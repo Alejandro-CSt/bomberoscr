@@ -43,12 +43,7 @@
             "attributes": ["className"],
             "functions": ["cn"]
           }
-        },
-        "useGoogleFontDisplay": "error",
-        "noDocumentImportInPage": "error",
-        "noHeadElement": "error",
-        "noHeadImportInDocument": "error",
-        "noImgElement": "error"
+        }
       },
       "style": { "noNamespace": "error", "useAsConstAssertion": "error" },
       "suspicious": {

@@ -1,8 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/mapa")({
-  component: MapaPage
-});
+export const Route = createFileRoute("/_map/mapa/")({ component: MapaPage });
 
 function MapaPage() {
   return (
