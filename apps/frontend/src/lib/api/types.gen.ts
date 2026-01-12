@@ -243,6 +243,57 @@ export type GetIncidentsByIdOgResponses = {
 export type GetIncidentsByIdOgResponse =
   GetIncidentsByIdOgResponses[keyof GetIncidentsByIdOgResponses];
 
+export type GetIncidentsByIdMapOriginalData = {
+  body?: never;
+  path: {
+    id: number | null;
+  };
+  query: {
+    token: string;
+  };
+  url: "/incidents/{id}/map/original";
+};
+
+export type GetIncidentsByIdMapOriginalErrors = {
+  /**
+   * Invalid coordinates
+   */
+  400: {
+    message: string;
+  };
+  /**
+   * Invalid or missing token
+   */
+  401: {
+    message: string;
+  };
+  /**
+   * Incident not found
+   */
+  404: {
+    message: string;
+  };
+  /**
+   * Failed to fetch map image
+   */
+  502: {
+    message: string;
+  };
+};
+
+export type GetIncidentsByIdMapOriginalError =
+  GetIncidentsByIdMapOriginalErrors[keyof GetIncidentsByIdMapOriginalErrors];
+
+export type GetIncidentsByIdMapOriginalResponses = {
+  /**
+   * Original map image from Mapbox (PNG)
+   */
+  200: Blob | File;
+};
+
+export type GetIncidentsByIdMapOriginalResponse =
+  GetIncidentsByIdMapOriginalResponses[keyof GetIncidentsByIdMapOriginalResponses];
+
 export type GetIncidentsByIdMapData = {
   body?: never;
   path: {
@@ -284,6 +335,169 @@ export type GetIncidentsByIdMapResponses = {
 
 export type GetIncidentsByIdMapResponse =
   GetIncidentsByIdMapResponses[keyof GetIncidentsByIdMapResponses];
+
+export type GetStationsData = {
+  body?: never;
+  path?: never;
+  query?: {
+    limit?: number;
+    cursor?: number | null;
+    search?: string;
+    isOperative?: boolean | null;
+    view?: "default" | "map";
+  };
+  url: "/stations";
+};
+
+export type GetStationsResponses = {
+  /**
+   * Paginated list of stations
+   */
+  200:
+    | {
+        view: "default";
+        stations: Array<{
+          id: number;
+          name: string;
+          stationKey: string;
+          address: string | null;
+          latitude: string;
+          longitude: string;
+          isOperative: boolean | null;
+        }>;
+        nextCursor: number | null;
+      }
+    | {
+        view: "map";
+        stations: Array<{
+          id: number;
+          stationKey: string;
+          latitude: string;
+          longitude: string;
+        }>;
+      };
+};
+
+export type GetStationsResponse = GetStationsResponses[keyof GetStationsResponses];
+
+export type GetStationsByKeyData = {
+  body?: never;
+  path: {
+    key: string;
+  };
+  query?: never;
+  url: "/stations/{key}";
+};
+
+export type GetStationsByKeyErrors = {
+  /**
+   * Station not found
+   */
+  404: {
+    message: string;
+  };
+};
+
+export type GetStationsByKeyError = GetStationsByKeyErrors[keyof GetStationsByKeyErrors];
+
+export type GetStationsByKeyResponses = {
+  /**
+   * Station details
+   */
+  200: {
+    station: {
+      id: number;
+      name: string;
+      stationKey: string;
+      radioChannel: string | null;
+      latitude: string;
+      longitude: string;
+      address: string | null;
+      phoneNumber: string | null;
+      fax: string | null;
+      email: string | null;
+      isOperative: boolean | null;
+    };
+  };
+};
+
+export type GetStationsByKeyResponse = GetStationsByKeyResponses[keyof GetStationsByKeyResponses];
+
+export type GetStationsByKeyImageOriginalData = {
+  body?: never;
+  path: {
+    key: string;
+  };
+  query: {
+    token: string;
+  };
+  url: "/stations/{key}/image/original";
+};
+
+export type GetStationsByKeyImageOriginalErrors = {
+  /**
+   * Invalid or missing token
+   */
+  401: {
+    message: string;
+  };
+  /**
+   * Station image not found
+   */
+  404: {
+    message: string;
+  };
+};
+
+export type GetStationsByKeyImageOriginalError =
+  GetStationsByKeyImageOriginalErrors[keyof GetStationsByKeyImageOriginalErrors];
+
+export type GetStationsByKeyImageOriginalResponses = {
+  /**
+   * Original station image
+   */
+  200: Blob | File;
+};
+
+export type GetStationsByKeyImageOriginalResponse =
+  GetStationsByKeyImageOriginalResponses[keyof GetStationsByKeyImageOriginalResponses];
+
+export type GetStationsByKeyImageData = {
+  body?: never;
+  path: {
+    key: string;
+  };
+  query?: never;
+  url: "/stations/{key}/image";
+};
+
+export type GetStationsByKeyImageErrors = {
+  /**
+   * Station image not found
+   */
+  404: {
+    message: string;
+  };
+  /**
+   * Failed to fetch station image
+   */
+  502: {
+    message: string;
+  };
+};
+
+export type GetStationsByKeyImageError =
+  GetStationsByKeyImageErrors[keyof GetStationsByKeyImageErrors];
+
+export type GetStationsByKeyImageResponses = {
+  /**
+   * Station image
+   */
+  200: Blob | File;
+};
+
+export type GetStationsByKeyImageResponse =
+  GetStationsByKeyImageResponses[keyof GetStationsByKeyImageResponses];
 
 export type GetAdminIncidentsData = {
   body?: never;

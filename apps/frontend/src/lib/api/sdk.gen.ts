@@ -10,6 +10,9 @@ import type {
   GetIncidentsByIdErrors,
   GetIncidentsByIdMapData,
   GetIncidentsByIdMapErrors,
+  GetIncidentsByIdMapOriginalData,
+  GetIncidentsByIdMapOriginalErrors,
+  GetIncidentsByIdMapOriginalResponses,
   GetIncidentsByIdMapResponses,
   GetIncidentsByIdOgData,
   GetIncidentsByIdOgErrors,
@@ -20,6 +23,17 @@ import type {
   GetIncidentsHighlightedData,
   GetIncidentsHighlightedResponses,
   GetIncidentsResponses,
+  GetStationsByKeyData,
+  GetStationsByKeyErrors,
+  GetStationsByKeyImageData,
+  GetStationsByKeyImageErrors,
+  GetStationsByKeyImageOriginalData,
+  GetStationsByKeyImageOriginalErrors,
+  GetStationsByKeyImageOriginalResponses,
+  GetStationsByKeyImageResponses,
+  GetStationsByKeyResponses,
+  GetStationsData,
+  GetStationsResponses,
   PostAdminIncidentsByIdData,
   PostAdminIncidentsByIdErrors,
   PostAdminIncidentsByIdResponses,
@@ -78,6 +92,15 @@ export const getIncidentsByIdOg = <ThrowOnError extends boolean = false>(
     ThrowOnError
   >({ url: "/incidents/{id}/og", ...options });
 
+export const getIncidentsByIdMapOriginal = <ThrowOnError extends boolean = false>(
+  options: Options<GetIncidentsByIdMapOriginalData, ThrowOnError>
+) =>
+  (options.client ?? client).get<
+    GetIncidentsByIdMapOriginalResponses,
+    GetIncidentsByIdMapOriginalErrors,
+    ThrowOnError
+  >({ url: "/incidents/{id}/map/original", ...options });
+
 export const getIncidentsByIdMap = <ThrowOnError extends boolean = false>(
   options: Options<GetIncidentsByIdMapData, ThrowOnError>
 ) =>
@@ -86,6 +109,40 @@ export const getIncidentsByIdMap = <ThrowOnError extends boolean = false>(
     GetIncidentsByIdMapErrors,
     ThrowOnError
   >({ url: "/incidents/{id}/map", ...options });
+
+export const getStations = <ThrowOnError extends boolean = false>(
+  options?: Options<GetStationsData, ThrowOnError>
+) =>
+  (options?.client ?? client).get<GetStationsResponses, unknown, ThrowOnError>({
+    url: "/stations",
+    ...options
+  });
+
+export const getStationsByKey = <ThrowOnError extends boolean = false>(
+  options: Options<GetStationsByKeyData, ThrowOnError>
+) =>
+  (options.client ?? client).get<GetStationsByKeyResponses, GetStationsByKeyErrors, ThrowOnError>({
+    url: "/stations/{key}",
+    ...options
+  });
+
+export const getStationsByKeyImageOriginal = <ThrowOnError extends boolean = false>(
+  options: Options<GetStationsByKeyImageOriginalData, ThrowOnError>
+) =>
+  (options.client ?? client).get<
+    GetStationsByKeyImageOriginalResponses,
+    GetStationsByKeyImageOriginalErrors,
+    ThrowOnError
+  >({ url: "/stations/{key}/image/original", ...options });
+
+export const getStationsByKeyImage = <ThrowOnError extends boolean = false>(
+  options: Options<GetStationsByKeyImageData, ThrowOnError>
+) =>
+  (options.client ?? client).get<
+    GetStationsByKeyImageResponses,
+    GetStationsByKeyImageErrors,
+    ThrowOnError
+  >({ url: "/stations/{key}/image", ...options });
 
 export const getAdminIncidents = <ThrowOnError extends boolean = false>(
   options: Options<GetAdminIncidentsData, ThrowOnError>

@@ -36,7 +36,7 @@
   },
   "devDependencies": {
     "@bomberoscr/typescript-config": "workspace:*",
-    "drizzle-kit": "^0.31.4",
-    "typescript": "^5.8.3"
+    "@typescript/native-preview": "catalog:",
+    "drizzle-kit": "^0.31.4"
   }
 }

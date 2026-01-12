@@ -6,6 +6,9 @@ settings:
 
 catalogs:
   default:
+    '@typescript/native-preview':
+      specifier: ^7.0.0-dev.20260112.1
+      version: 7.0.0-dev.20260112.1
     drizzle-orm:
       specifier: ^0.44.3
       version: 0.44.7
@@ -95,6 +98,9 @@ importers:
       '@types/node':
         specifier: 25.0.6
         version: 25.0.6
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260112.1
       cross-env:
         specifier: 10.1.0
         version: 10.1.0
@@ -104,9 +110,6 @@ importers:
       tsx:
         specifier: 4.21.0
         version: 4.21.0
-      typescript:
-        specifier: 5.9.3
-        version: 5.9.3
       vitest:
         specifier: 4.0.17
         version: 4.0.17(@opentelemetry/api@1.9.0)(@types/node@25.0.6)(jiti@2.6.1)(jsdom@27.4.0)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.2)
@@ -216,6 +219,9 @@ importers:
       '@types/react-dom':
         specifier: ^19.2.0
         version: 19.2.3(@types/react@19.2.7)
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260112.1
       '@vitejs/plugin-react':
         specifier: ^5.0.4
         version: 5.1.2(rolldown-vite@7.3.1(@types/node@22.19.5)(esbuild@0.27.2)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.2))
@@ -228,9 +234,6 @@ importers:
       tw-animate-css:
         specifier: ^1.4.0
         version: 1.4.0
-      typescript:
-        specifier: ^5.7.2
-        version: 5.9.3
       vite:
         specifier: npm:rolldown-vite@7.3.1
         version: rolldown-vite@7.3.1(@types/node@22.19.5)(esbuild@0.27.2)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.2)
@@ -404,6 +407,9 @@ importers:
       '@types/node-cron':
         specifier: ^3.0.11
         version: 3.0.11
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260112.1
       '@vitest/ui':
         specifier: ^3.2.4
         version: 3.2.4(vitest@3.2.4)
@@ -419,9 +425,6 @@ importers:
       tsup:
         specifier: ^8.5.0
         version: 8.5.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.2)
-      typescript:
-        specifier: ^5.8.3
-        version: 5.9.3
       vitest:
         specifier: ^3.2.4
         version: 3.2.4(@types/node@20.19.27)(@vitest/ui@3.2.4)(jiti@2.6.1)(jsdom@26.1.0)(lightningcss@1.30.2)(tsx@4.21.0)(yaml@2.8.2)
@@ -715,12 +718,12 @@ importers:
       '@bomberoscr/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260112.1
       drizzle-kit:
         specifier: ^0.31.4
         version: 0.31.8
-      typescript:
-        specifier: ^5.8.3
-        version: 5.9.3
 
   packages/lib:
     dependencies:
@@ -734,9 +737,9 @@ importers:
       '@bomberoscr/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
-      typescript:
-        specifier: ^5.8.3
-        version: 5.9.3
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260112.1
 
   packages/sigae:
     dependencies:
@@ -812,9 +815,9 @@ importers:
       '@bomberoscr/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
-      typescript:
-        specifier: ^5.8.3
-        version: 5.9.3
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260112.1
 
   packages/typescript-config: {}
 

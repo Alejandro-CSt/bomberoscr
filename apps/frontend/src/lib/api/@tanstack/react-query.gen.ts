@@ -14,8 +14,13 @@ import {
   getIncidents,
   getIncidentsById,
   getIncidentsByIdMap,
+  getIncidentsByIdMapOriginal,
   getIncidentsByIdOg,
   getIncidentsHighlighted,
+  getStations,
+  getStationsByKey,
+  getStationsByKeyImage,
+  getStationsByKeyImageOriginal,
   type Options,
   postAdminIncidents,
   postAdminIncidentsById
@@ -28,6 +33,9 @@ import type {
   GetIncidentsByIdError,
   GetIncidentsByIdMapData,
   GetIncidentsByIdMapError,
+  GetIncidentsByIdMapOriginalData,
+  GetIncidentsByIdMapOriginalError,
+  GetIncidentsByIdMapOriginalResponse,
   GetIncidentsByIdMapResponse,
   GetIncidentsByIdOgData,
   GetIncidentsByIdOgError,
@@ -38,6 +46,17 @@ import type {
   GetIncidentsHighlightedData,
   GetIncidentsHighlightedResponse,
   GetIncidentsResponse,
+  GetStationsByKeyData,
+  GetStationsByKeyError,
+  GetStationsByKeyImageData,
+  GetStationsByKeyImageError,
+  GetStationsByKeyImageOriginalData,
+  GetStationsByKeyImageOriginalError,
+  GetStationsByKeyImageOriginalResponse,
+  GetStationsByKeyImageResponse,
+  GetStationsByKeyResponse,
+  GetStationsData,
+  GetStationsResponse,
   PostAdminIncidentsByIdData,
   PostAdminIncidentsByIdError,
   PostAdminIncidentsByIdResponse,
@@ -249,6 +268,31 @@ export const getIncidentsByIdOgOptions = (options: Options<GetIncidentsByIdOgDat
     queryKey: getIncidentsByIdOgQueryKey(options)
   });
 
+export const getIncidentsByIdMapOriginalQueryKey = (
+  options: Options<GetIncidentsByIdMapOriginalData>
+) => createQueryKey("getIncidentsByIdMapOriginal", options);
+
+export const getIncidentsByIdMapOriginalOptions = (
+  options: Options<GetIncidentsByIdMapOriginalData>
+) =>
+  queryOptions<
+    GetIncidentsByIdMapOriginalResponse,
+    GetIncidentsByIdMapOriginalError,
+    GetIncidentsByIdMapOriginalResponse,
+    ReturnType<typeof getIncidentsByIdMapOriginalQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getIncidentsByIdMapOriginal({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true
+      });
+      return data;
+    },
+    queryKey: getIncidentsByIdMapOriginalQueryKey(options)
+  });
+
 export const getIncidentsByIdMapQueryKey = (options: Options<GetIncidentsByIdMapData>) =>
   createQueryKey("getIncidentsByIdMap", options);
 
@@ -269,6 +313,139 @@ export const getIncidentsByIdMapOptions = (options: Options<GetIncidentsByIdMapD
       return data;
     },
     queryKey: getIncidentsByIdMapQueryKey(options)
+  });
+
+export const getStationsQueryKey = (options?: Options<GetStationsData>) =>
+  createQueryKey("getStations", options);
+
+export const getStationsOptions = (options?: Options<GetStationsData>) =>
+  queryOptions<
+    GetStationsResponse,
+    DefaultError,
+    GetStationsResponse,
+    ReturnType<typeof getStationsQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getStations({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true
+      });
+      return data;
+    },
+    queryKey: getStationsQueryKey(options)
+  });
+
+export const getStationsInfiniteQueryKey = (
+  options?: Options<GetStationsData>
+): QueryKey<Options<GetStationsData>> => createQueryKey("getStations", options, true);
+
+export const getStationsInfiniteOptions = (options?: Options<GetStationsData>) =>
+  infiniteQueryOptions<
+    GetStationsResponse,
+    DefaultError,
+    InfiniteData<GetStationsResponse>,
+    QueryKey<Options<GetStationsData>>,
+    | number
+    | null
+    | Pick<QueryKey<Options<GetStationsData>>[0], "body" | "headers" | "path" | "query">
+  >(
+    // @ts-ignore
+    {
+      queryFn: async ({ pageParam, queryKey, signal }) => {
+        // @ts-ignore
+        const page: Pick<
+          QueryKey<Options<GetStationsData>>[0],
+          "body" | "headers" | "path" | "query"
+        > =
+          typeof pageParam === "object"
+            ? pageParam
+            : {
+                query: {
+                  cursor: pageParam
+                }
+              };
+        const params = createInfiniteParams(queryKey, page);
+        const { data } = await getStations({
+          ...options,
+          ...params,
+          signal,
+          throwOnError: true
+        });
+        return data;
+      },
+      queryKey: getStationsInfiniteQueryKey(options)
+    }
+  );
+
+export const getStationsByKeyQueryKey = (options: Options<GetStationsByKeyData>) =>
+  createQueryKey("getStationsByKey", options);
+
+export const getStationsByKeyOptions = (options: Options<GetStationsByKeyData>) =>
+  queryOptions<
+    GetStationsByKeyResponse,
+    GetStationsByKeyError,
+    GetStationsByKeyResponse,
+    ReturnType<typeof getStationsByKeyQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getStationsByKey({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true
+      });
+      return data;
+    },
+    queryKey: getStationsByKeyQueryKey(options)
+  });
+
+export const getStationsByKeyImageOriginalQueryKey = (
+  options: Options<GetStationsByKeyImageOriginalData>
+) => createQueryKey("getStationsByKeyImageOriginal", options);
+
+export const getStationsByKeyImageOriginalOptions = (
+  options: Options<GetStationsByKeyImageOriginalData>
+) =>
+  queryOptions<
+    GetStationsByKeyImageOriginalResponse,
+    GetStationsByKeyImageOriginalError,
+    GetStationsByKeyImageOriginalResponse,
+    ReturnType<typeof getStationsByKeyImageOriginalQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getStationsByKeyImageOriginal({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true
+      });
+      return data;
+    },
+    queryKey: getStationsByKeyImageOriginalQueryKey(options)
+  });
+
+export const getStationsByKeyImageQueryKey = (options: Options<GetStationsByKeyImageData>) =>
+  createQueryKey("getStationsByKeyImage", options);
+
+export const getStationsByKeyImageOptions = (options: Options<GetStationsByKeyImageData>) =>
+  queryOptions<
+    GetStationsByKeyImageResponse,
+    GetStationsByKeyImageError,
+    GetStationsByKeyImageResponse,
+    ReturnType<typeof getStationsByKeyImageQueryKey>
+  >({
+    queryFn: async ({ queryKey, signal }) => {
+      const { data } = await getStationsByKeyImage({
+        ...options,
+        ...queryKey[0],
+        signal,
+        throwOnError: true
+      });
+      return data;
+    },
+    queryKey: getStationsByKeyImageQueryKey(options)
   });
 
 export const getAdminIncidentsQueryKey = (options: Options<GetAdminIncidentsData>) =>
