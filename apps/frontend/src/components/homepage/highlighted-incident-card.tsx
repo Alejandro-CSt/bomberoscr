@@ -86,7 +86,7 @@ export function HighlightedIncidentCard({ incident }: { incident: HighlightedInc
           <div className="relative h-full w-full overflow-hidden rounded-lg">
             <div
               className={cn(
-                "absolute inset-0 scale-125 rounded-lg bg-gradient-to-r transition-transform duration-300 ease-out group-hover:scale-150",
+                "absolute inset-0 scale-125 rounded-lg bg-linear-to-r transition-transform duration-300 ease-out group-hover:scale-150",
                 getHeatGradient(heat)
               )}
             />

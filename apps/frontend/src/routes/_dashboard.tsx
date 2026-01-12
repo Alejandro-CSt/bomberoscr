@@ -8,7 +8,7 @@ export const Route = createFileRoute("/_dashboard")({
 function DashboardLayout() {
   return (
     <>
-      <div className="min-h-[calc(100dvh-var(--app-header-height))]">
+      <div className="min-h-[calc(100dvh-var(--app-header-height))] px-6 xl:px-0">
         <Outlet />
       </div>
       <Footer />
