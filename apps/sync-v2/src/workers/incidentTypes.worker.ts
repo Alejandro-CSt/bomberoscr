@@ -1,8 +1,9 @@
-import { redis } from "@/config/redis";
-import { syncIncidentTypes } from "@/services/incidentTypes.service";
 import logger from "@bomberoscr/lib/logger";
 import { Worker } from "bullmq";
 import { BullMQOtel } from "bullmq-otel";
+
+import { redis } from "@/config/redis";
+import { syncIncidentTypes } from "@/services/incidentTypes.service";
 
 export const incidentTypesWorker = new Worker(
   "incidentTypes",

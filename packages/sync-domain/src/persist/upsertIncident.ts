@@ -8,6 +8,7 @@ import { conflictUpdateSetAllColumns } from "@bomberoscr/db/utils";
 import { rawToDispatchedStations } from "@bomberoscr/sync-domain/transform/rawToDispatchedStations";
 import { rawToDispatchedVehicles } from "@bomberoscr/sync-domain/transform/rawToDispatchedVehicles";
 import { rawToIncident } from "@bomberoscr/sync-domain/transform/rawToIncident";
+
 import type {
   ItemObtenerEstacionesAtiendeIncidente,
   ItemObtenerUnidadesDespachadasIncidente,

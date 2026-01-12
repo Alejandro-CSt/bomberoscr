@@ -1,11 +1,13 @@
-import type { QueryClient } from "@tanstack/react-query";
+import { TanStackDevtools } from "@tanstack/react-devtools";
 import { HeadContent, Outlet, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
-import { TanStackDevtools } from "@tanstack/react-devtools";
 import { NuqsAdapter } from "nuqs/adapters/tanstack-router";
 
 import { Header } from "@/components/layout/header";
+
 import appCss from "../styles.css?url";
+
+import type { QueryClient } from "@tanstack/react-query";
 
 const brandName = "Emergencias CR";
 const defaultTitle = "Emergencias CR";

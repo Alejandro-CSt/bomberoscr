@@ -1,12 +1,13 @@
-import { fetcher } from "@/config/fetcher";
-import { redis } from "@/config/redis";
-import { stationsQueue } from "@/queues/stations.queue";
-import { syncSingleStation } from "@/services/stations.service";
 import logger from "@bomberoscr/lib/logger";
 import { getOperativeStations, getStationsList } from "@bomberoscr/sync-domain/api";
 import { Worker } from "bullmq";
 import { BullMQOtel } from "bullmq-otel";
 import { ResultAsync } from "neverthrow";
+
+import { fetcher } from "@/config/fetcher";
+import { redis } from "@/config/redis";
+import { stationsQueue } from "@/queues/stations.queue";
+import { syncSingleStation } from "@/services/stations.service";
 
 type StationListResponse = {
   Items: Array<{ IdEstacion: number; Nombre: string; ClaveEstacion: string }>;

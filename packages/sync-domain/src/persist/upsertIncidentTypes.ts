@@ -4,6 +4,7 @@ import {
   incidentTypes as incidentTypesTable
 } from "@bomberoscr/db/schema";
 import { conflictUpdateSetAllColumns } from "@bomberoscr/db/utils";
+
 import type { ItemObtenerTiposIncidente } from "@bomberoscr/sync-domain/types";
 import type { z } from "zod";
 

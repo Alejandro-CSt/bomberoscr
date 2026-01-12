@@ -5,13 +5,14 @@ import {
   type incidentsInsertSchema,
   incidents as incidentsTable
 } from "@bomberoscr/db/schema";
+import { eq } from "drizzle-orm";
+
 import type {
   ItemObtenerEstacionesAtiendeIncidente,
   ItemObtenerUnidadesDespachadasIncidente,
   ObtenerBoletaIncidente,
   ObtenerDetalleEmergencias
 } from "@bomberoscr/sigae/types";
-import { eq } from "drizzle-orm";
 import type z from "zod";
 
 export function rawToDispatchedStations({

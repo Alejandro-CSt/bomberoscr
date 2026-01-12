@@ -1,7 +1,9 @@
-import env from "@/env";
-import type { MiddlewareHandler } from "hono";
 import { getCookie } from "hono/cookie";
 import * as HttpStatusCodes from "stoker/http-status-codes";
+
+import env from "@/env";
+
+import type { MiddlewareHandler } from "hono";
 
 export const adminAuth: MiddlewareHandler = async (c, next) => {
   if (!env.ADMIN_TOKEN) {

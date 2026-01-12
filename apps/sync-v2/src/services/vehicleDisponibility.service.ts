@@ -1,4 +1,3 @@
-import { fetcher } from "@/config/fetcher";
 import { db } from "@bomberoscr/db/index";
 import {
   type vehicleDisponibilityInsertSchema,
@@ -7,6 +6,9 @@ import {
 import { conflictUpdateSetAllColumns } from "@bomberoscr/db/utils";
 import { getVehicleDisponibilityStates } from "@bomberoscr/sync-domain/api";
 import { ResultAsync } from "neverthrow";
+
+import { fetcher } from "@/config/fetcher";
+
 import type { z } from "zod";
 
 export type VehicleDisponibilitySyncError = {

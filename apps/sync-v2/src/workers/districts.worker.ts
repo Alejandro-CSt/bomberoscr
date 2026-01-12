@@ -1,7 +1,8 @@
-import { redis } from "@/config/redis";
-import { syncDistricts } from "@/services/districts.service";
 import logger from "@bomberoscr/lib/logger";
 import { Worker } from "bullmq";
+
+import { redis } from "@/config/redis";
+import { syncDistricts } from "@/services/districts.service";
 
 export const districtsWorker = new Worker(
   "districts",

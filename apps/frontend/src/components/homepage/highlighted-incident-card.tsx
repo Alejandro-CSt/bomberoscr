@@ -1,9 +1,10 @@
 import { GarageIcon, FireTruckIcon } from "@phosphor-icons/react";
-import { TriangleAlert } from "lucide-react";
 import { Link } from "@tanstack/react-router";
+import { TriangleAlert } from "lucide-react";
+
+import { Skeleton } from "@/components/ui/skeleton";
 import { client } from "@/lib/api/client.gen";
 import { cn } from "@/lib/utils";
-import { Skeleton } from "@/components/ui/skeleton";
 
 type HighlightedIncident = {
   id: number;

@@ -1,5 +1,4 @@
 import { createRouter } from "@/lib/create-app";
-
 import * as handlers from "@/routes/incidents/incidents.handlers";
 import * as routes from "@/routes/incidents/incidents.routes";
 

@@ -1,7 +1,3 @@
-import type { AppRouteHandler } from "@/lib/types";
-import env from "@/env";
-import { getFromS3, uploadToS3 } from "@/lib/s3";
-import { buildIncidentSlug, buildIncidentSlugFromPartial } from "@/lib/slug";
 import { db } from "@bomberoscr/db/index";
 import {
   dispatchedStations,
@@ -24,10 +20,16 @@ import {
   or,
   sql
 } from "drizzle-orm";
+import { createHmac } from "node:crypto";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import * as HttpStatusPhrases from "stoker/http-status-phrases";
+
+import env from "@/env";
+import { getFromS3, uploadToS3 } from "@/lib/s3";
+import { buildIncidentSlug, buildIncidentSlugFromPartial } from "@/lib/slug";
 import { generateOgImage } from "@/routes/incidents/incidents.og";
-import { createHmac } from "node:crypto";
+
+import type { AppRouteHandler } from "@/lib/types";
 import type {
   GetHighlightedRoute,
   GetMapImageRoute,

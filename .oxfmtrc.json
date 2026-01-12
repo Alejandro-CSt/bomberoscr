@@ -12,10 +12,13 @@
   "endOfLine": "lf",
   "singleAttributePerLine": true,
   "bracketSameLine": true,
-  "experimentalSortImports": null,
+  "experimentalSortImports": {
+    "groups": [["builtin", "external"], ["internal"], ["parent", "sibling", "index"], ["type"]],
+    "internalPattern": ["@/"]
+  },
   "experimentalSortPackageJson": true,
   "experimentalTailwindcss": {
-    "functions": ["cn", "clsx", "cva", "tw"],
+    "functions": ["cn", "clsx", "cva", "tw", "twMerge"],
     "stylesheet": "apps/frontend/src/styles.css"
   }
 }

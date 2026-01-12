@@ -1,8 +1,9 @@
-import { redis } from "@/config/redis";
-import { syncVehicleDisponibility } from "@/services/vehicleDisponibility.service";
 import logger from "@bomberoscr/lib/logger";
 import { Worker } from "bullmq";
 import { BullMQOtel } from "bullmq-otel";
+
+import { redis } from "@/config/redis";
+import { syncVehicleDisponibility } from "@/services/vehicleDisponibility.service";
 
 export const vehicleDisponibilityWorker = new Worker(
   "vehicleDisponibility",

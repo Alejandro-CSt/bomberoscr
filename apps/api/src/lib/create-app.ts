@@ -1,5 +1,3 @@
-import type { Schema } from "hono";
-
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { cors } from "hono/cors";
 import { requestId } from "hono/request-id";
@@ -10,6 +8,7 @@ import env from "@/env";
 import { pinoLogger } from "@/middlewares/pino-logger";
 
 import type { AppBindings, AppOpenAPI } from "@/lib/types";
+import type { Schema } from "hono";
 
 export function createRouter() {
   return new OpenAPIHono<AppBindings>({

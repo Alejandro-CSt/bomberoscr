@@ -1,1 +1,7 @@
 apps/web/
+
+apps/frontend/src/routeTree.gen.ts
+apps/frontend/src/lib/api/
+apps/frontend/dist/
+
+apps/api/dist/

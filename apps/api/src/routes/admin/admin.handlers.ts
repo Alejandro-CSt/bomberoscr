@@ -1,10 +1,3 @@
-import type { AppRouteHandler } from "@/lib/types";
-import env from "@/env";
-import type {
-  ListIncidentsRoute,
-  SyncIncidentRoute,
-  SyncIncidentsRoute
-} from "@/routes/admin/admin.routes";
 import { getExistingIncidentIds } from "@bomberoscr/db/queries/incidents";
 import {
   getIncidentDetails,
@@ -15,11 +8,20 @@ import {
 } from "@bomberoscr/sync-domain/api";
 import { createFetcher } from "@bomberoscr/sync-domain/fetcher";
 import { upsertIncident } from "@bomberoscr/sync-domain/persist/upsertIncident";
+import * as HttpStatusCodes from "stoker/http-status-codes";
+
+import env from "@/env";
+
+import type { AppRouteHandler } from "@/lib/types";
+import type {
+  ListIncidentsRoute,
+  SyncIncidentRoute,
+  SyncIncidentsRoute
+} from "@/routes/admin/admin.routes";
 import type {
   ObtenerEstacionesAtiendeIncidente,
   ObtenerUnidadesDespachadasIncidente
 } from "@bomberoscr/sync-domain/types";
-import * as HttpStatusCodes from "stoker/http-status-codes";
 
 type SigAEFetcher = ReturnType<typeof createFetcher>;
 

@@ -7,6 +7,7 @@ import { conflictUpdateSetAllColumns } from "@bomberoscr/db/utils";
 import logger from "@bomberoscr/lib/logger";
 import { getVehicleDisponibilityStates } from "@bomberoscr/sigae/api";
 import * as Sentry from "@sentry/node";
+
 import type { z } from "zod";
 
 type VehicleDisponibilityType = z.infer<typeof vehicleDisponibilityInsertSchema>;

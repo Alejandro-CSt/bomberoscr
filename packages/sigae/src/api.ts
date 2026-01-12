@@ -1,4 +1,5 @@
 import env from "./env";
+
 import type {
   ObtenerBoletaIncidente,
   ObtenerCantonesLista,

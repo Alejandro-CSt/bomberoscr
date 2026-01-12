@@ -1,4 +1,3 @@
-import { fetcher } from "@/config/fetcher";
 import { db } from "@bomberoscr/db/index";
 import {
   type incidentTypesInsertSchema,
@@ -6,8 +5,11 @@ import {
 } from "@bomberoscr/db/schema";
 import { conflictUpdateSetAllColumns } from "@bomberoscr/db/utils";
 import { getIncidentTypes } from "@bomberoscr/sync-domain/api";
-import type { ItemObtenerTiposIncidente } from "@bomberoscr/sync-domain/types";
 import { ResultAsync } from "neverthrow";
+
+import { fetcher } from "@/config/fetcher";
+
+import type { ItemObtenerTiposIncidente } from "@bomberoscr/sync-domain/types";
 import type { z } from "zod";
 
 export type IncidentTypesSyncError = {

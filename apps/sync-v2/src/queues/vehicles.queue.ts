@@ -1,6 +1,7 @@
-import { redis } from "@/config/redis";
 import { Queue } from "bullmq";
 import { BullMQOtel } from "bullmq-otel";
+
+import { redis } from "@/config/redis";
 
 export const vehiclesQueue = new Queue("vehicles", {
   connection: redis,

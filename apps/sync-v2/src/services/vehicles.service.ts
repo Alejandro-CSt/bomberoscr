@@ -1,9 +1,10 @@
-import { fetcher } from "@/config/fetcher";
 import { db } from "@bomberoscr/db/index";
 import { vehicles as vehiclesTable } from "@bomberoscr/db/schema";
 import { conflictUpdateSetAllColumns } from "@bomberoscr/db/utils";
 import { getAllVehicles, getVehicleDetails } from "@bomberoscr/sync-domain/api";
 import { ResultAsync } from "neverthrow";
+
+import { fetcher } from "@/config/fetcher";
 
 export type VehicleSyncError = {
   type: "api_error" | "database_error";

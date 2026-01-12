@@ -1,6 +1,5 @@
 import { createRouter } from "@/lib/create-app";
 import { adminAuth } from "@/middlewares/admin-auth";
-
 import * as handlers from "@/routes/admin/admin.handlers";
 import * as routes from "@/routes/admin/admin.routes";
 

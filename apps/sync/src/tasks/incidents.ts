@@ -9,6 +9,7 @@ import { getLatestIncidentsListApp } from "@bomberoscr/sigae/api";
 import { upsertIncident } from "@bomberoscr/sync-core/upsert-incident";
 import * as Sentry from "@sentry/node";
 import { and, between, eq, or } from "drizzle-orm";
+
 import type { z } from "zod";
 
 const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;

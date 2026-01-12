@@ -1,9 +1,10 @@
-import { fetcher } from "@/config/fetcher";
 import { db } from "@bomberoscr/db/index";
 import { cantons, districts, provinces } from "@bomberoscr/db/schema";
 import { conflictUpdateSetAllColumns } from "@bomberoscr/db/utils";
 import { getCantonsList, getDistrictsList, getProvincesList } from "@bomberoscr/sync-domain/api";
 import { ResultAsync } from "neverthrow";
+
+import { fetcher } from "@/config/fetcher";
 
 export type DistrictSyncError = {
   type: "api_error" | "database_error";

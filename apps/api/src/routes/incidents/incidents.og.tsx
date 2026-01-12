@@ -1,6 +1,7 @@
+import { ImageResponse } from "hono-og";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { ImageResponse } from "hono-og";
+
 import type { DetailedIncident, IncidentStatistics } from "@bomberoscr/db/queries/incidents";
 
 const size = { width: 1200, height: 630 } as const;

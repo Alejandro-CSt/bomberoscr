@@ -1,4 +1,3 @@
-import { fetcher } from "@/config/fetcher";
 import { db } from "@bomberoscr/db/index";
 import { stations as stationsTable } from "@bomberoscr/db/schema";
 import { conflictUpdateSetAllColumns } from "@bomberoscr/db/utils";
@@ -8,6 +7,8 @@ import {
   getStationsList
 } from "@bomberoscr/sync-domain/api";
 import { ResultAsync } from "neverthrow";
+
+import { fetcher } from "@/config/fetcher";
 
 export type StationSyncError = {
   type: "api_error" | "database_error";

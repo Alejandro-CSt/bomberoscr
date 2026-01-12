@@ -14,6 +14,7 @@ import {
   getVehiclesDispatchedToIncident
 } from "@bomberoscr/sigae/api";
 import { eq } from "drizzle-orm";
+
 import { rawToDispatchedStations, rawToDispatchedVehicles, rawToIncident } from "./transform";
 
 export async function upsertIncident(id: number) {

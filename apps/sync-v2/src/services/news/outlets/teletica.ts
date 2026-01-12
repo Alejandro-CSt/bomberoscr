@@ -1,6 +1,7 @@
-import type { Outlet, RawArticle } from "@/services/news/types";
 import { ResultAsync } from "neverthrow";
 import Parser from "rss-parser";
+
+import type { Outlet, RawArticle } from "@/services/news/types";
 
 export class Teletica implements Outlet {
   id = "teletica";

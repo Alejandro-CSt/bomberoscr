@@ -1,5 +1,6 @@
-import { Link } from "@tanstack/react-router";
 import { GithubLogo, Globe } from "@phosphor-icons/react";
+import { Link } from "@tanstack/react-router";
+
 import { Logo } from "@/components/layout/logo";
 import { navItems } from "@/components/layout/nav-items";
 
