@@ -91,6 +91,7 @@ export type GetIncidentsHighlightedResponses = {
       responsibleStation: string;
       dispatchedVehiclesCount: number;
       dispatchedStationsCount: number;
+      hasMapImage: boolean;
     }>;
   };
 };

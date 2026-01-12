@@ -1,4 +1,9 @@
-import { GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import {
+  GetObjectCommand,
+  HeadObjectCommand,
+  PutObjectCommand,
+  S3Client
+} from "@aws-sdk/client-s3";
 import env from "@/env";
 
 const s3Client = new S3Client({
@@ -10,6 +15,20 @@ const s3Client = new S3Client({
     secretAccessKey: env.S3_SECRET_KEY
   }
 });
+
+export async function existsInS3(key: string): Promise<boolean> {
+  try {
+    const command = new HeadObjectCommand({
+      Bucket: env.S3_BUCKET_NAME,
+      Key: key
+    });
+    await s3Client.send(command);
+    return true;
+    // oxlint-disable-next-line no-unused-vars
+  } catch (_error) {
+    return false;
+  }
+}
 
 export async function getFromS3(key: string): Promise<Buffer | null> {
   try {

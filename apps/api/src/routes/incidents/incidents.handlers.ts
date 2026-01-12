@@ -27,9 +27,11 @@ import {
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import * as HttpStatusPhrases from "stoker/http-status-phrases";
 import { generateOgImage } from "@/routes/incidents/incidents.og";
+import { createHmac } from "node:crypto";
 import type {
   GetHighlightedRoute,
   GetMapImageRoute,
+  GetMapOriginalRoute,
   GetOgImageRoute,
   GetOneRoute,
   ListRoute
@@ -51,6 +53,40 @@ function buildMapboxUrl(latitude: number, longitude: number): string {
 
 function getS3Key(incidentId: number): string {
   return `incidents/${incidentId}/map.png`;
+}
+
+function buildOriginalSourceUrl(incidentId: number): string {
+  const baseUrl = normalizeBaseUrl(env.SITE_URL);
+  return `${baseUrl}/bomberos/hono/incidents/${incidentId}/map/original?token=${env.IMGPROXY_TOKEN}`;
+}
+
+function normalizeBaseUrl(baseUrl: string): string {
+  return baseUrl.endsWith("/") ? baseUrl.slice(0, -1) : baseUrl;
+}
+
+function encodeImgproxySource(url: string): string {
+  return Buffer.from(url)
+    .toString("base64")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/g, "");
+}
+
+function signImgproxyPath(path: string): string {
+  const key = Buffer.from(env.IMGPROXY_KEY, "hex");
+  const salt = Buffer.from(env.IMGPROXY_SALT, "hex");
+  const signature = createHmac("sha256", key).update(salt).update(path).digest("base64");
+  return signature.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+}
+
+function buildImgproxyUrl(sourceUrl: string): string {
+  const width = MAPBOX_CONFIG.width * 2;
+  const height = MAPBOX_CONFIG.height * 2;
+  const processingOptions = `rs:fit:${width}:${height}`;
+  const encodedSource = encodeImgproxySource(sourceUrl);
+  const path = `/${processingOptions}/${encodedSource}`;
+  const signature = signImgproxyPath(path);
+  return `${normalizeBaseUrl(env.IMGPROXY_BASE_URL)}/${signature}${path}`;
 }
 
 export const list: AppRouteHandler<ListRoute> = async (c) => {
@@ -412,8 +448,49 @@ export const getOgImage: AppRouteHandler<GetOgImageRoute> = async (c) => {
 
 export const getMapImage: AppRouteHandler<GetMapImageRoute> = async (c) => {
   const { id } = c.req.valid("param");
+
+  const sourceUrl = buildOriginalSourceUrl(id);
+  const imgproxyUrl = buildImgproxyUrl(sourceUrl);
+  const acceptHeader = c.req.header("accept");
+
+  const imgproxyResponse = await fetch(imgproxyUrl, {
+    headers: acceptHeader ? { Accept: acceptHeader } : undefined
+  });
+
+  if (!imgproxyResponse.ok) {
+    const status = imgproxyResponse.status;
+    if (status === 404) {
+      return c.json({ message: "Incident not found" }, HttpStatusCodes.NOT_FOUND);
+    }
+    if (status === 400) {
+      return c.json({ message: "Invalid coordinates" }, HttpStatusCodes.BAD_REQUEST);
+    }
+    return c.json({ message: "Failed to fetch map image" }, HttpStatusCodes.BAD_GATEWAY);
+  }
+
+  const body = await imgproxyResponse.arrayBuffer();
+  const contentType = imgproxyResponse.headers.get("content-type") ?? "image/png";
+  const cacheControl =
+    imgproxyResponse.headers.get("cache-control") ?? "public, max-age=31536000, immutable";
+
+  return c.body(new Uint8Array(body), HttpStatusCodes.OK, {
+    "Content-Type": contentType,
+    "Cache-Control": cacheControl,
+    Vary: "Accept"
+  });
+};
+
+export const getMapOriginal: AppRouteHandler<GetMapOriginalRoute> = async (c) => {
+  const { id } = c.req.valid("param");
+  const { token } = c.req.valid("query");
+
+  if (token !== env.IMGPROXY_TOKEN) {
+    return c.json({ message: "Unauthorized" }, HttpStatusCodes.UNAUTHORIZED);
+  }
+
   const s3Key = getS3Key(id);
 
+  // Check S3 cache first
   const cachedImage = await getFromS3(s3Key);
   if (cachedImage) {
     return c.body(new Uint8Array(cachedImage), HttpStatusCodes.OK, {
@@ -422,6 +499,7 @@ export const getMapImage: AppRouteHandler<GetMapImageRoute> = async (c) => {
     });
   }
 
+  // Not cached - verify incident exists
   const incident = await db.query.incidents.findFirst({
     where: eq(incidents.id, id),
     columns: {
@@ -432,7 +510,7 @@ export const getMapImage: AppRouteHandler<GetMapImageRoute> = async (c) => {
   });
 
   if (!incident) {
-    return c.json({ message: HttpStatusPhrases.NOT_FOUND }, HttpStatusCodes.NOT_FOUND);
+    return c.json({ message: "Incident not found" }, HttpStatusCodes.NOT_FOUND);
   }
 
   const latitude = Number(incident.latitude);
@@ -442,21 +520,27 @@ export const getMapImage: AppRouteHandler<GetMapImageRoute> = async (c) => {
     return c.json({ message: "Invalid coordinates" }, HttpStatusCodes.BAD_REQUEST);
   }
 
+  // Fetch from Mapbox
   const mapboxUrl = buildMapboxUrl(latitude, longitude);
   const mapboxResponse = await fetch(mapboxUrl, {
-    headers: {
-      Referer: env.SITE_URL
-    }
+    headers: { Referer: env.SITE_URL }
   });
 
   if (!mapboxResponse.ok) {
+    const responseBody = await mapboxResponse.text().catch(() => "");
+    console.error("Mapbox response error:", {
+      status: mapboxResponse.status,
+      statusText: mapboxResponse.statusText,
+      body: responseBody.slice(0, 500)
+    });
     return c.json({ message: "Failed to fetch map image" }, HttpStatusCodes.BAD_GATEWAY);
   }
 
   const imageBuffer = await mapboxResponse.arrayBuffer();
 
+  // Save to S3 in background
   void uploadToS3(s3Key, imageBuffer, "image/png").catch((error) => {
-    console.error("Failed to upload map image to S3:", error);
+    console.error("Failed to save original to S3:", error);
   });
 
   return c.body(new Uint8Array(imageBuffer), HttpStatusCodes.OK, {
@@ -575,6 +659,8 @@ export const getHighlighted: AppRouteHandler<GetHighlightedRoute> = async (c) =>
       details: incidents.importantDetails,
       address: incidents.address,
       responsibleStation: stations.name,
+      latitude: incidents.latitude,
+      longitude: incidents.longitude,
       dispatchedVehiclesCount: sql<number>`COALESCE(${vehicleCounts.vehicleCount}, 0)`,
       dispatchedStationsCount: sql<number>`COALESCE(${stationCounts.stationCount}, 0)`
     })
@@ -600,7 +686,12 @@ export const getHighlighted: AppRouteHandler<GetHighlightedRoute> = async (c) =>
         address: incident.address || "Ubicación pendiente",
         responsibleStation: incident.responsibleStation || "Estación pendiente",
         dispatchedVehiclesCount: incident.dispatchedVehiclesCount,
-        dispatchedStationsCount: incident.dispatchedStationsCount
+        dispatchedStationsCount: incident.dispatchedStationsCount,
+        hasMapImage:
+          incident.latitude !== null &&
+          incident.longitude !== null &&
+          Number(incident.latitude) !== 0 &&
+          Number(incident.longitude) !== 0
       }))
     },
     HttpStatusCodes.OK

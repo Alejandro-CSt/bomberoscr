@@ -178,7 +178,8 @@ export const HighlightedIncidentItemSchema = z.object({
   address: z.string(),
   responsibleStation: z.string(),
   dispatchedVehiclesCount: z.number(),
-  dispatchedStationsCount: z.number()
+  dispatchedStationsCount: z.number(),
+  hasMapImage: z.boolean()
 });
 
 export const HighlightedIncidentsResponseSchema = z.object({

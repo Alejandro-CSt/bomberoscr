@@ -1,6 +1,7 @@
 import { GarageIcon, FireTruckIcon } from "@phosphor-icons/react";
 import { TriangleAlert } from "lucide-react";
 import { Link } from "@tanstack/react-router";
+import { client } from "@/lib/api/client.gen";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -13,6 +14,7 @@ type HighlightedIncident = {
   responsibleStation: string;
   dispatchedVehiclesCount: number;
   dispatchedStationsCount: number;
+  hasMapImage: boolean;
 };
 
 /**
@@ -61,6 +63,8 @@ function formatRelativeTime(dateString: string): string {
 export function HighlightedIncidentCard({ incident }: { incident: HighlightedIncident }) {
   const total = incident.dispatchedStationsCount + incident.dispatchedVehiclesCount;
   const heat = Math.max(0, Math.min((total - 2) / 13, 1));
+  const baseUrl = client.getConfig().baseUrl ?? "";
+  const mapImageUrl = incident.hasMapImage ? `${baseUrl}/incidents/${incident.id}/map` : null;
 
   return (
     <Link
@@ -68,21 +72,37 @@ export function HighlightedIncidentCard({ incident }: { incident: HighlightedInc
       params={{ slug: incident.slug }}
       className="group flex flex-col overflow-hidden rounded-lg bg-card md:flex-row">
       <div className="relative flex aspect-video w-full items-center justify-center p-1.5 md:aspect-4/3 md:w-[50%] md:p-2">
-        <div
-          className={cn(
-            "relative flex h-full w-full items-center justify-center rounded-lg bg-gradient-to-r",
-            getHeatGradient(heat)
-          )}>
-          <div className="w-fit rounded-md bg-background/60 px-3 py-2 backdrop-blur-3xl">
-            <p className="flex items-center gap-1.5 text-xs whitespace-nowrap select-none">
-              <TriangleAlert
-                className="size-3.5 shrink-0 text-amber-500"
-                aria-hidden="true"
-              />
-              Sin imagen
-            </p>
+        {mapImageUrl ? (
+          <div className="h-full w-full overflow-hidden rounded-lg">
+            <img
+              src={mapImageUrl}
+              alt={`Mapa del incidente ${incident.details}`}
+              className="h-full w-full scale-125 rounded-lg object-cover transition-transform duration-300 ease-out group-hover:scale-150"
+              loading="lazy"
+              decoding="async"
+            />
           </div>
-        </div>
+        ) : (
+          <div className="relative h-full w-full overflow-hidden rounded-lg">
+            <div
+              className={cn(
+                "absolute inset-0 scale-125 rounded-lg bg-gradient-to-r transition-transform duration-300 ease-out group-hover:scale-150",
+                getHeatGradient(heat)
+              )}
+            />
+            <div className="relative flex h-full w-full items-center justify-center">
+              <div className="w-fit rounded-md bg-background/60 px-3 py-2 backdrop-blur-3xl">
+                <p className="flex items-center gap-1.5 text-xs whitespace-nowrap select-none">
+                  <TriangleAlert
+                    className="size-3.5 shrink-0 text-amber-500"
+                    aria-hidden="true"
+                  />
+                  Coordenadas aún no disponibles.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
       <div className="flex flex-col gap-2 p-3 md:flex-1 md:py-3 md:pr-3 md:pl-1">
         <div className="flex flex-col gap-0.5">

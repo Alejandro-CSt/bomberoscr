@@ -1,4 +1,4 @@
-import { createRoute } from "@hono/zod-openapi";
+import { createRoute, z } from "@hono/zod-openapi";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
 import { createMessageObjectSchema } from "stoker/openapi/schemas";
@@ -86,6 +86,24 @@ export const getMapImage = createRoute({
     [HttpStatusCodes.OK]: {
       description: "Map image for the incident",
       content: {
+        "image/avif": {
+          schema: {
+            type: "string",
+            format: "binary"
+          }
+        },
+        "image/webp": {
+          schema: {
+            type: "string",
+            format: "binary"
+          }
+        },
+        "image/jpeg": {
+          schema: {
+            type: "string",
+            format: "binary"
+          }
+        },
         "image/png": {
           schema: {
             type: "string",
@@ -113,6 +131,51 @@ export type ListRoute = typeof list;
 export type GetOneRoute = typeof getOne;
 export type GetOgImageRoute = typeof getOgImage;
 export type GetMapImageRoute = typeof getMapImage;
+
+const MapOriginalTokenSchema = z.object({
+  token: z.string()
+});
+
+export const getMapOriginal = createRoute({
+  tags: ["Incidents"],
+  method: "get",
+  path: "/incidents/{id}/map/original",
+  request: {
+    params: IncidentIdParamSchema,
+    query: MapOriginalTokenSchema
+  },
+  responses: {
+    [HttpStatusCodes.OK]: {
+      description: "Original map image from Mapbox (PNG)",
+      content: {
+        "image/png": {
+          schema: {
+            type: "string",
+            format: "binary"
+          }
+        }
+      }
+    },
+    [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
+      createMessageObjectSchema("Unauthorized"),
+      "Invalid or missing token"
+    ),
+    [HttpStatusCodes.BAD_REQUEST]: jsonContent(
+      createMessageObjectSchema("Invalid coordinates"),
+      "Invalid coordinates"
+    ),
+    [HttpStatusCodes.NOT_FOUND]: jsonContent(
+      createMessageObjectSchema("Incident not found"),
+      "Incident not found"
+    ),
+    [HttpStatusCodes.BAD_GATEWAY]: jsonContent(
+      createMessageObjectSchema("Failed to fetch map image"),
+      "Failed to fetch map image"
+    )
+  }
+});
+
+export type GetMapOriginalRoute = typeof getMapOriginal;
 
 export const getHighlighted = createRoute({
   tags: ["Incidents"],

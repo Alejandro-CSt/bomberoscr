@@ -15,7 +15,12 @@ import { Tabs, TabsList, TabsTab } from "@/components/ui/tabs";
 import { getIncidentsHighlightedOptions } from "@/lib/api/@tanstack/react-query.gen";
 
 export function HighlightedIncidents() {
-  const [timeRange] = useQueryState("timeRange", timeRangeParser);
+  const [timeRange] = useQueryState(
+    "timeRange",
+    timeRangeParser.withOptions({
+      history: "replace"
+    })
+  );
 
   const highlightedOptions = getIncidentsHighlightedOptions({
     query: { timeRange }
