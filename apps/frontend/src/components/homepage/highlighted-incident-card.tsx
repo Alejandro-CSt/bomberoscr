@@ -4,7 +4,7 @@ import { TriangleAlert } from "lucide-react";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { client } from "@/lib/api/client.gen";
-import { cn } from "@/lib/utils";
+import { cn, formatRelativeTime } from "@/lib/utils";
 
 type HighlightedIncident = {
   id: number;
@@ -38,27 +38,6 @@ function getHeatGradient(heat: number): string {
     return "from-yellow-500/80 to-orange-500/80";
   }
   return "from-orange-500/80 to-red-500/80";
-}
-
-function formatRelativeTime(dateString: string): string {
-  const date = new Date(dateString);
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffSeconds = Math.floor(diffMs / 1000);
-  const diffMinutes = Math.floor(diffSeconds / 60);
-  const diffHours = Math.floor(diffMinutes / 60);
-  const diffDays = Math.floor(diffHours / 24);
-
-  if (diffDays > 0) {
-    return `hace ${diffDays} ${diffDays === 1 ? "día" : "días"}`;
-  }
-  if (diffHours > 0) {
-    return `hace ${diffHours} ${diffHours === 1 ? "hora" : "horas"}`;
-  }
-  if (diffMinutes > 0) {
-    return `hace ${diffMinutes} ${diffMinutes === 1 ? "minuto" : "minutos"}`;
-  }
-  return "hace un momento";
 }
 
 export function HighlightedIncidentCard({ incident }: { incident: HighlightedIncident }) {

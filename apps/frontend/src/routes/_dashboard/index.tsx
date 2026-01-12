@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { HighlightedIncidents } from "@/components/homepage/highlighted-incidents";
+import { LatestIncidents } from "@/components/homepage/latest-incidents";
 import { timeRangeSearchSchema } from "@/components/homepage/time-range-search-params";
 
 const title = "Emergencias CR";
@@ -24,8 +25,9 @@ export const Route = createFileRoute("/_dashboard/")({
 
 function HomePage() {
   return (
-    <div className="mx-auto max-w-6xl py-6">
+    <div className="mx-auto flex max-w-6xl flex-col gap-8">
       <HighlightedIncidents />
+      <LatestIncidents />
     </div>
   );
 }

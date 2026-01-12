@@ -27,6 +27,10 @@ export default function configureOpenAPI(app: AppOpenAPI) {
       layout: "modern",
       defaultOpenAllTags: true,
       hideClientButton: true,
+      showDeveloperTools: "localhost",
+      telemetry: false,
+      pageTitle: "Emergencias CR API Reference",
+      favicon: "/favicon.ico",
       defaultHttpClient: {
         targetKey: "shell",
         clientKey: "curl"

@@ -1,5 +1,6 @@
 import { TanStackDevtools } from "@tanstack/react-devtools";
-import { HeadContent, Outlet, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
+import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
+import { createRootRouteWithContext, HeadContent, Outlet, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { NuqsAdapter } from "nuqs/adapters/tanstack-router";
 
@@ -86,7 +87,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body className="font-sans antialiased">
         <Header />
-        <main className="pt-[var(--app-header-height)]">{children}</main>
+        <main className="pt-(--app-header-height)">{children}</main>
         <TanStackDevtools
           config={{
             position: "bottom-right"
@@ -95,6 +96,11 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             {
               name: "Tanstack Router",
               render: <TanStackRouterDevtoolsPanel />
+            },
+            {
+              name: "TanStack Query",
+              render: <ReactQueryDevtoolsPanel />,
+              defaultOpen: true
             }
           ]}
         />

@@ -1,4 +1,4 @@
-import { GithubLogo, Globe } from "@phosphor-icons/react";
+import { GithubLogoIcon, GlobeIcon } from "@phosphor-icons/react";
 import { Link } from "@tanstack/react-router";
 
 import { Logo } from "@/components/layout/logo";
@@ -8,12 +8,12 @@ const SOCIAL_LINKS = [
   {
     title: "GitHub",
     url: "https://github.com/Alejandro-CSt/bomberoscr",
-    icon: GithubLogo
+    icon: GithubLogoIcon
   },
   {
     title: "Página Oficial de Bomberos",
     url: "https://www.bomberos.go.cr",
-    icon: Globe
+    icon: GlobeIcon
   }
 ] as const;
 
@@ -21,7 +21,7 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="mt-20 border-t bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
+    <footer className="mt-20 border-t bg-background/95 px-6 backdrop-blur supports-backdrop-filter:bg-background/60 xl:px-0">
       <div className="mx-auto w-full max-w-6xl px-0 py-12">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           <div className="flex flex-col gap-4 md:col-span-2">
