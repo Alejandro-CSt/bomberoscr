@@ -74,87 +74,80 @@ export const IncidentsResponseSchema = z.discriminatedUnion("view", [
   IncidentsMapResponseSchema
 ]);
 
-const LocationSchema = z.object({
-  id: z.number(),
-  name: z.string(),
-  code: z.string()
+const IncidentDispatchedVehicleSchema = z.object({
+  internalNumber: z.string(),
+  dispatchTime: z.string().nullable(),
+  arrivalTime: z.string().nullable(),
+  departureTime: z.string().nullable()
 });
 
-const StationSchema = z.object({
-  id: z.number(),
+const IncidentDispatchedStationSummarySchema = z.object({
   name: z.string(),
   stationKey: z.string(),
-  address: z.string().nullable(),
-  latitude: z.string(),
-  longitude: z.string()
+  isResponsible: z.boolean(),
+  vehicles: z.array(IncidentDispatchedVehicleSchema)
 });
-
-const DispatchedStationSchema = z.object({
-  id: z.number(),
-  attentionOnFoot: z.boolean(),
-  serviceTypeId: z.number().nullable(),
-  station: StationSchema
-});
-
-const VehicleSchema = z.object({
-  id: z.number(),
-  internalNumber: z.string(),
-  class: z.string()
-});
-
-const DispatchedVehicleSchema = z.object({
-  id: z.number(),
-  dispatchedTime: z.string(),
-  arrivalTime: z.string(),
-  departureTime: z.string(),
-  baseReturnTime: z.string(),
-  attentionOnFoot: z.boolean().nullable(),
-  vehicle: VehicleSchema.nullable(),
-  station: z.object({ name: z.string() })
-});
-
-const IncidentTypeNameSchema = z.object({ name: z.string() }).nullable();
 
 export const IncidentDetailSchema = z.object({
   id: z.number(),
-  incidentCode: z.string().nullable(),
-  specificIncidentCode: z.string().nullable(),
-  dispatchIncidentCode: z.string().nullable(),
-  specificDispatchIncidentCode: z.string().nullable(),
-  EEConsecutive: z.string(),
-  address: z.string(),
-  responsibleStation: z.number().nullable(),
+  title: z.string(),
   incidentTimestamp: z.string(),
-  importantDetails: z.string(),
-  latitude: z.string(),
-  longitude: z.string(),
-  provinceId: z.number().nullable(),
-  cantonId: z.number().nullable(),
-  districtId: z.number().nullable(),
+  dispatchType: z.string(),
+  actualType: z.string().nullable(),
+  address: z.string().nullable(),
   isOpen: z.boolean(),
-  modifiedAt: z.string(),
-  province: LocationSchema.nullable(),
-  canton: LocationSchema.extend({ provinceId: z.number() }).nullable(),
-  district: LocationSchema.extend({ cantonId: z.number() }).nullable(),
-  dispatchedStations: z.array(DispatchedStationSchema),
-  dispatchedVehicles: z.array(DispatchedVehicleSchema),
-  dispatchIncidentType: IncidentTypeNameSchema,
-  specificDispatchIncidentType: IncidentTypeNameSchema,
-  incidentType: IncidentTypeNameSchema,
-  specificIncidentType: IncidentTypeNameSchema
+  modifiedAt: z.string().nullable(),
+  cantonName: z.string().nullable(),
+  latitude: z.string().nullable(),
+  longitude: z.string().nullable(),
+  hasMapImage: z.boolean(),
+  dispatchedStations: z.array(IncidentDispatchedStationSummarySchema)
 });
 
 export const StatisticsSchema = z.object({
-  typeRankInYear: z.number(),
-  typeRankInCanton: z.number(),
-  districtIncidentsThisYear: z.number(),
-  typeCountPreviousYear: z.number(),
-  year: z.number()
+  currentYear: z.number(),
+  currentYearCount: z.number(),
+  currentYearCantonCount: z.number(),
+  previousYear: z.number(),
+  previousYearCount: z.number()
 });
 
 export const IncidentDetailResponseSchema = z.object({
   incident: IncidentDetailSchema,
   statistics: StatisticsSchema
+});
+
+export const IncidentTimelineEventSchema = z.object({
+  id: z.string(),
+  date: z.string(),
+  title: z.string(),
+  description: z.string().optional()
+});
+
+export const IncidentTimelineResponseSchema = z.object({
+  incidentId: z.number(),
+  events: z.array(IncidentTimelineEventSchema)
+});
+
+export const IncidentResponseTimeItemSchema = z.object({
+  id: z.number(),
+  vehicle: z.string(),
+  station: z.string(),
+  dispatchedTime: z.string().nullable(),
+  arrivalTime: z.string().nullable(),
+  departureTime: z.string().nullable(),
+  baseReturnTime: z.string().nullable(),
+  responseTimeSeconds: z.number(),
+  onSceneTimeSeconds: z.number(),
+  returnTimeSeconds: z.number(),
+  totalTimeSeconds: z.number(),
+  isEnRoute: z.boolean()
+});
+
+export const IncidentResponseTimesResponseSchema = z.object({
+  incidentId: z.number(),
+  isOpen: z.boolean(),
+  vehicles: z.array(IncidentResponseTimeItemSchema)
 });
 
 export type IncidentListItem = z.infer<typeof IncidentListItemSchema>;

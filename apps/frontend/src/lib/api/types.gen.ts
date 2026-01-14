@@ -123,92 +123,123 @@ export type GetIncidentsByIdResponses = {
     200: {
         incident: {
             id: number;
-            incidentCode: string | null;
-            specificIncidentCode: string | null;
-            dispatchIncidentCode: string | null;
-            specificDispatchIncidentCode: string | null;
-            EEConsecutive: string;
-            address: string;
-            responsibleStation: number | null;
+            title: string;
             incidentTimestamp: string;
-            importantDetails: string;
-            latitude: string;
-            longitude: string;
-            provinceId: number | null;
-            cantonId: number | null;
-            districtId: number | null;
+            dispatchType: string;
+            actualType: string | null;
+            address: string | null;
             isOpen: boolean;
-            modifiedAt: string;
-            province: {
-                id: number;
-                name: string;
-                code: string;
-            } | null;
-            canton: {
-                id: number;
-                name: string;
-                code: string;
-                provinceId: number;
-            } | null;
-            district: {
-                id: number;
-                name: string;
-                code: string;
-                cantonId: number;
-            } | null;
+            modifiedAt: string | null;
+            cantonName: string | null;
+            latitude: string | null;
+            longitude: string | null;
+            hasMapImage: boolean;
             dispatchedStations: Array<{
-                id: number;
-                attentionOnFoot: boolean;
-                serviceTypeId: number | null;
-                station: {
-                    id: number;
-                    name: string;
-                    stationKey: string;
-                    address: string | null;
-                    latitude: string;
-                    longitude: string;
-                };
-            }>;
-            dispatchedVehicles: Array<{
-                id: number;
-                dispatchedTime: string;
-                arrivalTime: string;
-                departureTime: string;
-                baseReturnTime: string;
-                attentionOnFoot: boolean | null;
-                vehicle: {
-                    id: number;
+                name: string;
+                stationKey: string;
+                isResponsible: boolean;
+                vehicles: Array<{
                     internalNumber: string;
-                    class: string;
-                } | null;
-                station: {
-                    name: string;
-                };
+                    dispatchTime: string | null;
+                    arrivalTime: string | null;
+                    departureTime: string | null;
+                }>;
             }>;
-            dispatchIncidentType: {
-                name: string;
-            } | null;
-            specificDispatchIncidentType: {
-                name: string;
-            } | null;
-            incidentType: {
-                name: string;
-            } | null;
-            specificIncidentType: {
-                name: string;
-            } | null;
         };
         statistics: {
-            typeRankInYear: number;
-            typeRankInCanton: number;
-            districtIncidentsThisYear: number;
-            typeCountPreviousYear: number;
-            year: number;
+            currentYear: number;
+            currentYearCount: number;
+            currentYearCantonCount: number;
+            previousYear: number;
+            previousYearCount: number;
         };
     };
 };
 
 export type GetIncidentsByIdResponse = GetIncidentsByIdResponses[keyof GetIncidentsByIdResponses];
+
+export type GetIncidentsByIdTimelineData = {
+    body?: never;
+    path: {
+        id: number | null;
+    };
+    query?: never;
+    url: '/incidents/{id}/timeline';
+};
+
+export type GetIncidentsByIdTimelineErrors = {
+    /**
+     * Incident not found
+     */
+    404: {
+        message: string;
+    };
+};
+
+export type GetIncidentsByIdTimelineError = GetIncidentsByIdTimelineErrors[keyof GetIncidentsByIdTimelineErrors];
+
+export type GetIncidentsByIdTimelineResponses = {
+    /**
+     * Timeline events for the incident
+     */
+    200: {
+        incidentId: number;
+        events: Array<{
+            id: string;
+            date: string;
+            title: string;
+            description?: string;
+        }>;
+    };
+};
+
+export type GetIncidentsByIdTimelineResponse = GetIncidentsByIdTimelineResponses[keyof GetIncidentsByIdTimelineResponses];
+
+export type GetIncidentsByIdResponseTimesData = {
+    body?: never;
+    path: {
+        id: number | null;
+    };
+    query?: never;
+    url: '/incidents/{id}/response-times';
+};
+
+export type GetIncidentsByIdResponseTimesErrors = {
+    /**
+     * Incident not found
+     */
+    404: {
+        message: string;
+    };
+};
+
+export type GetIncidentsByIdResponseTimesError = GetIncidentsByIdResponseTimesErrors[keyof GetIncidentsByIdResponseTimesErrors];
+
+export type GetIncidentsByIdResponseTimesResponses = {
+    /**
+     * Response time breakdown for dispatched vehicles
+     */
+    200: {
+        incidentId: number;
+        isOpen: boolean;
+        vehicles: Array<{
+            id: number;
+            vehicle: string;
+            station: string;
+            dispatchedTime: string | null;
+            arrivalTime: string | null;
+            departureTime: string | null;
+            baseReturnTime: string | null;
+            responseTimeSeconds: number;
+            onSceneTimeSeconds: number;
+            returnTimeSeconds: number;
+            totalTimeSeconds: number;
+            isEnRoute: boolean;
+        }>;
+    };
+};
+
+export type GetIncidentsByIdResponseTimesResponse = GetIncidentsByIdResponseTimesResponses[keyof GetIncidentsByIdResponseTimesResponses];
 
 export type GetIncidentsByIdOgData = {
     body?: never;

@@ -8,6 +8,8 @@ import {
   HighlightedIncidentsResponseSchema,
   IncidentDetailResponseSchema,
   IncidentIdParamSchema,
+  IncidentResponseTimesResponseSchema,
+  IncidentTimelineResponseSchema,
   IncidentsQuerySchema,
   IncidentsResponseSchema
 } from "@/routes/incidents/incidents.schemas";
@@ -42,6 +44,44 @@ export const getOne = createRoute({
     [HttpStatusCodes.OK]: jsonContent(
       IncidentDetailResponseSchema,
       "Detailed incident information"
+    ),
+    [HttpStatusCodes.NOT_FOUND]: jsonContent(
+      createMessageObjectSchema("Incident not found"),
+      "Incident not found"
+    )
+  }
+});
+
+export const getTimeline = createRoute({
+  tags: ["Incidents"],
+  method: "get",
+  path: "/incidents/{id}/timeline",
+  request: {
+    params: IncidentIdParamSchema
+  },
+  responses: {
+    [HttpStatusCodes.OK]: jsonContent(
+      IncidentTimelineResponseSchema,
+      "Timeline events for the incident"
+    ),
+    [HttpStatusCodes.NOT_FOUND]: jsonContent(
+      createMessageObjectSchema("Incident not found"),
+      "Incident not found"
+    )
+  }
+});
+
+export const getResponseTimes = createRoute({
+  tags: ["Incidents"],
+  method: "get",
+  path: "/incidents/{id}/response-times",
+  request: {
+    params: IncidentIdParamSchema
+  },
+  responses: {
+    [HttpStatusCodes.OK]: jsonContent(
+      IncidentResponseTimesResponseSchema,
+      "Response time breakdown for dispatched vehicles"
     ),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(
       createMessageObjectSchema("Incident not found"),
@@ -130,6 +170,8 @@ export const getMapImage = createRoute({
 
 export type ListRoute = typeof list;
 export type GetOneRoute = typeof getOne;
+export type GetTimelineRoute = typeof getTimeline;
+export type GetResponseTimesRoute = typeof getResponseTimes;
 export type GetOgImageRoute = typeof getOgImage;
 export type GetMapImageRoute = typeof getMapImage;
 

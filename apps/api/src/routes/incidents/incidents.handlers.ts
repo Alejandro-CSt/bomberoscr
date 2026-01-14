@@ -36,6 +36,8 @@ import type {
   GetMapOriginalRoute,
   GetOgImageRoute,
   GetOneRoute,
+  GetResponseTimesRoute,
+  GetTimelineRoute,
   ListRoute
 } from "@/routes/incidents/incidents.routes";
 
@@ -89,6 +91,68 @@ function buildImgproxyUrl(sourceUrl: string): string {
   const path = `/${processingOptions}/${encodedSource}`;
   const signature = signImgproxyPath(path);
   return `${normalizeBaseUrl(env.IMGPROXY_BASE_URL)}/${signature}${path}`;
+}
+
+function isUndefinedDate(date?: Date | null): boolean {
+  return !date || date.getFullYear() === 1;
+}
+
+function toIsoStringOrNull(date?: Date | null): string | null {
+  return isUndefinedDate(date) ? null : (date?.toISOString() ?? null);
+}
+
+function formatListSpanish(items: string[]): string {
+  if (items.length === 0) return "";
+  if (items.length === 1) return items[0] ?? "";
+  return items.join(", ");
+}
+
+function formatIncidentTypes(types: Array<string | null | undefined>, fallback?: string): string {
+  const filtered = types.filter((item): item is string => Boolean(item));
+  if (filtered.length === 0) {
+    return fallback ?? "";
+  }
+  return formatListSpanish(filtered);
+}
+
+function getLocation(incident: {
+  province?: { name: string } | null;
+  canton?: { name: string } | null;
+  district?: { name: string } | null;
+}): string | undefined {
+  if (incident.province && incident.canton && incident.district) {
+    return `${incident.district.name}, ${incident.canton.name}, ${incident.province.name}`;
+  }
+  return undefined;
+}
+
+function getIncidentTitle(incident: {
+  importantDetails: string | null;
+  specificDispatchIncidentType?: { name: string } | null;
+  dispatchIncidentType?: { name: string } | null;
+  province?: { name: string } | null;
+  canton?: { name: string } | null;
+  district?: { name: string } | null;
+}): string {
+  const incidentType =
+    incident.importantDetails ||
+    incident.specificDispatchIncidentType?.name ||
+    incident.dispatchIncidentType?.name ||
+    "Incidente";
+
+  let title = incidentType;
+  const location = getLocation(incident);
+  if (location) {
+    title += ` EN ${location}`;
+  }
+  return title;
+}
+
+function calculateTimeDiffInSeconds(end?: Date | null, start?: Date | null): number {
+  if (!end || !start || isUndefinedDate(end) || isUndefinedDate(start)) {
+    return 0;
+  }
+  return Math.floor((end.getTime() - start.getTime()) / 1000);
 }
 
 export const list: AppRouteHandler<ListRoute> = async (c) => {
@@ -287,19 +351,286 @@ async function handleMapView(
   );
 }
 
+type DispatchedVehicleSummary = {
+  internalNumber: string;
+  dispatchTime: string | null;
+  arrivalTime: string | null;
+  departureTime: string | null;
+};
+
+type StationSummary = {
+  id: number;
+  key?: string;
+  name: string;
+  isResponsible: boolean;
+  vehicles: DispatchedVehicleSummary[];
+};
+
+function resolveResponsibleStationId(incident: {
+  responsibleStation: number | null;
+  dispatchedStations: Array<{ serviceTypeId: number | null; station: { id: number } }>;
+}): number | null {
+  const fromDispatch = incident.dispatchedStations.find((station) => station.serviceTypeId === 1)
+    ?.station.id;
+  if (fromDispatch) {
+    return fromDispatch;
+  }
+  return incident.responsibleStation ?? null;
+}
+
+function buildDispatchedStationsSummary(incident: {
+  responsibleStation: number | null;
+  dispatchedStations: Array<{
+    serviceTypeId: number | null;
+    station: { id: number; name: string; stationKey: string };
+  }>;
+  dispatchedVehicles: Array<{
+    stationId: number | null;
+    dispatchedTime: Date | null;
+    arrivalTime: Date | null;
+    departureTime: Date | null;
+    vehicle: { internalNumber: string } | null;
+    station: { id: number; name: string } | null;
+  }>;
+}): StationSummary[] {
+  const responsibleStationId = resolveResponsibleStationId(incident);
+  const stationMap = new Map<number, StationSummary>();
+
+  for (const dispatched of incident.dispatchedStations) {
+    const stationId = dispatched.station.id;
+    const isResponsible = dispatched.serviceTypeId === 1;
+    const existing = stationMap.get(stationId);
+    if (existing) {
+      if (isResponsible) {
+        existing.isResponsible = true;
+      }
+      continue;
+    }
+    stationMap.set(stationId, {
+      id: stationId,
+      key: dispatched.station.stationKey,
+      name: dispatched.station.name,
+      isResponsible,
+      vehicles: []
+    });
+  }
+
+  for (const vehicle of incident.dispatchedVehicles) {
+    const stationId = vehicle.stationId ?? vehicle.station?.id;
+    if (!stationId) continue;
+    const existing = stationMap.get(stationId);
+    if (!existing) {
+      stationMap.set(stationId, {
+        id: stationId,
+        name: vehicle.station?.name ?? "Estación desconocida",
+        isResponsible: false,
+        vehicles: []
+      });
+    }
+
+    stationMap.get(stationId)?.vehicles.push({
+      internalNumber: vehicle.vehicle?.internalNumber ?? "N/A",
+      dispatchTime: toIsoStringOrNull(vehicle.dispatchedTime),
+      arrivalTime: toIsoStringOrNull(vehicle.arrivalTime),
+      departureTime: toIsoStringOrNull(vehicle.departureTime)
+    });
+  }
+
+  if (
+    !Array.from(stationMap.values()).some((station) => station.isResponsible) &&
+    responsibleStationId
+  ) {
+    const fallback = stationMap.get(responsibleStationId);
+    if (fallback) {
+      fallback.isResponsible = true;
+    }
+  }
+
+  return Array.from(stationMap.values());
+}
+type TimelineEvent = {
+  id: string;
+  date: Date;
+  title: string;
+  description?: string;
+};
+
+function buildTimelineEvents(
+  incident: { id: number; incidentTimestamp: Date; isOpen: boolean; modifiedAt: Date | null },
+  vehicles: Array<{
+    dispatchedTime: Date | null;
+    arrivalTime: Date | null;
+    departureTime: Date | null;
+    station: { name: string };
+    vehicle: { internalNumber: string } | null;
+  }>
+): TimelineEvent[] {
+  type Kind = "dispatch" | "arrival" | "departure";
+  type VehicleEvent = { date: Date; vehicle: string; station: string };
+  const byKindStation = new Map<Kind, Map<string, VehicleEvent[]>>();
+  const thresholdMs = 10 * 60 * 1000;
+
+  const pushEvent = (kind: Kind, date: Date, station: string, vehicle: string) => {
+    const stationKey =
+      kind === "arrival" || kind === "dispatch" || kind === "departure"
+        ? `all-${kind === "dispatch" ? "dispatches" : kind === "arrival" ? "arrivals" : "departures"}`
+        : station;
+    const existingStationMap = byKindStation.get(kind);
+    const stationMap = existingStationMap ?? new Map<string, VehicleEvent[]>();
+    if (!existingStationMap) byKindStation.set(kind, stationMap);
+    const list = stationMap.get(stationKey) ?? [];
+    list.push({ date, vehicle, station });
+    stationMap.set(stationKey, list);
+  };
+
+  const events: TimelineEvent[] = [];
+
+  events.push({
+    id: `incident:${incident.id}:reported`,
+    date: incident.incidentTimestamp,
+    title: "Reporte inicial"
+  });
+
+  for (const v of vehicles) {
+    const vehicleLabel = v.vehicle?.internalNumber || "N/A";
+    const stationLabel = v.station.name;
+
+    if (!isUndefinedDate(v.dispatchedTime) && v.dispatchedTime) {
+      pushEvent("dispatch", v.dispatchedTime, stationLabel, vehicleLabel);
+    }
+    if (!isUndefinedDate(v.arrivalTime) && v.arrivalTime) {
+      pushEvent("arrival", v.arrivalTime, stationLabel, vehicleLabel);
+    }
+    if (!isUndefinedDate(v.departureTime) && v.departureTime) {
+      pushEvent("departure", v.departureTime, stationLabel, vehicleLabel);
+    }
+  }
+
+  for (const [kind, stationMap] of byKindStation) {
+    for (const [stationKey, list] of stationMap) {
+      list.sort((a, b) => a.date.getTime() - b.date.getTime());
+
+      let groupStart: Date | undefined;
+      let groupVehicles: string[] = [];
+      let groupStations = new Set<string>();
+
+      const flush = () => {
+        if (!groupStart || groupVehicles.length === 0) return;
+        const uniqueStations = Array.from(groupStations);
+        const stationDescription =
+          kind === "arrival" || kind === "dispatch" || kind === "departure"
+            ? uniqueStations.length === 1
+              ? uniqueStations[0]
+              : uniqueStations.join(", ")
+            : stationKey;
+
+        const idBase = `${kind}|${stationKey}|${groupStart.getTime()}|${groupVehicles.join("-")}`;
+        const count = groupVehicles.length;
+        if (kind === "dispatch") {
+          events.push({
+            id: idBase,
+            date: groupStart,
+            title:
+              count > 1
+                ? `Despachados: ${groupVehicles.join(", ")}`
+                : `Despachado: ${groupVehicles[0]}`,
+            description: stationDescription
+          });
+        } else if (kind === "arrival") {
+          events.push({
+            id: idBase,
+            date: groupStart,
+            title:
+              count > 1
+                ? `Llegada a escena: ${groupVehicles.join(", ")}`
+                : `Llegada a escena: ${groupVehicles[0]}`,
+            description: stationDescription
+          });
+        } else if (kind === "departure") {
+          events.push({
+            id: idBase,
+            date: groupStart,
+            title:
+              count > 1
+                ? `Retiro de escena: ${groupVehicles.join(", ")}`
+                : `Retiro de escena: ${groupVehicles[0]}`
+          });
+        }
+      };
+
+      for (const e of list) {
+        if (!groupStart) {
+          groupStart = e.date;
+          groupVehicles = [e.vehicle];
+          groupStations = new Set([e.station]);
+          continue;
+        }
+        const diff = e.date.getTime() - groupStart.getTime();
+        if (diff <= thresholdMs) {
+          groupVehicles.push(e.vehicle);
+          groupStations.add(e.station);
+        } else {
+          flush();
+          groupStart = e.date;
+          groupVehicles = [e.vehicle];
+          groupStations = new Set([e.station]);
+        }
+      }
+      flush();
+    }
+  }
+
+  if (!incident.isOpen && incident.modifiedAt && !isUndefinedDate(incident.modifiedAt)) {
+    events.push({
+      id: `incident:${incident.id}:closed`,
+      date: incident.modifiedAt,
+      title: "Incidente cerrado"
+    });
+  }
+
+  events.sort((a, b) => a.date.getTime() - b.date.getTime());
+
+  return events;
+}
+
 export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
   const { id } = c.req.valid("param");
 
   const incident = await db.query.incidents.findFirst({
     where: eq(incidents.id, id),
+    columns: {
+      id: true,
+      incidentCode: true,
+      specificIncidentCode: true,
+      incidentTimestamp: true,
+      address: true,
+      responsibleStation: true,
+      importantDetails: true,
+      isOpen: true,
+      modifiedAt: true,
+      cantonId: true,
+      districtId: true,
+      latitude: true,
+      longitude: true
+    },
     with: {
-      canton: true,
-      district: true,
-      province: true,
+      canton: {
+        columns: {
+          name: true
+        }
+      },
+      district: {
+        columns: {
+          name: true
+        }
+      },
+      province: {
+        columns: {
+          name: true
+        }
+      },
       dispatchedStations: {
         columns: {
-          id: true,
-          attentionOnFoot: true,
           serviceTypeId: true
         },
         with: {
@@ -307,30 +638,29 @@ export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
             columns: {
               id: true,
               name: true,
-              stationKey: true,
-              address: true,
-              latitude: true,
-              longitude: true
+              stationKey: true
             }
           }
         }
       },
       dispatchedVehicles: {
         columns: {
-          incidentId: false,
-          stationId: false,
-          vehicleId: false
+          id: true,
+          stationId: true,
+          dispatchedTime: true,
+          arrivalTime: true,
+          departureTime: true,
+          baseReturnTime: true
         },
         with: {
           vehicle: {
             columns: {
-              id: true,
-              internalNumber: true,
-              class: true
+              internalNumber: true
             }
           },
           station: {
             columns: {
+              id: true,
               name: true
             }
           }
@@ -363,9 +693,180 @@ export const getOne: AppRouteHandler<GetOneRoute> = async (c) => {
     return c.json({ message: HttpStatusPhrases.NOT_FOUND }, HttpStatusCodes.NOT_FOUND);
   }
 
+  const dispatchType = formatIncidentTypes(
+    [incident.dispatchIncidentType?.name, incident.specificDispatchIncidentType?.name],
+    "incidente"
+  );
+
+  const actualType = formatIncidentTypes([
+    incident.incidentType?.name,
+    incident.specificIncidentType?.name
+  ]);
+
+  const dispatchedStations = buildDispatchedStationsSummary(incident);
   const statistics = await getIncidentStatistics(incident);
 
-  return c.json({ incident, statistics }, HttpStatusCodes.OK);
+  return c.json(
+    {
+      incident: {
+        id: incident.id,
+        title: getIncidentTitle(incident),
+        incidentTimestamp: incident.incidentTimestamp.toISOString(),
+        dispatchType,
+        actualType: actualType || null,
+        address: incident.address,
+        isOpen: incident.isOpen,
+        modifiedAt: toIsoStringOrNull(incident.modifiedAt),
+        cantonName: incident.canton?.name ?? null,
+        latitude: incident.latitude?.toString() ?? null,
+        longitude: incident.longitude?.toString() ?? null,
+        hasMapImage:
+          incident.latitude !== null &&
+          incident.longitude !== null &&
+          Number(incident.latitude) !== 0 &&
+          Number(incident.longitude) !== 0,
+        dispatchedStations: dispatchedStations.map((station) => ({
+          name: station.name,
+          stationKey: station.key ?? "",
+          isResponsible: station.isResponsible,
+          vehicles: station.vehicles
+        }))
+      },
+      statistics: {
+        currentYear: statistics.year,
+        currentYearCount: statistics.typeRankInYear,
+        currentYearCantonCount: statistics.typeRankInCanton,
+        previousYear: statistics.year - 1,
+        previousYearCount: statistics.typeCountPreviousYear
+      }
+    },
+    HttpStatusCodes.OK
+  );
+};
+
+export const getTimeline: AppRouteHandler<GetTimelineRoute> = async (c) => {
+  const { id } = c.req.valid("param");
+
+  const incident = await db.query.incidents.findFirst({
+    where: eq(incidents.id, id),
+    columns: {
+      id: true,
+      incidentTimestamp: true,
+      isOpen: true,
+      modifiedAt: true
+    },
+    with: {
+      dispatchedVehicles: {
+        columns: {
+          dispatchedTime: true,
+          arrivalTime: true,
+          departureTime: true
+        },
+        with: {
+          vehicle: {
+            columns: {
+              internalNumber: true
+            }
+          },
+          station: {
+            columns: {
+              name: true
+            }
+          }
+        }
+      }
+    }
+  });
+
+  if (!incident) {
+    return c.json({ message: HttpStatusPhrases.NOT_FOUND }, HttpStatusCodes.NOT_FOUND);
+  }
+
+  const events = buildTimelineEvents(incident, incident.dispatchedVehicles).map((event) => ({
+    id: event.id,
+    date: event.date.toISOString(),
+    title: event.title,
+    ...(event.description ? { description: event.description } : {})
+  }));
+
+  return c.json({ incidentId: incident.id, events }, HttpStatusCodes.OK);
+};
+
+export const getResponseTimes: AppRouteHandler<GetResponseTimesRoute> = async (c) => {
+  const { id } = c.req.valid("param");
+
+  const incident = await db.query.incidents.findFirst({
+    where: eq(incidents.id, id),
+    columns: {
+      id: true,
+      isOpen: true
+    },
+    with: {
+      dispatchedVehicles: {
+        columns: {
+          id: true,
+          dispatchedTime: true,
+          arrivalTime: true,
+          departureTime: true,
+          baseReturnTime: true
+        },
+        with: {
+          vehicle: {
+            columns: {
+              internalNumber: true
+            }
+          },
+          station: {
+            columns: {
+              name: true
+            }
+          }
+        }
+      }
+    }
+  });
+
+  if (!incident) {
+    return c.json({ message: HttpStatusPhrases.NOT_FOUND }, HttpStatusCodes.NOT_FOUND);
+  }
+
+  const vehicles = incident.dispatchedVehicles.map((vehicle) => {
+    const responseTimeSeconds = calculateTimeDiffInSeconds(
+      vehicle.arrivalTime,
+      vehicle.dispatchedTime
+    );
+    const hasDeparture = !!vehicle.departureTime && !isUndefinedDate(vehicle.departureTime);
+    const hasReturn = !!vehicle.baseReturnTime && !isUndefinedDate(vehicle.baseReturnTime);
+    const onSceneEndDate = hasDeparture
+      ? vehicle.departureTime
+      : incident.isOpen
+        ? new Date()
+        : null;
+    const onSceneTimeSeconds = calculateTimeDiffInSeconds(onSceneEndDate, vehicle.arrivalTime);
+    const isEnRoute = hasDeparture && !hasReturn;
+    const returnTimeSeconds =
+      hasDeparture && hasReturn
+        ? calculateTimeDiffInSeconds(vehicle.baseReturnTime, vehicle.departureTime)
+        : 0;
+    const totalTimeSeconds = responseTimeSeconds + onSceneTimeSeconds + returnTimeSeconds;
+
+    return {
+      id: vehicle.id,
+      vehicle: vehicle.vehicle?.internalNumber || "N/A",
+      station: vehicle.station.name,
+      dispatchedTime: toIsoStringOrNull(vehicle.dispatchedTime),
+      arrivalTime: toIsoStringOrNull(vehicle.arrivalTime),
+      departureTime: toIsoStringOrNull(vehicle.departureTime),
+      baseReturnTime: toIsoStringOrNull(vehicle.baseReturnTime),
+      responseTimeSeconds,
+      onSceneTimeSeconds,
+      returnTimeSeconds,
+      totalTimeSeconds,
+      isEnRoute
+    };
+  });
+
+  return c.json({ incidentId: incident.id, isOpen: incident.isOpen, vehicles }, HttpStatusCodes.OK);
 };
 
 export const getOgImage: AppRouteHandler<GetOgImageRoute> = async (c) => {
@@ -551,9 +1052,15 @@ export const getMapOriginal: AppRouteHandler<GetMapOriginalRoute> = async (c) =>
   });
 };
 
-type DetailedIncident = NonNullable<Awaited<ReturnType<typeof db.query.incidents.findFirst>>>;
+type IncidentStatisticsSource = {
+  incidentTimestamp: Date;
+  incidentCode: string | null;
+  specificIncidentCode: string | null;
+  cantonId: number | null;
+  districtId: number | null;
+};
 
-async function getIncidentStatistics(incident: DetailedIncident) {
+async function getIncidentStatistics(incident: IncidentStatisticsSource) {
   const year = incident.incidentTimestamp.getFullYear();
   const startOfYear = new Date(year, 0, 1);
   const incidentTimestamp = incident.incidentTimestamp;

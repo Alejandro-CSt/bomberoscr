@@ -3,8 +3,8 @@
 import { type DefaultError, type InfiniteData, infiniteQueryOptions, queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { getAdminIncidents, getIncidents, getIncidentsById, getIncidentsByIdMap, getIncidentsByIdMapOriginal, getIncidentsByIdOg, getIncidentsHighlighted, getStations, getStationsByKey, getStationsByKeyImage, getStationsByKeyImageOriginal, type Options, postAdminIncidents, postAdminIncidentsById } from '../sdk.gen';
-import type { GetAdminIncidentsData, GetAdminIncidentsError, GetAdminIncidentsResponse, GetIncidentsByIdData, GetIncidentsByIdError, GetIncidentsByIdMapData, GetIncidentsByIdMapError, GetIncidentsByIdMapOriginalData, GetIncidentsByIdMapOriginalError, GetIncidentsByIdMapOriginalResponse, GetIncidentsByIdMapResponse, GetIncidentsByIdOgData, GetIncidentsByIdOgError, GetIncidentsByIdOgResponse, GetIncidentsByIdResponse, GetIncidentsData, GetIncidentsError, GetIncidentsHighlightedData, GetIncidentsHighlightedResponse, GetIncidentsResponse, GetStationsByKeyData, GetStationsByKeyError, GetStationsByKeyImageData, GetStationsByKeyImageError, GetStationsByKeyImageOriginalData, GetStationsByKeyImageOriginalError, GetStationsByKeyImageOriginalResponse, GetStationsByKeyImageResponse, GetStationsByKeyResponse, GetStationsData, GetStationsResponse, PostAdminIncidentsByIdData, PostAdminIncidentsByIdError, PostAdminIncidentsByIdResponse, PostAdminIncidentsData, PostAdminIncidentsError, PostAdminIncidentsResponse } from '../types.gen';
+import { getAdminIncidents, getIncidents, getIncidentsById, getIncidentsByIdMap, getIncidentsByIdMapOriginal, getIncidentsByIdOg, getIncidentsByIdResponseTimes, getIncidentsByIdTimeline, getIncidentsHighlighted, getStations, getStationsByKey, getStationsByKeyImage, getStationsByKeyImageOriginal, type Options, postAdminIncidents, postAdminIncidentsById } from '../sdk.gen';
+import type { GetAdminIncidentsData, GetAdminIncidentsError, GetAdminIncidentsResponse, GetIncidentsByIdData, GetIncidentsByIdError, GetIncidentsByIdMapData, GetIncidentsByIdMapError, GetIncidentsByIdMapOriginalData, GetIncidentsByIdMapOriginalError, GetIncidentsByIdMapOriginalResponse, GetIncidentsByIdMapResponse, GetIncidentsByIdOgData, GetIncidentsByIdOgError, GetIncidentsByIdOgResponse, GetIncidentsByIdResponse, GetIncidentsByIdResponseTimesData, GetIncidentsByIdResponseTimesError, GetIncidentsByIdResponseTimesResponse, GetIncidentsByIdTimelineData, GetIncidentsByIdTimelineError, GetIncidentsByIdTimelineResponse, GetIncidentsData, GetIncidentsError, GetIncidentsHighlightedData, GetIncidentsHighlightedResponse, GetIncidentsResponse, GetStationsByKeyData, GetStationsByKeyError, GetStationsByKeyImageData, GetStationsByKeyImageError, GetStationsByKeyImageOriginalData, GetStationsByKeyImageOriginalError, GetStationsByKeyImageOriginalResponse, GetStationsByKeyImageResponse, GetStationsByKeyResponse, GetStationsData, GetStationsResponse, PostAdminIncidentsByIdData, PostAdminIncidentsByIdError, PostAdminIncidentsByIdResponse, PostAdminIncidentsData, PostAdminIncidentsError, PostAdminIncidentsResponse } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -135,6 +135,36 @@ export const getIncidentsByIdOptions = (options: Options<GetIncidentsByIdData>) 
         return data;
     },
     queryKey: getIncidentsByIdQueryKey(options)
+});
+
+export const getIncidentsByIdTimelineQueryKey = (options: Options<GetIncidentsByIdTimelineData>) => createQueryKey('getIncidentsByIdTimeline', options);
+
+export const getIncidentsByIdTimelineOptions = (options: Options<GetIncidentsByIdTimelineData>) => queryOptions<GetIncidentsByIdTimelineResponse, GetIncidentsByIdTimelineError, GetIncidentsByIdTimelineResponse, ReturnType<typeof getIncidentsByIdTimelineQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await getIncidentsByIdTimeline({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getIncidentsByIdTimelineQueryKey(options)
+});
+
+export const getIncidentsByIdResponseTimesQueryKey = (options: Options<GetIncidentsByIdResponseTimesData>) => createQueryKey('getIncidentsByIdResponseTimes', options);
+
+export const getIncidentsByIdResponseTimesOptions = (options: Options<GetIncidentsByIdResponseTimesData>) => queryOptions<GetIncidentsByIdResponseTimesResponse, GetIncidentsByIdResponseTimesError, GetIncidentsByIdResponseTimesResponse, ReturnType<typeof getIncidentsByIdResponseTimesQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await getIncidentsByIdResponseTimes({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getIncidentsByIdResponseTimesQueryKey(options)
 });
 
 export const getIncidentsByIdOgQueryKey = (options: Options<GetIncidentsByIdOgData>) => createQueryKey('getIncidentsByIdOg', options);
