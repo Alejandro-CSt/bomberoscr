@@ -10,6 +10,7 @@ import { createMessageObjectSchema } from "stoker/openapi/schemas";
 import {
   formatIncidentTypes,
   getIncidentTitle,
+  getLocation,
   toIsoStringOrNull
 } from "@/routes/incidents/_lib/formatters";
 import { buildDispatchedStationsSummary } from "@/routes/incidents/_lib/stations";
@@ -55,7 +56,8 @@ export const handler: AppRouteHandler<typeof route> = async (c) => {
       cantonId: true,
       districtId: true,
       latitude: true,
-      longitude: true
+      longitude: true,
+      EEConsecutive: true
     },
     with: {
       canton: {
@@ -162,6 +164,9 @@ export const handler: AppRouteHandler<typeof route> = async (c) => {
         isOpen: incident.isOpen,
         modifiedAt: toIsoStringOrNull(incident.modifiedAt),
         cantonName: incident.canton?.name ?? null,
+        provinceName: incident.province?.name ?? null,
+        districtName: incident.district?.name ?? null,
+        location: getLocation(incident) ?? null,
         latitude: incident.latitude?.toString() ?? null,
         longitude: incident.longitude?.toString() ?? null,
         hasMapImage:
@@ -169,6 +174,9 @@ export const handler: AppRouteHandler<typeof route> = async (c) => {
           incident.longitude !== null &&
           Number(incident.latitude) !== 0 &&
           Number(incident.longitude) !== 0,
+        EEConsecutive: incident.EEConsecutive,
+        dispatchedVehiclesCount: incident.dispatchedVehicles.length,
+        dispatchedStationsCount: dispatchedStations.length,
         dispatchedStations: dispatchedStations.map((station) => ({
           name: station.name,
           stationKey: station.key ?? "",

@@ -131,9 +131,15 @@ export type GetIncidentsByIdResponses = {
             isOpen: boolean;
             modifiedAt: string | null;
             cantonName: string | null;
+            provinceName: string | null;
+            districtName: string | null;
+            location: string | null;
             latitude: string | null;
             longitude: string | null;
             hasMapImage: boolean;
+            EEConsecutive: string | null;
+            dispatchedVehiclesCount: number;
+            dispatchedStationsCount: number;
             dispatchedStations: Array<{
                 name: string;
                 stationKey: string;

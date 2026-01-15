@@ -1,8 +1,69 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
+// Regex patterns for performance (defined at top level)
+// biome-ignore lint/suspicious/noMisleadingCharacterClass: Unicode combining characters range is intentional for diacritic removal
+const diacriticRegex = /[\u0300-\u036f]/g;
+const specialCharRegex = /[^a-z0-9\s-]/g;
+const locationPatternRegex = / EN [^,]+,/i;
+const multipleHyphensRegex = /-+/g;
+const multipleSpacesRegex = /\s+/g;
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
+}
+
+/**
+ * Converts a string to a URL-friendly slug.
+ * Removes location information (EN ...), special characters, and formats for URLs.
+ * Only removes location when "EN" is followed by a comma (indicating a place name).
+ */
+export function createIncidentSlug(title: string): string {
+  // Remove location part only if "EN" is followed by a comma pattern (e.g., "EN District, Canton, Province")
+  // This preserves descriptions like "ATRAPADO EN MEDIO DE" while removing "EN San José, Central, San José"
+  let titleWithoutLocation = title;
+
+  if (locationPatternRegex.test(title)) {
+    // Find the last occurrence of " EN " followed by comma-separated location
+    const lastEnIndex = title.lastIndexOf(" EN ");
+    if (lastEnIndex !== -1) {
+      const afterEn = title.substring(lastEnIndex + 4);
+      // Only remove if it contains a comma (location format)
+      if (afterEn.includes(",")) {
+        titleWithoutLocation = title.substring(0, lastEnIndex);
+      }
+    }
+  }
+
+  return titleWithoutLocation
+    .toLowerCase()
+    .normalize("NFD") // Decompose accented characters
+    .replace(diacriticRegex, "") // Remove diacritics
+    .replace(specialCharRegex, "") // Remove special characters
+    .trim()
+    .replace(multipleSpacesRegex, "-") // Replace spaces with hyphens
+    .replace(multipleHyphensRegex, "-"); // Replace multiple hyphens with single hyphen
+}
+
+/**
+ * Builds a complete incident URL path in the format: /incidentes/{id}-{slug}-{yyyy-mm-dd}
+ */
+export function buildIncidentUrl(id: number, title: string, date: Date): string {
+  const slug = createIncidentSlug(title);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const dateString = `${year}-${month}-${day}`;
+
+  return `/incidentes/${id}-${slug}-${dateString}`;
+}
+
+export function areCoordinatesValid(
+  latitude: string | null | undefined,
+  longitude: string | null | undefined
+) {
+  if (!latitude || !longitude) return false;
+  return Number(latitude) !== 0 && Number(longitude) !== 0;
 }
 
 export function formatRelativeTime(dateString: string): string {
@@ -33,18 +94,6 @@ export function formatRelativeTime(dateString: string): string {
  *
  * @param date - ISO string or date to evaluate.
  * @param reference - Optional fixed "current" time.  When omitted, `new Date()` is used.
- *
- * @example
- * getRelativeTime("2025-01-31T13:26:48.000Z")
- * "hace 6 días"
- *
- * @example
- * getRelativeTime("2025-01-31T13:26:48.000Z", new Date("2025-02-01T13:26:48.000Z"))
- * "hace 1 día"
- *
- * @example
- * getRelativeTime("2024-07-01T00:00:00.000Z", new Date("2025-01-01T00:00:00.000Z"))
- * "hace 6 meses"
  */
 export function getRelativeTime(date: string, reference?: Date): string {
   const rtf = new Intl.RelativeTimeFormat("es-CR", { numeric: "auto" });

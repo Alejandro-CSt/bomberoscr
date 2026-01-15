@@ -64,6 +64,7 @@ export {
   calculateTimeDiffInSeconds,
   formatIncidentTypes,
   getIncidentTitle,
+  getLocation,
   isUndefinedDate,
   toIsoStringOrNull
 };

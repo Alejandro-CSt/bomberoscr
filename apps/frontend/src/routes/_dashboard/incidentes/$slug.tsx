@@ -16,6 +16,7 @@ import {
 } from "@/components/incidents/vehicle-response-times";
 import { getIncidentsById } from "@/lib/api";
 import { client } from "@/lib/api/client.gen";
+import { areCoordinatesValid, buildIncidentUrl } from "@/lib/utils";
 
 export const Route = createFileRoute("/_dashboard/incidentes/$slug")({
   ssr: true,
@@ -48,18 +49,45 @@ export const Route = createFileRoute("/_dashboard/incidentes/$slug")({
       statistics: data.statistics
     };
   },
-  head: ({ params }) => {
-    const title = `Incidente ${params.slug} — Emergencias CR`;
-    const description = `Detalles del incidente ${params.slug} atendido por Bomberos de Costa Rica.`;
+  head: ({ loaderData }) => {
+    if (!loaderData) return {};
+    const { incident } = loaderData;
+
+    const formattedDate = new Date(incident.incidentTimestamp).toLocaleDateString("es-CR", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric"
+    });
+
+    const description = `Incidente reportado el ${formattedDate}${incident.location ? ` en ${incident.location}` : ""}. EE-${incident.EEConsecutive}. ${incident.dispatchedStationsCount} estación(es) y ${incident.dispatchedVehiclesCount} unidad(es) despachadas.`;
+
+    const titleWithLocation = incident.title;
+    const siteUrl = "https://emergencias.cr";
+
+    const canonicalUrl = buildIncidentUrl(
+      incident.id,
+      incident.title,
+      new Date(incident.incidentTimestamp)
+    );
+
+    const fullUrl = `${siteUrl}${canonicalUrl}`;
+    const ogImageUrl = `${fullUrl}/og`;
+
     return {
       meta: [
-        { title },
+        { title: `${titleWithLocation} | EE-${incident.EEConsecutive}` },
         { name: "description", content: description },
-        { property: "og:title", content: title },
+        { property: "og:title", content: titleWithLocation },
         { property: "og:description", content: description },
-        { name: "twitter:title", content: title },
-        { name: "twitter:description", content: description }
-      ]
+        { property: "og:url", content: fullUrl },
+        { property: "og:type", content: "article" },
+        { property: "og:image", content: ogImageUrl },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: titleWithLocation },
+        { name: "twitter:description", content: description },
+        { name: "twitter:image", content: ogImageUrl }
+      ],
+      links: [{ rel: "canonical", href: fullUrl }]
     };
   },
   pendingComponent: IncidentDetailSkeleton,
@@ -84,8 +112,49 @@ function IncidentDetailSkeleton() {
 function IncidenteDetailPage() {
   const { incident } = Route.useLoaderData();
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Event",
+    name: incident.title,
+    description: `Incidente reportado el ${new Date(incident.incidentTimestamp).toLocaleDateString("es-CR", { day: "2-digit", month: "long", year: "numeric" })} en ${incident.location}. EE-${incident.EEConsecutive}. ${incident.dispatchedStationsCount} estación(es) y ${incident.dispatchedVehiclesCount} unidad(es) despachadas.`,
+    startDate: incident.incidentTimestamp,
+    eventStatus: incident.isOpen
+      ? "https://schema.org/EventScheduled"
+      : "https://schema.org/EventCancelled",
+    endDate: incident.isOpen ? incident.modifiedAt : undefined,
+    location: {
+      "@type": "Place",
+      name: incident.location,
+      ...(incident.address && {
+        address: {
+          "@type": "PostalAddress",
+          streetAddress: incident.address,
+          addressCountry: "CR"
+        }
+      }),
+      ...(areCoordinatesValid(incident.latitude, incident.longitude) && {
+        geo: {
+          "@type": "GeoCoordinates",
+          latitude: Number(incident.latitude),
+          longitude: Number(incident.longitude)
+        }
+      })
+    },
+    organizer: {
+      "@type": "EmergencyService",
+      name: "Emergencias CR"
+    },
+    eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode"
+  };
+
   return (
     <div className="typography grid w-full max-w-none grid-cols-1 gap-6 pt-8 pb-24 md:gap-8 lg:grid-cols-3 lg:items-start">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c")
+        }}
+      />
       {incident.isOpen && (
         <OpenIncidentBanner
           modifiedAt={incident.modifiedAt ?? ""}

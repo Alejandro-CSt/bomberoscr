@@ -98,9 +98,15 @@ export const IncidentDetailSchema = z.object({
   isOpen: z.boolean(),
   modifiedAt: z.string().nullable(),
   cantonName: z.string().nullable(),
+  provinceName: z.string().nullable(),
+  districtName: z.string().nullable(),
+  location: z.string().nullable(),
   latitude: z.string().nullable(),
   longitude: z.string().nullable(),
   hasMapImage: z.boolean(),
+  EEConsecutive: z.string().nullable(),
+  dispatchedVehiclesCount: z.number(),
+  dispatchedStationsCount: z.number(),
   dispatchedStations: z.array(IncidentDispatchedStationSummarySchema)
 });
 
