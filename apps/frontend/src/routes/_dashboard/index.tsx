@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { HighlightedIncidents } from "@/components/homepage/highlighted-incidents";
 import { LatestIncidents } from "@/components/homepage/latest-incidents";
+import { MapCTA } from "@/components/homepage/map-cta";
 import { timeRangeSearchSchema } from "@/components/homepage/time-range-search-params";
 
 const title = "Emergencias CR";
@@ -28,6 +29,7 @@ function HomePage() {
     <div className="mx-auto flex max-w-6xl flex-col gap-8">
       <HighlightedIncidents />
       <LatestIncidents />
+      <MapCTA />
     </div>
   );
 }
