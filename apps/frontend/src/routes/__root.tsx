@@ -5,6 +5,7 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { NuqsAdapter } from "nuqs/adapters/tanstack-router";
 
 import { Header } from "@/components/layout/header";
+import { HeaderBackdrop } from "@/components/layout/header-backdrop";
 
 import appCss from "../styles.css?url";
 
@@ -87,6 +88,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body className="font-sans antialiased">
         <Header />
+        <HeaderBackdrop />
         <main className="pt-(--app-header-height)">{children}</main>
         <TanStackDevtools
           config={{
