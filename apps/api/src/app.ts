@@ -1,8 +1,8 @@
 import configureOpenAPI from "@/lib/configure-open-api";
 import createApp from "@/lib/create-app";
-import admin from "@/routes/admin/admin.index";
-import incidents from "@/routes/incidents/incidents.index";
-import stations from "@/routes/stations/stations.index";
+import admin from "@/routes/admin/_router";
+import incidents from "@/routes/incidents/_router";
+import stations from "@/routes/stations/_router";
 
 const app = createApp();
 

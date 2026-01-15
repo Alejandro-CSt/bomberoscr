@@ -153,7 +153,6 @@ export const IncidentResponseTimesResponseSchema = z.object({
 export type IncidentListItem = z.infer<typeof IncidentListItemSchema>;
 export type IncidentMapItem = z.infer<typeof IncidentMapItemSchema>;
 
-// Highlighted incidents schemas
 export const HighlightedIncidentsQuerySchema = z.object({
   timeRange: z.coerce
     .number()
@@ -177,6 +176,10 @@ export const HighlightedIncidentItemSchema = z.object({
 
 export const HighlightedIncidentsResponseSchema = z.object({
   incidents: z.array(HighlightedIncidentItemSchema)
+});
+
+export const MapOriginalTokenSchema = z.object({
+  token: z.string()
 });
 
 export type HighlightedIncidentItem = z.infer<typeof HighlightedIncidentItemSchema>;

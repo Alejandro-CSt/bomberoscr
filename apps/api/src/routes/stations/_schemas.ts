@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "@hono/zod-openapi";
 
 export const StationsQuerySchema = z.object({
   limit: z.coerce.number().min(1).max(100).default(20),
@@ -64,4 +64,8 @@ export const StationDetailSchema = z.object({
 
 export const StationDetailResponseSchema = z.object({
   station: StationDetailSchema
+});
+
+export const StationImageTokenSchema = z.object({
+  token: z.string()
 });
