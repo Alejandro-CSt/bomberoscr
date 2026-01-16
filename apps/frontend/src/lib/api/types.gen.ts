@@ -659,3 +659,41 @@ export type PostAdminIncidentsByIdResponses = {
 };
 
 export type PostAdminIncidentsByIdResponse = PostAdminIncidentsByIdResponses[keyof PostAdminIncidentsByIdResponses];
+
+export type GetStatsYearRecapData = {
+    body?: never;
+    path?: never;
+    query?: {
+        year?: number;
+    };
+    url: '/stats/year-recap';
+};
+
+export type GetStatsYearRecapResponses = {
+    /**
+     * Year-to-date statistics about emergency response
+     */
+    200: {
+        year: number;
+        totalIncidents: number;
+        frequency: number | null;
+        busiestDate: {
+            date: string;
+            count: number;
+        } | null;
+        busiestStation: {
+            name: string;
+            count: number;
+        } | null;
+        busiestVehicle: {
+            internalNumber: string;
+            count: number;
+        } | null;
+        mostPopularIncidentType: {
+            name: string;
+            count: number;
+        } | null;
+    };
+};
+
+export type GetStatsYearRecapResponse = GetStatsYearRecapResponses[keyof GetStatsYearRecapResponses];

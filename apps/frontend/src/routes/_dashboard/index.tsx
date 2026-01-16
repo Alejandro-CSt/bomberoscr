@@ -4,6 +4,7 @@ import { HighlightedIncidents } from "@/components/homepage/highlighted-incident
 import { LatestIncidents } from "@/components/homepage/latest-incidents";
 import { MapCTA } from "@/components/homepage/map-cta";
 import { timeRangeSearchSchema } from "@/components/homepage/time-range-search-params";
+import { YearRecapHero } from "@/components/homepage/year-recap-hero";
 
 const title = "Emergencias CR";
 const description =
@@ -30,6 +31,7 @@ function HomePage() {
       <HighlightedIncidents />
       <LatestIncidents />
       <MapCTA />
+      <YearRecapHero />
     </div>
   );
 }

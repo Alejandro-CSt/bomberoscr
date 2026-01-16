@@ -3,8 +3,8 @@
 import { type DefaultError, type InfiniteData, infiniteQueryOptions, queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { getAdminIncidents, getIncidents, getIncidentsById, getIncidentsByIdMap, getIncidentsByIdMapOriginal, getIncidentsByIdOg, getIncidentsByIdResponseTimes, getIncidentsByIdTimeline, getIncidentsHighlighted, getStations, getStationsByKey, getStationsByKeyImage, getStationsByKeyImageOriginal, type Options, postAdminIncidents, postAdminIncidentsById } from '../sdk.gen';
-import type { GetAdminIncidentsData, GetAdminIncidentsError, GetAdminIncidentsResponse, GetIncidentsByIdData, GetIncidentsByIdError, GetIncidentsByIdMapData, GetIncidentsByIdMapError, GetIncidentsByIdMapOriginalData, GetIncidentsByIdMapOriginalError, GetIncidentsByIdMapOriginalResponse, GetIncidentsByIdMapResponse, GetIncidentsByIdOgData, GetIncidentsByIdOgError, GetIncidentsByIdOgResponse, GetIncidentsByIdResponse, GetIncidentsByIdResponseTimesData, GetIncidentsByIdResponseTimesError, GetIncidentsByIdResponseTimesResponse, GetIncidentsByIdTimelineData, GetIncidentsByIdTimelineError, GetIncidentsByIdTimelineResponse, GetIncidentsData, GetIncidentsError, GetIncidentsHighlightedData, GetIncidentsHighlightedResponse, GetIncidentsResponse, GetStationsByKeyData, GetStationsByKeyError, GetStationsByKeyImageData, GetStationsByKeyImageError, GetStationsByKeyImageOriginalData, GetStationsByKeyImageOriginalError, GetStationsByKeyImageOriginalResponse, GetStationsByKeyImageResponse, GetStationsByKeyResponse, GetStationsData, GetStationsResponse, PostAdminIncidentsByIdData, PostAdminIncidentsByIdError, PostAdminIncidentsByIdResponse, PostAdminIncidentsData, PostAdminIncidentsError, PostAdminIncidentsResponse } from '../types.gen';
+import { getAdminIncidents, getIncidents, getIncidentsById, getIncidentsByIdMap, getIncidentsByIdMapOriginal, getIncidentsByIdOg, getIncidentsByIdResponseTimes, getIncidentsByIdTimeline, getIncidentsHighlighted, getStations, getStationsByKey, getStationsByKeyImage, getStationsByKeyImageOriginal, getStatsYearRecap, type Options, postAdminIncidents, postAdminIncidentsById } from '../sdk.gen';
+import type { GetAdminIncidentsData, GetAdminIncidentsError, GetAdminIncidentsResponse, GetIncidentsByIdData, GetIncidentsByIdError, GetIncidentsByIdMapData, GetIncidentsByIdMapError, GetIncidentsByIdMapOriginalData, GetIncidentsByIdMapOriginalError, GetIncidentsByIdMapOriginalResponse, GetIncidentsByIdMapResponse, GetIncidentsByIdOgData, GetIncidentsByIdOgError, GetIncidentsByIdOgResponse, GetIncidentsByIdResponse, GetIncidentsByIdResponseTimesData, GetIncidentsByIdResponseTimesError, GetIncidentsByIdResponseTimesResponse, GetIncidentsByIdTimelineData, GetIncidentsByIdTimelineError, GetIncidentsByIdTimelineResponse, GetIncidentsData, GetIncidentsError, GetIncidentsHighlightedData, GetIncidentsHighlightedResponse, GetIncidentsResponse, GetStationsByKeyData, GetStationsByKeyError, GetStationsByKeyImageData, GetStationsByKeyImageError, GetStationsByKeyImageOriginalData, GetStationsByKeyImageOriginalError, GetStationsByKeyImageOriginalResponse, GetStationsByKeyImageResponse, GetStationsByKeyResponse, GetStationsData, GetStationsResponse, GetStatsYearRecapData, GetStatsYearRecapResponse, PostAdminIncidentsByIdData, PostAdminIncidentsByIdError, PostAdminIncidentsByIdResponse, PostAdminIncidentsData, PostAdminIncidentsError, PostAdminIncidentsResponse } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -338,3 +338,18 @@ export const postAdminIncidentsByIdMutation = (options?: Partial<Options<PostAdm
     };
     return mutationOptions;
 };
+
+export const getStatsYearRecapQueryKey = (options?: Options<GetStatsYearRecapData>) => createQueryKey('getStatsYearRecap', options);
+
+export const getStatsYearRecapOptions = (options?: Options<GetStatsYearRecapData>) => queryOptions<GetStatsYearRecapResponse, DefaultError, GetStatsYearRecapResponse, ReturnType<typeof getStatsYearRecapQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await getStatsYearRecap({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getStatsYearRecapQueryKey(options)
+});
