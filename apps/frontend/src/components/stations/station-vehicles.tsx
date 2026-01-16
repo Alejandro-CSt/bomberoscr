@@ -1,20 +1,9 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
+
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-
-interface StationVehiclesProps {
-  vehicles: Array<{
-    id: number;
-    internalNumber: string | null;
-    plate: string | null;
-    descriptionType: string | null;
-    class: string | null;
-    descriptionOperationalStatus: string | null;
-    stats: {
-      incidentCount: number;
-      avgResponseTimeSeconds: number | null;
-    };
-  }>;
-}
+import { getStationsByKeyVehiclesOptions } from "@/lib/api/@tanstack/react-query.gen";
+import { Route } from "@/routes/_dashboard/estaciones/$name";
 
 function formatResponseTime(seconds: number | null): string {
   if (seconds === null) return "-";
@@ -24,14 +13,21 @@ function formatResponseTime(seconds: number | null): string {
   return `${minutes}m ${remainingSeconds}s`;
 }
 
-export function StationVehicles({ vehicles }: StationVehiclesProps) {
-  if (vehicles.length === 0) return null;
+export function StationVehicles() {
+  const { station } = Route.useLoaderData();
+  const { data } = useSuspenseQuery(
+    getStationsByKeyVehiclesOptions({
+      path: { key: station.stationKey }
+    })
+  );
+
+  if (data.vehicles.length === 0) return null;
 
   return (
     <section>
       <h2 className="mb-4 text-lg font-semibold">Unidades</h2>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {vehicles.map((vehicle) => (
+        {data.vehicles.map((vehicle) => (
           <article
             key={vehicle.id}
             className="overflow-hidden rounded-2xl border border-border/50 bg-card">

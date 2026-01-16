@@ -1,26 +1,26 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
+
 import { Skeleton } from "@/components/ui/skeleton";
+import { getStationsByKeyHeatmapOptions } from "@/lib/api/@tanstack/react-query.gen";
+import { Route } from "@/routes/_dashboard/estaciones/$name";
 
 import { StationIncidentsHeatmap } from "./station-incidents-heatmap";
 
-interface StationHeatmapSectionProps {
-  data: Array<{ date: string; count: number }>;
-  totalIncidents: number;
-}
+export function StationHeatmapSection() {
+  const { station } = Route.useLoaderData();
+  const { data } = useSuspenseQuery(
+    getStationsByKeyHeatmapOptions({
+      path: { key: station.stationKey }
+    })
+  );
 
-/** Props that match the API response shape */
-export interface StationHeatmapSectionApiProps {
-  data: Array<{ date: string; count: number }>;
-  totalIncidents: number;
-}
-
-export function StationHeatmapSection({ data, totalIncidents }: StationHeatmapSectionProps) {
   return (
     <section className="flex flex-col gap-4">
       <header className="flex items-center justify-between">
         <h2 className="text-lg font-semibold">Actividad del último año</h2>
-        <span className="text-sm text-muted-foreground">{totalIncidents} incidentes</span>
+        <span className="text-sm text-muted-foreground">{data.totalIncidents} incidentes</span>
       </header>
-      <StationIncidentsHeatmap data={data} />
+      <StationIncidentsHeatmap data={data.data} />
     </section>
   );
 }

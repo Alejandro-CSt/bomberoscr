@@ -1,26 +1,29 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
+
 import {
   StationHighlightedCard,
   StationHighlightedCardSkeleton
 } from "@/components/stations/station-highlighted-card";
+import { getStationsByKeyHighlightedIncidentsOptions } from "@/lib/api/@tanstack/react-query.gen";
+import { Route } from "@/routes/_dashboard/estaciones/$name";
 
-interface StationHighlightedIncidentsProps {
-  incidents: Array<{
-    id: number;
-    incidentTimestamp: string;
-    details: string | null;
-    latitude: string;
-    longitude: string;
-    dispatchedVehiclesCount: number;
-    dispatchedStationsCount: number;
-  }>;
-}
+export function StationHighlightedIncidents() {
+  const { station } = Route.useLoaderData();
+  const { data } = useSuspenseQuery(
+    getStationsByKeyHighlightedIncidentsOptions({
+      path: { key: station.stationKey }
+    })
+  );
 
-export function StationHighlightedIncidents({ incidents }: StationHighlightedIncidentsProps) {
+  if (data.incidents.length === 0) {
+    return null;
+  }
+
   return (
     <section className="flex flex-col gap-4">
       <h2 className="text-lg font-semibold">Destacados</h2>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        {incidents.map((incident) => (
+        {data.incidents.map((incident) => (
           <StationHighlightedCard
             key={incident.id}
             incident={incident}

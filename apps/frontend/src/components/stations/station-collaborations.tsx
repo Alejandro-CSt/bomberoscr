@@ -1,19 +1,20 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 
 import { Skeleton } from "@/components/ui/skeleton";
+import { getStationsByKeyCollaborationsOptions } from "@/lib/api/@tanstack/react-query.gen";
 import { client } from "@/lib/api/client.gen";
+import { Route } from "@/routes/_dashboard/estaciones/$name";
 
-interface StationCollaborationsProps {
-  collaborations: Array<{
-    id: number;
-    name: string;
-    stationKey: string;
-    collaborationCount: number;
-  }>;
-}
+export function StationCollaborations() {
+  const { station } = Route.useLoaderData();
+  const { data } = useSuspenseQuery(
+    getStationsByKeyCollaborationsOptions({
+      path: { key: station.stationKey }
+    })
+  );
 
-export function StationCollaborations({ collaborations }: StationCollaborationsProps) {
-  if (collaborations.length === 0) {
+  if (data.collaborations.length === 0) {
     return null;
   }
 
@@ -23,7 +24,7 @@ export function StationCollaborations({ collaborations }: StationCollaborationsP
         Incidentes conjuntos en el último mes
       </h2>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {collaborations.map((station) => (
+        {data.collaborations.map((station) => (
           <CollaborationCard
             key={station.id}
             station={station}

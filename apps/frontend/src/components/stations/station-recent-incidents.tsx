@@ -1,32 +1,30 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
+
 import {
   StationIncidentCard,
   StationIncidentCardSkeleton
 } from "@/components/stations/station-incident-card";
+import { getStationsByKeyRecentIncidentsOptions } from "@/lib/api/@tanstack/react-query.gen";
+import { Route } from "@/routes/_dashboard/estaciones/$name";
 
-interface StationRecentIncidentsProps {
-  incidents: Array<{
-    id: number;
-    incidentTimestamp: string;
-    importantDetails: string | null;
-    address: string | null;
-    latitude: string;
-    longitude: string;
-    dispatchedVehiclesCount: number;
-    dispatchedStationsCount: number;
-  }>;
-}
+export function StationRecentIncidents() {
+  const { station } = Route.useLoaderData();
+  const { data } = useSuspenseQuery(
+    getStationsByKeyRecentIncidentsOptions({
+      path: { key: station.stationKey }
+    })
+  );
 
-export function StationRecentIncidents({ incidents }: StationRecentIncidentsProps) {
   return (
     <section className="flex flex-col gap-4">
       <h2 className="text-lg font-semibold">Incidentes recientes</h2>
-      {incidents.length === 0 ? (
+      {data.incidents.length === 0 ? (
         <p className="text-sm text-muted-foreground">
           No hay incidentes recientes para esta estación.
         </p>
       ) : (
         <div className="flex flex-col gap-2">
-          {incidents.map((incident) => (
+          {data.incidents.map((incident) => (
             <StationIncidentCard
               key={incident.id}
               incident={incident}

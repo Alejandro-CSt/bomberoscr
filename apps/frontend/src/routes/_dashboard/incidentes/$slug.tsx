@@ -26,9 +26,7 @@ export const Route = createFileRoute("/_dashboard/incidentes/$slug")({
     const isServer = typeof window === "undefined";
     const baseUrl = isServer
       ? process.env.SERVER_INTERNAL_URL
-      : import.meta.env.DEV
-        ? "http://localhost:9998/bomberos/hono"
-        : "/bomberos/hono";
+      : import.meta.env.VITE_SERVER_URL || "/bomberos/hono";
 
     client.setConfig({ baseUrl });
 
