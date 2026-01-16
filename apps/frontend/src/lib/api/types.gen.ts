@@ -451,6 +451,263 @@ export type GetStationsByKeyResponses = {
 
 export type GetStationsByKeyResponse = GetStationsByKeyResponses[keyof GetStationsByKeyResponses];
 
+export type GetStationsByKeyHighlightedIncidentsData = {
+    body?: never;
+    path: {
+        key: string;
+    };
+    query?: {
+        /**
+         * Time range in days to look for incidents
+         */
+        timeRange?: number;
+        /**
+         * Maximum number of incidents to return
+         */
+        limit?: number;
+    };
+    url: '/stations/{key}/highlighted-incidents';
+};
+
+export type GetStationsByKeyHighlightedIncidentsErrors = {
+    /**
+     * Station not found
+     */
+    404: {
+        message: string;
+    };
+};
+
+export type GetStationsByKeyHighlightedIncidentsError = GetStationsByKeyHighlightedIncidentsErrors[keyof GetStationsByKeyHighlightedIncidentsErrors];
+
+export type GetStationsByKeyHighlightedIncidentsResponses = {
+    /**
+     * Highlighted incidents for the station
+     */
+    200: {
+        incidents: Array<{
+            id: number;
+            incidentTimestamp: string;
+            details: string | null;
+            address: string | null;
+            responsibleStation: string | null;
+            latitude: string;
+            longitude: string;
+            dispatchedVehiclesCount: number;
+            dispatchedStationsCount: number;
+        }>;
+    };
+};
+
+export type GetStationsByKeyHighlightedIncidentsResponse = GetStationsByKeyHighlightedIncidentsResponses[keyof GetStationsByKeyHighlightedIncidentsResponses];
+
+export type GetStationsByKeyHeatmapData = {
+    body?: never;
+    path: {
+        key: string;
+    };
+    query?: {
+        /**
+         * Number of days to include in heatmap data
+         */
+        days?: number;
+    };
+    url: '/stations/{key}/heatmap';
+};
+
+export type GetStationsByKeyHeatmapErrors = {
+    /**
+     * Station not found
+     */
+    404: {
+        message: string;
+    };
+};
+
+export type GetStationsByKeyHeatmapError = GetStationsByKeyHeatmapErrors[keyof GetStationsByKeyHeatmapErrors];
+
+export type GetStationsByKeyHeatmapResponses = {
+    /**
+     * Heatmap data showing incidents per day
+     */
+    200: {
+        data: Array<{
+            date: string;
+            count: number;
+        }>;
+        totalIncidents: number;
+    };
+};
+
+export type GetStationsByKeyHeatmapResponse = GetStationsByKeyHeatmapResponses[keyof GetStationsByKeyHeatmapResponses];
+
+export type GetStationsByKeyRecentIncidentsData = {
+    body?: never;
+    path: {
+        key: string;
+    };
+    query?: {
+        /**
+         * Maximum number of incidents to return
+         */
+        limit?: number;
+    };
+    url: '/stations/{key}/recent-incidents';
+};
+
+export type GetStationsByKeyRecentIncidentsErrors = {
+    /**
+     * Station not found
+     */
+    404: {
+        message: string;
+    };
+};
+
+export type GetStationsByKeyRecentIncidentsError = GetStationsByKeyRecentIncidentsErrors[keyof GetStationsByKeyRecentIncidentsErrors];
+
+export type GetStationsByKeyRecentIncidentsResponses = {
+    /**
+     * Most recent incidents for the station
+     */
+    200: {
+        incidents: Array<{
+            id: number;
+            incidentTimestamp: string;
+            address: string | null;
+            importantDetails: string | null;
+            responsibleStation: string | null;
+            latitude: string;
+            longitude: string;
+            dispatchedVehiclesCount: number;
+            dispatchedStationsCount: number;
+        }>;
+    };
+};
+
+export type GetStationsByKeyRecentIncidentsResponse = GetStationsByKeyRecentIncidentsResponses[keyof GetStationsByKeyRecentIncidentsResponses];
+
+export type GetStationsByKeyCollaborationsData = {
+    body?: never;
+    path: {
+        key: string;
+    };
+    query?: never;
+    url: '/stations/{key}/collaborations';
+};
+
+export type GetStationsByKeyCollaborationsErrors = {
+    /**
+     * Station not found
+     */
+    404: {
+        message: string;
+    };
+};
+
+export type GetStationsByKeyCollaborationsError = GetStationsByKeyCollaborationsErrors[keyof GetStationsByKeyCollaborationsErrors];
+
+export type GetStationsByKeyCollaborationsResponses = {
+    /**
+     * Stations that collaborated with this one
+     */
+    200: {
+        collaborations: Array<{
+            id: number;
+            name: string;
+            stationKey: string;
+            collaborationCount: number;
+        }>;
+    };
+};
+
+export type GetStationsByKeyCollaborationsResponse = GetStationsByKeyCollaborationsResponses[keyof GetStationsByKeyCollaborationsResponses];
+
+export type GetStationsByKeyVehiclesData = {
+    body?: never;
+    path: {
+        key: string;
+    };
+    query?: never;
+    url: '/stations/{key}/vehicles';
+};
+
+export type GetStationsByKeyVehiclesErrors = {
+    /**
+     * Station not found
+     */
+    404: {
+        message: string;
+    };
+};
+
+export type GetStationsByKeyVehiclesError = GetStationsByKeyVehiclesErrors[keyof GetStationsByKeyVehiclesErrors];
+
+export type GetStationsByKeyVehiclesResponses = {
+    /**
+     * Vehicles assigned to this station with stats
+     */
+    200: {
+        vehicles: Array<{
+            id: number;
+            internalNumber: string | null;
+            plate: string | null;
+            descriptionType: string | null;
+            class: string | null;
+            descriptionOperationalStatus: string | null;
+            stats: {
+                incidentCount: number;
+                avgResponseTimeSeconds: number | null;
+            };
+        }>;
+    };
+};
+
+export type GetStationsByKeyVehiclesResponse = GetStationsByKeyVehiclesResponses[keyof GetStationsByKeyVehiclesResponses];
+
+export type GetStationsByNameByNameData = {
+    body?: never;
+    path: {
+        name: string;
+    };
+    query?: never;
+    url: '/stations/by-name/{name}';
+};
+
+export type GetStationsByNameByNameErrors = {
+    /**
+     * Station not found
+     */
+    404: {
+        message: string;
+    };
+};
+
+export type GetStationsByNameByNameError = GetStationsByNameByNameErrors[keyof GetStationsByNameByNameErrors];
+
+export type GetStationsByNameByNameResponses = {
+    /**
+     * Station details
+     */
+    200: {
+        station: {
+            id: number;
+            name: string;
+            stationKey: string;
+            radioChannel: string | null;
+            latitude: string;
+            longitude: string;
+            address: string | null;
+            phoneNumber: string | null;
+            fax: string | null;
+            email: string | null;
+            isOperative: boolean | null;
+        };
+    };
+};
+
+export type GetStationsByNameByNameResponse = GetStationsByNameByNameResponses[keyof GetStationsByNameByNameResponses];
+
 export type GetStationsByKeyImageOriginalData = {
     body?: never;
     path: {
@@ -697,3 +954,147 @@ export type GetStatsYearRecapResponses = {
 };
 
 export type GetStatsYearRecapResponse = GetStatsYearRecapResponses[keyof GetStatsYearRecapResponses];
+
+export type GetStatsTopDispatchedStationsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        timeRange?: number;
+    };
+    url: '/stats/top-dispatched-stations';
+};
+
+export type GetStatsTopDispatchedStationsResponses = {
+    /**
+     * Top dispatched stations by count
+     */
+    200: Array<{
+        name: string;
+        key: string | null;
+        total: number;
+        responsible: number;
+        support: number;
+    }>;
+};
+
+export type GetStatsTopDispatchedStationsResponse = GetStatsTopDispatchedStationsResponses[keyof GetStatsTopDispatchedStationsResponses];
+
+export type GetStatsTopResponseTimesData = {
+    body?: never;
+    path?: never;
+    query?: {
+        timeRange?: number;
+    };
+    url: '/stats/top-response-times';
+};
+
+export type GetStatsTopResponseTimesResponses = {
+    /**
+     * Station response time rankings (fastest, slowest, and national average)
+     */
+    200: Array<{
+        name: string;
+        key: string | null;
+        avgResponseTimeMinutes: number;
+        totalDispatches: number;
+        fastestResponseMinutes: number;
+        slowestResponseMinutes: number;
+        category: 'fastest' | 'slowest' | 'average';
+    }>;
+};
+
+export type GetStatsTopResponseTimesResponse = GetStatsTopResponseTimesResponses[keyof GetStatsTopResponseTimesResponses];
+
+export type GetStatsIncidentsByDayOfWeekData = {
+    body?: never;
+    path?: never;
+    query?: {
+        timeRange?: number;
+    };
+    url: '/stats/incidents-by-day-of-week';
+};
+
+export type GetStatsIncidentsByDayOfWeekResponses = {
+    /**
+     * Incidents distribution by day of week
+     */
+    200: Array<{
+        dayOfWeek: string;
+        count: number;
+    }>;
+};
+
+export type GetStatsIncidentsByDayOfWeekResponse = GetStatsIncidentsByDayOfWeekResponses[keyof GetStatsIncidentsByDayOfWeekResponses];
+
+export type GetStatsIncidentsByHourData = {
+    body?: never;
+    path?: never;
+    query?: {
+        timeRange?: number;
+    };
+    url: '/stats/incidents-by-hour';
+};
+
+export type GetStatsIncidentsByHourResponses = {
+    /**
+     * Incidents distribution by hour of day
+     */
+    200: Array<{
+        hour: number;
+        count: number;
+        displayHour: string;
+    }>;
+};
+
+export type GetStatsIncidentsByHourResponse = GetStatsIncidentsByHourResponses[keyof GetStatsIncidentsByHourResponses];
+
+export type GetStatsDailyIncidentsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        timeRange?: number;
+    };
+    url: '/stats/daily-incidents';
+};
+
+export type GetStatsDailyIncidentsResponses = {
+    /**
+     * Daily incidents comparison between current and previous period
+     */
+    200: {
+        data: Array<{
+            date: string;
+            dayOffset: number;
+            current: number;
+            previous: number;
+            displayDate: string;
+        }>;
+        summary: {
+            currentTotal: number;
+            previousTotal: number;
+            percentageChange: number;
+        };
+    };
+};
+
+export type GetStatsDailyIncidentsResponse = GetStatsDailyIncidentsResponses[keyof GetStatsDailyIncidentsResponses];
+
+export type GetStatsSystemOverviewData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/stats/system-overview';
+};
+
+export type GetStatsSystemOverviewResponses = {
+    /**
+     * System overview statistics
+     */
+    200: {
+        stationCount: number;
+        activeVehicleCount: number;
+        avgResponseTimeMinutes: number | null;
+    };
+};
+
+export type GetStatsSystemOverviewResponse = GetStatsSystemOverviewResponses[keyof GetStatsSystemOverviewResponses];

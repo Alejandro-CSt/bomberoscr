@@ -2,7 +2,6 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 // Regex patterns for performance (defined at top level)
-// biome-ignore lint/suspicious/noMisleadingCharacterClass: Unicode combining characters range is intentional for diacritic removal
 const diacriticRegex = /[\u0300-\u036f]/g;
 const specialCharRegex = /[^a-z0-9\s-]/g;
 const locationPatternRegex = / EN [^,]+,/i;
@@ -142,4 +141,19 @@ export function getRelativeTime(date: string, reference?: Date): string {
 export function isUndefinedDate(date: Date | null | undefined) {
   if (!date) return true;
   return date.getFullYear() === 1;
+}
+
+/**
+ * Formats a number of minutes into a human-readable string (e.g., "1h 30m" or "5m 30s")
+ * @param minutes - The number of minutes to format
+ */
+export function formatMinutesToHMS(minutes: number): string {
+  const hrs = Math.floor(minutes / 60);
+  const mins = Math.floor(minutes % 60);
+  const secs = Math.floor((minutes * 60) % 60);
+
+  if (hrs > 0) {
+    return `${hrs}h ${mins}m`;
+  }
+  return `${mins}m ${secs}s`;
 }

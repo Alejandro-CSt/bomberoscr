@@ -87,8 +87,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body className="font-sans antialiased">
-        <Header />
-        <HeaderBackdrop />
+        <div className="gap-0 space-y-0">
+          <Header />
+          <HeaderBackdrop />
+        </div>
         <main className="pt-(--app-header-height)">{children}</main>
         <TanStackDevtools
           config={{

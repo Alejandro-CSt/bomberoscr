@@ -3,8 +3,8 @@
 import { type DefaultError, type InfiniteData, infiniteQueryOptions, queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { getAdminIncidents, getIncidents, getIncidentsById, getIncidentsByIdMap, getIncidentsByIdMapOriginal, getIncidentsByIdOg, getIncidentsByIdResponseTimes, getIncidentsByIdTimeline, getIncidentsHighlighted, getStations, getStationsByKey, getStationsByKeyImage, getStationsByKeyImageOriginal, getStatsYearRecap, type Options, postAdminIncidents, postAdminIncidentsById } from '../sdk.gen';
-import type { GetAdminIncidentsData, GetAdminIncidentsError, GetAdminIncidentsResponse, GetIncidentsByIdData, GetIncidentsByIdError, GetIncidentsByIdMapData, GetIncidentsByIdMapError, GetIncidentsByIdMapOriginalData, GetIncidentsByIdMapOriginalError, GetIncidentsByIdMapOriginalResponse, GetIncidentsByIdMapResponse, GetIncidentsByIdOgData, GetIncidentsByIdOgError, GetIncidentsByIdOgResponse, GetIncidentsByIdResponse, GetIncidentsByIdResponseTimesData, GetIncidentsByIdResponseTimesError, GetIncidentsByIdResponseTimesResponse, GetIncidentsByIdTimelineData, GetIncidentsByIdTimelineError, GetIncidentsByIdTimelineResponse, GetIncidentsData, GetIncidentsError, GetIncidentsHighlightedData, GetIncidentsHighlightedResponse, GetIncidentsResponse, GetStationsByKeyData, GetStationsByKeyError, GetStationsByKeyImageData, GetStationsByKeyImageError, GetStationsByKeyImageOriginalData, GetStationsByKeyImageOriginalError, GetStationsByKeyImageOriginalResponse, GetStationsByKeyImageResponse, GetStationsByKeyResponse, GetStationsData, GetStationsResponse, GetStatsYearRecapData, GetStatsYearRecapResponse, PostAdminIncidentsByIdData, PostAdminIncidentsByIdError, PostAdminIncidentsByIdResponse, PostAdminIncidentsData, PostAdminIncidentsError, PostAdminIncidentsResponse } from '../types.gen';
+import { getAdminIncidents, getIncidents, getIncidentsById, getIncidentsByIdMap, getIncidentsByIdMapOriginal, getIncidentsByIdOg, getIncidentsByIdResponseTimes, getIncidentsByIdTimeline, getIncidentsHighlighted, getStations, getStationsByKey, getStationsByKeyCollaborations, getStationsByKeyHeatmap, getStationsByKeyHighlightedIncidents, getStationsByKeyImage, getStationsByKeyImageOriginal, getStationsByKeyRecentIncidents, getStationsByKeyVehicles, getStationsByNameByName, getStatsDailyIncidents, getStatsIncidentsByDayOfWeek, getStatsIncidentsByHour, getStatsSystemOverview, getStatsTopDispatchedStations, getStatsTopResponseTimes, getStatsYearRecap, type Options, postAdminIncidents, postAdminIncidentsById } from '../sdk.gen';
+import type { GetAdminIncidentsData, GetAdminIncidentsError, GetAdminIncidentsResponse, GetIncidentsByIdData, GetIncidentsByIdError, GetIncidentsByIdMapData, GetIncidentsByIdMapError, GetIncidentsByIdMapOriginalData, GetIncidentsByIdMapOriginalError, GetIncidentsByIdMapOriginalResponse, GetIncidentsByIdMapResponse, GetIncidentsByIdOgData, GetIncidentsByIdOgError, GetIncidentsByIdOgResponse, GetIncidentsByIdResponse, GetIncidentsByIdResponseTimesData, GetIncidentsByIdResponseTimesError, GetIncidentsByIdResponseTimesResponse, GetIncidentsByIdTimelineData, GetIncidentsByIdTimelineError, GetIncidentsByIdTimelineResponse, GetIncidentsData, GetIncidentsError, GetIncidentsHighlightedData, GetIncidentsHighlightedResponse, GetIncidentsResponse, GetStationsByKeyCollaborationsData, GetStationsByKeyCollaborationsError, GetStationsByKeyCollaborationsResponse, GetStationsByKeyData, GetStationsByKeyError, GetStationsByKeyHeatmapData, GetStationsByKeyHeatmapError, GetStationsByKeyHeatmapResponse, GetStationsByKeyHighlightedIncidentsData, GetStationsByKeyHighlightedIncidentsError, GetStationsByKeyHighlightedIncidentsResponse, GetStationsByKeyImageData, GetStationsByKeyImageError, GetStationsByKeyImageOriginalData, GetStationsByKeyImageOriginalError, GetStationsByKeyImageOriginalResponse, GetStationsByKeyImageResponse, GetStationsByKeyRecentIncidentsData, GetStationsByKeyRecentIncidentsError, GetStationsByKeyRecentIncidentsResponse, GetStationsByKeyResponse, GetStationsByKeyVehiclesData, GetStationsByKeyVehiclesError, GetStationsByKeyVehiclesResponse, GetStationsByNameByNameData, GetStationsByNameByNameError, GetStationsByNameByNameResponse, GetStationsData, GetStationsResponse, GetStatsDailyIncidentsData, GetStatsDailyIncidentsResponse, GetStatsIncidentsByDayOfWeekData, GetStatsIncidentsByDayOfWeekResponse, GetStatsIncidentsByHourData, GetStatsIncidentsByHourResponse, GetStatsSystemOverviewData, GetStatsSystemOverviewResponse, GetStatsTopDispatchedStationsData, GetStatsTopDispatchedStationsResponse, GetStatsTopResponseTimesData, GetStatsTopResponseTimesResponse, GetStatsYearRecapData, GetStatsYearRecapResponse, PostAdminIncidentsByIdData, PostAdminIncidentsByIdError, PostAdminIncidentsByIdResponse, PostAdminIncidentsData, PostAdminIncidentsError, PostAdminIncidentsResponse } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -266,6 +266,96 @@ export const getStationsByKeyOptions = (options: Options<GetStationsByKeyData>) 
     queryKey: getStationsByKeyQueryKey(options)
 });
 
+export const getStationsByKeyHighlightedIncidentsQueryKey = (options: Options<GetStationsByKeyHighlightedIncidentsData>) => createQueryKey('getStationsByKeyHighlightedIncidents', options);
+
+export const getStationsByKeyHighlightedIncidentsOptions = (options: Options<GetStationsByKeyHighlightedIncidentsData>) => queryOptions<GetStationsByKeyHighlightedIncidentsResponse, GetStationsByKeyHighlightedIncidentsError, GetStationsByKeyHighlightedIncidentsResponse, ReturnType<typeof getStationsByKeyHighlightedIncidentsQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await getStationsByKeyHighlightedIncidents({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getStationsByKeyHighlightedIncidentsQueryKey(options)
+});
+
+export const getStationsByKeyHeatmapQueryKey = (options: Options<GetStationsByKeyHeatmapData>) => createQueryKey('getStationsByKeyHeatmap', options);
+
+export const getStationsByKeyHeatmapOptions = (options: Options<GetStationsByKeyHeatmapData>) => queryOptions<GetStationsByKeyHeatmapResponse, GetStationsByKeyHeatmapError, GetStationsByKeyHeatmapResponse, ReturnType<typeof getStationsByKeyHeatmapQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await getStationsByKeyHeatmap({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getStationsByKeyHeatmapQueryKey(options)
+});
+
+export const getStationsByKeyRecentIncidentsQueryKey = (options: Options<GetStationsByKeyRecentIncidentsData>) => createQueryKey('getStationsByKeyRecentIncidents', options);
+
+export const getStationsByKeyRecentIncidentsOptions = (options: Options<GetStationsByKeyRecentIncidentsData>) => queryOptions<GetStationsByKeyRecentIncidentsResponse, GetStationsByKeyRecentIncidentsError, GetStationsByKeyRecentIncidentsResponse, ReturnType<typeof getStationsByKeyRecentIncidentsQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await getStationsByKeyRecentIncidents({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getStationsByKeyRecentIncidentsQueryKey(options)
+});
+
+export const getStationsByKeyCollaborationsQueryKey = (options: Options<GetStationsByKeyCollaborationsData>) => createQueryKey('getStationsByKeyCollaborations', options);
+
+export const getStationsByKeyCollaborationsOptions = (options: Options<GetStationsByKeyCollaborationsData>) => queryOptions<GetStationsByKeyCollaborationsResponse, GetStationsByKeyCollaborationsError, GetStationsByKeyCollaborationsResponse, ReturnType<typeof getStationsByKeyCollaborationsQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await getStationsByKeyCollaborations({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getStationsByKeyCollaborationsQueryKey(options)
+});
+
+export const getStationsByKeyVehiclesQueryKey = (options: Options<GetStationsByKeyVehiclesData>) => createQueryKey('getStationsByKeyVehicles', options);
+
+export const getStationsByKeyVehiclesOptions = (options: Options<GetStationsByKeyVehiclesData>) => queryOptions<GetStationsByKeyVehiclesResponse, GetStationsByKeyVehiclesError, GetStationsByKeyVehiclesResponse, ReturnType<typeof getStationsByKeyVehiclesQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await getStationsByKeyVehicles({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getStationsByKeyVehiclesQueryKey(options)
+});
+
+export const getStationsByNameByNameQueryKey = (options: Options<GetStationsByNameByNameData>) => createQueryKey('getStationsByNameByName', options);
+
+export const getStationsByNameByNameOptions = (options: Options<GetStationsByNameByNameData>) => queryOptions<GetStationsByNameByNameResponse, GetStationsByNameByNameError, GetStationsByNameByNameResponse, ReturnType<typeof getStationsByNameByNameQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await getStationsByNameByName({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getStationsByNameByNameQueryKey(options)
+});
+
 export const getStationsByKeyImageOriginalQueryKey = (options: Options<GetStationsByKeyImageOriginalData>) => createQueryKey('getStationsByKeyImageOriginal', options);
 
 export const getStationsByKeyImageOriginalOptions = (options: Options<GetStationsByKeyImageOriginalData>) => queryOptions<GetStationsByKeyImageOriginalResponse, GetStationsByKeyImageOriginalError, GetStationsByKeyImageOriginalResponse, ReturnType<typeof getStationsByKeyImageOriginalQueryKey>>({
@@ -352,4 +442,97 @@ export const getStatsYearRecapOptions = (options?: Options<GetStatsYearRecapData
         return data;
     },
     queryKey: getStatsYearRecapQueryKey(options)
+});
+
+export const getStatsTopDispatchedStationsQueryKey = (options?: Options<GetStatsTopDispatchedStationsData>) => createQueryKey('getStatsTopDispatchedStations', options);
+
+export const getStatsTopDispatchedStationsOptions = (options?: Options<GetStatsTopDispatchedStationsData>) => queryOptions<GetStatsTopDispatchedStationsResponse, DefaultError, GetStatsTopDispatchedStationsResponse, ReturnType<typeof getStatsTopDispatchedStationsQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await getStatsTopDispatchedStations({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getStatsTopDispatchedStationsQueryKey(options)
+});
+
+export const getStatsTopResponseTimesQueryKey = (options?: Options<GetStatsTopResponseTimesData>) => createQueryKey('getStatsTopResponseTimes', options);
+
+export const getStatsTopResponseTimesOptions = (options?: Options<GetStatsTopResponseTimesData>) => queryOptions<GetStatsTopResponseTimesResponse, DefaultError, GetStatsTopResponseTimesResponse, ReturnType<typeof getStatsTopResponseTimesQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await getStatsTopResponseTimes({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getStatsTopResponseTimesQueryKey(options)
+});
+
+export const getStatsIncidentsByDayOfWeekQueryKey = (options?: Options<GetStatsIncidentsByDayOfWeekData>) => createQueryKey('getStatsIncidentsByDayOfWeek', options);
+
+export const getStatsIncidentsByDayOfWeekOptions = (options?: Options<GetStatsIncidentsByDayOfWeekData>) => queryOptions<GetStatsIncidentsByDayOfWeekResponse, DefaultError, GetStatsIncidentsByDayOfWeekResponse, ReturnType<typeof getStatsIncidentsByDayOfWeekQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await getStatsIncidentsByDayOfWeek({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getStatsIncidentsByDayOfWeekQueryKey(options)
+});
+
+export const getStatsIncidentsByHourQueryKey = (options?: Options<GetStatsIncidentsByHourData>) => createQueryKey('getStatsIncidentsByHour', options);
+
+export const getStatsIncidentsByHourOptions = (options?: Options<GetStatsIncidentsByHourData>) => queryOptions<GetStatsIncidentsByHourResponse, DefaultError, GetStatsIncidentsByHourResponse, ReturnType<typeof getStatsIncidentsByHourQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await getStatsIncidentsByHour({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getStatsIncidentsByHourQueryKey(options)
+});
+
+export const getStatsDailyIncidentsQueryKey = (options?: Options<GetStatsDailyIncidentsData>) => createQueryKey('getStatsDailyIncidents', options);
+
+export const getStatsDailyIncidentsOptions = (options?: Options<GetStatsDailyIncidentsData>) => queryOptions<GetStatsDailyIncidentsResponse, DefaultError, GetStatsDailyIncidentsResponse, ReturnType<typeof getStatsDailyIncidentsQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await getStatsDailyIncidents({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getStatsDailyIncidentsQueryKey(options)
+});
+
+export const getStatsSystemOverviewQueryKey = (options?: Options<GetStatsSystemOverviewData>) => createQueryKey('getStatsSystemOverview', options);
+
+/**
+ * Get system-wide overview statistics including operative stations, active vehicles, and average response time over the last 30 days
+ */
+export const getStatsSystemOverviewOptions = (options?: Options<GetStatsSystemOverviewData>) => queryOptions<GetStatsSystemOverviewResponse, DefaultError, GetStatsSystemOverviewResponse, ReturnType<typeof getStatsSystemOverviewQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await getStatsSystemOverview({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getStatsSystemOverviewQueryKey(options)
 });

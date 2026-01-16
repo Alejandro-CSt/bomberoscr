@@ -49,6 +49,9 @@ importers:
       '@bomberoscr/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@bomberoscr/lib':
+        specifier: workspace:*
+        version: link:../../packages/lib
       '@bomberoscr/sync-domain':
         specifier: workspace:*
         version: link:../../packages/sync-domain
@@ -164,6 +167,9 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
+      date-fns:
+        specifier: ^4.1.0
+        version: 4.1.0
       lucide-react:
         specifier: ^0.561.0
         version: 0.561.0(react@19.2.3)

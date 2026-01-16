@@ -1,8 +1,12 @@
 {
   "name": "@bomberoscr/lib",
   "version": "0.0.0",
+  "type": "module",
   "exports": {
-    "./*": "./src/*.ts"
+    "./time-range": "./src/time-range.ts",
+    "./logger": "./src/logger.ts",
+    "./areCoordinatesValid": "./src/areCoordinatesValid.ts",
+    "./compare-two-strings": "./src/compare-two-strings.ts"
   },
   "scripts": {
     "build": "tsc"
