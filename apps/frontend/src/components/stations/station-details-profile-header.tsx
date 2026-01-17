@@ -3,7 +3,7 @@ import { Mail, Phone } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { client } from "@/lib/api/client.gen";
 
-interface StationProfileHeaderProps {
+interface StationDetailsProfileHeaderProps {
   station: {
     id: number;
     name: string;
@@ -19,7 +19,7 @@ interface StationProfileHeaderProps {
   };
 }
 
-export function StationProfileHeader({ station }: StationProfileHeaderProps) {
+export function StationDetailsProfileHeader({ station }: StationDetailsProfileHeaderProps) {
   const baseUrl = client.getConfig().baseUrl ?? "";
   const imageUrl = `${baseUrl}/stations/${encodeURIComponent(station.stationKey)}/image`;
 
@@ -73,7 +73,7 @@ export function StationProfileHeader({ station }: StationProfileHeaderProps) {
   );
 }
 
-export function StationProfileHeaderSkeleton() {
+export function StationDetailsProfileHeaderSkeleton() {
   return (
     <header>
       <div className="relative">

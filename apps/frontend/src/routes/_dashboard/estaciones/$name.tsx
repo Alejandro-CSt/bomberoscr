@@ -2,26 +2,29 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { Suspense } from "react";
 
 import {
-  StationCollaborations,
-  StationCollaborationsSkeleton
-} from "@/components/stations/station-collaborations";
+  StationDetailsCollaborations,
+  StationDetailsCollaborationsSkeleton
+} from "@/components/stations/station-details-collaborations";
 import {
-  StationHeatmapSection,
-  StationHeatmapSectionSkeleton
-} from "@/components/stations/station-heatmap-section";
+  StationDetailsHeatmapSection,
+  StationDetailsHeatmapSectionSkeleton
+} from "@/components/stations/station-details-heatmap-section";
 import {
-  StationHighlightedIncidents,
-  StationHighlightedIncidentsSkeleton
-} from "@/components/stations/station-highlighted-incidents";
+  StationDetailsHighlightedIncidents,
+  StationDetailsHighlightedIncidentsSkeleton
+} from "@/components/stations/station-details-highlighted-incidents";
 import {
-  StationProfileHeader,
-  StationProfileHeaderSkeleton
-} from "@/components/stations/station-profile-header";
+  StationDetailsProfileHeader,
+  StationDetailsProfileHeaderSkeleton
+} from "@/components/stations/station-details-profile-header";
 import {
-  StationRecentIncidents,
-  StationRecentIncidentsSkeleton
-} from "@/components/stations/station-recent-incidents";
-import { StationVehicles, StationVehiclesSkeleton } from "@/components/stations/station-vehicles";
+  StationDetailsRecentIncidents,
+  StationDetailsRecentIncidentsSkeleton
+} from "@/components/stations/station-details-recent-incidents";
+import {
+  StationDetailsVehicles,
+  StationDetailsVehiclesSkeleton
+} from "@/components/stations/station-details-vehicles";
 import { getStationsByNameByName } from "@/lib/api";
 import { client } from "@/lib/api/client.gen";
 
@@ -79,27 +82,27 @@ function EstacionDetailPage() {
     <div className="flex flex-col gap-6">
       <div className="grid w-full grid-cols-1 gap-6 md:gap-8 lg:grid-cols-3">
         <aside className="top-[calc(var(--app-top-offset)+2rem)] self-start md:sticky">
-          <StationProfileHeader station={station} />
+          <StationDetailsProfileHeader station={station} />
         </aside>
 
         <div className="flex flex-col gap-6 lg:col-span-2">
-          <Suspense fallback={<StationHighlightedIncidentsSkeleton />}>
-            <StationHighlightedIncidents />
+          <Suspense fallback={<StationDetailsHighlightedIncidentsSkeleton />}>
+            <StationDetailsHighlightedIncidents />
           </Suspense>
-          <Suspense fallback={<StationHeatmapSectionSkeleton />}>
-            <StationHeatmapSection />
+          <Suspense fallback={<StationDetailsHeatmapSectionSkeleton />}>
+            <StationDetailsHeatmapSection />
           </Suspense>
-          <Suspense fallback={<StationRecentIncidentsSkeleton />}>
-            <StationRecentIncidents />
+          <Suspense fallback={<StationDetailsRecentIncidentsSkeleton />}>
+            <StationDetailsRecentIncidents />
           </Suspense>
         </div>
       </div>
 
-      <Suspense fallback={<StationCollaborationsSkeleton />}>
-        <StationCollaborations />
+      <Suspense fallback={<StationDetailsCollaborationsSkeleton />}>
+        <StationDetailsCollaborations />
       </Suspense>
-      <Suspense fallback={<StationVehiclesSkeleton />}>
-        <StationVehicles />
+      <Suspense fallback={<StationDetailsVehiclesSkeleton />}>
+        <StationDetailsVehicles />
       </Suspense>
     </div>
   );
@@ -110,16 +113,16 @@ function PageSkeleton() {
     <div className="flex flex-col gap-6">
       <div className="grid w-full grid-cols-1 gap-6 md:gap-8 lg:grid-cols-3">
         <aside className="top-(--app-top-offset) self-start md:sticky">
-          <StationProfileHeaderSkeleton />
+          <StationDetailsProfileHeaderSkeleton />
         </aside>
         <div className="flex flex-col gap-6 lg:col-span-2">
-          <StationHighlightedIncidentsSkeleton />
-          <StationHeatmapSectionSkeleton />
-          <StationRecentIncidentsSkeleton />
+          <StationDetailsHighlightedIncidentsSkeleton />
+          <StationDetailsHeatmapSectionSkeleton />
+          <StationDetailsRecentIncidentsSkeleton />
         </div>
       </div>
-      <StationCollaborationsSkeleton />
-      <StationVehiclesSkeleton />
+      <StationDetailsCollaborationsSkeleton />
+      <StationDetailsVehiclesSkeleton />
     </div>
   );
 }

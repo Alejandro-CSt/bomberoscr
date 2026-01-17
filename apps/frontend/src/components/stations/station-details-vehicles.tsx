@@ -13,7 +13,7 @@ function formatResponseTime(seconds: number | null): string {
   return `${minutes}m ${remainingSeconds}s`;
 }
 
-export function StationVehicles() {
+export function StationDetailsVehicles() {
   const { station } = Route.useLoaderData();
   const { data } = useSuspenseQuery(
     getStationsByKeyVehiclesOptions({
@@ -70,7 +70,7 @@ export function StationVehicles() {
   );
 }
 
-export function StationVehiclesSkeleton() {
+export function StationDetailsVehiclesSkeleton() {
   return (
     <section>
       <Skeleton className="mb-4 h-7 w-24" />

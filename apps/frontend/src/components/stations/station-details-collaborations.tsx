@@ -6,7 +6,7 @@ import { getStationsByKeyCollaborationsOptions } from "@/lib/api/@tanstack/react
 import { client } from "@/lib/api/client.gen";
 import { Route } from "@/routes/_dashboard/estaciones/$name";
 
-export function StationCollaborations() {
+export function StationDetailsCollaborations() {
   const { station } = Route.useLoaderData();
   const { data } = useSuspenseQuery(
     getStationsByKeyCollaborationsOptions({
@@ -78,7 +78,7 @@ function CollaborationCard({ station }: CollaborationCardProps) {
   );
 }
 
-export function StationCollaborationsSkeleton() {
+export function StationDetailsCollaborationsSkeleton() {
   return (
     <section>
       <Skeleton className="mb-6 h-7 w-80" />

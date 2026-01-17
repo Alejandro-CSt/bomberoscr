@@ -6,12 +6,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { client } from "@/lib/api/client.gen";
 import { areCoordinatesValid, cn, formatRelativeTime } from "@/lib/utils";
 
-interface StationIncidentCardProps {
+interface StationDetailsHighlightedCardProps {
   incident: {
     id: number;
     incidentTimestamp: string;
-    importantDetails: string | null;
-    address: string | null;
+    details: string | null;
     latitude: string;
     longitude: string;
     dispatchedVehiclesCount: number;
@@ -28,7 +27,7 @@ function getHeatGradient(heat: number): string {
   return "from-yellow-500 to-green-500";
 }
 
-export function StationIncidentCard({ incident }: StationIncidentCardProps) {
+export function StationDetailsHighlightedCard({ incident }: StationDetailsHighlightedCardProps) {
   const heat = incident.dispatchedStationsCount + incident.dispatchedVehiclesCount;
   const hasValidCoordinates = areCoordinatesValid(incident.latitude, incident.longitude);
   const baseUrl = client.getConfig().baseUrl ?? "";
@@ -39,12 +38,12 @@ export function StationIncidentCard({ incident }: StationIncidentCardProps) {
       to="/incidentes/$slug"
       params={{ slug: String(incident.id) }}
       className="flex overflow-hidden rounded-lg bg-card hover:bg-accent/10">
-      <div className="relative flex aspect-square w-24 shrink-0 items-center justify-center p-1.5">
+      <div className="relative flex aspect-square w-32 shrink-0 items-center justify-center p-1.5 md:w-36">
         {mapImageUrl ? (
           <div className="h-full w-full overflow-hidden rounded-lg">
             <img
               src={mapImageUrl}
-              alt={`Mapa del incidente ${incident.importantDetails ?? ""}`}
+              alt={`Mapa del incidente ${incident.details ?? ""}`}
               className="h-full w-full rounded-lg object-cover"
               loading="lazy"
               decoding="async"
@@ -58,7 +57,7 @@ export function StationIncidentCard({ incident }: StationIncidentCardProps) {
             <div className="relative flex h-full w-full items-center justify-center">
               <div className="w-fit rounded-md bg-background/60 px-2 py-1.5 backdrop-blur-3xl">
                 <TriangleAlert
-                  className="size-4 text-amber-500"
+                  className="size-5 text-amber-500"
                   aria-hidden="true"
                 />
               </div>
@@ -66,26 +65,23 @@ export function StationIncidentCard({ incident }: StationIncidentCardProps) {
           </div>
         )}
       </div>
-      <div className="flex min-w-0 flex-1 flex-col justify-center gap-1.5 py-2 pr-3 pl-1.5">
-        <h3 className="line-clamp-1 text-sm leading-snug font-medium">
-          {incident.importantDetails ?? "Sin detalles"}
+      <div className="flex min-w-0 flex-1 flex-col justify-center gap-2 py-3 pr-4 pl-2">
+        <h3 className="line-clamp-2 text-base leading-snug font-medium">
+          {incident.details ?? "Sin detalles"}
         </h3>
-        {incident.address && (
-          <p className="line-clamp-1 text-xs text-muted-foreground">{incident.address}</p>
-        )}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <div className="flex items-center gap-1 text-muted-foreground">
-              <GarageIcon className="size-3.5" />
-              <span className="text-xs font-medium">{incident.dispatchedStationsCount}</span>
+              <GarageIcon className="size-4.5" />
+              <span className="text-sm font-medium">{incident.dispatchedStationsCount}</span>
             </div>
             <div className="flex items-center gap-1 text-muted-foreground">
-              <FireTruckIcon className="size-3.5" />
-              <span className="text-xs font-medium">{incident.dispatchedVehiclesCount}</span>
+              <FireTruckIcon className="size-4.5" />
+              <span className="text-sm font-medium">{incident.dispatchedVehiclesCount}</span>
             </div>
           </div>
           <span
-            className="shrink-0 text-xs whitespace-nowrap text-muted-foreground first-letter:uppercase"
+            className="shrink-0 text-sm whitespace-nowrap text-muted-foreground first-letter:uppercase"
             suppressHydrationWarning>
             {formatRelativeTime(incident.incidentTimestamp)}
           </span>
@@ -95,21 +91,21 @@ export function StationIncidentCard({ incident }: StationIncidentCardProps) {
   );
 }
 
-export function StationIncidentCardSkeleton({ className }: { className?: string }) {
+export function StationDetailsHighlightedCardSkeleton({ className }: { className?: string }) {
   return (
     <div className={cn("flex overflow-hidden rounded-lg bg-card", className)}>
-      <div className="relative aspect-square w-24 shrink-0 p-1.5">
+      <div className="relative aspect-square w-32 shrink-0 p-1.5 md:w-36">
         <Skeleton className="h-full w-full rounded-lg" />
       </div>
-      <div className="flex min-w-0 flex-1 flex-col justify-center gap-1.5 py-2 pr-3 pl-1.5">
+      <div className="flex min-w-0 flex-1 flex-col justify-center gap-2 py-3 pr-4 pl-2">
+        <Skeleton className="h-5 w-full" />
         <Skeleton className="h-4 w-3/4" />
-        <Skeleton className="h-3 w-1/2" />
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Skeleton className="h-4 w-8" />
-            <Skeleton className="h-4 w-8" />
+          <div className="flex items-center gap-3">
+            <Skeleton className="h-5 w-10" />
+            <Skeleton className="h-5 w-10" />
           </div>
-          <Skeleton className="h-4 w-16" />
+          <Skeleton className="h-5 w-20" />
         </div>
       </div>
     </div>

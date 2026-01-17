@@ -14,11 +14,11 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
-interface StationIncidentsHeatmapProps {
+interface StationDetailsIncidentsHeatmapProps {
   data: { date: string; count: number }[];
 }
 
-export function StationIncidentsHeatmap({ data }: StationIncidentsHeatmapProps) {
+export function StationDetailsIncidentsHeatmap({ data }: StationDetailsIncidentsHeatmapProps) {
   const tooltipHandle = React.useMemo(
     () => TooltipCreateHandle<{ count: number; date: Date }>(),
     []
@@ -150,7 +150,7 @@ export function StationIncidentsHeatmap({ data }: StationIncidentsHeatmapProps) 
   );
 }
 
-export function StationIncidentsHeatmapSkeleton() {
+export function StationDetailsIncidentsHeatmapSkeleton() {
   const intensityColor = {
     0: "bg-muted",
     1: "bg-primary/20",

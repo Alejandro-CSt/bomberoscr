@@ -1,13 +1,13 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 
 import {
-  StationIncidentCard,
-  StationIncidentCardSkeleton
-} from "@/components/stations/station-incident-card";
+  StationDetailsIncidentCard,
+  StationDetailsIncidentCardSkeleton
+} from "@/components/stations/station-details-incident-card";
 import { getStationsByKeyRecentIncidentsOptions } from "@/lib/api/@tanstack/react-query.gen";
 import { Route } from "@/routes/_dashboard/estaciones/$name";
 
-export function StationRecentIncidents() {
+export function StationDetailsRecentIncidents() {
   const { station } = Route.useLoaderData();
   const { data } = useSuspenseQuery(
     getStationsByKeyRecentIncidentsOptions({
@@ -25,7 +25,7 @@ export function StationRecentIncidents() {
       ) : (
         <div className="flex flex-col gap-2">
           {data.incidents.map((incident) => (
-            <StationIncidentCard
+            <StationDetailsIncidentCard
               key={incident.id}
               incident={incident}
             />
@@ -36,7 +36,7 @@ export function StationRecentIncidents() {
   );
 }
 
-export function StationRecentIncidentsSkeleton({ count = 5 }: { count?: number }) {
+export function StationDetailsRecentIncidentsSkeleton({ count = 5 }: { count?: number }) {
   const keys = Array.from({ length: count }, (_, i) => i + 1);
 
   return (
@@ -44,7 +44,7 @@ export function StationRecentIncidentsSkeleton({ count = 5 }: { count?: number }
       <div className="h-7 w-40 animate-pulse rounded bg-muted" />
       <div className="flex flex-col gap-2">
         {keys.map((key) => (
-          <StationIncidentCardSkeleton key={key} />
+          <StationDetailsIncidentCardSkeleton key={key} />
         ))}
       </div>
     </section>

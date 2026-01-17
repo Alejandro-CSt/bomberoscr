@@ -1,13 +1,13 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 
 import {
-  StationHighlightedCard,
-  StationHighlightedCardSkeleton
-} from "@/components/stations/station-highlighted-card";
+  StationDetailsHighlightedCard,
+  StationDetailsHighlightedCardSkeleton
+} from "@/components/stations/station-details-highlighted-card";
 import { getStationsByKeyHighlightedIncidentsOptions } from "@/lib/api/@tanstack/react-query.gen";
 import { Route } from "@/routes/_dashboard/estaciones/$name";
 
-export function StationHighlightedIncidents() {
+export function StationDetailsHighlightedIncidents() {
   const { station } = Route.useLoaderData();
   const { data } = useSuspenseQuery(
     getStationsByKeyHighlightedIncidentsOptions({
@@ -24,7 +24,7 @@ export function StationHighlightedIncidents() {
       <h2 className="text-lg font-semibold">Destacados</h2>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {data.incidents.map((incident) => (
-          <StationHighlightedCard
+          <StationDetailsHighlightedCard
             key={incident.id}
             incident={incident}
           />
@@ -34,7 +34,7 @@ export function StationHighlightedIncidents() {
   );
 }
 
-export function StationHighlightedIncidentsSkeleton({ count = 6 }: { count?: number }) {
+export function StationDetailsHighlightedIncidentsSkeleton({ count = 6 }: { count?: number }) {
   const keys = Array.from({ length: count }, (_, i) => i + 1);
 
   return (
@@ -42,7 +42,7 @@ export function StationHighlightedIncidentsSkeleton({ count = 6 }: { count?: num
       <div className="h-7 w-32 animate-pulse rounded bg-muted" />
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {keys.map((key) => (
-          <StationHighlightedCardSkeleton key={key} />
+          <StationDetailsHighlightedCardSkeleton key={key} />
         ))}
       </div>
     </section>

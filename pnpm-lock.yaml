@@ -173,6 +173,9 @@ importers:
       lucide-react:
         specifier: ^0.561.0
         version: 0.561.0(react@19.2.3)
+      motion:
+        specifier: ^12.23.24
+        version: 12.24.12(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       nitro:
         specifier: latest
         version: 3.0.1-alpha.1(chokidar@5.0.0)(drizzle-orm@0.44.7(@opentelemetry/api@1.9.0)(@types/pg@8.16.0)(pg@8.16.3))(ioredis@5.9.1)(lru-cache@11.2.4)(rolldown-vite@7.3.1(@types/node@22.19.5)(esbuild@0.27.2)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.2))(rollup@4.55.1)

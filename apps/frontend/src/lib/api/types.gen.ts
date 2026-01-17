@@ -371,10 +371,10 @@ export type GetStationsData = {
     path?: never;
     query?: {
         limit?: number;
-        cursor?: number | null;
+        page?: number;
         search?: string;
         isOperative?: boolean | null;
-        view?: 'default' | 'map';
+        view?: 'default' | 'map' | 'directory';
     };
     url: '/stations';
 };
@@ -394,14 +394,29 @@ export type GetStationsResponses = {
             longitude: string;
             isOperative: boolean | null;
         }>;
-        nextCursor: number | null;
+        pagination: {
+            page: number;
+            limit: number;
+            total: number;
+            totalPages: number;
+            hasNext: boolean;
+            hasPrev: boolean;
+        };
     } | {
         view: 'map';
         stations: Array<{
             id: number;
+            name: string;
             stationKey: string;
             latitude: string;
             longitude: string;
+        }>;
+    } | {
+        view: 'directory';
+        stations: Array<{
+            stationKey: string;
+            name: string;
+            address: string | null;
         }>;
     };
 };

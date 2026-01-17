@@ -229,14 +229,14 @@ export const getStationsOptions = (options?: Options<GetStationsData>) => queryO
 
 export const getStationsInfiniteQueryKey = (options?: Options<GetStationsData>): QueryKey<Options<GetStationsData>> => createQueryKey('getStations', options, true);
 
-export const getStationsInfiniteOptions = (options?: Options<GetStationsData>) => infiniteQueryOptions<GetStationsResponse, DefaultError, InfiniteData<GetStationsResponse>, QueryKey<Options<GetStationsData>>, number | null | Pick<QueryKey<Options<GetStationsData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
+export const getStationsInfiniteOptions = (options?: Options<GetStationsData>) => infiniteQueryOptions<GetStationsResponse, DefaultError, InfiniteData<GetStationsResponse>, QueryKey<Options<GetStationsData>>, number | Pick<QueryKey<Options<GetStationsData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
 // @ts-ignore
 {
     queryFn: async ({ pageParam, queryKey, signal }) => {
         // @ts-ignore
         const page: Pick<QueryKey<Options<GetStationsData>>[0], 'body' | 'headers' | 'path' | 'query'> = typeof pageParam === 'object' ? pageParam : {
             query: {
-                cursor: pageParam
+                page: pageParam
             }
         };
         const params = createInfiniteParams(queryKey, page);

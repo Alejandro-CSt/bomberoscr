@@ -4,16 +4,15 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { client } from "@/lib/api/client.gen";
 import { cn } from "@/lib/utils";
 
-interface StationCardProps {
+interface StationsDirectoryCardProps {
   station: {
-    id: number;
     name: string;
     stationKey: string;
     address: string | null;
   };
 }
 
-export function StationCard({ station }: StationCardProps) {
+export function StationsDirectoryCard({ station }: StationsDirectoryCardProps) {
   const baseUrl = client.getConfig().baseUrl ?? "";
   const imageUrl = `${baseUrl}/stations/${encodeURIComponent(station.stationKey)}/image`;
 
@@ -52,7 +51,7 @@ export function StationCard({ station }: StationCardProps) {
   );
 }
 
-export function StationCardSkeleton({ className }: { className?: string }) {
+export function StationsDirectoryCardSkeleton({ className }: { className?: string }) {
   return (
     <div className={cn("rounded-xl bg-card shadow-md", className)}>
       <div className="relative">

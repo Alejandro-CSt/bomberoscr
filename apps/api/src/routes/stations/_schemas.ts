@@ -1,11 +1,11 @@
 import { z } from "@hono/zod-openapi";
 
 export const StationsQuerySchema = z.object({
-  limit: z.coerce.number().min(1).max(500).default(20),
-  cursor: z.coerce.number().optional(),
+  limit: z.coerce.number().min(1).max(100).default(20),
+  page: z.coerce.number().min(1).default(1),
   search: z.string().trim().optional(),
   isOperative: z.coerce.boolean().optional(),
-  view: z.enum(["default", "map"]).default("default")
+  view: z.enum(["default", "map", "directory"]).default("default")
 });
 
 export const StationKeyParamSchema = z.object({
@@ -34,15 +34,25 @@ export const StationListItemSchema = z.object({
 
 export const StationMapItemSchema = z.object({
   id: z.number(),
+  name: z.string(),
   stationKey: z.string(),
   latitude: z.string(),
   longitude: z.string()
 });
 
+export const PaginationSchema = z.object({
+  page: z.number(),
+  limit: z.number(),
+  total: z.number(),
+  totalPages: z.number(),
+  hasNext: z.boolean(),
+  hasPrev: z.boolean()
+});
+
 export const StationsDefaultResponseSchema = z.object({
   view: z.literal("default"),
   stations: z.array(StationListItemSchema),
-  nextCursor: z.number().nullable()
+  pagination: PaginationSchema
 });
 
 export const StationsMapResponseSchema = z.object({
@@ -50,9 +60,21 @@ export const StationsMapResponseSchema = z.object({
   stations: z.array(StationMapItemSchema)
 });
 
+export const StationDirectoryItemSchema = z.object({
+  stationKey: z.string(),
+  name: z.string(),
+  address: z.string().nullable()
+});
+
+export const StationsDirectoryResponseSchema = z.object({
+  view: z.literal("directory"),
+  stations: z.array(StationDirectoryItemSchema)
+});
+
 export const StationsResponseSchema = z.discriminatedUnion("view", [
   StationsDefaultResponseSchema,
-  StationsMapResponseSchema
+  StationsMapResponseSchema,
+  StationsDirectoryResponseSchema
 ]);
 
 export const StationDetailSchema = z.object({
