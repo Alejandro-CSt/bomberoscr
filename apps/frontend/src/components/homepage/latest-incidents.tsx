@@ -5,6 +5,7 @@ import { ArrowRightIcon } from "lucide-react";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { getIncidentsOptions } from "@/lib/api/@tanstack/react-query.gen";
+import { client } from "@/lib/api/client.gen";
 import { formatRelativeTime } from "@/lib/utils";
 
 interface LatestIncident {
@@ -16,29 +17,74 @@ interface LatestIncident {
   dispatchedVehiclesCount: number;
   responsibleStation: string;
   incidentTimestamp: string;
+  incidentCode: string | null;
 }
 
 function LatestIncidentCard({ incident }: { incident: LatestIncident }) {
+  const baseUrl = client.getConfig().baseUrl ?? "";
+  const typeImageUrl = incident.incidentCode
+    ? `${baseUrl}/incidents/types/${encodeURIComponent(incident.incidentCode)}/image`
+    : null;
+
   return (
     <Link
       to="/incidentes/$slug"
       params={{ slug: incident.slug }}
-      className="flex flex-col gap-2 rounded border border-border bg-card p-4 text-sm">
-      <h3 className="line-clamp-1 text-base font-medium">{incident.details}</h3>
-      <span className="font-medium">{incident.responsibleStation}</span>
-      <p className="line-clamp-1 text-muted-foreground">{incident.address}</p>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
+      className="group relative flex flex-col overflow-hidden rounded-xl border border-border bg-card">
+      {/* Background blurred image */}
+      {typeImageUrl && (
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <img
+            src={typeImageUrl}
+            alt=""
+            aria-hidden="true"
+            className="absolute top-1/2 left-1/2 h-[140%] w-[140%] -translate-x-1/2 -translate-y-1/2 scale-110 object-cover opacity-15 blur-2xl transition-transform duration-500 group-hover:scale-125"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+      )}
+
+      {/* Content */}
+      <div className="relative flex flex-1 gap-3 p-3">
+        {/* Foreground illustration */}
+        {typeImageUrl && (
+          <div className="flex shrink-0 items-center justify-center">
+            <div className="relative size-16 overflow-hidden rounded-lg bg-muted/50">
+              <img
+                src={typeImageUrl}
+                alt={`Ilustración de ${incident.details}`}
+                className="size-full object-contain p-1.5 drop-shadow-md transition-transform duration-300 group-hover:scale-110"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Text content */}
+        <div className="flex min-w-0 flex-1 flex-col justify-center gap-1">
+          <h3 className="line-clamp-1 text-sm leading-tight font-medium">{incident.details}</h3>
+          <p className="line-clamp-1 text-xs text-muted-foreground">{incident.address}</p>
+          <span className="text-xs font-medium text-muted-foreground">
+            {incident.responsibleStation}
+          </span>
+        </div>
+      </div>
+
+      {/* Footer stats */}
+      <div className="relative flex items-center justify-between border-t border-border/50 bg-muted/30 px-3 py-2 text-xs">
+        <div className="flex items-center gap-3 text-muted-foreground">
           <div className="flex items-center gap-1">
-            <GarageIcon className="size-5" />
-            <span>{incident.dispatchedStationsCount}</span>
+            <GarageIcon className="size-4" />
+            <span className="font-medium">{incident.dispatchedStationsCount}</span>
           </div>
           <div className="flex items-center gap-1">
-            <FireTruckIcon className="size-5" />
-            <span>{incident.dispatchedVehiclesCount}</span>
+            <FireTruckIcon className="size-4" />
+            <span className="font-medium">{incident.dispatchedVehiclesCount}</span>
           </div>
         </div>
-        <span className="text-xs whitespace-nowrap text-muted-foreground first-letter:uppercase">
+        <span className="text-muted-foreground first-letter:uppercase">
           {formatRelativeTime(incident.incidentTimestamp)}
         </span>
       </div>
@@ -48,13 +94,18 @@ function LatestIncidentCard({ incident }: { incident: LatestIncident }) {
 
 function LatestIncidentCardSkeleton() {
   return (
-    <div className="flex flex-col gap-2 rounded border border-border bg-card p-4 text-sm">
-      <Skeleton className="h-6 w-3/4" />
-      <Skeleton className="h-5 w-1/3" />
-      <Skeleton className="h-5 w-full" />
-      <div className="flex items-center justify-between">
-        <Skeleton className="h-5 w-20" />
-        <Skeleton className="h-4 w-24" />
+    <div className="flex flex-col overflow-hidden rounded-xl border border-border bg-card">
+      <div className="flex gap-3 p-3">
+        <Skeleton className="size-16 shrink-0 rounded-lg" />
+        <div className="flex flex-1 flex-col justify-center gap-1.5">
+          <Skeleton className="h-4 w-3/4" />
+          <Skeleton className="h-3 w-full" />
+          <Skeleton className="h-3 w-1/2" />
+        </div>
+      </div>
+      <div className="flex items-center justify-between border-t border-border/50 bg-muted/30 px-3 py-2">
+        <Skeleton className="h-4 w-16" />
+        <Skeleton className="h-4 w-20" />
       </div>
     </div>
   );
@@ -85,7 +136,8 @@ export function LatestIncidents() {
     dispatchedStationsCount: incident.dispatchedStationsCount ?? 0,
     dispatchedVehiclesCount: incident.dispatchedVehiclesCount ?? 0,
     responsibleStation: incident.responsibleStation ?? "Estación pendiente",
-    incidentTimestamp: incident.incidentTimestamp
+    incidentTimestamp: incident.incidentTimestamp,
+    incidentCode: incident.specificIncidentCode ?? null
   }));
 
   return (

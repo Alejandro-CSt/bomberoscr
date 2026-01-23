@@ -19,6 +19,14 @@ import {
   route as highlightedRoute
 } from "@/routes/incidents/highlighted";
 import { handler as listHandler, route as listRoute } from "@/routes/incidents/index";
+import {
+  handler as typeImageHandler,
+  route as typeImageRoute
+} from "@/routes/incidents/types/[code]/image";
+import {
+  handler as typeImageOriginalHandler,
+  route as typeImageOriginalRoute
+} from "@/routes/incidents/types/[code]/image/original";
 
 const router = createRouter()
   .openapi(listRoute, listHandler)
@@ -28,6 +36,8 @@ const router = createRouter()
   .openapi(responseTimesRoute, responseTimesHandler)
   .openapi(ogRoute, ogHandler)
   .openapi(mapOriginalRoute, mapOriginalHandler)
-  .openapi(mapRoute, mapHandler);
+  .openapi(mapRoute, mapHandler)
+  .openapi(typeImageOriginalRoute, typeImageOriginalHandler)
+  .openapi(typeImageRoute, typeImageHandler);
 
 export default router;

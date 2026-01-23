@@ -188,4 +188,16 @@ export const MapOriginalTokenSchema = z.object({
   token: z.string()
 });
 
+export const IncidentTypeCodeParamSchema = z.object({
+  code: z.string().openapi({
+    param: { name: "code", in: "path", required: true },
+    example: "6.1.1.2.1",
+    description: "Incident type code (e.g., '1' for fire, '6.1.1.2.1' for snake rescue)"
+  })
+});
+
+export const TypeImageOriginalTokenSchema = z.object({
+  token: z.string()
+});
+
 export type HighlightedIncidentItem = z.infer<typeof HighlightedIncidentItemSchema>;
