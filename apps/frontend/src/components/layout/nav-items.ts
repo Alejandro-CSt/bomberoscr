@@ -1,16 +1,10 @@
-import { GarageIcon, HouseLineIcon, MapTrifoldIcon, SirenIcon } from "@phosphor-icons/react";
+import { GarageIcon, HouseLineIcon, SirenIcon } from "@phosphor-icons/react";
 
 export const navItems = [
   {
     title: "Inicio",
     url: "/",
     icon: HouseLineIcon,
-    enabled: true
-  },
-  {
-    title: "Mapa interactivo",
-    url: "/mapa",
-    icon: MapTrifoldIcon,
     enabled: true
   },
   {

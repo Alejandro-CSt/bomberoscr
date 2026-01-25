@@ -9,17 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as MapRouteImport } from './routes/_map'
+import { Route as IncidentsRouteImport } from './routes/_incidents'
 import { Route as DashboardRouteImport } from './routes/_dashboard'
 import { Route as DashboardIndexRouteImport } from './routes/_dashboard/index'
-import { Route as MapMapaIndexRouteImport } from './routes/_map/mapa/index'
-import { Route as DashboardIncidentesIndexRouteImport } from './routes/_dashboard/incidentes/index'
+import { Route as IncidentsIncidentesIndexRouteImport } from './routes/_incidents/incidentes/index'
 import { Route as DashboardEstacionesIndexRouteImport } from './routes/_dashboard/estaciones/index'
 import { Route as DashboardIncidentesSlugRouteImport } from './routes/_dashboard/incidentes/$slug'
 import { Route as DashboardEstacionesNameRouteImport } from './routes/_dashboard/estaciones/$name'
 
-const MapRoute = MapRouteImport.update({
-  id: '/_map',
+const IncidentsRoute = IncidentsRouteImport.update({
+  id: '/_incidents',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -31,16 +30,11 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
   path: '/',
   getParentRoute: () => DashboardRoute,
 } as any)
-const MapMapaIndexRoute = MapMapaIndexRouteImport.update({
-  id: '/mapa/',
-  path: '/mapa/',
-  getParentRoute: () => MapRoute,
-} as any)
-const DashboardIncidentesIndexRoute =
-  DashboardIncidentesIndexRouteImport.update({
+const IncidentsIncidentesIndexRoute =
+  IncidentsIncidentesIndexRouteImport.update({
     id: '/incidentes/',
     path: '/incidentes/',
-    getParentRoute: () => DashboardRoute,
+    getParentRoute: () => IncidentsRoute,
   } as any)
 const DashboardEstacionesIndexRoute =
   DashboardEstacionesIndexRouteImport.update({
@@ -64,27 +58,24 @@ export interface FileRoutesByFullPath {
   '/estaciones/$name': typeof DashboardEstacionesNameRoute
   '/incidentes/$slug': typeof DashboardIncidentesSlugRoute
   '/estaciones': typeof DashboardEstacionesIndexRoute
-  '/incidentes': typeof DashboardIncidentesIndexRoute
-  '/mapa': typeof MapMapaIndexRoute
+  '/incidentes': typeof IncidentsIncidentesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof DashboardIndexRoute
   '/estaciones/$name': typeof DashboardEstacionesNameRoute
   '/incidentes/$slug': typeof DashboardIncidentesSlugRoute
   '/estaciones': typeof DashboardEstacionesIndexRoute
-  '/incidentes': typeof DashboardIncidentesIndexRoute
-  '/mapa': typeof MapMapaIndexRoute
+  '/incidentes': typeof IncidentsIncidentesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_dashboard': typeof DashboardRouteWithChildren
-  '/_map': typeof MapRouteWithChildren
+  '/_incidents': typeof IncidentsRouteWithChildren
   '/_dashboard/': typeof DashboardIndexRoute
   '/_dashboard/estaciones/$name': typeof DashboardEstacionesNameRoute
   '/_dashboard/incidentes/$slug': typeof DashboardIncidentesSlugRoute
   '/_dashboard/estaciones/': typeof DashboardEstacionesIndexRoute
-  '/_dashboard/incidentes/': typeof DashboardIncidentesIndexRoute
-  '/_map/mapa/': typeof MapMapaIndexRoute
+  '/_incidents/incidentes/': typeof IncidentsIncidentesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -94,7 +85,6 @@ export interface FileRouteTypes {
     | '/incidentes/$slug'
     | '/estaciones'
     | '/incidentes'
-    | '/mapa'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -102,31 +92,29 @@ export interface FileRouteTypes {
     | '/incidentes/$slug'
     | '/estaciones'
     | '/incidentes'
-    | '/mapa'
   id:
     | '__root__'
     | '/_dashboard'
-    | '/_map'
+    | '/_incidents'
     | '/_dashboard/'
     | '/_dashboard/estaciones/$name'
     | '/_dashboard/incidentes/$slug'
     | '/_dashboard/estaciones/'
-    | '/_dashboard/incidentes/'
-    | '/_map/mapa/'
+    | '/_incidents/incidentes/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRouteWithChildren
-  MapRoute: typeof MapRouteWithChildren
+  IncidentsRoute: typeof IncidentsRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/_map': {
-      id: '/_map'
+    '/_incidents': {
+      id: '/_incidents'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof MapRouteImport
+      preLoaderRoute: typeof IncidentsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_dashboard': {
@@ -143,19 +131,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
-    '/_map/mapa/': {
-      id: '/_map/mapa/'
-      path: '/mapa'
-      fullPath: '/mapa'
-      preLoaderRoute: typeof MapMapaIndexRouteImport
-      parentRoute: typeof MapRoute
-    }
-    '/_dashboard/incidentes/': {
-      id: '/_dashboard/incidentes/'
+    '/_incidents/incidentes/': {
+      id: '/_incidents/incidentes/'
       path: '/incidentes'
       fullPath: '/incidentes'
-      preLoaderRoute: typeof DashboardIncidentesIndexRouteImport
-      parentRoute: typeof DashboardRoute
+      preLoaderRoute: typeof IncidentsIncidentesIndexRouteImport
+      parentRoute: typeof IncidentsRoute
     }
     '/_dashboard/estaciones/': {
       id: '/_dashboard/estaciones/'
@@ -186,7 +167,6 @@ interface DashboardRouteChildren {
   DashboardEstacionesNameRoute: typeof DashboardEstacionesNameRoute
   DashboardIncidentesSlugRoute: typeof DashboardIncidentesSlugRoute
   DashboardEstacionesIndexRoute: typeof DashboardEstacionesIndexRoute
-  DashboardIncidentesIndexRoute: typeof DashboardIncidentesIndexRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
@@ -194,26 +174,27 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardEstacionesNameRoute: DashboardEstacionesNameRoute,
   DashboardIncidentesSlugRoute: DashboardIncidentesSlugRoute,
   DashboardEstacionesIndexRoute: DashboardEstacionesIndexRoute,
-  DashboardIncidentesIndexRoute: DashboardIncidentesIndexRoute,
 }
 
 const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
   DashboardRouteChildren,
 )
 
-interface MapRouteChildren {
-  MapMapaIndexRoute: typeof MapMapaIndexRoute
+interface IncidentsRouteChildren {
+  IncidentsIncidentesIndexRoute: typeof IncidentsIncidentesIndexRoute
 }
 
-const MapRouteChildren: MapRouteChildren = {
-  MapMapaIndexRoute: MapMapaIndexRoute,
+const IncidentsRouteChildren: IncidentsRouteChildren = {
+  IncidentsIncidentesIndexRoute: IncidentsIncidentesIndexRoute,
 }
 
-const MapRouteWithChildren = MapRoute._addFileChildren(MapRouteChildren)
+const IncidentsRouteWithChildren = IncidentsRoute._addFileChildren(
+  IncidentsRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRouteWithChildren,
-  MapRoute: MapRouteWithChildren,
+  IncidentsRoute: IncidentsRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

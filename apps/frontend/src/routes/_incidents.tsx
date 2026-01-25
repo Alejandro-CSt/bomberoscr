@@ -1,6 +1,6 @@
 import { Outlet, createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/_map")({
+export const Route = createFileRoute("/_incidents")({
   component: MapLayout
 });
 

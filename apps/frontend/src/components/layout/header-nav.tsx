@@ -14,9 +14,6 @@ export function HeaderNav({ className }: { className?: string }) {
     if (pathname === "/" || pathname === "") {
       return "inicio";
     }
-    if (pathname.includes("/mapa")) {
-      return "mapa";
-    }
     if (pathname.includes("/incidentes")) {
       return "incidentes";
     }
@@ -35,18 +32,14 @@ export function HeaderNav({ className }: { className?: string }) {
           variant="underline"
           className="h-auto gap-0 rounded-none bg-transparent px-1 py-1 text-foreground outline-none *:shrink-0 focus:outline-none focus-visible:outline-none">
           {enabledNavItems.map((item) => {
-            const value = item.title
-              .toLowerCase()
-              .replace(" ", "-")
-              .replace("mapa-interactivo", "mapa");
+            const value = item.title.toLowerCase().replace(" ", "-");
             const Icon = item.icon;
-            const tabValue = value === "mapa-interactivo" ? "mapa" : value;
             return (
               <TabsTab
                 className="relative border-none hover:bg-accent hover:text-foreground focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 data-active:bg-transparent data-active:shadow-none data-active:hover:bg-accent"
                 key={item.url}
                 render={<Link to={item.url} />}
-                value={tabValue}>
+                value={value}>
                 <Icon size={16} />
                 {item.title}
               </TabsTab>

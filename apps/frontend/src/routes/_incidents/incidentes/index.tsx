@@ -4,7 +4,7 @@ const title = "Incidentes — Emergencias CR";
 const description =
   "Consulta el historial de incidentes atendidos por Bomberos de Costa Rica. Filtra por fecha, tipo y estación.";
 
-export const Route = createFileRoute("/_dashboard/incidentes/")({
+export const Route = createFileRoute("/_incidents/incidentes/")({
   head: () => ({
     meta: [
       { title },
