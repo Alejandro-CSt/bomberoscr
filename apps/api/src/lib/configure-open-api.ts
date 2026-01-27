@@ -23,7 +23,7 @@ export default function configureOpenAPI(app: AppOpenAPI) {
     "/",
     Scalar({
       url: `${BASE_PATH}/doc`,
-      theme: "laserwave",
+      theme: "moon",
       layout: "modern",
       defaultOpenAllTags: true,
       hideClientButton: true,

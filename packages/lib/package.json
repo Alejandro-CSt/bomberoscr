@@ -6,7 +6,8 @@
     "./time-range": "./src/time-range.ts",
     "./logger": "./src/logger.ts",
     "./areCoordinatesValid": "./src/areCoordinatesValid.ts",
-    "./compare-two-strings": "./src/compare-two-strings.ts"
+    "./compare-two-strings": "./src/compare-two-strings.ts",
+    "./incidents-search": "./src/incidents-search.ts"
   },
   "scripts": {
     "build": "tsc"

@@ -9,7 +9,12 @@
     "postgres": {
       "type": "local",
       "enabled": true,
-      "command": ["bun", "x", "@modelcontextprotocol/server-postgres", "{env:DRIZZLE_POSTGRES_URL}"]
+      "command": ["bunx", "@modelcontextprotocol/server-postgres", "{env:DRIZZLE_POSTGRES_URL}"]
+    },
+    "playwright": {
+      "type": "local",
+      "command": ["bunx", "@playwright/mcp@latest", "--ignore-https-errors", "--headless"],
+      "enabled": true
     }
   }
 }
