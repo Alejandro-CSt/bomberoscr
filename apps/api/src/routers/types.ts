@@ -14,10 +14,10 @@ import {
   findAvailableImageCode,
   getS3Key
 } from "@/lib/utils/incidents/type-image-utils";
+import { adminAuthedRouteRequestSchema } from "@/schemas/shared";
 import {
   TypeCodeRequest,
   TypeCodeResponse,
-  TypeImageTokenRequest,
   TypeIncludeRequest,
   TypesListResponse
 } from "@/schemas/types";
@@ -293,7 +293,7 @@ app.openapi(
     tags: ["Types"],
     request: {
       params: TypeCodeRequest,
-      query: TypeImageTokenRequest
+      query: adminAuthedRouteRequestSchema
     },
     responses: {
       [HttpStatusCodes.OK]: {

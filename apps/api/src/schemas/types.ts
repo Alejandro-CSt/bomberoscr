@@ -8,10 +8,6 @@ export const TypeCodeRequest = z.object({
   })
 });
 
-export const TypeImageTokenRequest = z.object({
-  token: z.string()
-});
-
 export const TypeIncludeRequest = z.object({
   include: z
     .string()

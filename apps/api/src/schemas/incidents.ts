@@ -324,3 +324,105 @@ export const IncidentsListResponse = z
   .openapi({
     description: "Response containing a list of incidents and pagination metadata"
   });
+
+export const IncidentResponseTimeItemSchema = z
+  .object({
+    id: z.number().openapi({
+      description: "The vehicle dispatch ID.",
+      example: 1285917
+    }),
+    vehicle: z.string().openapi({
+      description: "The vehicle internal number.",
+      example: "M-05"
+    }),
+    station: z.string().openapi({
+      description: "The station name.",
+      example: "METROPOLITANA SUR"
+    }),
+    dispatchedTime: z.string().nullable().openapi({
+      description: "Time when the vehicle was dispatched.",
+      example: "2025-11-23T17:22:06.000Z"
+    }),
+    arrivalTime: z.string().nullable().openapi({
+      description: "Time when the vehicle arrived at the scene.",
+      example: "2025-11-23T17:27:15.000Z"
+    }),
+    departureTime: z.string().nullable().openapi({
+      description: "Time when the vehicle departed from the scene.",
+      example: "2025-11-25T04:00:25.000Z"
+    }),
+    baseReturnTime: z.string().nullable().openapi({
+      description: "Time when the vehicle returned to base.",
+      example: "2025-11-25T04:32:40.000Z"
+    }),
+    responseTimeSeconds: z.number().openapi({
+      description: "Time in seconds from dispatch to arrival.",
+      example: 309
+    }),
+    onSceneTimeSeconds: z.number().openapi({
+      description: "Time in seconds the vehicle was on scene.",
+      example: 124390
+    }),
+    returnTimeSeconds: z.number().openapi({
+      description: "Time in seconds from departure to base return.",
+      example: 1935
+    }),
+    totalTimeSeconds: z.number().openapi({
+      description: "Total time in seconds (response + on scene + return).",
+      example: 126634
+    }),
+    isEnRoute: z.boolean().openapi({
+      description: "Whether the vehicle is still en route (departed but not returned).",
+      example: false
+    })
+  })
+  .openapi({
+    description: "Vehicle response time data"
+  });
+
+export const IncidentResponseTimesResponseSchema = z
+  .object({
+    vehicles: z.array(IncidentResponseTimeItemSchema).openapi({
+      description: "Array of vehicle response time data."
+    })
+  })
+  .openapi({
+    description: "Response time breakdown for dispatched vehicles",
+    example: {
+      vehicles: [
+        {
+          id: 1285917,
+          vehicle: "M-05",
+          station: "METROPOLITANA SUR",
+          dispatchedTime: "2025-11-23T17:22:06.000Z",
+          arrivalTime: "2025-11-23T17:27:15.000Z",
+          departureTime: "2025-11-25T04:00:25.000Z",
+          baseReturnTime: "2025-11-25T04:32:40.000Z",
+          responseTimeSeconds: 309,
+          onSceneTimeSeconds: 124390,
+          returnTimeSeconds: 1935,
+          totalTimeSeconds: 126634,
+          isEnRoute: false
+        }
+      ]
+    }
+  });
+
+export const IncidentTimelineEventSchema = z.object({
+  id: z.string().openapi({
+    example: "dispatch|all-dispatches|1763918355000|M-133-M-46-T-02-M-05-AMBULANCIA-03-V-141-M-32"
+  }),
+  date: z.string().openapi({
+    example: "2025-11-23T17:19:15.000Z"
+  }),
+  title: z.string().openapi({
+    example: "Despachados: M-133, M-46, T-02, M-05, AMBULANCIA-03, V-141, M-32"
+  }),
+  description: z.string().optional().openapi({
+    example: "DESAMPARADOS, METROPOLITANA SUR, METROPOLITANA NORTE, SANTO DOMINGO"
+  })
+});
+
+export const IncidentTimelineResponseSchema = z.object({
+  events: z.array(IncidentTimelineEventSchema)
+});

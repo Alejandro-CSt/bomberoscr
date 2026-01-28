@@ -3,8 +3,8 @@ import {
   getIncidentCoordinatesById,
   getIncidentOgImageData,
   getIncidentResponseTimesData,
-  getIncidentTimelineData,
-  getIncidents
+  getIncidents,
+  getIncidentTimelineData
 } from "@bomberoscr/db/queries/incidents";
 import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
 import * as HttpStatusCodes from "stoker/http-status-codes";
@@ -14,12 +14,6 @@ import { createMessageObjectSchema } from "stoker/openapi/schemas";
 
 import env from "@/env";
 import { getFromS3, uploadToS3 } from "@/lib/s3";
-import {
-  IncidentIdParamSchema,
-  IncidentResponseTimesResponseSchema,
-  IncidentTimelineResponseSchema,
-  MapOriginalTokenSchema
-} from "@/lib/utils/incidents/_schemas";
 import {
   calculateTimeDiffInSeconds,
   isUndefinedDate,
@@ -36,10 +30,13 @@ import { getIncidentStatistics } from "@/lib/utils/incidents/statistics";
 import { buildTimelineEvents } from "@/lib/utils/incidents/timeline";
 import {
   IncidentByIdRequest,
-  IncidentsListRequest,
   IncidentByIdResponse,
-  IncidentsListResponse
-} from "@/schemas/incident";
+  IncidentResponseTimesResponseSchema,
+  IncidentsListRequest,
+  IncidentsListResponse,
+  IncidentTimelineResponseSchema
+} from "@/schemas/incidents";
+import { adminAuthedRouteRequestSchema } from "@/schemas/shared";
 
 const app = new OpenAPIHono();
 
@@ -282,7 +279,7 @@ app.openapi(
     description: "Retrieve timeline events for an incident",
     tags: ["Incidents"],
     request: {
-      params: IncidentIdParamSchema
+      params: IncidentByIdRequest.pick({ id: true })
     },
     responses: {
       [HttpStatusCodes.OK]: jsonContent(
@@ -311,7 +308,7 @@ app.openapi(
       ...(event.description ? { description: event.description } : {})
     }));
 
-    return c.json({ incidentId: incident.id, events }, HttpStatusCodes.OK);
+    return c.json({ events }, HttpStatusCodes.OK);
   }
 );
 
@@ -324,7 +321,7 @@ app.openapi(
     description: "Retrieve response time breakdown for dispatched vehicles",
     tags: ["Incidents"],
     request: {
-      params: IncidentIdParamSchema
+      params: IncidentByIdRequest.pick({ id: true })
     },
     responses: {
       [HttpStatusCodes.OK]: jsonContent(
@@ -382,10 +379,7 @@ app.openapi(
       };
     });
 
-    return c.json(
-      { incidentId: incident.id, isOpen: incident.isOpen, vehicles },
-      HttpStatusCodes.OK
-    );
+    return c.json({ vehicles }, HttpStatusCodes.OK);
   }
 );
 
@@ -398,7 +392,7 @@ app.openapi(
     description: "Generate the Open Graph image for an incident",
     tags: ["Incidents"],
     request: {
-      params: IncidentIdParamSchema
+      params: IncidentByIdRequest.pick({ id: true })
     },
     responses: {
       [HttpStatusCodes.OK]: {
@@ -441,7 +435,7 @@ app.openapi(
     description: "Retrieve the generated map image for an incident",
     tags: ["Incidents"],
     request: {
-      params: IncidentIdParamSchema
+      params: IncidentByIdRequest.pick({ id: true })
     },
     responses: {
       [HttpStatusCodes.OK]: {
@@ -531,8 +525,8 @@ app.openapi(
     description: "Retrieve the original map image for an incident from Mapbox",
     tags: ["Incidents"],
     request: {
-      params: IncidentIdParamSchema,
-      query: MapOriginalTokenSchema
+      params: IncidentByIdRequest.pick({ id: true }),
+      query: adminAuthedRouteRequestSchema
     },
     responses: {
       [HttpStatusCodes.OK]: {
