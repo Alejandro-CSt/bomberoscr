@@ -2,6 +2,25 @@ import { z } from "@hono/zod-openapi";
 
 import { stringBoolean } from "@/lib/zod-utils";
 
+const incidentTypeSchema = z
+  .object({
+    code: z.string().openapi({
+      description: "Type code.",
+      example: "1"
+    }),
+    name: z.string().openapi({
+      description: "Type name.",
+      example: "EMERGENCIAS POR FUEGO"
+    }),
+    imageUrl: z.string().url().nullable().openapi({
+      description: "URL to the type's icon image.",
+      example: "https://api.example.com/types/1/image"
+    })
+  })
+  .openapi({
+    description: "Incident type object with code, name, and image URL"
+  });
+
 export const IncidentByIdRequest = z.object({
   id: z.coerce.number().openapi({
     param: { name: "id", in: "path", required: true },
@@ -214,66 +233,22 @@ export const IncidentByIdResponse = z
       description: "The important details of the incident.",
       example: "BODEGAS CERRADAS"
     }),
-    dispatchType: z
-      .object({
-        code: z.string().openapi({
-          description: "General type code assigned by dispatch.",
-          example: "1"
-        }),
-        name: z.string().openapi({
-          description: "General type name assigned by dispatch.",
-          example: "EMERGENCIAS POR FUEGO"
-        })
-      })
-      .nullable()
-      .openapi({
-        description: "General type assigned by dispatch."
-      }),
-    specificDispatchType: z
-      .object({
-        code: z.string().openapi({
-          description: "Specific type code assigned by dispatch.",
-          example: "1.1.1.1.2"
-        }),
-        name: z.string().openapi({
-          description: "Specific type name assigned by dispatch.",
-          example: "BODEGAS CERRADAS"
-        })
-      })
-      .nullable()
-      .openapi({
-        description: "Specific type assigned by dispatch."
-      }),
-    actualType: z
-      .object({
-        code: z.string().openapi({
-          description: "Actual general type code (set by firefighters on scene).",
-          example: "1"
-        }),
-        name: z.string().openapi({
-          description: "Actual general type name (set by firefighters on scene).",
-          example: "EMERGENCIAS POR FUEGO"
-        })
-      })
-      .nullable()
-      .openapi({
-        description: "Actual general type (set by firefighters on scene)."
-      }),
-    specificActualType: z
-      .object({
-        code: z.string().openapi({
-          description: "Actual specific type code (set by firefighters on scene).",
-          example: "1.1.1.4"
-        }),
-        name: z.string().openapi({
-          description: "Actual specific type name (set by firefighters on scene).",
-          example: "ALMACEN FISCAL"
-        })
-      })
-      .nullable()
-      .openapi({
-        description: "Actual specific type (set by firefighters on scene)."
-      })
+    mapImageUrl: z.string().url().nullable().openapi({
+      description: "URL to the incident's map image.",
+      example: "https://api.example.com/incidents/1550734/map"
+    }),
+    dispatchType: incidentTypeSchema.nullable().openapi({
+      description: "General type assigned by dispatch."
+    }),
+    specificDispatchType: incidentTypeSchema.nullable().openapi({
+      description: "Specific type assigned by dispatch."
+    }),
+    actualType: incidentTypeSchema.nullable().openapi({
+      description: "Actual general type (set by firefighters on scene)."
+    }),
+    specificActualType: incidentTypeSchema.nullable().openapi({
+      description: "Actual specific type (set by firefighters on scene)."
+    })
   })
   .extend({
     dispatchedStations: z.array(dispatchedStationSchema).openapi({

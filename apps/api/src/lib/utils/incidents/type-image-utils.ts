@@ -2,6 +2,7 @@ import { createHmac } from "node:crypto";
 
 import env from "@/env";
 import { existsInS3 } from "@/lib/s3";
+import { getApiBaseUrl } from "@/lib/url-builder";
 
 /**
  * Get the S3 key for an incident type image.
@@ -57,8 +58,7 @@ function normalizeBaseUrl(baseUrl: string): string {
  * Build the URL for the original image endpoint (used by imgproxy).
  */
 function buildOriginalSourceUrl(code: string): string {
-  const baseUrl = normalizeBaseUrl(env.SITE_URL);
-  return `${baseUrl}/bomberos/hono/incidents/types/${code}/image/original?token=${env.IMGPROXY_TOKEN}`;
+  return `${getApiBaseUrl()}/types/${code}/image/original?token=${env.IMGPROXY_TOKEN}`;
 }
 
 function encodeImgproxySource(url: string): string {

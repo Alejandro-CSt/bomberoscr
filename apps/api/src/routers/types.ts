@@ -8,6 +8,7 @@ import { createMessageObjectSchema } from "stoker/openapi/schemas";
 
 import env from "@/env";
 import { getFromS3 } from "@/lib/s3";
+import { buildTypeImageUrl } from "@/lib/url-builder";
 import {
   buildImgproxyUrl,
   buildOriginalSourceUrl,
@@ -55,6 +56,7 @@ app.openapi(
     const items = types.map((type) => ({
       code: type.incidentCode,
       name: type.name,
+      imageUrl: buildTypeImageUrl(type.incidentCode),
       parentCode: type.parentId ? (codeById.get(type.parentId) ?? null) : null,
       level: type.incidentCode.split(".").length
     }));
@@ -165,15 +167,17 @@ app.openapi(
       type: {
         code: string;
         name: string;
+        imageUrl: string;
         parentCode: string | null;
         level: number;
       };
-      children?: Array<{ code: string; name: string }>;
-      ancestors?: Array<{ code: string; name: string; level: number }>;
+      children?: Array<{ code: string; name: string; imageUrl: string }>;
+      ancestors?: Array<{ code: string; name: string; imageUrl: string; level: number }>;
     } = {
       type: {
         code: type.incidentCode,
         name: type.name,
+        imageUrl: buildTypeImageUrl(type.incidentCode),
         parentCode: parent?.incidentCode ?? null,
         level: type.incidentCode.split(".").length
       }
@@ -182,12 +186,16 @@ app.openapi(
     if (includeChildren && children) {
       response.children = children.map((child) => ({
         code: child.incidentCode,
-        name: child.name
+        name: child.name,
+        imageUrl: buildTypeImageUrl(child.incidentCode)
       }));
     }
 
     if (includeAncestors && ancestors) {
-      response.ancestors = ancestors;
+      response.ancestors = ancestors.map((ancestor) => ({
+        ...ancestor,
+        imageUrl: buildTypeImageUrl(ancestor.code)
+      }));
     }
 
     return c.json(response, HttpStatusCodes.OK);

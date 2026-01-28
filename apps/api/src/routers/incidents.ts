@@ -14,6 +14,7 @@ import { createMessageObjectSchema } from "stoker/openapi/schemas";
 
 import env from "@/env";
 import { getFromS3, uploadToS3 } from "@/lib/s3";
+import { buildMapImageUrl, buildTypeImageUrl } from "@/lib/url-builder";
 import {
   calculateTimeDiffInSeconds,
   isUndefinedDate,
@@ -39,6 +40,18 @@ import {
 import { adminAuthedRouteRequestSchema } from "@/schemas/shared";
 
 const app = new OpenAPIHono();
+
+function buildIncidentType(
+  code: string | null,
+  name: string | null | undefined
+): { code: string; name: string; imageUrl: string } | null {
+  if (!code || !name) return null;
+  return {
+    code,
+    name,
+    imageUrl: buildTypeImageUrl(code)
+  };
+}
 
 function buildDispatchedStations(incident: {
   responsibleStation: number | null;
@@ -181,25 +194,20 @@ app.openapi(
         address: incident.address,
         incidentTimestamp: incident.incidentTimestamp,
         importantDetails: incident.importantDetails,
-        dispatchType:
-          incident.dispatchIncidentCode && incident.dispatchIncidentType
-            ? { code: incident.dispatchIncidentCode, name: incident.dispatchIncidentType }
-            : null,
-        specificDispatchType:
-          incident.specificDispatchIncidentCode && incident.specificDispatchIncidentType
-            ? {
-                code: incident.specificDispatchIncidentCode,
-                name: incident.specificDispatchIncidentType
-              }
-            : null,
-        actualType:
-          incident.incidentTypeCode && incident.incidentType
-            ? { code: incident.incidentTypeCode, name: incident.incidentType }
-            : null,
-        specificActualType:
-          incident.specificIncidentTypeCode && incident.specificIncidentType
-            ? { code: incident.specificIncidentTypeCode, name: incident.specificIncidentType }
-            : null,
+        mapImageUrl: buildMapImageUrl(incident.id),
+        dispatchType: buildIncidentType(
+          incident.dispatchIncidentCode,
+          incident.dispatchIncidentType
+        ),
+        specificDispatchType: buildIncidentType(
+          incident.specificDispatchIncidentCode,
+          incident.specificDispatchIncidentType
+        ),
+        actualType: buildIncidentType(incident.incidentTypeCode, incident.incidentType),
+        specificActualType: buildIncidentType(
+          incident.specificIncidentTypeCode,
+          incident.specificIncidentType
+        ),
         dispatchedStationsCount: incident.dispatchedStationsCount ?? 0,
         dispatchedVehiclesCount: incident.dispatchedVehiclesCount ?? 0
       }))
@@ -244,25 +252,20 @@ app.openapi(
         address: incident.address,
         incidentTimestamp: incident.incidentTimestamp,
         importantDetails: incident.importantDetails,
-        dispatchType:
-          incident.dispatchIncidentCode && incident.dispatchIncidentType?.name
-            ? { code: incident.dispatchIncidentCode, name: incident.dispatchIncidentType.name }
-            : null,
-        specificDispatchType:
-          incident.specificDispatchIncidentCode && incident.specificDispatchIncidentType?.name
-            ? {
-                code: incident.specificDispatchIncidentCode,
-                name: incident.specificDispatchIncidentType.name
-              }
-            : null,
-        actualType:
-          incident.incidentCode && incident.incidentType?.name
-            ? { code: incident.incidentCode, name: incident.incidentType.name }
-            : null,
-        specificActualType:
-          incident.specificIncidentCode && incident.specificIncidentType?.name
-            ? { code: incident.specificIncidentCode, name: incident.specificIncidentType.name }
-            : null,
+        mapImageUrl: buildMapImageUrl(incident.id),
+        dispatchType: buildIncidentType(
+          incident.dispatchIncidentCode,
+          incident.dispatchIncidentType?.name
+        ),
+        specificDispatchType: buildIncidentType(
+          incident.specificDispatchIncidentCode,
+          incident.specificDispatchIncidentType?.name
+        ),
+        actualType: buildIncidentType(incident.incidentCode, incident.incidentType?.name),
+        specificActualType: buildIncidentType(
+          incident.specificIncidentCode,
+          incident.specificIncidentType?.name
+        ),
         dispatchedStations
       },
       HttpStatusCodes.OK
