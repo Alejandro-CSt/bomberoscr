@@ -30,12 +30,12 @@ import { generateOgImage } from "@/lib/utils/incidents/og-image";
 import { getIncidentStatistics } from "@/lib/utils/incidents/statistics";
 import { buildTimelineEvents } from "@/lib/utils/incidents/timeline";
 import {
-  IncidentByIdRequest,
-  IncidentByIdResponse,
-  IncidentResponseTimesResponseSchema,
-  IncidentsListRequest,
-  IncidentsListResponse,
-  IncidentTimelineResponseSchema
+  incidentByIdRequest,
+  incidentByIdResponse,
+  incidentResponseTimesResponseSchema,
+  incidentsListRequest,
+  incidentsListResponse,
+  incidentTimelineResponseSchema
 } from "@/schemas/incidents";
 import { adminAuthedRouteRequestSchema } from "@/schemas/shared";
 
@@ -167,10 +167,10 @@ app.openapi(
     description: "Retrieve a list of incidents",
     tags: ["Incidents"],
     request: {
-      query: IncidentsListRequest
+      query: incidentsListRequest
     },
     responses: {
-      [HttpStatusCodes.OK]: jsonContent(IncidentsListResponse, "List of incidents")
+      [HttpStatusCodes.OK]: jsonContent(incidentsListResponse, "List of incidents")
     }
   }),
   async (c) => {
@@ -223,10 +223,10 @@ app.openapi(
     operationId: "getIncidentById",
     description: "Retrieve an incident by its unique identifier",
     tags: ["Incidents"],
-    request: { params: IncidentByIdRequest.pick({ id: true }) },
+    request: { params: incidentByIdRequest.pick({ id: true }) },
     responses: {
       [HttpStatusCodes.OK]: jsonContent(
-        IncidentByIdResponse,
+        incidentByIdResponse,
         "Retrieve an incident by its unique identifier"
       ),
       [HttpStatusCodes.NOT_FOUND]: jsonContent(
@@ -282,11 +282,11 @@ app.openapi(
     description: "Retrieve timeline events for an incident",
     tags: ["Incidents"],
     request: {
-      params: IncidentByIdRequest.pick({ id: true })
+      params: incidentByIdRequest.pick({ id: true })
     },
     responses: {
       [HttpStatusCodes.OK]: jsonContent(
-        IncidentTimelineResponseSchema,
+        incidentTimelineResponseSchema,
         "Timeline events for the incident"
       ),
       [HttpStatusCodes.NOT_FOUND]: jsonContent(
@@ -324,11 +324,11 @@ app.openapi(
     description: "Retrieve response time breakdown for dispatched vehicles",
     tags: ["Incidents"],
     request: {
-      params: IncidentByIdRequest.pick({ id: true })
+      params: incidentByIdRequest.pick({ id: true })
     },
     responses: {
       [HttpStatusCodes.OK]: jsonContent(
-        IncidentResponseTimesResponseSchema,
+        incidentResponseTimesResponseSchema,
         "Response time breakdown for dispatched vehicles"
       ),
       [HttpStatusCodes.NOT_FOUND]: jsonContent(
@@ -395,7 +395,7 @@ app.openapi(
     description: "Generate the Open Graph image for an incident",
     tags: ["Incidents"],
     request: {
-      params: IncidentByIdRequest.pick({ id: true })
+      params: incidentByIdRequest.pick({ id: true })
     },
     responses: {
       [HttpStatusCodes.OK]: {
@@ -438,7 +438,7 @@ app.openapi(
     description: "Retrieve the generated map image for an incident",
     tags: ["Incidents"],
     request: {
-      params: IncidentByIdRequest.pick({ id: true })
+      params: incidentByIdRequest.pick({ id: true })
     },
     responses: {
       [HttpStatusCodes.OK]: {
@@ -528,7 +528,7 @@ app.openapi(
     description: "Retrieve the original map image for an incident from Mapbox",
     tags: ["Incidents"],
     request: {
-      params: IncidentByIdRequest.pick({ id: true }),
+      params: incidentByIdRequest.pick({ id: true }),
       query: adminAuthedRouteRequestSchema
     },
     responses: {

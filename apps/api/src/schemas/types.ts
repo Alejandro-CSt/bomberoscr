@@ -1,6 +1,6 @@
 import { z } from "@hono/zod-openapi";
 
-export const TypeCodeRequest = z.object({
+export const typeByCodeRequest = z.object({
   code: z.string().openapi({
     param: { name: "code", in: "path", required: true },
     example: "1.1.1.4",
@@ -8,7 +8,7 @@ export const TypeCodeRequest = z.object({
   })
 });
 
-export const TypeIncludeRequest = z.object({
+export const typeIncludeRequest = z.object({
   include: z
     .string()
     .optional()
@@ -32,7 +32,7 @@ export const TypeIncludeRequest = z.object({
     })
 });
 
-export const TypeSummary = z.object({
+export const typeSummary = z.object({
   code: z.string().openapi({
     description: "Incident type code",
     example: "1.1.1.4"
@@ -55,8 +55,8 @@ export const TypeSummary = z.object({
   })
 });
 
-export const TypesListResponse = z.object({
-  items: z.array(TypeSummary).openapi({
+export const typesListResponse = z.object({
+  items: z.array(typeSummary).openapi({
     description: "Flat list of incident types",
     example: [
       {
@@ -91,7 +91,7 @@ export const TypesListResponse = z.object({
   })
 });
 
-export const TypeChild = z.object({
+export const typeChild = z.object({
   code: z.string().openapi({
     description: "Child incident type code",
     example: "1.1.1.4"
@@ -106,7 +106,7 @@ export const TypeChild = z.object({
   })
 });
 
-export const TypeAncestor = z.object({
+export const typeAncestor = z.object({
   code: z.string().openapi({
     description: "Ancestor incident type code",
     example: "1.1.1"
@@ -125,10 +125,10 @@ export const TypeAncestor = z.object({
   })
 });
 
-export const TypeCodeResponse = z.object({
-  type: TypeSummary,
+export const typeByCodeResponse = z.object({
+  type: typeSummary,
   children: z
-    .array(TypeChild)
+    .array(typeChild)
     .optional()
     .openapi({
       description: "Direct children of this incident type",
@@ -156,7 +156,7 @@ export const TypeCodeResponse = z.object({
       ]
     }),
   ancestors: z
-    .array(TypeAncestor)
+    .array(typeAncestor)
     .optional()
     .openapi({
       description: "Ancestors of this incident type",

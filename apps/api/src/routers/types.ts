@@ -17,10 +17,10 @@ import {
 } from "@/lib/utils/incidents/type-image-utils";
 import { adminAuthedRouteRequestSchema } from "@/schemas/shared";
 import {
-  TypeCodeRequest,
-  TypeCodeResponse,
-  TypeIncludeRequest,
-  TypesListResponse
+  typeByCodeRequest,
+  typeByCodeResponse,
+  typeIncludeRequest,
+  typesListResponse
 } from "@/schemas/types";
 
 const app = new OpenAPIHono();
@@ -34,7 +34,7 @@ app.openapi(
     description: "Retrieve all incident types with hierarchy metadata",
     tags: ["Types"],
     responses: {
-      [HttpStatusCodes.OK]: jsonContent(TypesListResponse, "List of incident types")
+      [HttpStatusCodes.OK]: jsonContent(typesListResponse, "List of incident types")
     }
   }),
   async (c) => {
@@ -74,11 +74,11 @@ app.openapi(
     description: "Retrieve a single incident type and its direct children",
     tags: ["Types"],
     request: {
-      params: TypeCodeRequest,
-      query: TypeIncludeRequest
+      params: typeByCodeRequest,
+      query: typeIncludeRequest
     },
     responses: {
-      [HttpStatusCodes.OK]: jsonContent(TypeCodeResponse, "Incident type details"),
+      [HttpStatusCodes.OK]: jsonContent(typeByCodeResponse, "Incident type details"),
       [HttpStatusCodes.NOT_FOUND]: jsonContent(
         createMessageObjectSchema("Incident type not found"),
         "Incident type not found"
@@ -211,7 +211,7 @@ app.openapi(
     description: "Retrieve the illustration image for an incident type",
     tags: ["Types"],
     request: {
-      params: TypeCodeRequest
+      params: typeByCodeRequest
     },
     responses: {
       [HttpStatusCodes.OK]: {
@@ -300,7 +300,7 @@ app.openapi(
     description: "Retrieve the original incident type image from storage",
     tags: ["Types"],
     request: {
-      params: TypeCodeRequest,
+      params: typeByCodeRequest,
       query: adminAuthedRouteRequestSchema
     },
     responses: {

@@ -21,14 +21,14 @@ const incidentTypeSchema = z
     description: "Incident type object with code, name, and image URL"
   });
 
-export const IncidentByIdRequest = z.object({
+export const incidentByIdRequest = z.object({
   id: z.coerce.number().openapi({
     param: { name: "id", in: "path", required: true },
     example: 1550734
   })
 });
 
-export const IncidentsListRequest = z.object({
+export const incidentsListRequest = z.object({
   cursor: z.coerce
     .number()
     .nullable()
@@ -206,7 +206,7 @@ const dispatchedStationSchema = z
     description: "Dispatched station"
   });
 
-export const IncidentByIdResponse = z
+export const incidentByIdResponse = z
   .object({
     id: z.number().openapi({
       description: "The ID of the incident.",
@@ -259,7 +259,7 @@ export const IncidentByIdResponse = z
     description: "Incident object"
   });
 
-export const IncidentsListResponse = z
+export const incidentsListResponse = z
   .object({
     meta: z
       .object({
@@ -281,7 +281,7 @@ export const IncidentsListResponse = z
       }),
     data: z
       .array(
-        IncidentByIdResponse.omit({ dispatchedStations: true }).extend({
+        incidentByIdResponse.omit({ dispatchedStations: true }).extend({
           dispatchedStationsCount: z.number().openapi({
             description: "Number of stations dispatched to the incident.",
             example: 3
@@ -300,7 +300,7 @@ export const IncidentsListResponse = z
     description: "Response containing a list of incidents and pagination metadata"
   });
 
-export const IncidentResponseTimeItemSchema = z
+export const incidentResponseTimeItemSchema = z
   .object({
     id: z.number().openapi({
       description: "The vehicle dispatch ID.",
@@ -355,9 +355,9 @@ export const IncidentResponseTimeItemSchema = z
     description: "Vehicle response time data"
   });
 
-export const IncidentResponseTimesResponseSchema = z
+export const incidentResponseTimesResponseSchema = z
   .object({
-    vehicles: z.array(IncidentResponseTimeItemSchema).openapi({
+    vehicles: z.array(incidentResponseTimeItemSchema).openapi({
       description: "Array of vehicle response time data."
     })
   })
@@ -383,7 +383,7 @@ export const IncidentResponseTimesResponseSchema = z
     }
   });
 
-export const IncidentTimelineEventSchema = z.object({
+export const incidentTimelineEventSchema = z.object({
   id: z.string().openapi({
     example: "dispatch|all-dispatches|1763918355000|M-133-M-46-T-02-M-05-AMBULANCIA-03-V-141-M-32"
   }),
@@ -398,6 +398,6 @@ export const IncidentTimelineEventSchema = z.object({
   })
 });
 
-export const IncidentTimelineResponseSchema = z.object({
-  events: z.array(IncidentTimelineEventSchema)
+export const incidentTimelineResponseSchema = z.object({
+  events: z.array(incidentTimelineEventSchema)
 });
