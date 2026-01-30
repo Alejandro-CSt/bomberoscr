@@ -194,6 +194,10 @@ const dispatchedStationSchema = z
       description: "The station key.",
       example: "desamparados"
     }),
+    imageUrl: z.string().url().openapi({
+      description: "URL to the station's image.",
+      example: "https://api.example.com/stations/DESAMPARADOS/image"
+    }),
     isResponsible: z.boolean().openapi({
       description: "Whether the station is responsible for the incident.",
       example: true
@@ -206,11 +210,46 @@ const dispatchedStationSchema = z
     description: "Dispatched station"
   });
 
+const incidentStatisticsSchema = z
+  .object({
+    currentYear: z.number().openapi({
+      description: "The year of the incident.",
+      example: 2025
+    }),
+    currentYearCount: z.number().openapi({
+      description: "Count of incidents of this type in the incident's year.",
+      example: 34
+    }),
+    currentYearCantonCount: z.number().openapi({
+      description: "Count of incidents of this type in the incident's canton for that year.",
+      example: 3
+    }),
+    previousYear: z.number().openapi({
+      description: "The year before the incident.",
+      example: 2024
+    }),
+    previousYearCount: z.number().openapi({
+      description: "Count of incidents of this type in the previous year.",
+      example: 28
+    })
+  })
+  .openapi({
+    description: "Statistics about incidents of this type"
+  });
+
 export const incidentByIdResponse = z
   .object({
     id: z.number().openapi({
       description: "The ID of the incident.",
       example: 1550734
+    }),
+    slug: z.string().openapi({
+      description: "URL-friendly slug for the incident.",
+      example: "1550734-colision-de-vehiculo-2025-11-23"
+    }),
+    title: z.string().openapi({
+      description: "Human-readable title for the incident.",
+      example: "COLISION DE VEHICULO"
     }),
     isOpen: z.boolean().openapi({
       description: "Whether the incident is currently open.",
@@ -229,9 +268,25 @@ export const incidentByIdResponse = z
       description: "The timestamp of the incident.",
       example: "2025-11-23T23:18:07.000Z"
     }),
+    modifiedAt: z.string().openapi({
+      description: "The timestamp when the incident was last modified.",
+      example: "2025-11-23T23:45:12.000Z"
+    }),
     importantDetails: z.string().openapi({
       description: "The important details of the incident.",
       example: "BODEGAS CERRADAS"
+    }),
+    latitude: z.number().openapi({
+      description: "The latitude coordinate of the incident.",
+      example: 9.8986
+    }),
+    longitude: z.number().openapi({
+      description: "The longitude coordinate of the incident.",
+      example: -84.0356
+    }),
+    cantonName: z.string().nullable().openapi({
+      description: "Name of the canton where the incident occurred.",
+      example: "SAN JOSE"
     }),
     mapImageUrl: z.string().url().nullable().openapi({
       description: "URL to the incident's map image.",
@@ -248,6 +303,9 @@ export const incidentByIdResponse = z
     }),
     specificActualType: incidentTypeSchema.nullable().openapi({
       description: "Actual specific type (set by firefighters on scene)."
+    }),
+    statistics: incidentStatisticsSchema.openapi({
+      description: "Statistics about incidents of this type."
     })
   })
   .extend({
@@ -281,16 +339,30 @@ export const incidentsListResponse = z
       }),
     data: z
       .array(
-        incidentByIdResponse.omit({ dispatchedStations: true }).extend({
-          dispatchedStationsCount: z.number().openapi({
-            description: "Number of stations dispatched to the incident.",
-            example: 3
-          }),
-          dispatchedVehiclesCount: z.number().openapi({
-            description: "Number of vehicles dispatched to the incident.",
-            example: 5
+        incidentByIdResponse
+          .omit({ dispatchedStations: true, statistics: true, cantonName: true })
+          .extend({
+            responsibleStationName: z.string().nullable().openapi({
+              description: "Name of the responsible station for the incident.",
+              example: "DESAMPARADOS"
+            }),
+            districtName: z.string().nullable().openapi({
+              description: "Name of the district where the incident occurred.",
+              example: "SAN RAFAEL ARRIBA"
+            }),
+            dispatchedStationsCount: z.number().openapi({
+              description: "Number of stations dispatched to the incident.",
+              example: 3
+            }),
+            dispatchedVehiclesCount: z.number().openapi({
+              description: "Number of vehicles dispatched to the incident.",
+              example: 5
+            }),
+            totalDispatched: z.number().openapi({
+              description: "Total dispatched (stations + vehicles).",
+              example: 8
+            })
           })
-        })
       )
       .openapi({
         description: "Array of incident list items"

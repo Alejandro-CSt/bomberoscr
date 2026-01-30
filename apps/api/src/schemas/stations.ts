@@ -267,6 +267,10 @@ export const stationHighlightedIncidentSchema = z.object({
     description: "Incident longitude.",
     example: "-84.0765451393084"
   }),
+  mapImageUrl: z.string().url().nullable().openapi({
+    description: "URL to the incident's map image.",
+    example: "https://api.example.com/incidents/1558658/map"
+  }),
   dispatchedVehiclesCount: z.number().openapi({
     description: "Number of dispatched vehicles.",
     example: 3
@@ -293,6 +297,7 @@ export const stationHighlightedIncidentsResponseSchema = z
           responsibleStation: "ACOSTA",
           latitude: "9.73357675239847",
           longitude: "-84.0765451393084",
+          mapImageUrl: "https://api.example.com/incidents/1558658/map",
           dispatchedVehiclesCount: 3,
           dispatchedStationsCount: 2
         },
@@ -304,6 +309,7 @@ export const stationHighlightedIncidentsResponseSchema = z
           responsibleStation: "ACOSTA",
           latitude: "0",
           longitude: "0",
+          mapImageUrl: null,
           dispatchedVehiclesCount: 3,
           dispatchedStationsCount: 1
         }
@@ -354,6 +360,9 @@ export const stationCollaborationSchema = z.object({
     description: "Station key.",
     example: "1-4"
   }),
+  imageUrl: stationImageUrlSchema.openapi({
+    description: "Station image URL."
+  }),
   collaborationCount: z.number().openapi({
     description: "Number of collaborations with the station.",
     example: 19
@@ -371,12 +380,14 @@ export const stationCollaborationsResponseSchema = z
           id: 46,
           name: "DESAMPARADOS",
           stationKey: "1-4",
+          imageUrl: "https://api.example.com/stations/DESAMPARADOS/image",
           collaborationCount: 19
         },
         {
           id: 48,
           name: "PURISCAL",
           stationKey: "1-6",
+          imageUrl: "https://api.example.com/stations/PURISCAL/image",
           collaborationCount: 3
         }
       ]
@@ -492,3 +503,26 @@ export const stationHighlightedIncidentsQuerySchema = z.object({
       example: 3
     })
 });
+
+export const stationsOverviewResponse = z
+  .object({
+    operativeStationsCount: z.number().openapi({
+      description: "Number of operative stations.",
+      example: 75
+    }),
+    operativeVehiclesCount: z.number().openapi({
+      description: "Number of active vehicles (available or in incident).",
+      example: 892
+    }),
+    averageResponseTimeSeconds: z.number().nullable().openapi({
+      description: "Average response time in seconds over the last 30 days (outliers removed).",
+      example: 485
+    })
+  })
+  .openapi({
+    example: {
+      operativeStationsCount: 75,
+      operativeVehiclesCount: 892,
+      averageResponseTimeSeconds: 485
+    }
+  });

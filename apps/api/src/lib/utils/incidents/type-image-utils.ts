@@ -1,8 +1,10 @@
-import { createHmac } from "node:crypto";
-
-import env from "@/env";
+import {
+  buildImgproxyUrl as buildImgproxyUrlBase,
+  buildOriginalSourceUrl as buildOriginalSourceUrlBase
+} from "@/lib/imgproxy";
 import { existsInS3 } from "@/lib/s3";
-import { getApiBaseUrl } from "@/lib/url-builder";
+
+const IMAGE_SIZE = 256;
 
 /**
  * Get the S3 key for an incident type image.
@@ -50,30 +52,11 @@ async function findAvailableImageCode(code: string): Promise<string | null> {
   return null;
 }
 
-function normalizeBaseUrl(baseUrl: string): string {
-  return baseUrl.endsWith("/") ? baseUrl.slice(0, -1) : baseUrl;
-}
-
 /**
  * Build the URL for the original image endpoint (used by imgproxy).
  */
 function buildOriginalSourceUrl(code: string): string {
-  return `${getApiBaseUrl()}/types/${code}/image/original?token=${env.IMGPROXY_TOKEN}`;
-}
-
-function encodeImgproxySource(url: string): string {
-  return Buffer.from(url)
-    .toString("base64")
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/g, "");
-}
-
-function signImgproxyPath(path: string): string {
-  const key = Buffer.from(env.IMGPROXY_KEY, "hex");
-  const salt = Buffer.from(env.IMGPROXY_SALT, "hex");
-  const signature = createHmac("sha256", key).update(salt).update(path).digest("base64");
-  return signature.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+  return buildOriginalSourceUrlBase(`types/${code}/image/original`);
 }
 
 /**
@@ -81,12 +64,7 @@ function signImgproxyPath(path: string): string {
  * Resizes to 256x256 for consistent icon size.
  */
 function buildImgproxyUrl(sourceUrl: string): string {
-  const size = 256;
-  const processingOptions = `rs:fit:${size}:${size}`;
-  const encodedSource = encodeImgproxySource(sourceUrl);
-  const path = `/${processingOptions}/${encodedSource}`;
-  const signature = signImgproxyPath(path);
-  return `${normalizeBaseUrl(env.IMGPROXY_BASE_URL)}/${signature}${path}`;
+  return buildImgproxyUrlBase(sourceUrl, { width: IMAGE_SIZE, height: IMAGE_SIZE });
 }
 
 export {

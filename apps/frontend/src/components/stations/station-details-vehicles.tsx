@@ -2,7 +2,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getStationsByKeyVehiclesOptions } from "@/lib/api/@tanstack/react-query.gen";
+import { getStationVehiclesOptions } from "@/lib/api/@tanstack/react-query.gen";
 import { Route } from "@/routes/_dashboard/estaciones/$name";
 
 function formatResponseTime(seconds: number | null): string {
@@ -16,8 +16,8 @@ function formatResponseTime(seconds: number | null): string {
 export function StationDetailsVehicles() {
   const { station } = Route.useLoaderData();
   const { data } = useSuspenseQuery(
-    getStationsByKeyVehiclesOptions({
-      path: { key: station.stationKey }
+    getStationVehiclesOptions({
+      path: { name: station.name }
     })
   );
 

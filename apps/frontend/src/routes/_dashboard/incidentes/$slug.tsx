@@ -14,7 +14,7 @@ import {
   VehicleResponseTimes,
   VehicleResponseTimesSkeleton
 } from "@/components/incidents/vehicle-response-times";
-import { getIncidentsById } from "@/lib/api";
+import { getIncidentById } from "@/lib/api";
 import { client } from "@/lib/api/client.gen";
 import { areCoordinatesValid, buildIncidentUrl } from "@/lib/utils";
 
@@ -32,19 +32,18 @@ export const Route = createFileRoute("/_dashboard/incidentes/$slug")({
 
     const incidentId = extractIncidentIdFromSlug(slug);
 
-    const { data } = await getIncidentsById({
+    const { data } = await getIncidentById({
       path: {
         id: incidentId
       }
     });
 
-    if (!data?.incident) {
+    if (!data) {
       throw notFound();
     }
 
     return {
-      incident: data.incident,
-      statistics: data.statistics
+      incident: data
     };
   },
   head: ({ loaderData }) => {
@@ -57,7 +56,13 @@ export const Route = createFileRoute("/_dashboard/incidentes/$slug")({
       year: "numeric"
     });
 
-    const description = `Incidente reportado el ${formattedDate}${incident.location ? ` en ${incident.location}` : ""}. EE-${incident.EEConsecutive}. ${incident.dispatchedStationsCount} estación(es) y ${incident.dispatchedVehiclesCount} unidad(es) despachadas.`;
+    const dispatchedStationsCount = incident.dispatchedStations.length;
+    const dispatchedVehiclesCount = incident.dispatchedStations.reduce(
+      (acc, station) => acc + station.vehicles.length,
+      0
+    );
+
+    const description = `Incidente reportado el ${formattedDate}${incident.address ? ` en ${incident.address}` : ""}. EE-${incident.EEConsecutive}. ${dispatchedStationsCount} estación(es) y ${dispatchedVehiclesCount} unidad(es) despachadas.`;
 
     const titleWithLocation = incident.title;
     const siteUrl = "https://emergencias.cr";
@@ -110,11 +115,16 @@ function IncidentDetailSkeleton() {
 function IncidenteDetailPage() {
   const { incident } = Route.useLoaderData();
 
+  const dispatchedStationsCount = incident.dispatchedStations.length;
+  const dispatchedVehiclesCount = incident.dispatchedStations.reduce(
+    (acc, station) => acc + station.vehicles.length,
+    0
+  );
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Event",
     name: incident.title,
-    description: `Incidente reportado el ${new Date(incident.incidentTimestamp).toLocaleDateString("es-CR", { day: "2-digit", month: "long", year: "numeric" })} en ${incident.location}. EE-${incident.EEConsecutive}. ${incident.dispatchedStationsCount} estación(es) y ${incident.dispatchedVehiclesCount} unidad(es) despachadas.`,
+    description: `Incidente reportado el ${new Date(incident.incidentTimestamp).toLocaleDateString("es-CR", { day: "2-digit", month: "long", year: "numeric" })} en ${incident.address}. EE-${incident.EEConsecutive}. ${dispatchedStationsCount} estación(es) y ${dispatchedVehiclesCount} unidad(es) despachadas.`,
     startDate: incident.incidentTimestamp,
     eventStatus: incident.isOpen
       ? "https://schema.org/EventScheduled"
@@ -122,7 +132,7 @@ function IncidenteDetailPage() {
     endDate: incident.isOpen ? incident.modifiedAt : undefined,
     location: {
       "@type": "Place",
-      name: incident.location,
+      name: incident.address,
       ...(incident.address && {
         address: {
           "@type": "PostalAddress",
@@ -130,7 +140,7 @@ function IncidenteDetailPage() {
           addressCountry: "CR"
         }
       }),
-      ...(areCoordinatesValid(incident.latitude, incident.longitude) && {
+      ...(areCoordinatesValid(incident.latitude.toString(), incident.longitude.toString()) && {
         geo: {
           "@type": "GeoCoordinates",
           latitude: Number(incident.latitude),

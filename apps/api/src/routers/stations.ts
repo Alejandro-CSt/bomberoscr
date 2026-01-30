@@ -4,17 +4,22 @@ import {
   getStationHighlightedIncidents,
   getStationIdByName,
   getStationIncidentsPerDay,
-  getStationVehiclesWithStats,
-  getStationsList
+  getStationsList,
+  getStationsOverview,
+  getStationVehiclesWithStats
 } from "@bomberoscr/db/queries/stations";
 import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
-import { createHmac } from "node:crypto";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
 import { createMessageObjectSchema } from "stoker/openapi/schemas";
 
 import env from "@/env";
+import {
+  buildImgproxyUrl as buildImgproxyUrlBase,
+  buildOriginalSourceUrl as buildOriginalSourceUrlBase
+} from "@/lib/imgproxy";
 import { getFromS3 } from "@/lib/s3";
+import { buildMapImageUrl, buildStationImageUrl } from "@/lib/url-builder";
 import {
   stationByNameRequest,
   stationByNameResponse,
@@ -26,12 +31,14 @@ import {
   stationImageTokenSchema,
   stationsListRequest,
   stationsListResponse,
+  stationsOverviewResponse,
   stationVehiclesResponseSchema
 } from "@/schemas/stations";
 
 const app = new OpenAPIHono();
 
 const IMAGE_EXTENSIONS = ["jpg", "jpeg", "png"] as const;
+const IMAGE_SIZE = { width: 800, height: 600 };
 
 type ImageExtension = (typeof IMAGE_EXTENSIONS)[number];
 
@@ -41,42 +48,21 @@ const CONTENT_TYPE_MAP: Record<ImageExtension, string> = {
   png: "image/png"
 };
 
-function normalizeBaseUrl(baseUrl: string): string {
-  return baseUrl.endsWith("/") ? baseUrl.slice(0, -1) : baseUrl;
-}
-
-function encodeImgproxySource(url: string): string {
-  return Buffer.from(url)
-    .toString("base64")
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/g, "");
-}
-
-function signImgproxyPath(path: string): string {
-  const key = Buffer.from(env.IMGPROXY_KEY, "hex");
-  const salt = Buffer.from(env.IMGPROXY_SALT, "hex");
-  const signature = createHmac("sha256", key).update(salt).update(path).digest("base64");
-  return signature.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+function isValidCoordinates(latitude: string | null, longitude: string | null): boolean {
+  if (latitude === null || longitude === null) return false;
+  const lat = Number(latitude);
+  const lng = Number(longitude);
+  if (lat === 0 && lng === 0) return false;
+  return true;
 }
 
 function buildImgproxyUrl(sourceUrl: string): string {
-  const encodedSource = encodeImgproxySource(sourceUrl);
-  const path = `/rs:fit:800:600/${encodedSource}`;
-  const signature = signImgproxyPath(path);
-  return `${normalizeBaseUrl(env.IMGPROXY_BASE_URL)}/${signature}${path}`;
+  return buildImgproxyUrlBase(sourceUrl, IMAGE_SIZE);
 }
 
 function buildOriginalSourceUrl(stationName: string): string {
-  const baseUrl = normalizeBaseUrl(env.SITE_URL);
   const encodedName = encodeURIComponent(stationName.trim());
-  return `${baseUrl}/bomberos/hono/stations/${encodedName}/image/original?token=${env.IMGPROXY_TOKEN}`;
-}
-
-function buildStationImageUrl(stationName: string): string {
-  const baseUrl = normalizeBaseUrl(env.API_URL);
-  const encodedName = encodeURIComponent(stationName.trim());
-  return `${baseUrl}/stations/${encodedName}/image`;
+  return buildOriginalSourceUrlBase(`stations/${encodedName}/image/original`);
 }
 
 async function getStationImage(
@@ -126,6 +112,33 @@ app.openapi(
           imageUrl: buildStationImageUrl(station.name)
         })),
         meta
+      },
+      HttpStatusCodes.OK
+    );
+  }
+);
+
+app.openapi(
+  createRoute({
+    method: "get",
+    path: "/overview",
+    summary: "Get stations overview",
+    operationId: "getStationsOverview",
+    description:
+      "Get overview statistics for all stations including operative station count, active vehicle count, and average response time",
+    tags: ["Stations"],
+    responses: {
+      [HttpStatusCodes.OK]: jsonContent(stationsOverviewResponse, "Stations overview statistics")
+    }
+  }),
+  async (c) => {
+    const data = await getStationsOverview();
+
+    return c.json(
+      {
+        operativeStationsCount: data.operativeStationsCount,
+        operativeVehiclesCount: data.operativeVehiclesCount,
+        averageResponseTimeSeconds: data.averageResponseTimeSeconds
       },
       HttpStatusCodes.OK
     );
@@ -246,7 +259,18 @@ app.openapi(
       limit
     });
 
-    return c.json({ incidents }, HttpStatusCodes.OK);
+    return c.json(
+      {
+        incidents: incidents.map((incident) => ({
+          ...incident,
+          incidentTimestamp: incident.incidentTimestamp.toISOString(),
+          mapImageUrl: isValidCoordinates(incident.latitude, incident.longitude)
+            ? buildMapImageUrl(incident.id)
+            : null
+        }))
+      },
+      HttpStatusCodes.OK
+    );
   }
 );
 
@@ -281,7 +305,15 @@ app.openapi(
     }
 
     const collaborations = await getStationCollaborations({ stationId: station.id });
-    return c.json({ collaborations }, HttpStatusCodes.OK);
+    return c.json(
+      {
+        collaborations: collaborations.map((collab) => ({
+          ...collab,
+          imageUrl: buildStationImageUrl(collab.name)
+        }))
+      },
+      HttpStatusCodes.OK
+    );
   }
 );
 

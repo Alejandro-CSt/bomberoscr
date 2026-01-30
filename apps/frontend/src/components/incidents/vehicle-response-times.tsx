@@ -19,7 +19,7 @@ import {
   TableRow
 } from "@/components/ui/table";
 import { Tabs, TabsList, TabsPanel, TabsTab } from "@/components/ui/tabs";
-import { getIncidentsByIdResponseTimesOptions } from "@/lib/api/@tanstack/react-query.gen";
+import { getIncidentResponseTimesOptions } from "@/lib/api/@tanstack/react-query.gen";
 import { cn } from "@/lib/utils";
 import { Route } from "@/routes/_dashboard/incidentes/$slug";
 
@@ -77,7 +77,7 @@ export function VehicleResponseTimes() {
     isLoading,
     isError
   } = useQuery(
-    getIncidentsByIdResponseTimesOptions({
+    getIncidentResponseTimesOptions({
       path: { id: incident.id }
     })
   );

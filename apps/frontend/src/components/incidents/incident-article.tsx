@@ -2,7 +2,6 @@ import { WarningIcon } from "@phosphor-icons/react";
 import { Link } from "@tanstack/react-router";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import { client } from "@/lib/api/client.gen";
 import { isUndefinedDate } from "@/lib/utils";
 import { Route } from "@/routes/_dashboard/incidentes/$slug";
 
@@ -42,10 +41,7 @@ function calculateResponseTime(dispatchTime: Date, arrivalTime: Date): string {
 }
 
 export function IncidentArticle() {
-  const { incident, statistics } = Route.useLoaderData();
-
-  const baseUrl = client.getConfig().baseUrl ?? "";
-  const mapImageUrl = incident.hasMapImage ? `${baseUrl}/incidents/${incident.id}/map` : null;
+  const { incident } = Route.useLoaderData();
 
   const incidentTimestamp = new Date(incident.incidentTimestamp);
   const formattedIncidentDate = incidentTimestamp.toLocaleString("es-CR", {
@@ -67,21 +63,21 @@ export function IncidentArticle() {
 
   const firstBatchVehicles = responsibleStation
     ? responsibleStation.vehicles
-        .filter((v) => v.dispatchTime && v.arrivalTime)
+        .filter((v) => v.dispatchedTime && v.arrivalTime)
         .filter(
           (v) =>
-            !isUndefinedDate(new Date(v.dispatchTime ?? "")) &&
+            !isUndefinedDate(new Date(v.dispatchedTime ?? "")) &&
             !isUndefinedDate(new Date(v.arrivalTime ?? ""))
         )
         .filter((v) => {
           const timeDiff =
-            new Date(v.dispatchTime ?? "").getTime() -
+            new Date(v.dispatchedTime ?? "").getTime() -
             new Date(incident.incidentTimestamp).getTime();
           return timeDiff >= 0 && timeDiff <= tenMinutesInMs;
         })
         .sort(
           (a, b) =>
-            new Date(a.dispatchTime ?? "").getTime() - new Date(b.dispatchTime ?? "").getTime()
+            new Date(a.dispatchedTime ?? "").getTime() - new Date(b.dispatchedTime ?? "").getTime()
         )
     : [];
 
@@ -104,7 +100,7 @@ export function IncidentArticle() {
     <article className="space-y-4">
       <h1>{incident.title}</h1>
       <figure className="not-typography">
-        {mapImageUrl ? (
+        {incident.mapImageUrl ? (
           // TODO: Re-enable interactive map when ready
           // <IncidentMap
           //   latitude={Number(incident.latitude)}
@@ -117,8 +113,8 @@ export function IncidentArticle() {
           // />
           <div className="relative aspect-video w-full overflow-hidden rounded-xl">
             <img
-              src={mapImageUrl}
-              alt={`Imagen satelital de la ubicación del incidente en ${incident.cantonName ?? "ubicación desconocida"}`}
+              src={incident.mapImageUrl}
+              alt="magen satelital de las coordenadas del incidente"
               referrerPolicy="origin"
               className="h-full w-full object-cover"
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 672px"
@@ -147,7 +143,8 @@ export function IncidentArticle() {
       </time>
       <p>
         Al ser {formatArticleForTime(incidentTimestamp)} {formattedIncidentTime}, Bomberos recibe
-        una alerta de "<em className="lowercase">{incident.dispatchType}</em>" en la dirección:
+        una alerta de "<em className="lowercase">{incident.specificDispatchType?.name}</em>" en la
+        dirección:
       </p>
       <blockquote>{incident.address}</blockquote>
       {responsibleStation && (
@@ -171,7 +168,7 @@ export function IncidentArticle() {
               {" "}
               que con un tiempo de respuesta de{" "}
               {calculateResponseTime(
-                new Date(firstBatchVehicles[0].dispatchTime ?? ""),
+                new Date(firstBatchVehicles[0].dispatchedTime ?? ""),
                 new Date(firstBatchVehicles[0].arrivalTime ?? "")
               )}{" "}
               {firstBatchVehicles.length > 1 ? "llegan" : "llega"} a la escena al ser{" "}
@@ -228,45 +225,64 @@ export function IncidentArticle() {
         </p>
       )}
 
-      {(!incident.isOpen || incident.dispatchType !== incident.actualType) &&
+      {(!incident.isOpen || incident.dispatchType?.code !== incident.actualType?.code) &&
         incident.actualType &&
-        (incident.dispatchType !== incident.actualType ? (
+        (incident.dispatchType?.code !== incident.actualType?.code ? (
           <p>
             Los bomberos en la escena actualizan la clasificación del incidente a: "
-            <em className="lowercase">{incident.actualType}</em>".
+            <em className="lowercase">{incident.actualType.name}</em>".
           </p>
         ) : (
           <p>
             Los bomberos en la escena confirman la categoría del incidente como "
-            <em className="lowercase">{incident.actualType}</em>".
+            <em className="lowercase">{incident.actualType.name}</em>".
           </p>
         ))}
 
-      {statistics.currentYearCount > 0 && (
-        <p>
-          En el {statistics.currentYear} se han reportado{" "}
-          {statistics.currentYearCount.toLocaleString("es-CR")} incidente
-          {statistics.currentYearCount !== 1 ? "s" : ""} de tipo "
-          <em className="lowercase">{incident.actualType ?? incident.dispatchType}</em>"
-          {statistics.currentYearCantonCount > 0 && incident.cantonName && (
-            <>
-              {", "}
-              {statistics.currentYearCantonCount === 1
-                ? `siendo este el primero en el cantón de ${incident.cantonName}`
-                : `${statistics.currentYearCantonCount.toLocaleString("es-CR")} de ellos en ${incident.cantonName}`}
-            </>
-          )}
-          .
-          {statistics.previousYearCount > 0 && (
-            <>
-              {" "}
-              En {statistics.previousYear} hubo{" "}
-              {statistics.previousYearCount.toLocaleString("es-CR")} incidente
-              {statistics.previousYearCount !== 1 ? "s" : ""} de este tipo.
-            </>
-          )}
-        </p>
-      )}
+      {incident.statistics.currentYearCount > 0 &&
+        (() => {
+          const currentYear = new Date().getFullYear();
+          const isCurrentYear = incident.statistics.currentYear === currentYear;
+          const count = incident.statistics.currentYearCount;
+          const cantonCount = incident.statistics.currentYearCantonCount;
+          const prevCount = incident.statistics.previousYearCount;
+
+          // Verb conjugation based on tense and number
+          const verb = isCurrentYear
+            ? count === 1
+              ? "se ha reportado"
+              : "se han reportado"
+            : count === 1
+              ? "se reportó"
+              : "se reportaron";
+
+          return (
+            <p>
+              En {isCurrentYear ? "lo que va del" : "el"} {incident.statistics.currentYear} {verb}{" "}
+              {count.toLocaleString("es-CR")} incidente{count !== 1 ? "s" : ""} de tipo "
+              <em className="lowercase">
+                {incident.actualType?.name ?? incident.dispatchType?.name}
+              </em>
+              "
+              {cantonCount > 0 && incident.cantonName && (
+                <>
+                  {", "}
+                  {cantonCount === 1
+                    ? `siendo este el primero en el cantón de ${incident.cantonName}`
+                    : `${cantonCount.toLocaleString("es-CR")} de ellos en ${incident.cantonName}`}
+                </>
+              )}
+              .
+              {prevCount > 0 && (
+                <>
+                  {" "}
+                  En {incident.statistics.previousYear} hubo {prevCount.toLocaleString("es-CR")}{" "}
+                  incidente{prevCount !== 1 ? "s" : ""} de este tipo.
+                </>
+              )}
+            </p>
+          );
+        })()}
     </article>
   );
 }

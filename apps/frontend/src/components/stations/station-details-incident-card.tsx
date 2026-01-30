@@ -3,8 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { TriangleAlert } from "lucide-react";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import { client } from "@/lib/api/client.gen";
-import { areCoordinatesValid, cn, formatRelativeTime } from "@/lib/utils";
+import { cn, formatRelativeTime } from "@/lib/utils";
 
 interface StationDetailsIncidentCardProps {
   incident: {
@@ -12,8 +11,7 @@ interface StationDetailsIncidentCardProps {
     incidentTimestamp: string;
     importantDetails: string | null;
     address: string | null;
-    latitude: string;
-    longitude: string;
+    mapImageUrl: string | null;
     dispatchedVehiclesCount: number;
     dispatchedStationsCount: number;
   };
@@ -30,9 +28,6 @@ function getHeatGradient(heat: number): string {
 
 export function StationDetailsIncidentCard({ incident }: StationDetailsIncidentCardProps) {
   const heat = incident.dispatchedStationsCount + incident.dispatchedVehiclesCount;
-  const hasValidCoordinates = areCoordinatesValid(incident.latitude, incident.longitude);
-  const baseUrl = client.getConfig().baseUrl ?? "";
-  const mapImageUrl = hasValidCoordinates ? `${baseUrl}/incidents/${incident.id}/map` : null;
 
   return (
     <Link
@@ -40,10 +35,10 @@ export function StationDetailsIncidentCard({ incident }: StationDetailsIncidentC
       params={{ slug: String(incident.id) }}
       className="flex overflow-hidden rounded-lg bg-card hover:bg-accent/10">
       <div className="relative flex aspect-square w-24 shrink-0 items-center justify-center p-1.5">
-        {mapImageUrl ? (
+        {incident.mapImageUrl ? (
           <div className="h-full w-full overflow-hidden rounded-lg">
             <img
-              src={mapImageUrl}
+              src={incident.mapImageUrl}
               alt={`Mapa del incidente ${incident.importantDetails ?? ""}`}
               className="h-full w-full rounded-lg object-cover"
               loading="lazy"

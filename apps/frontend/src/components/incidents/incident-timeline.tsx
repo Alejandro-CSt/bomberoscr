@@ -12,7 +12,7 @@ import {
   TimelineSeparator,
   TimelineTitle
 } from "@/components/ui/timeline";
-import { getIncidentsByIdTimelineOptions } from "@/lib/api/@tanstack/react-query.gen";
+import { getIncidentTimelineOptions } from "@/lib/api/@tanstack/react-query.gen";
 import { Route } from "@/routes/_dashboard/incidentes/$slug";
 
 type TimelineEvent = {
@@ -55,7 +55,7 @@ export function IncidentTimeline() {
     isLoading,
     isError
   } = useQuery(
-    getIncidentsByIdTimelineOptions({
+    getIncidentTimelineOptions({
       path: { id: incident.id }
     })
   );

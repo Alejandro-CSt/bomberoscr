@@ -8,13 +8,13 @@ import {
 import { TopDispatchedStationsChart } from "@/components/homepage/charts/top-dispatched-stations-chart";
 import { TopResponseTimesStationsChart } from "@/components/homepage/charts/top-response-times-chart";
 import {
-  getStatsTopDispatchedStationsOptions,
-  getStatsTopResponseTimesOptions
+  getTopDispatchedStationsOptions,
+  getTopResponseTimesOptions
 } from "@/lib/api/@tanstack/react-query.gen";
 
 function TopDispatchedStationsSection() {
   const { data, isLoading, isError } = useQuery({
-    ...getStatsTopDispatchedStationsOptions(),
+    ...getTopDispatchedStationsOptions({ query: { timeRange: 30 } }),
     staleTime: 30 * 60 * 1000, // 30 minutes
     gcTime: 30 * 60 * 1000
   });
@@ -48,7 +48,7 @@ function TopDispatchedStationsSection() {
 
 function TopResponseTimesSection() {
   const { data, isLoading, isError } = useQuery({
-    ...getStatsTopResponseTimesOptions(),
+    ...getTopResponseTimesOptions({ query: { timeRange: 30 } }),
     staleTime: 30 * 60 * 1000, // 30 minutes
     gcTime: 30 * 60 * 1000
   });

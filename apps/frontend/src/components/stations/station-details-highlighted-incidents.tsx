@@ -4,18 +4,25 @@ import {
   StationDetailsHighlightedCard,
   StationDetailsHighlightedCardSkeleton
 } from "@/components/stations/station-details-highlighted-card";
-import { getStationsByKeyHighlightedIncidentsOptions } from "@/lib/api/@tanstack/react-query.gen";
+import {
+  getStationHighlightedIncidentsOptions,
+  listIncidentsOptions
+} from "@/lib/api/@tanstack/react-query.gen";
 import { Route } from "@/routes/_dashboard/estaciones/$name";
 
 export function StationDetailsHighlightedIncidents() {
   const { station } = Route.useLoaderData();
   const { data } = useSuspenseQuery(
-    getStationsByKeyHighlightedIncidentsOptions({
-      path: { key: station.stationKey }
+    listIncidentsOptions({
+      query: {
+        stations: [station.id],
+        sort: ["totalDispatched", "desc"],
+        pageSize: 6
+      }
     })
   );
 
-  if (data.incidents.length === 0) {
+  if (data.data.length === 0) {
     return null;
   }
 
@@ -23,10 +30,18 @@ export function StationDetailsHighlightedIncidents() {
     <section className="flex flex-col gap-4">
       <h2 className="text-lg font-semibold">Destacados</h2>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        {data.incidents.map((incident) => (
+        {data.data.map((incident) => (
           <StationDetailsHighlightedCard
             key={incident.id}
-            incident={incident}
+            incident={{
+              id: incident.id,
+              incidentTimestamp: incident.incidentTimestamp,
+              details: incident.importantDetails,
+              latitude: station.latitude,
+              longitude: station.longitude,
+              dispatchedVehiclesCount: incident.dispatchedVehiclesCount,
+              dispatchedStationsCount: incident.dispatchedStationsCount
+            }}
           />
         ))}
       </div>

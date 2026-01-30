@@ -3,11 +3,11 @@ import { useQuery } from "@tanstack/react-query";
 
 import { StatCard, StatCardSkeleton } from "@/components/homepage/stat-card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getStatsYearRecapOptions } from "@/lib/api/@tanstack/react-query.gen";
+import { getYearRecapOptions } from "@/lib/api/@tanstack/react-query.gen";
 
-import type { GetStatsYearRecapResponse } from "@/lib/api/types.gen";
+import type { GetYearRecapResponse } from "@/lib/api/types.gen";
 
-function YearRecapContent({ data }: { data: GetStatsYearRecapResponse }) {
+function YearRecapContent({ data }: { data: GetYearRecapResponse }) {
   const currentYear = new Date().getFullYear();
 
   const formatBusiestDate = (dateString: string) => {
@@ -98,7 +98,7 @@ function YearRecapSkeleton() {
 }
 
 export function YearRecapHero() {
-  const yearRecapOptions = getStatsYearRecapOptions();
+  const yearRecapOptions = getYearRecapOptions();
 
   const { data, isLoading, isError } = useQuery({
     ...yearRecapOptions,

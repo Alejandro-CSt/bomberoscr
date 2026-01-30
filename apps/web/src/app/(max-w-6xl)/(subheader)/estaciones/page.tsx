@@ -15,7 +15,7 @@ import {
   stationsSearchParamsCache
 } from "@/features/stations/stations-search-params";
 import { getStationsForDirectory } from "@bomberoscr/db/queries/stations";
-import { getSystemOverview } from "@bomberoscr/db/queries/systemOverview";
+import { getSystemOverview } from "@bomberoscr/db/queries/stats";
 import { FireTruckIcon, ShieldIcon, TimerIcon } from "@phosphor-icons/react/dist/ssr";
 import type { Metadata } from "next";
 import { cacheLife } from "next/cache";

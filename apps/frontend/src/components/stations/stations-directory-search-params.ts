@@ -4,5 +4,5 @@ export const STATIONS_PER_PAGE = 9;
 
 export const stationsSearchParamsParsers = {
   q: parseAsString.withDefault(""),
-  page: parseAsIndex.withDefault(0)
+  page: parseAsIndex.withDefault(1)
 };

@@ -2,15 +2,15 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import { getStationsByKeyCollaborationsOptions } from "@/lib/api/@tanstack/react-query.gen";
+import { getStationCollaborationsOptions } from "@/lib/api/@tanstack/react-query.gen";
 import { client } from "@/lib/api/client.gen";
 import { Route } from "@/routes/_dashboard/estaciones/$name";
 
 export function StationDetailsCollaborations() {
   const { station } = Route.useLoaderData();
   const { data } = useSuspenseQuery(
-    getStationsByKeyCollaborationsOptions({
-      path: { key: station.stationKey }
+    getStationCollaborationsOptions({
+      path: { name: station.name }
     })
   );
 
@@ -40,14 +40,12 @@ interface CollaborationCardProps {
     id: number;
     name: string;
     stationKey: string;
+    imageUrl: string;
     collaborationCount: number;
   };
 }
 
 function CollaborationCard({ station }: CollaborationCardProps) {
-  const baseUrl = client.getConfig().baseUrl ?? "";
-  const imageUrl = `${baseUrl}/stations/${encodeURIComponent(station.stationKey)}/image`;
-
   return (
     <Link
       to="/estaciones/$name"
@@ -55,7 +53,7 @@ function CollaborationCard({ station }: CollaborationCardProps) {
       className="group block overflow-hidden rounded-xl bg-card shadow-md hover:shadow-xl">
       <div className="relative aspect-2/1 w-full bg-muted">
         <img
-          src={imageUrl}
+          src={station.imageUrl}
           alt={station.name}
           className="h-full w-full object-cover"
           loading="lazy"
@@ -70,7 +68,8 @@ function CollaborationCard({ station }: CollaborationCardProps) {
           {station.name}
         </h3>
         <p className="text-sm text-foreground">
-          Trabajaron en conjunto en {station.collaborationCount.toLocaleString("es-CR")}{" "}
+          Trabajaron en conjunto en{" "}
+          <strong>{station.collaborationCount.toLocaleString("es-CR")}</strong>{" "}
           {station.collaborationCount === 1 ? "incidente" : "incidentes"}.
         </p>
       </div>

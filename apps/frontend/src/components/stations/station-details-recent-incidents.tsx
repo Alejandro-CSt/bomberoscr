@@ -4,30 +4,42 @@ import {
   StationDetailsIncidentCard,
   StationDetailsIncidentCardSkeleton
 } from "@/components/stations/station-details-incident-card";
-import { getStationsByKeyRecentIncidentsOptions } from "@/lib/api/@tanstack/react-query.gen";
+import { listIncidentsOptions } from "@/lib/api/@tanstack/react-query.gen";
 import { Route } from "@/routes/_dashboard/estaciones/$name";
 
 export function StationDetailsRecentIncidents() {
   const { station } = Route.useLoaderData();
   const { data } = useSuspenseQuery(
-    getStationsByKeyRecentIncidentsOptions({
-      path: { key: station.stationKey }
+    listIncidentsOptions({
+      query: {
+        stations: [station.id],
+        // sort: ["incidentTimestamp", "desc"], // desc id sorting works better
+        pageSize: 5
+      }
     })
   );
 
   return (
     <section className="flex flex-col gap-4">
       <h2 className="text-lg font-semibold">Incidentes recientes</h2>
-      {data.incidents.length === 0 ? (
+      {data.data.length === 0 ? (
         <p className="text-sm text-muted-foreground">
           No hay incidentes recientes para esta estación.
         </p>
       ) : (
         <div className="flex flex-col gap-2">
-          {data.incidents.map((incident) => (
+          {data.data.map((incident) => (
             <StationDetailsIncidentCard
               key={incident.id}
-              incident={incident}
+              incident={{
+                id: incident.id,
+                incidentTimestamp: incident.incidentTimestamp,
+                importantDetails: incident.importantDetails,
+                address: incident.address,
+                mapImageUrl: incident.mapImageUrl,
+                dispatchedVehiclesCount: incident.dispatchedVehiclesCount,
+                dispatchedStationsCount: incident.dispatchedStationsCount
+              }}
             />
           ))}
         </div>

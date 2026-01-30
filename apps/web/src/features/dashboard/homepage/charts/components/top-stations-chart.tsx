@@ -14,7 +14,7 @@ import {
   ChartLegendContent,
   ChartTooltip
 } from "@/features/shared/components/ui/chart";
-import type { getTopDispatchedStations } from "@bomberoscr/db/queries/charts/topDispatchedStations";
+import type { getTopDispatchedStations } from "@bomberoscr/db/queries/stats";
 import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
 
 type TopDispatchedStations = Awaited<ReturnType<typeof getTopDispatchedStations>>;

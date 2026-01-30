@@ -25,7 +25,7 @@ import {
   StationDetailsVehicles,
   StationDetailsVehiclesSkeleton
 } from "@/components/stations/station-details-vehicles";
-import { getStationsByNameByName } from "@/lib/api";
+import { getStationByName } from "@/lib/api";
 import { client } from "@/lib/api/client.gen";
 
 export const Route = createFileRoute("/_dashboard/estaciones/$name")({
@@ -41,7 +41,7 @@ export const Route = createFileRoute("/_dashboard/estaciones/$name")({
 
     client.setConfig({ baseUrl });
 
-    const { data } = await getStationsByNameByName({
+    const { data } = await getStationByName({
       path: {
         name: decodedName
       }

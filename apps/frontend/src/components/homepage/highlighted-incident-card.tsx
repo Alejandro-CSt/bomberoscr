@@ -3,19 +3,20 @@ import { Link } from "@tanstack/react-router";
 import { TriangleAlert } from "lucide-react";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import { client } from "@/lib/api/client.gen";
 import { cn, formatRelativeTime } from "@/lib/utils";
 
 type HighlightedIncident = {
   id: number;
   slug: string;
   incidentTimestamp: string;
-  details: string;
+  importantDetails: string;
   address: string;
-  responsibleStation: string;
+  mapImageUrl: string | null;
   dispatchedVehiclesCount: number;
   dispatchedStationsCount: number;
-  hasMapImage: boolean;
+  dispatchType: {
+    name: string;
+  } | null;
 };
 
 /**
@@ -43,8 +44,6 @@ function getHeatGradient(heat: number): string {
 export function HighlightedIncidentCard({ incident }: { incident: HighlightedIncident }) {
   const total = incident.dispatchedStationsCount + incident.dispatchedVehiclesCount;
   const heat = Math.max(0, Math.min((total - 2) / 13, 1));
-  const baseUrl = client.getConfig().baseUrl ?? "";
-  const mapImageUrl = incident.hasMapImage ? `${baseUrl}/incidents/${incident.id}/map` : null;
 
   return (
     <Link
@@ -52,11 +51,11 @@ export function HighlightedIncidentCard({ incident }: { incident: HighlightedInc
       params={{ slug: incident.slug }}
       className="group flex flex-col overflow-hidden rounded-lg bg-card md:flex-row">
       <div className="relative flex aspect-video w-full items-center justify-center p-1.5 md:aspect-4/3 md:w-[50%] md:p-2">
-        {mapImageUrl ? (
+        {incident.mapImageUrl ? (
           <div className="h-full w-full overflow-hidden rounded-lg">
             <img
-              src={mapImageUrl}
-              alt={`Mapa del incidente ${incident.details}`}
+              src={incident.mapImageUrl}
+              alt={`Mapa del incidente ${incident.importantDetails}`}
               className="h-full w-full scale-125 rounded-lg object-cover transition-transform duration-300 ease-out group-hover:scale-150"
               loading="lazy"
               decoding="async"
@@ -86,8 +85,10 @@ export function HighlightedIncidentCard({ incident }: { incident: HighlightedInc
       </div>
       <div className="flex flex-col gap-2 p-3 md:flex-1 md:py-3 md:pr-3 md:pl-1">
         <div className="flex flex-col gap-0.5">
-          <h3 className="line-clamp-1 text-base font-medium">{incident.details}</h3>
-          <span className="text-sm text-muted-foreground">{incident.responsibleStation}</span>
+          <h3 className="line-clamp-1 text-base font-medium">{incident.importantDetails}</h3>
+          <span className="text-sm text-muted-foreground">
+            {incident.dispatchType?.name ?? "Sin tipo"}
+          </span>
           <p className="line-clamp-1 text-xs text-muted-foreground md:line-clamp-2">
             {incident.address}
           </p>

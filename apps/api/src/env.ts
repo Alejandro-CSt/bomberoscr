@@ -21,7 +21,7 @@ const EnvSchema = z.object({
   SIGAE_COD_SYS: z.string().optional(),
   ADMIN_TOKEN: z.string().optional(),
   MAPBOX_API_KEY: z.string(),
-  SITE_URL: z.string().url(),
+  INTERNAL_API_URL: z.string().url(),
   IMGPROXY_BASE_URL: z.string().url(),
   IMGPROXY_KEY: z.string(),
   IMGPROXY_SALT: z.string(),

@@ -9,7 +9,7 @@ import {
   STATIONS_PER_PAGE,
   stationsSearchParamsParsers
 } from "@/components/stations/stations-directory-search-params";
-import { getStationsOptions } from "@/lib/api/@tanstack/react-query.gen";
+import { listStationsOptions } from "@/lib/api/@tanstack/react-query.gen";
 
 export function StationsDirectorySectionSkeleton() {
   return (
@@ -19,7 +19,6 @@ export function StationsDirectorySectionSkeleton() {
       </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {Array.from({ length: 9 }).map((_, i) => (
-          // biome-ignore lint/suspicious/noArrayIndexKey: skeleton items have no unique id
           <div
             key={i}
             className="h-64 animate-pulse rounded-xl bg-muted"
@@ -34,9 +33,9 @@ export function StationsDirectorySection() {
   const [{ q, page }, setParams] = useQueryStates(stationsSearchParamsParsers);
 
   const {
-    data: { stations }
+    data: { data: stations }
   } = useSuspenseQuery({
-    ...getStationsOptions({ query: { view: "directory" } }),
+    ...listStationsOptions({ query: { limit: STATIONS_PER_PAGE, page: 1 } }),
     staleTime: Infinity
   });
 

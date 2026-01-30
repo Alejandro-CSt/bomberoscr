@@ -2,7 +2,7 @@ import { FireTruckIcon, ShieldIcon, TimerIcon, type Icon } from "@phosphor-icons
 import { useSuspenseQuery } from "@tanstack/react-query";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import { getStatsSystemOverviewOptions } from "@/lib/api/@tanstack/react-query.gen";
+import { getSystemOverviewOptions, listStationsOptions } from "@/lib/api/@tanstack/react-query.gen";
 import { cn, formatMinutesToHMS } from "@/lib/utils";
 
 interface StationsSystemOverviewCardProps {
@@ -13,26 +13,26 @@ interface StationsSystemOverviewCardProps {
 }
 
 export function StationsSystemOverviewSection() {
-  const { data: systemOverview } = useSuspenseQuery(getStatsSystemOverviewOptions());
+  const { data: systemOverview } = useSuspenseQuery(getSystemOverviewOptions());
 
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
       <StationsSystemOverviewCard
         title="Estaciones operativas"
-        value={systemOverview?.stationCount ?? 0}
+        value={systemOverview.stationCount}
         icon={ShieldIcon}
       />
       <StationsSystemOverviewCard
         title="Vehículos activos"
-        value={systemOverview?.activeVehicleCount ?? 0}
+        value={systemOverview.activeVehicleCount}
         icon={FireTruckIcon}
       />
       <StationsSystemOverviewCard
         title="Tiempo respuesta promedio"
         value={
-          systemOverview?.avgResponseTimeMinutes
+          systemOverview.avgResponseTimeMinutes
             ? formatMinutesToHMS(systemOverview.avgResponseTimeMinutes)
-            : "—"
+            : "N/A"
         }
         icon={TimerIcon}
       />

@@ -1,12 +1,12 @@
 import { Link } from "@tanstack/react-router";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import { client } from "@/lib/api/client.gen";
 import { Route } from "@/routes/_dashboard/incidentes/$slug";
 
 interface Station {
   name: string;
   stationKey: string;
+  imageUrl: string;
   isResponsible: boolean;
   vehicles: {
     internalNumber: string;
@@ -47,9 +47,6 @@ export function DispatchedStations() {
 }
 
 function StationCard({ station }: { station: Station }) {
-  const baseUrl = client.getConfig().baseUrl ?? "";
-  const imageUrl = `${baseUrl}/stations/${encodeURIComponent(station.stationKey)}/image`;
-
   return (
     <Link
       to="/estaciones/$name"
@@ -57,7 +54,7 @@ function StationCard({ station }: { station: Station }) {
       className="group block overflow-hidden rounded-xl bg-card shadow-md transition-shadow hover:shadow-xl">
       <div className="relative aspect-3/2 w-full bg-muted">
         <img
-          src={imageUrl}
+          src={station.imageUrl}
           alt={station.name}
           className="h-full w-full object-cover transition-opacity duration-300"
           loading="lazy"

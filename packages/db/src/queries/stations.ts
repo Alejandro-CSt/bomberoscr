@@ -344,3 +344,66 @@ export async function getStationVehiclesWithStats({ stationId }: { stationId: nu
     }
   }));
 }
+
+export async function getStationsOverview() {
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+  const now = new Date();
+
+  const [operativeStationsResult, operativeVehiclesResult, avgResponseTimeResult] =
+    await Promise.all([
+      db
+        .select({
+          count: sql<number>`count(*)::int`
+        })
+        .from(stations)
+        .where(eq(stations.isOperative, true)),
+
+      db
+        .select({
+          count: sql<number>`count(*)::int`
+        })
+        .from(vehicles)
+        .where(
+          or(
+            eq(vehicles.descriptionOperationalStatus, "DISPONIBLE"),
+            eq(vehicles.descriptionOperationalStatus, "EN INCIDENTE")
+          )
+        ),
+
+      db.execute(sql`
+      WITH valid_dispatches AS (
+        SELECT 
+          ${dispatchedVehicles.stationId},
+          EXTRACT(EPOCH FROM (${dispatchedVehicles.arrivalTime} - ${dispatchedVehicles.dispatchedTime})) as response_time
+        FROM ${dispatchedVehicles}
+        INNER JOIN ${incidents} ON ${dispatchedVehicles.incidentId} = ${incidents.id}
+        WHERE ${incidents.incidentTimestamp} BETWEEN ${thirtyDaysAgo} AND ${now}
+          AND ${dispatchedVehicles.arrivalTime} IS NOT NULL
+          AND ${dispatchedVehicles.dispatchedTime} IS NOT NULL
+          AND ${dispatchedVehicles.arrivalTime} > ${dispatchedVehicles.dispatchedTime}
+          AND EXTRACT(EPOCH FROM (${dispatchedVehicles.arrivalTime} - ${dispatchedVehicles.dispatchedTime})) >= 60
+          AND EXTRACT(EPOCH FROM (${dispatchedVehicles.arrivalTime} - ${dispatchedVehicles.dispatchedTime})) <= 10800
+      ),
+      stations_with_min_incidents AS (
+        SELECT station_id
+        FROM valid_dispatches
+        GROUP BY station_id
+        HAVING count(*) >= 10
+      )
+      SELECT 
+        ROUND(AVG(vd.response_time))::int as avg_response_time_seconds
+      FROM valid_dispatches vd
+      INNER JOIN stations_with_min_incidents swm ON vd.station_id = swm.station_id
+    `)
+    ]);
+
+  const avgResult = avgResponseTimeResult as unknown as {
+    rows: [{ avg_response_time_seconds: number | null }];
+  };
+
+  return {
+    operativeStationsCount: operativeStationsResult[0]?.count ?? 0,
+    operativeVehiclesCount: operativeVehiclesResult[0]?.count ?? 0,
+    averageResponseTimeSeconds: avgResult.rows?.[0]?.avg_response_time_seconds ?? null
+  };
+}

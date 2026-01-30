@@ -275,6 +275,7 @@ app.openapi(
       if (status === 404) {
         return c.json({ message: "Image not found" }, HttpStatusCodes.NOT_FOUND);
       }
+      console.error("Failed to fetch image:", imgproxyResponse.statusText);
       return c.json({ message: "Failed to fetch image" }, HttpStatusCodes.BAD_GATEWAY);
     }
 

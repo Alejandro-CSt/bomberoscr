@@ -14,7 +14,8 @@ import { createMessageObjectSchema } from "stoker/openapi/schemas";
 
 import env from "@/env";
 import { getFromS3, uploadToS3 } from "@/lib/s3";
-import { buildMapImageUrl, buildTypeImageUrl } from "@/lib/url-builder";
+import { buildIncidentSlug } from "@/lib/slug";
+import { buildMapImageUrl, buildStationImageUrl, buildTypeImageUrl } from "@/lib/url-builder";
 import {
   calculateTimeDiffInSeconds,
   isUndefinedDate,
@@ -51,6 +52,39 @@ function buildIncidentType(
     name,
     imageUrl: buildTypeImageUrl(code)
   };
+}
+
+function isValidCoordinates(latitude: number | null, longitude: number | null): boolean {
+  if (latitude === null || longitude === null) return false;
+  if (latitude === 0 && longitude === 0) return false;
+  return true;
+}
+
+function getIncidentTitle(
+  importantDetails: string | null,
+  specificType: string | null | undefined,
+  type: string | null | undefined,
+  location?: {
+    districtName: string | null;
+    cantonName: string | null;
+    provinceName: string | null;
+  }
+): string {
+  const baseTitle = importantDetails || specificType || type || "Incidente";
+
+  if (!location) return baseTitle;
+
+  const { districtName, cantonName, provinceName } = location;
+
+  // Build location string: "EN district, canton, province"
+  const locationParts: string[] = [];
+  if (districtName) locationParts.push(districtName);
+  if (cantonName) locationParts.push(cantonName);
+  if (provinceName) locationParts.push(provinceName);
+
+  if (locationParts.length === 0) return baseTitle;
+
+  return `${baseTitle} EN ${locationParts.join(", ")}`;
 }
 
 function buildDispatchedStations(incident: {
@@ -153,6 +187,7 @@ function buildDispatchedStations(incident: {
   return Array.from(stationMap.values()).map((station) => ({
     name: station.name,
     stationKey: station.stationKey,
+    imageUrl: buildStationImageUrl(station.name),
     isResponsible: station.isResponsible,
     vehicles: station.vehicles
   }));
@@ -187,30 +222,52 @@ app.openapi(
 
     return c.json({
       meta,
-      data: data.map((incident) => ({
-        id: incident.id,
-        isOpen: incident.isOpen,
-        EEConsecutive: incident.EEConsecutive,
-        address: incident.address,
-        incidentTimestamp: incident.incidentTimestamp,
-        importantDetails: incident.importantDetails,
-        mapImageUrl: buildMapImageUrl(incident.id),
-        dispatchType: buildIncidentType(
-          incident.dispatchIncidentCode,
-          incident.dispatchIncidentType
-        ),
-        specificDispatchType: buildIncidentType(
-          incident.specificDispatchIncidentCode,
-          incident.specificDispatchIncidentType
-        ),
-        actualType: buildIncidentType(incident.incidentTypeCode, incident.incidentType),
-        specificActualType: buildIncidentType(
-          incident.specificIncidentTypeCode,
-          incident.specificIncidentType
-        ),
-        dispatchedStationsCount: incident.dispatchedStationsCount ?? 0,
-        dispatchedVehiclesCount: incident.dispatchedVehiclesCount ?? 0
-      }))
+      data: data.map((incident) => {
+        const title = getIncidentTitle(
+          incident.importantDetails,
+          incident.specificIncidentType,
+          incident.incidentType,
+          {
+            districtName: incident.districtName,
+            cantonName: incident.cantonName,
+            provinceName: incident.provinceName
+          }
+        );
+        return {
+          id: incident.id,
+          slug: buildIncidentSlug(incident.id, title, incident.incidentTimestamp),
+          title,
+          isOpen: incident.isOpen,
+          EEConsecutive: incident.EEConsecutive,
+          address: incident.address,
+          incidentTimestamp: incident.incidentTimestamp,
+          modifiedAt: incident.modifiedAt,
+          importantDetails: incident.importantDetails,
+          latitude: Number(incident.latitude),
+          longitude: Number(incident.longitude),
+          mapImageUrl: isValidCoordinates(Number(incident.latitude), Number(incident.longitude))
+            ? buildMapImageUrl(incident.id)
+            : null,
+          dispatchType: buildIncidentType(
+            incident.dispatchIncidentCode,
+            incident.dispatchIncidentType
+          ),
+          specificDispatchType: buildIncidentType(
+            incident.specificDispatchIncidentCode,
+            incident.specificDispatchIncidentType
+          ),
+          actualType: buildIncidentType(incident.incidentTypeCode, incident.incidentType),
+          specificActualType: buildIncidentType(
+            incident.specificIncidentTypeCode,
+            incident.specificIncidentType
+          ),
+          responsibleStationName: incident.responsibleStation,
+          districtName: incident.districtName,
+          dispatchedStationsCount: incident.dispatchedStationsCount ?? 0,
+          dispatchedVehiclesCount: incident.dispatchedVehiclesCount ?? 0,
+          totalDispatched: incident.totalDispatched ?? 0
+        };
+      })
     });
   }
 );
@@ -244,15 +301,42 @@ app.openapi(
     }
 
     const dispatchedStations = buildDispatchedStations(incident);
+    const title = getIncidentTitle(
+      incident.importantDetails,
+      incident.specificIncidentType?.name,
+      incident.incidentType?.name,
+      {
+        districtName: incident.district?.name ?? null,
+        cantonName: incident.canton?.name ?? null,
+        provinceName: incident.province?.name ?? null
+      }
+    );
+
+    const statistics = await getIncidentStatistics({
+      incidentTimestamp: incident.incidentTimestamp,
+      incidentCode: incident.incidentCode,
+      specificIncidentCode: incident.specificIncidentCode,
+      cantonId: incident.cantonId,
+      cantonName: incident.canton?.name ?? null
+    });
+
     return c.json(
       {
         id: incident.id,
+        slug: buildIncidentSlug(incident.id, title, incident.incidentTimestamp),
+        title,
         isOpen: incident.isOpen,
         EEConsecutive: incident.EEConsecutive,
         address: incident.address,
         incidentTimestamp: incident.incidentTimestamp,
+        modifiedAt: incident.modifiedAt,
         importantDetails: incident.importantDetails,
-        mapImageUrl: buildMapImageUrl(incident.id),
+        latitude: Number(incident.latitude),
+        longitude: Number(incident.longitude),
+        cantonName: incident.canton?.name ?? null,
+        mapImageUrl: isValidCoordinates(Number(incident.latitude), Number(incident.longitude))
+          ? buildMapImageUrl(incident.id)
+          : null,
         dispatchType: buildIncidentType(
           incident.dispatchIncidentCode,
           incident.dispatchIncidentType?.name
@@ -266,6 +350,13 @@ app.openapi(
           incident.specificIncidentCode,
           incident.specificIncidentType?.name
         ),
+        statistics: {
+          currentYear: statistics.currentYear,
+          currentYearCount: statistics.currentYearCount,
+          currentYearCantonCount: statistics.currentYearCantonCount,
+          previousYear: statistics.previousYear,
+          previousYearCount: statistics.previousYearCount
+        },
         dispatchedStations
       },
       HttpStatusCodes.OK
@@ -424,7 +515,13 @@ app.openapi(
       return c.json({ message: HttpStatusPhrases.NOT_FOUND }, HttpStatusCodes.NOT_FOUND);
     }
 
-    const statistics = await getIncidentStatistics(incident);
+    const statistics = await getIncidentStatistics({
+      incidentTimestamp: incident.incidentTimestamp,
+      incidentCode: incident.incidentCode,
+      specificIncidentCode: incident.specificIncidentCode,
+      cantonId: incident.cantonId,
+      cantonName: incident.canton?.name ?? null
+    });
     return generateOgImage(incident, statistics);
   }
 );
@@ -593,9 +690,7 @@ app.openapi(
     }
 
     const mapboxUrl = buildMapboxUrl(latitude, longitude);
-    const mapboxResponse = await fetch(mapboxUrl, {
-      headers: { Referer: env.SITE_URL }
-    });
+    const mapboxResponse = await fetch(mapboxUrl);
 
     if (!mapboxResponse.ok) {
       const responseBody = await mapboxResponse.text().catch(() => "");

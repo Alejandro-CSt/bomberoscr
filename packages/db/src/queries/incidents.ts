@@ -1,25 +1,15 @@
 import { db } from "@bomberoscr/db/index";
 import {
+  cantons,
   dispatchedStations,
   dispatchedVehicles,
+  districts,
   incidents,
   incidentTypes,
+  provinces,
   stations as stationsTable
 } from "@bomberoscr/db/schema";
-import {
-  type SQL,
-  and,
-  asc,
-  between,
-  desc,
-  eq,
-  gte,
-  ilike,
-  inArray,
-  lte,
-  or,
-  sql
-} from "drizzle-orm";
+import { type SQL, and, between, eq, gte, ilike, inArray, lte, or, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 
 // Create aliases for the incident_types table since we join it multiple times
@@ -130,7 +120,10 @@ export async function getIncidents(params: GetIncidentsParams) {
       EEConsecutive: incidents.EEConsecutive,
       address: incidents.address,
       incidentTimestamp: incidents.incidentTimestamp,
+      modifiedAt: incidents.modifiedAt,
       importantDetails: incidents.importantDetails,
+      latitude: incidents.latitude,
+      longitude: incidents.longitude,
       responsibleStation: stationsTable.name,
       dispatchIncidentType: dispatchIncidentTypes.name,
       dispatchIncidentCode: incidents.dispatchIncidentCode,
@@ -140,12 +133,19 @@ export async function getIncidents(params: GetIncidentsParams) {
       incidentTypeCode: incidents.incidentCode,
       specificIncidentType: specificActualIncidentTypes.name,
       specificIncidentTypeCode: incidents.specificIncidentCode,
+      districtName: districts.name,
+      cantonName: cantons.name,
+      provinceName: provinces.name,
       dispatchedVehiclesCount: sql<number>`COALESCE(${vehicleCounts.vehicleCount}, 0)`.as(
         "dispatched_vehicles_count"
       ),
       dispatchedStationsCount: sql<number>`COALESCE(${stationCounts.stationCount}, 0)`.as(
         "dispatched_stations_count"
-      )
+      ),
+      totalDispatched:
+        sql<number>`COALESCE(${vehicleCounts.vehicleCount}, 0) + COALESCE(${stationCounts.stationCount}, 0)`.as(
+          "total_dispatched"
+        )
     })
     .from(incidents)
     .leftJoin(stationsTable, eq(incidents.responsibleStation, stationsTable.id))
@@ -164,42 +164,27 @@ export async function getIncidents(params: GetIncidentsParams) {
     )
     .leftJoin(vehicleCounts, eq(incidents.id, vehicleCounts.incidentId))
     .leftJoin(stationCounts, eq(incidents.id, stationCounts.incidentId))
+    .leftJoin(districts, eq(incidents.districtId, districts.id))
+    .leftJoin(cantons, eq(incidents.cantonId, cantons.id))
+    .leftJoin(provinces, eq(incidents.provinceId, provinces.id))
     .where(and(...whereConditions));
 
-  if (sort && sort.length === 2) {
-    const [column, direction] = sort;
-    const isAscending = direction === "asc";
+  if (sort?.length === 2) {
+    const [column, direction] = sort as [string, string];
+    const dir = direction === "asc" ? "ASC" : "DESC";
 
-    switch (column) {
-      case "incidentTimestamp":
-        if (isAscending) {
-          query.orderBy(asc(incidents.incidentTimestamp));
-        } else {
-          query.orderBy(desc(incidents.incidentTimestamp));
-        }
-        break;
-      case "EEConsecutive":
-        if (isAscending) {
-          query.orderBy(asc(incidents.EEConsecutive));
-        } else {
-          query.orderBy(desc(incidents.EEConsecutive));
-        }
-        break;
-      case "isOpen":
-        if (isAscending) {
-          query.orderBy(asc(incidents.isOpen));
-        } else {
-          query.orderBy(desc(incidents.isOpen));
-        }
-        break;
-      default:
-        // Default to id
-        if (isAscending) {
-          query.orderBy(asc(incidents.id));
-        } else {
-          query.orderBy(desc(incidents.id));
-        }
-    }
+    const sortMap: Record<string, string> = {
+      incidentTimestamp: '"incidentTimestamp"',
+      modifiedAt: '"modifiedAt"',
+      EEConsecutive: '"EEConsecutive"',
+      isOpen: '"isOpen"',
+      dispatchedVehiclesCount: "dispatched_vehicles_count",
+      dispatchedStationsCount: "dispatched_stations_count",
+      totalDispatched: "total_dispatched"
+    };
+
+    const col = sortMap[column] ?? "id";
+    query.orderBy(sql.raw(`${col} ${dir}`));
   }
 
   // Apply pagination
@@ -231,14 +216,33 @@ export async function getIncidentById({ id }: { id: number }) {
       EEConsecutive: true,
       address: true,
       incidentTimestamp: true,
+      modifiedAt: true,
       importantDetails: true,
+      latitude: true,
+      longitude: true,
       dispatchIncidentCode: true,
       specificDispatchIncidentCode: true,
       incidentCode: true,
       specificIncidentCode: true,
-      responsibleStation: true
+      responsibleStation: true,
+      cantonId: true
     },
     with: {
+      district: {
+        columns: {
+          name: true
+        }
+      },
+      canton: {
+        columns: {
+          name: true
+        }
+      },
+      province: {
+        columns: {
+          name: true
+        }
+      },
       dispatchIncidentType: {
         columns: {
           name: true
@@ -458,3 +462,6 @@ export async function getExistingIncidentIds(ids: number[]) {
     .where(inArray(incidents.id, ids));
   return rows.map((r) => r.id);
 }
+
+// Type exports
+export type DetailedIncident = NonNullable<Awaited<ReturnType<typeof getIncidentOgImageData>>>;

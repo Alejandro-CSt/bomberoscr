@@ -1,7 +1,6 @@
 import { Mail, Phone } from "lucide-react";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import { client } from "@/lib/api/client.gen";
 
 interface StationDetailsProfileHeaderProps {
   station: {
@@ -16,25 +15,23 @@ interface StationDetailsProfileHeaderProps {
     fax: string | null;
     email: string | null;
     isOperative: boolean | null;
+    imageUrl: string;
   };
 }
 
 export function StationDetailsProfileHeader({ station }: StationDetailsProfileHeaderProps) {
-  const baseUrl = client.getConfig().baseUrl ?? "";
-  const imageUrl = `${baseUrl}/stations/${encodeURIComponent(station.stationKey)}/image`;
-
   return (
     <header>
       <div className="relative">
         <div className="aspect-4/3 w-full max-w-sm overflow-hidden rounded-xl bg-muted">
           <img
-            src={imageUrl}
+            src={station.imageUrl}
             alt=""
             aria-hidden="true"
             className="absolute inset-0 h-full w-full scale-105 object-cover opacity-40 blur-lg brightness-95"
           />
           <img
-            src={imageUrl}
+            src={station.imageUrl}
             alt={`Estación ${station.name}`}
             className="relative h-full w-full object-contain"
           />

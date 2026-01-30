@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { GetAdminIncidentsData, GetAdminIncidentsErrors, GetAdminIncidentsResponses, GetIncidentsByIdData, GetIncidentsByIdErrors, GetIncidentsByIdMapData, GetIncidentsByIdMapErrors, GetIncidentsByIdMapOriginalData, GetIncidentsByIdMapOriginalErrors, GetIncidentsByIdMapOriginalResponses, GetIncidentsByIdMapResponses, GetIncidentsByIdOgData, GetIncidentsByIdOgErrors, GetIncidentsByIdOgResponses, GetIncidentsByIdResponses, GetIncidentsByIdResponseTimesData, GetIncidentsByIdResponseTimesErrors, GetIncidentsByIdResponseTimesResponses, GetIncidentsByIdTimelineData, GetIncidentsByIdTimelineErrors, GetIncidentsByIdTimelineResponses, GetIncidentsData, GetIncidentsErrors, GetIncidentsHighlightedData, GetIncidentsHighlightedResponses, GetIncidentsResponses, GetStationsByKeyCollaborationsData, GetStationsByKeyCollaborationsErrors, GetStationsByKeyCollaborationsResponses, GetStationsByKeyData, GetStationsByKeyErrors, GetStationsByKeyHeatmapData, GetStationsByKeyHeatmapErrors, GetStationsByKeyHeatmapResponses, GetStationsByKeyHighlightedIncidentsData, GetStationsByKeyHighlightedIncidentsErrors, GetStationsByKeyHighlightedIncidentsResponses, GetStationsByKeyImageData, GetStationsByKeyImageErrors, GetStationsByKeyImageOriginalData, GetStationsByKeyImageOriginalErrors, GetStationsByKeyImageOriginalResponses, GetStationsByKeyImageResponses, GetStationsByKeyRecentIncidentsData, GetStationsByKeyRecentIncidentsErrors, GetStationsByKeyRecentIncidentsResponses, GetStationsByKeyResponses, GetStationsByKeyVehiclesData, GetStationsByKeyVehiclesErrors, GetStationsByKeyVehiclesResponses, GetStationsByNameByNameData, GetStationsByNameByNameErrors, GetStationsByNameByNameResponses, GetStationsData, GetStationsResponses, GetStatsDailyIncidentsData, GetStatsDailyIncidentsResponses, GetStatsIncidentsByDayOfWeekData, GetStatsIncidentsByDayOfWeekResponses, GetStatsIncidentsByHourData, GetStatsIncidentsByHourResponses, GetStatsSystemOverviewData, GetStatsSystemOverviewResponses, GetStatsTopDispatchedStationsData, GetStatsTopDispatchedStationsResponses, GetStatsTopResponseTimesData, GetStatsTopResponseTimesResponses, GetStatsYearRecapData, GetStatsYearRecapResponses, PostAdminIncidentsByIdData, PostAdminIncidentsByIdErrors, PostAdminIncidentsByIdResponses, PostAdminIncidentsData, PostAdminIncidentsErrors, PostAdminIncidentsResponses } from './types.gen';
+import type { GetDailyIncidentsData, GetDailyIncidentsResponses, GetIncidentByIdData, GetIncidentByIdErrors, GetIncidentByIdResponses, GetIncidentMapData, GetIncidentMapErrors, GetIncidentMapResponses, GetIncidentOgImageData, GetIncidentOgImageErrors, GetIncidentOgImageResponses, GetIncidentOriginalMapData, GetIncidentOriginalMapErrors, GetIncidentOriginalMapResponses, GetIncidentResponseTimesData, GetIncidentResponseTimesErrors, GetIncidentResponseTimesResponses, GetIncidentsByDayOfWeekData, GetIncidentsByDayOfWeekResponses, GetIncidentsByHourData, GetIncidentsByHourResponses, GetIncidentTimelineData, GetIncidentTimelineErrors, GetIncidentTimelineResponses, GetIncidentTypeData, GetIncidentTypeErrors, GetIncidentTypeImageData, GetIncidentTypeImageErrors, GetIncidentTypeImageResponses, GetIncidentTypeOriginalImageData, GetIncidentTypeOriginalImageErrors, GetIncidentTypeOriginalImageResponses, GetIncidentTypeResponses, GetStationByNameData, GetStationByNameErrors, GetStationByNameResponses, GetStationCollaborationsData, GetStationCollaborationsErrors, GetStationCollaborationsResponses, GetStationHeatmapData, GetStationHeatmapErrors, GetStationHeatmapResponses, GetStationHighlightedIncidentsData, GetStationHighlightedIncidentsErrors, GetStationHighlightedIncidentsResponses, GetStationImageData, GetStationImageErrors, GetStationImageResponses, GetStationOriginalImageData, GetStationOriginalImageErrors, GetStationOriginalImageResponses, GetStationsOverviewData, GetStationsOverviewResponses, GetStationVehiclesData, GetStationVehiclesErrors, GetStationVehiclesResponses, GetSystemOverviewData, GetSystemOverviewResponses, GetTopDispatchedStationsData, GetTopDispatchedStationsResponses, GetTopResponseTimesData, GetTopResponseTimesResponses, GetYearRecapData, GetYearRecapResponses, ListIncidentsData, ListIncidentsResponses, ListIncidentTypesData, ListIncidentTypesResponses, ListStationsData, ListStationsResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -18,68 +18,191 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
     meta?: Record<string, unknown>;
 };
 
-export const getIncidents = <ThrowOnError extends boolean = false>(options?: Options<GetIncidentsData, ThrowOnError>) => (options?.client ?? client).get<GetIncidentsResponses, GetIncidentsErrors, ThrowOnError>({ url: '/incidents', ...options });
-
-export const getIncidentsHighlighted = <ThrowOnError extends boolean = false>(options?: Options<GetIncidentsHighlightedData, ThrowOnError>) => (options?.client ?? client).get<GetIncidentsHighlightedResponses, unknown, ThrowOnError>({ url: '/incidents/highlighted', ...options });
-
-export const getIncidentsById = <ThrowOnError extends boolean = false>(options: Options<GetIncidentsByIdData, ThrowOnError>) => (options.client ?? client).get<GetIncidentsByIdResponses, GetIncidentsByIdErrors, ThrowOnError>({ url: '/incidents/{id}', ...options });
-
-export const getIncidentsByIdTimeline = <ThrowOnError extends boolean = false>(options: Options<GetIncidentsByIdTimelineData, ThrowOnError>) => (options.client ?? client).get<GetIncidentsByIdTimelineResponses, GetIncidentsByIdTimelineErrors, ThrowOnError>({ url: '/incidents/{id}/timeline', ...options });
-
-export const getIncidentsByIdResponseTimes = <ThrowOnError extends boolean = false>(options: Options<GetIncidentsByIdResponseTimesData, ThrowOnError>) => (options.client ?? client).get<GetIncidentsByIdResponseTimesResponses, GetIncidentsByIdResponseTimesErrors, ThrowOnError>({ url: '/incidents/{id}/response-times', ...options });
-
-export const getIncidentsByIdOg = <ThrowOnError extends boolean = false>(options: Options<GetIncidentsByIdOgData, ThrowOnError>) => (options.client ?? client).get<GetIncidentsByIdOgResponses, GetIncidentsByIdOgErrors, ThrowOnError>({ url: '/incidents/{id}/og', ...options });
-
-export const getIncidentsByIdMapOriginal = <ThrowOnError extends boolean = false>(options: Options<GetIncidentsByIdMapOriginalData, ThrowOnError>) => (options.client ?? client).get<GetIncidentsByIdMapOriginalResponses, GetIncidentsByIdMapOriginalErrors, ThrowOnError>({ url: '/incidents/{id}/map/original', ...options });
-
-export const getIncidentsByIdMap = <ThrowOnError extends boolean = false>(options: Options<GetIncidentsByIdMapData, ThrowOnError>) => (options.client ?? client).get<GetIncidentsByIdMapResponses, GetIncidentsByIdMapErrors, ThrowOnError>({ url: '/incidents/{id}/map', ...options });
-
-export const getStations = <ThrowOnError extends boolean = false>(options?: Options<GetStationsData, ThrowOnError>) => (options?.client ?? client).get<GetStationsResponses, unknown, ThrowOnError>({ url: '/stations', ...options });
-
-export const getStationsByKey = <ThrowOnError extends boolean = false>(options: Options<GetStationsByKeyData, ThrowOnError>) => (options.client ?? client).get<GetStationsByKeyResponses, GetStationsByKeyErrors, ThrowOnError>({ url: '/stations/{key}', ...options });
-
-export const getStationsByKeyHighlightedIncidents = <ThrowOnError extends boolean = false>(options: Options<GetStationsByKeyHighlightedIncidentsData, ThrowOnError>) => (options.client ?? client).get<GetStationsByKeyHighlightedIncidentsResponses, GetStationsByKeyHighlightedIncidentsErrors, ThrowOnError>({ url: '/stations/{key}/highlighted-incidents', ...options });
-
-export const getStationsByKeyHeatmap = <ThrowOnError extends boolean = false>(options: Options<GetStationsByKeyHeatmapData, ThrowOnError>) => (options.client ?? client).get<GetStationsByKeyHeatmapResponses, GetStationsByKeyHeatmapErrors, ThrowOnError>({ url: '/stations/{key}/heatmap', ...options });
-
-export const getStationsByKeyRecentIncidents = <ThrowOnError extends boolean = false>(options: Options<GetStationsByKeyRecentIncidentsData, ThrowOnError>) => (options.client ?? client).get<GetStationsByKeyRecentIncidentsResponses, GetStationsByKeyRecentIncidentsErrors, ThrowOnError>({ url: '/stations/{key}/recent-incidents', ...options });
-
-export const getStationsByKeyCollaborations = <ThrowOnError extends boolean = false>(options: Options<GetStationsByKeyCollaborationsData, ThrowOnError>) => (options.client ?? client).get<GetStationsByKeyCollaborationsResponses, GetStationsByKeyCollaborationsErrors, ThrowOnError>({ url: '/stations/{key}/collaborations', ...options });
-
-export const getStationsByKeyVehicles = <ThrowOnError extends boolean = false>(options: Options<GetStationsByKeyVehiclesData, ThrowOnError>) => (options.client ?? client).get<GetStationsByKeyVehiclesResponses, GetStationsByKeyVehiclesErrors, ThrowOnError>({ url: '/stations/{key}/vehicles', ...options });
-
-export const getStationsByNameByName = <ThrowOnError extends boolean = false>(options: Options<GetStationsByNameByNameData, ThrowOnError>) => (options.client ?? client).get<GetStationsByNameByNameResponses, GetStationsByNameByNameErrors, ThrowOnError>({ url: '/stations/by-name/{name}', ...options });
-
-export const getStationsByKeyImageOriginal = <ThrowOnError extends boolean = false>(options: Options<GetStationsByKeyImageOriginalData, ThrowOnError>) => (options.client ?? client).get<GetStationsByKeyImageOriginalResponses, GetStationsByKeyImageOriginalErrors, ThrowOnError>({ url: '/stations/{key}/image/original', ...options });
-
-export const getStationsByKeyImage = <ThrowOnError extends boolean = false>(options: Options<GetStationsByKeyImageData, ThrowOnError>) => (options.client ?? client).get<GetStationsByKeyImageResponses, GetStationsByKeyImageErrors, ThrowOnError>({ url: '/stations/{key}/image', ...options });
-
-export const getAdminIncidents = <ThrowOnError extends boolean = false>(options: Options<GetAdminIncidentsData, ThrowOnError>) => (options.client ?? client).get<GetAdminIncidentsResponses, GetAdminIncidentsErrors, ThrowOnError>({ url: '/admin/incidents', ...options });
-
-export const postAdminIncidents = <ThrowOnError extends boolean = false>(options?: Options<PostAdminIncidentsData, ThrowOnError>) => (options?.client ?? client).post<PostAdminIncidentsResponses, PostAdminIncidentsErrors, ThrowOnError>({
-    url: '/admin/incidents',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options?.headers
-    }
-});
-
-export const postAdminIncidentsById = <ThrowOnError extends boolean = false>(options: Options<PostAdminIncidentsByIdData, ThrowOnError>) => (options.client ?? client).post<PostAdminIncidentsByIdResponses, PostAdminIncidentsByIdErrors, ThrowOnError>({ url: '/admin/incidents/{id}', ...options });
-
-export const getStatsYearRecap = <ThrowOnError extends boolean = false>(options?: Options<GetStatsYearRecapData, ThrowOnError>) => (options?.client ?? client).get<GetStatsYearRecapResponses, unknown, ThrowOnError>({ url: '/stats/year-recap', ...options });
-
-export const getStatsTopDispatchedStations = <ThrowOnError extends boolean = false>(options?: Options<GetStatsTopDispatchedStationsData, ThrowOnError>) => (options?.client ?? client).get<GetStatsTopDispatchedStationsResponses, unknown, ThrowOnError>({ url: '/stats/top-dispatched-stations', ...options });
-
-export const getStatsTopResponseTimes = <ThrowOnError extends boolean = false>(options?: Options<GetStatsTopResponseTimesData, ThrowOnError>) => (options?.client ?? client).get<GetStatsTopResponseTimesResponses, unknown, ThrowOnError>({ url: '/stats/top-response-times', ...options });
-
-export const getStatsIncidentsByDayOfWeek = <ThrowOnError extends boolean = false>(options?: Options<GetStatsIncidentsByDayOfWeekData, ThrowOnError>) => (options?.client ?? client).get<GetStatsIncidentsByDayOfWeekResponses, unknown, ThrowOnError>({ url: '/stats/incidents-by-day-of-week', ...options });
-
-export const getStatsIncidentsByHour = <ThrowOnError extends boolean = false>(options?: Options<GetStatsIncidentsByHourData, ThrowOnError>) => (options?.client ?? client).get<GetStatsIncidentsByHourResponses, unknown, ThrowOnError>({ url: '/stats/incidents-by-hour', ...options });
-
-export const getStatsDailyIncidents = <ThrowOnError extends boolean = false>(options?: Options<GetStatsDailyIncidentsData, ThrowOnError>) => (options?.client ?? client).get<GetStatsDailyIncidentsResponses, unknown, ThrowOnError>({ url: '/stats/daily-incidents', ...options });
+/**
+ * List all incidents
+ *
+ * Retrieve a list of incidents
+ */
+export const listIncidents = <ThrowOnError extends boolean = false>(options?: Options<ListIncidentsData, ThrowOnError>) => (options?.client ?? client).get<ListIncidentsResponses, unknown, ThrowOnError>({ url: '/incidents', ...options });
 
 /**
- * Get system-wide overview statistics including operative stations, active vehicles, and average response time over the last 30 days
+ * Retrieve an incident
+ *
+ * Retrieve an incident by its unique identifier
  */
-export const getStatsSystemOverview = <ThrowOnError extends boolean = false>(options?: Options<GetStatsSystemOverviewData, ThrowOnError>) => (options?.client ?? client).get<GetStatsSystemOverviewResponses, unknown, ThrowOnError>({ url: '/stats/system-overview', ...options });
+export const getIncidentById = <ThrowOnError extends boolean = false>(options: Options<GetIncidentByIdData, ThrowOnError>) => (options.client ?? client).get<GetIncidentByIdResponses, GetIncidentByIdErrors, ThrowOnError>({ url: '/incidents/{id}', ...options });
+
+/**
+ * Retrieve incident timeline
+ *
+ * Retrieve timeline events for an incident
+ */
+export const getIncidentTimeline = <ThrowOnError extends boolean = false>(options: Options<GetIncidentTimelineData, ThrowOnError>) => (options.client ?? client).get<GetIncidentTimelineResponses, GetIncidentTimelineErrors, ThrowOnError>({ url: '/incidents/{id}/timeline', ...options });
+
+/**
+ * Retrieve incident response times
+ *
+ * Retrieve response time breakdown for dispatched vehicles
+ */
+export const getIncidentResponseTimes = <ThrowOnError extends boolean = false>(options: Options<GetIncidentResponseTimesData, ThrowOnError>) => (options.client ?? client).get<GetIncidentResponseTimesResponses, GetIncidentResponseTimesErrors, ThrowOnError>({ url: '/incidents/{id}/response-times', ...options });
+
+/**
+ * Retrieve incident Open Graph image
+ *
+ * Generate the Open Graph image for an incident
+ */
+export const getIncidentOgImage = <ThrowOnError extends boolean = false>(options: Options<GetIncidentOgImageData, ThrowOnError>) => (options.client ?? client).get<GetIncidentOgImageResponses, GetIncidentOgImageErrors, ThrowOnError>({ url: '/incidents/{id}/og', ...options });
+
+/**
+ * Retrieve incident map image
+ *
+ * Retrieve the generated map image for an incident
+ */
+export const getIncidentMap = <ThrowOnError extends boolean = false>(options: Options<GetIncidentMapData, ThrowOnError>) => (options.client ?? client).get<GetIncidentMapResponses, GetIncidentMapErrors, ThrowOnError>({ url: '/incidents/{id}/map', ...options });
+
+/**
+ * Retrieve original incident map image
+ *
+ * Retrieve the original map image for an incident from Mapbox
+ */
+export const getIncidentOriginalMap = <ThrowOnError extends boolean = false>(options: Options<GetIncidentOriginalMapData, ThrowOnError>) => (options.client ?? client).get<GetIncidentOriginalMapResponses, GetIncidentOriginalMapErrors, ThrowOnError>({ url: '/incidents/{id}/map/original', ...options });
+
+/**
+ * List stations
+ *
+ * Retrieve stations
+ */
+export const listStations = <ThrowOnError extends boolean = false>(options?: Options<ListStationsData, ThrowOnError>) => (options?.client ?? client).get<ListStationsResponses, unknown, ThrowOnError>({ url: '/stations', ...options });
+
+/**
+ * Get stations overview
+ *
+ * Get overview statistics for all stations including operative station count, active vehicle count, and average response time
+ */
+export const getStationsOverview = <ThrowOnError extends boolean = false>(options?: Options<GetStationsOverviewData, ThrowOnError>) => (options?.client ?? client).get<GetStationsOverviewResponses, unknown, ThrowOnError>({ url: '/stations/overview', ...options });
+
+/**
+ * Retrieve station
+ *
+ * Retrieve a station by its name
+ */
+export const getStationByName = <ThrowOnError extends boolean = false>(options: Options<GetStationByNameData, ThrowOnError>) => (options.client ?? client).get<GetStationByNameResponses, GetStationByNameErrors, ThrowOnError>({ url: '/stations/{name}', ...options });
+
+/**
+ * Retrieve station heatmap
+ *
+ * Retrieve incident counts per day for the station
+ */
+export const getStationHeatmap = <ThrowOnError extends boolean = false>(options: Options<GetStationHeatmapData, ThrowOnError>) => (options.client ?? client).get<GetStationHeatmapResponses, GetStationHeatmapErrors, ThrowOnError>({ url: '/stations/{name}/heatmap', ...options });
+
+/**
+ * Retrieve station highlighted incidents
+ *
+ * Retrieve highlighted incidents for the station
+ */
+export const getStationHighlightedIncidents = <ThrowOnError extends boolean = false>(options: Options<GetStationHighlightedIncidentsData, ThrowOnError>) => (options.client ?? client).get<GetStationHighlightedIncidentsResponses, GetStationHighlightedIncidentsErrors, ThrowOnError>({ url: '/stations/{name}/highlighted-incidents', ...options });
+
+/**
+ * Retrieve station collaborations
+ *
+ * Retrieve stations that collaborated with the given station
+ */
+export const getStationCollaborations = <ThrowOnError extends boolean = false>(options: Options<GetStationCollaborationsData, ThrowOnError>) => (options.client ?? client).get<GetStationCollaborationsResponses, GetStationCollaborationsErrors, ThrowOnError>({ url: '/stations/{name}/collaborations', ...options });
+
+/**
+ * Retrieve station vehicles
+ *
+ * Retrieve vehicles assigned to the station with stats
+ */
+export const getStationVehicles = <ThrowOnError extends boolean = false>(options: Options<GetStationVehiclesData, ThrowOnError>) => (options.client ?? client).get<GetStationVehiclesResponses, GetStationVehiclesErrors, ThrowOnError>({ url: '/stations/{name}/vehicles', ...options });
+
+/**
+ * Retrieve station image
+ *
+ * Retrieve the station image
+ */
+export const getStationImage = <ThrowOnError extends boolean = false>(options: Options<GetStationImageData, ThrowOnError>) => (options.client ?? client).get<GetStationImageResponses, GetStationImageErrors, ThrowOnError>({ url: '/stations/{name}/image', ...options });
+
+/**
+ * Retrieve original station image
+ *
+ * Retrieve the original station image from storage
+ */
+export const getStationOriginalImage = <ThrowOnError extends boolean = false>(options: Options<GetStationOriginalImageData, ThrowOnError>) => (options.client ?? client).get<GetStationOriginalImageResponses, GetStationOriginalImageErrors, ThrowOnError>({ url: '/stations/{name}/image/original', ...options });
+
+/**
+ * Get year recap statistics
+ *
+ * Year-to-date statistics about emergency response
+ */
+export const getYearRecap = <ThrowOnError extends boolean = false>(options?: Options<GetYearRecapData, ThrowOnError>) => (options?.client ?? client).get<GetYearRecapResponses, unknown, ThrowOnError>({ url: '/stats/year-recap', ...options });
+
+/**
+ * Get top dispatched stations
+ *
+ * Top dispatched stations by count
+ */
+export const getTopDispatchedStations = <ThrowOnError extends boolean = false>(options?: Options<GetTopDispatchedStationsData, ThrowOnError>) => (options?.client ?? client).get<GetTopDispatchedStationsResponses, unknown, ThrowOnError>({ url: '/stats/top-dispatched-stations', ...options });
+
+/**
+ * Get station response time rankings
+ *
+ * Station response time rankings (fastest, slowest, and national average)
+ */
+export const getTopResponseTimes = <ThrowOnError extends boolean = false>(options?: Options<GetTopResponseTimesData, ThrowOnError>) => (options?.client ?? client).get<GetTopResponseTimesResponses, unknown, ThrowOnError>({ url: '/stats/top-response-times', ...options });
+
+/**
+ * Get incidents by day of week
+ *
+ * Incidents distribution by day of week
+ */
+export const getIncidentsByDayOfWeek = <ThrowOnError extends boolean = false>(options?: Options<GetIncidentsByDayOfWeekData, ThrowOnError>) => (options?.client ?? client).get<GetIncidentsByDayOfWeekResponses, unknown, ThrowOnError>({ url: '/stats/incidents-by-day-of-week', ...options });
+
+/**
+ * Get incidents by hour
+ *
+ * Incidents distribution by hour of day
+ */
+export const getIncidentsByHour = <ThrowOnError extends boolean = false>(options?: Options<GetIncidentsByHourData, ThrowOnError>) => (options?.client ?? client).get<GetIncidentsByHourResponses, unknown, ThrowOnError>({ url: '/stats/incidents-by-hour', ...options });
+
+/**
+ * Get daily incidents comparison
+ *
+ * Daily incidents comparison between current and previous period
+ */
+export const getDailyIncidents = <ThrowOnError extends boolean = false>(options?: Options<GetDailyIncidentsData, ThrowOnError>) => (options?.client ?? client).get<GetDailyIncidentsResponses, unknown, ThrowOnError>({ url: '/stats/daily-incidents', ...options });
+
+/**
+ * Get system overview
+ *
+ * System-wide overview statistics including operative stations, active vehicles, and average response time over the last 30 days
+ */
+export const getSystemOverview = <ThrowOnError extends boolean = false>(options?: Options<GetSystemOverviewData, ThrowOnError>) => (options?.client ?? client).get<GetSystemOverviewResponses, unknown, ThrowOnError>({ url: '/stats/system-overview', ...options });
+
+/**
+ * List incident types
+ *
+ * Retrieve all incident types with hierarchy metadata
+ */
+export const listIncidentTypes = <ThrowOnError extends boolean = false>(options?: Options<ListIncidentTypesData, ThrowOnError>) => (options?.client ?? client).get<ListIncidentTypesResponses, unknown, ThrowOnError>({ url: '/types', ...options });
+
+/**
+ * Retrieve incident type
+ *
+ * Retrieve a single incident type and its direct children
+ */
+export const getIncidentType = <ThrowOnError extends boolean = false>(options: Options<GetIncidentTypeData, ThrowOnError>) => (options.client ?? client).get<GetIncidentTypeResponses, GetIncidentTypeErrors, ThrowOnError>({ url: '/types/{code}', ...options });
+
+/**
+ * Retrieve incident type image
+ *
+ * Retrieve the illustration image for an incident type
+ */
+export const getIncidentTypeImage = <ThrowOnError extends boolean = false>(options: Options<GetIncidentTypeImageData, ThrowOnError>) => (options.client ?? client).get<GetIncidentTypeImageResponses, GetIncidentTypeImageErrors, ThrowOnError>({ url: '/types/{code}/image', ...options });
+
+/**
+ * Retrieve original incident type image
+ *
+ * Retrieve the original incident type image from storage
+ */
+export const getIncidentTypeOriginalImage = <ThrowOnError extends boolean = false>(options: Options<GetIncidentTypeOriginalImageData, ThrowOnError>) => (options.client ?? client).get<GetIncidentTypeOriginalImageResponses, GetIncidentTypeOriginalImageErrors, ThrowOnError>({ url: '/types/{code}/image/original', ...options });

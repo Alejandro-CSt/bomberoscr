@@ -24,3 +24,10 @@ export function buildMapImageUrl(incidentId: number): string {
 export function buildTypeImageUrl(code: string): string {
   return `${getApiBaseUrl()}/types/${code}/image`;
 }
+
+/**
+ * Build the URL for a station's image.
+ */
+export function buildStationImageUrl(stationName: string): string {
+  return `${getApiBaseUrl()}/stations/${encodeURIComponent(stationName.trim())}/image`;
+}

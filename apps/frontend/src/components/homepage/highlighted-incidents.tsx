@@ -13,7 +13,17 @@ import {
   timeRangeParser
 } from "@/components/homepage/time-range-search-params";
 import { Tabs, TabsList, TabsTab } from "@/components/ui/tabs";
-import { getIncidentsHighlightedOptions } from "@/lib/api/@tanstack/react-query.gen";
+import { listIncidentsOptions } from "@/lib/api/@tanstack/react-query.gen";
+
+function getDateRange(days: number) {
+  const end = new Date();
+  const start = new Date();
+  start.setDate(start.getDate() - days);
+  return {
+    start: start.toISOString(),
+    end: end.toISOString()
+  };
+}
 
 export function HighlightedIncidents() {
   const [timeRange] = useQueryState(
@@ -23,17 +33,22 @@ export function HighlightedIncidents() {
     })
   );
 
-  const highlightedOptions = getIncidentsHighlightedOptions({
-    query: { timeRange }
-  });
+  const { start, end } = getDateRange(timeRange);
 
   const { data, isLoading, isError } = useQuery({
-    ...highlightedOptions,
+    ...listIncidentsOptions({
+      query: {
+        sort: ["totalDispatched", "desc"],
+        pageSize: 6,
+        start,
+        end
+      }
+    }),
     staleTime: 60 * 60 * 1000,
     gcTime: 60 * 60 * 1000
   });
 
-  const incidents = data?.incidents ?? [];
+  const incidents = data?.data ?? [];
 
   return (
     <section className="flex flex-col gap-4 pt-8">

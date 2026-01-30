@@ -9,14 +9,14 @@ import { DailyIncidentsChart } from "@/components/homepage/charts/daily-incident
 import { IncidentsByDayOfWeekChart } from "@/components/homepage/charts/incidents-by-day-of-week-chart";
 import { IncidentsByHourChart } from "@/components/homepage/charts/incidents-by-hour-chart";
 import {
-  getStatsDailyIncidentsOptions,
-  getStatsIncidentsByDayOfWeekOptions,
-  getStatsIncidentsByHourOptions
+  getDailyIncidentsOptions,
+  getIncidentsByDayOfWeekOptions,
+  getIncidentsByHourOptions
 } from "@/lib/api/@tanstack/react-query.gen";
 
 function IncidentsByDayOfWeekSection() {
   const { data, isLoading, isError } = useQuery({
-    ...getStatsIncidentsByDayOfWeekOptions(),
+    ...getIncidentsByDayOfWeekOptions({ query: { timeRange: 30 } }),
     staleTime: 30 * 60 * 1000, // 30 minutes
     gcTime: 30 * 60 * 1000
   });
@@ -50,7 +50,7 @@ function IncidentsByDayOfWeekSection() {
 
 function IncidentsByHourSection() {
   const { data, isLoading, isError } = useQuery({
-    ...getStatsIncidentsByHourOptions(),
+    ...getIncidentsByHourOptions({ query: { timeRange: 30 } }),
     staleTime: 30 * 60 * 1000, // 30 minutes
     gcTime: 30 * 60 * 1000
   });
@@ -84,7 +84,7 @@ function IncidentsByHourSection() {
 
 function DailyIncidentsSection() {
   const { data, isLoading, isError } = useQuery({
-    ...getStatsDailyIncidentsOptions(),
+    ...getDailyIncidentsOptions({ query: { timeRange: 30 } }),
     staleTime: 30 * 60 * 1000, // 30 minutes
     gcTime: 30 * 60 * 1000
   });

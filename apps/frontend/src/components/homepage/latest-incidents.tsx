@@ -4,8 +4,7 @@ import { Link } from "@tanstack/react-router";
 import { ArrowRightIcon } from "lucide-react";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import { getIncidentsOptions } from "@/lib/api/@tanstack/react-query.gen";
-import { client } from "@/lib/api/client.gen";
+import { listIncidentsOptions } from "@/lib/api/@tanstack/react-query.gen";
 import { formatRelativeTime } from "@/lib/utils";
 
 interface LatestIncident {
@@ -17,14 +16,15 @@ interface LatestIncident {
   dispatchedVehiclesCount: number;
   responsibleStation: string;
   incidentTimestamp: string;
-  incidentCode: string | null;
+  incidentCode: {
+    code: string;
+    name: string;
+    imageUrl: string | null;
+  } | null;
 }
 
 function LatestIncidentCard({ incident }: { incident: LatestIncident }) {
-  const baseUrl = client.getConfig().baseUrl ?? "";
-  const typeImageUrl = incident.incidentCode
-    ? `${baseUrl}/incidents/types/${encodeURIComponent(incident.incidentCode)}/image`
-    : null;
+  const typeImageUrl = incident.incidentCode?.imageUrl ?? null;
 
   return (
     <Link
@@ -112,11 +112,9 @@ function LatestIncidentCardSkeleton() {
 }
 
 export function LatestIncidents() {
-  const latestOptions = getIncidentsOptions({
+  const latestOptions = listIncidentsOptions({
     query: {
-      limit: 6,
-      sortBy: "id",
-      sortOrder: "desc"
+      pageSize: 6
     }
   });
 
@@ -126,18 +124,18 @@ export function LatestIncidents() {
     gcTime: 60 * 60 * 1000
   });
 
-  const latestIncidents = data?.view === "default" ? data.incidents : [];
+  const latestIncidents = data?.data ?? [];
 
   const cards: LatestIncident[] = latestIncidents.map((incident) => ({
     id: incident.id,
     slug: incident.slug,
-    details: incident.importantDetails || "Incidente",
-    address: incident.address ?? "Ubicación pendiente",
-    dispatchedStationsCount: incident.dispatchedStationsCount ?? 0,
-    dispatchedVehiclesCount: incident.dispatchedVehiclesCount ?? 0,
-    responsibleStation: incident.responsibleStation ?? "Estación pendiente",
+    details: incident.importantDetails,
+    address: incident.address,
+    dispatchedStationsCount: incident.dispatchedStationsCount,
+    dispatchedVehiclesCount: incident.dispatchedVehiclesCount,
+    responsibleStation: incident.responsibleStationName ?? "Estación pendiente",
     incidentTimestamp: incident.incidentTimestamp,
-    incidentCode: incident.specificIncidentCode ?? null
+    incidentCode: incident.specificActualType
   }));
 
   return (

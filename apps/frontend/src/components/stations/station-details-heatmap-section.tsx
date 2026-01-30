@@ -1,7 +1,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import { getStationsByKeyHeatmapOptions } from "@/lib/api/@tanstack/react-query.gen";
+import { getStationHeatmapOptions } from "@/lib/api/@tanstack/react-query.gen";
 import { Route } from "@/routes/_dashboard/estaciones/$name";
 
 import { StationDetailsIncidentsHeatmap } from "./station-details-incidents-heatmap";
@@ -9,8 +9,8 @@ import { StationDetailsIncidentsHeatmap } from "./station-details-incidents-heat
 export function StationDetailsHeatmapSection() {
   const { station } = Route.useLoaderData();
   const { data } = useSuspenseQuery(
-    getStationsByKeyHeatmapOptions({
-      path: { key: station.stationKey }
+    getStationHeatmapOptions({
+      path: { name: station.name }
     })
   );
 

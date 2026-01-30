@@ -4,18 +4,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { client } from "@/lib/api/client.gen";
 import { cn } from "@/lib/utils";
 
-interface StationsDirectoryCardProps {
-  station: {
-    name: string;
-    stationKey: string;
-    address: string | null;
-  };
-}
+import type { GetStationByNameResponse } from "@/lib/api/types.gen";
 
-export function StationsDirectoryCard({ station }: StationsDirectoryCardProps) {
-  const baseUrl = client.getConfig().baseUrl ?? "";
-  const imageUrl = `${baseUrl}/stations/${encodeURIComponent(station.stationKey)}/image`;
-
+export function StationsDirectoryCard({
+  station
+}: {
+  station: GetStationByNameResponse["station"];
+}) {
   return (
     <Link
       to="/estaciones/$name"
@@ -25,7 +20,7 @@ export function StationsDirectoryCard({ station }: StationsDirectoryCardProps) {
         <div className="relative">
           <div className="aspect-3/2 w-full overflow-hidden rounded-t-xl bg-muted">
             <img
-              src={imageUrl}
+              src={station.imageUrl}
               alt={`Estación ${station.name}`}
               className="h-full w-full object-cover"
               loading="lazy"

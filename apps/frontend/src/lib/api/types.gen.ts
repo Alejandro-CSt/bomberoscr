@@ -4,99 +4,235 @@ export type ClientOptions = {
     baseUrl: `${string}://${string}/bomberos/hono` | (string & {});
 };
 
-export type GetIncidentsData = {
+export type ListIncidentsData = {
     body?: never;
     path?: never;
     query?: {
-        limit?: number;
+        /**
+         * A cursor for pagination, representing the last item from the previous page.
+         */
         cursor?: number | null;
-        station?: string | null;
-        view?: 'default' | 'map';
-        sortBy?: 'id' | 'incidentTimestamp';
-        sortOrder?: 'asc' | 'desc';
-        startTime?: string | null;
-        endTime?: string | null;
+        /**
+         * Sorting order as a tuple: [field, direction]. Example: ['id', 'desc'].
+         */
+        sort?: [
+            string,
+            string
+        ] | null;
+        /**
+         * Number of incidents to return per page (1-100).
+         */
+        pageSize?: number;
+        /**
+         * Search query string to filter incidents by text.
+         */
+        q?: string | null;
+        /**
+         * Start date (inclusive) for filtering incidents, in ISO 8601 format.
+         */
+        start?: string | null;
+        /**
+         * End date (inclusive) for filtering incidents, in ISO 8601 format.
+         */
+        end?: string | null;
+        /**
+         * List of station IDs to filter incidents.
+         */
+        stations?: number | null | Array<number | null> | unknown;
+        /**
+         * List of incident IDs to filter incidents.
+         */
+        ids?: number | null | Array<number | null> | unknown;
+        /**
+         * List of incident types to filter incidents.
+         */
+        types?: string | Array<string>;
+        /**
+         * Filter by open status. true: only open incidents, false: only closed incidents
+         */
+        open?: string | null;
+        /**
+         * Bounding box for filtering incidents by location.
+         */
+        bounds?: {
+            north: number | null;
+            south: number | null;
+            east: number | null;
+            west: number | null;
+        } | null;
     };
     url: '/incidents';
 };
 
-export type GetIncidentsErrors = {
+export type ListIncidentsResponses = {
     /**
-     * Invalid time range (must be positive and not exceed 3 days for map view)
-     */
-    400: {
-        message: string;
-    };
-};
-
-export type GetIncidentsError = GetIncidentsErrors[keyof GetIncidentsErrors];
-
-export type GetIncidentsResponses = {
-    /**
-     * List of incidents. 'default' view returns paginated results with nextCursor; 'map' view returns all matching coordinates (max 3 day range).
+     * Response containing a list of incidents and pagination metadata
      */
     200: {
-        view: 'default';
-        incidents: Array<{
+        /**
+         * Pagination metadata
+         */
+        meta: {
+            /**
+             * Cursor for pagination; null if there is no next page
+             */
+            cursor: number | null;
+            /**
+             * Indicates if there is a previous page of results
+             */
+            hasPreviousPage: boolean;
+            /**
+             * Indicates if there is a next page of results
+             */
+            hasNextPage: boolean;
+        };
+        /**
+         * Array of incident list items
+         */
+        data: Array<{
+            /**
+             * The ID of the incident.
+             */
             id: number;
+            /**
+             * URL-friendly slug for the incident.
+             */
             slug: string;
+            /**
+             * Human-readable title for the incident.
+             */
+            title: string;
+            /**
+             * Whether the incident is currently open.
+             */
             isOpen: boolean;
-            EEConsecutive: string | null;
-            address: string | null;
-            incidentTimestamp: string;
-            importantDetails: string | null;
-            specificIncidentCode: string | null;
-            incidentType: string | null;
-            responsibleStation: string | null;
-            specificIncidentType: string | null;
-            dispatchedVehiclesCount: number;
-            dispatchedStationsCount: number;
-        }>;
-        nextCursor: number | null;
-    } | {
-        view: 'map';
-        incidents: Array<{
-            id: number;
-            slug: string;
-            latitude: string;
-            longitude: string;
-        }>;
-    };
-};
-
-export type GetIncidentsResponse = GetIncidentsResponses[keyof GetIncidentsResponses];
-
-export type GetIncidentsHighlightedData = {
-    body?: never;
-    path?: never;
-    query?: {
-        timeRange?: number;
-    };
-    url: '/incidents/highlighted';
-};
-
-export type GetIncidentsHighlightedResponses = {
-    /**
-     * List of highlighted incidents sorted by total emergency response deployment
-     */
-    200: {
-        incidents: Array<{
-            id: number;
-            slug: string;
-            incidentTimestamp: string;
-            details: string;
+            /**
+             * The consecutive number of the incident.
+             */
+            EEConsecutive: string;
+            /**
+             * The address of the incident.
+             */
             address: string;
-            responsibleStation: string;
-            dispatchedVehiclesCount: number;
+            /**
+             * The timestamp of the incident.
+             */
+            incidentTimestamp: string;
+            /**
+             * The timestamp when the incident was last modified.
+             */
+            modifiedAt: string;
+            /**
+             * The important details of the incident.
+             */
+            importantDetails: string;
+            /**
+             * The latitude coordinate of the incident.
+             */
+            latitude: number;
+            /**
+             * The longitude coordinate of the incident.
+             */
+            longitude: number;
+            /**
+             * URL to the incident's map image.
+             */
+            mapImageUrl: string | null;
+            /**
+             * General type assigned by dispatch.
+             */
+            dispatchType: {
+                /**
+                 * Type code.
+                 */
+                code: string;
+                /**
+                 * Type name.
+                 */
+                name: string;
+                /**
+                 * URL to the type's icon image.
+                 */
+                imageUrl: string | null;
+            } | null;
+            /**
+             * Specific type assigned by dispatch.
+             */
+            specificDispatchType: {
+                /**
+                 * Type code.
+                 */
+                code: string;
+                /**
+                 * Type name.
+                 */
+                name: string;
+                /**
+                 * URL to the type's icon image.
+                 */
+                imageUrl: string | null;
+            } | null;
+            /**
+             * Actual general type (set by firefighters on scene).
+             */
+            actualType: {
+                /**
+                 * Type code.
+                 */
+                code: string;
+                /**
+                 * Type name.
+                 */
+                name: string;
+                /**
+                 * URL to the type's icon image.
+                 */
+                imageUrl: string | null;
+            } | null;
+            /**
+             * Actual specific type (set by firefighters on scene).
+             */
+            specificActualType: {
+                /**
+                 * Type code.
+                 */
+                code: string;
+                /**
+                 * Type name.
+                 */
+                name: string;
+                /**
+                 * URL to the type's icon image.
+                 */
+                imageUrl: string | null;
+            } | null;
+            /**
+             * Name of the responsible station for the incident.
+             */
+            responsibleStationName: string | null;
+            /**
+             * Name of the district where the incident occurred.
+             */
+            districtName: string | null;
+            /**
+             * Number of stations dispatched to the incident.
+             */
             dispatchedStationsCount: number;
-            hasMapImage: boolean;
+            /**
+             * Number of vehicles dispatched to the incident.
+             */
+            dispatchedVehiclesCount: number;
+            /**
+             * Total dispatched (stations + vehicles).
+             */
+            totalDispatched: number;
         }>;
     };
 };
 
-export type GetIncidentsHighlightedResponse = GetIncidentsHighlightedResponses[keyof GetIncidentsHighlightedResponses];
+export type ListIncidentsResponse = ListIncidentsResponses[keyof ListIncidentsResponses];
 
-export type GetIncidentsByIdData = {
+export type GetIncidentByIdData = {
     body?: never;
     path: {
         id: number | null;
@@ -105,7 +241,7 @@ export type GetIncidentsByIdData = {
     url: '/incidents/{id}';
 };
 
-export type GetIncidentsByIdErrors = {
+export type GetIncidentByIdErrors = {
     /**
      * Incident not found
      */
@@ -114,57 +250,222 @@ export type GetIncidentsByIdErrors = {
     };
 };
 
-export type GetIncidentsByIdError = GetIncidentsByIdErrors[keyof GetIncidentsByIdErrors];
+export type GetIncidentByIdError = GetIncidentByIdErrors[keyof GetIncidentByIdErrors];
 
-export type GetIncidentsByIdResponses = {
+export type GetIncidentByIdResponses = {
     /**
-     * Detailed incident information
+     * Incident object
      */
     200: {
-        incident: {
-            id: number;
-            title: string;
-            incidentTimestamp: string;
-            dispatchType: string;
-            actualType: string | null;
-            address: string | null;
-            isOpen: boolean;
-            modifiedAt: string | null;
-            cantonName: string | null;
-            provinceName: string | null;
-            districtName: string | null;
-            location: string | null;
-            latitude: string | null;
-            longitude: string | null;
-            hasMapImage: boolean;
-            EEConsecutive: string | null;
-            dispatchedVehiclesCount: number;
-            dispatchedStationsCount: number;
-            dispatchedStations: Array<{
-                name: string;
-                stationKey: string;
-                isResponsible: boolean;
-                vehicles: Array<{
-                    internalNumber: string;
-                    dispatchTime: string | null;
-                    arrivalTime: string | null;
-                    departureTime: string | null;
-                }>;
-            }>;
-        };
+        /**
+         * The ID of the incident.
+         */
+        id: number;
+        /**
+         * URL-friendly slug for the incident.
+         */
+        slug: string;
+        /**
+         * Human-readable title for the incident.
+         */
+        title: string;
+        /**
+         * Whether the incident is currently open.
+         */
+        isOpen: boolean;
+        /**
+         * The consecutive number of the incident.
+         */
+        EEConsecutive: string;
+        /**
+         * The address of the incident.
+         */
+        address: string;
+        /**
+         * The timestamp of the incident.
+         */
+        incidentTimestamp: string;
+        /**
+         * The timestamp when the incident was last modified.
+         */
+        modifiedAt: string;
+        /**
+         * The important details of the incident.
+         */
+        importantDetails: string;
+        /**
+         * The latitude coordinate of the incident.
+         */
+        latitude: number;
+        /**
+         * The longitude coordinate of the incident.
+         */
+        longitude: number;
+        /**
+         * Name of the canton where the incident occurred.
+         */
+        cantonName: string | null;
+        /**
+         * URL to the incident's map image.
+         */
+        mapImageUrl: string | null;
+        /**
+         * General type assigned by dispatch.
+         */
+        dispatchType: {
+            /**
+             * Type code.
+             */
+            code: string;
+            /**
+             * Type name.
+             */
+            name: string;
+            /**
+             * URL to the type's icon image.
+             */
+            imageUrl: string | null;
+        } | null;
+        /**
+         * Specific type assigned by dispatch.
+         */
+        specificDispatchType: {
+            /**
+             * Type code.
+             */
+            code: string;
+            /**
+             * Type name.
+             */
+            name: string;
+            /**
+             * URL to the type's icon image.
+             */
+            imageUrl: string | null;
+        } | null;
+        /**
+         * Actual general type (set by firefighters on scene).
+         */
+        actualType: {
+            /**
+             * Type code.
+             */
+            code: string;
+            /**
+             * Type name.
+             */
+            name: string;
+            /**
+             * URL to the type's icon image.
+             */
+            imageUrl: string | null;
+        } | null;
+        /**
+         * Actual specific type (set by firefighters on scene).
+         */
+        specificActualType: {
+            /**
+             * Type code.
+             */
+            code: string;
+            /**
+             * Type name.
+             */
+            name: string;
+            /**
+             * URL to the type's icon image.
+             */
+            imageUrl: string | null;
+        } | null;
+        /**
+         * Statistics about incidents of this type.
+         */
         statistics: {
+            /**
+             * The year of the incident.
+             */
             currentYear: number;
+            /**
+             * Count of incidents of this type in the incident's year.
+             */
             currentYearCount: number;
+            /**
+             * Count of incidents of this type in the incident's canton for that year.
+             */
             currentYearCantonCount: number;
+            /**
+             * The year before the incident.
+             */
             previousYear: number;
+            /**
+             * Count of incidents of this type in the previous year.
+             */
             previousYearCount: number;
         };
+        /**
+         * Stations dispatched to the incident.
+         */
+        dispatchedStations: Array<{
+            /**
+             * The station name.
+             */
+            name: string;
+            /**
+             * The station key.
+             */
+            stationKey: string;
+            /**
+             * URL to the station's image.
+             */
+            imageUrl: string;
+            /**
+             * Whether the station is responsible for the incident.
+             */
+            isResponsible: boolean;
+            /**
+             * Vehicles dispatched from this station.
+             */
+            vehicles: Array<{
+                /**
+                 * The vehicle ID.
+                 */
+                id: number;
+                /**
+                 * The internal vehicle number.
+                 */
+                internalNumber: string;
+                /**
+                 * The vehicle plate number.
+                 */
+                plate: string;
+                /**
+                 * The vehicle type.
+                 */
+                type: string;
+                /**
+                 * Time when the vehicle was dispatched.
+                 */
+                dispatchedTime: string;
+                /**
+                 * Time when the vehicle arrived at the scene.
+                 */
+                arrivalTime: string | null;
+                /**
+                 * Time when the vehicle departed from the scene.
+                 */
+                departureTime: string | null;
+                /**
+                 * Time when the vehicle returned to base.
+                 */
+                baseReturnTime: string | null;
+            }>;
+        }>;
     };
 };
 
-export type GetIncidentsByIdResponse = GetIncidentsByIdResponses[keyof GetIncidentsByIdResponses];
+export type GetIncidentByIdResponse = GetIncidentByIdResponses[keyof GetIncidentByIdResponses];
 
-export type GetIncidentsByIdTimelineData = {
+export type GetIncidentTimelineData = {
     body?: never;
     path: {
         id: number | null;
@@ -173,7 +474,7 @@ export type GetIncidentsByIdTimelineData = {
     url: '/incidents/{id}/timeline';
 };
 
-export type GetIncidentsByIdTimelineErrors = {
+export type GetIncidentTimelineErrors = {
     /**
      * Incident not found
      */
@@ -182,14 +483,13 @@ export type GetIncidentsByIdTimelineErrors = {
     };
 };
 
-export type GetIncidentsByIdTimelineError = GetIncidentsByIdTimelineErrors[keyof GetIncidentsByIdTimelineErrors];
+export type GetIncidentTimelineError = GetIncidentTimelineErrors[keyof GetIncidentTimelineErrors];
 
-export type GetIncidentsByIdTimelineResponses = {
+export type GetIncidentTimelineResponses = {
     /**
      * Timeline events for the incident
      */
     200: {
-        incidentId: number;
         events: Array<{
             id: string;
             date: string;
@@ -199,9 +499,9 @@ export type GetIncidentsByIdTimelineResponses = {
     };
 };
 
-export type GetIncidentsByIdTimelineResponse = GetIncidentsByIdTimelineResponses[keyof GetIncidentsByIdTimelineResponses];
+export type GetIncidentTimelineResponse = GetIncidentTimelineResponses[keyof GetIncidentTimelineResponses];
 
-export type GetIncidentsByIdResponseTimesData = {
+export type GetIncidentResponseTimesData = {
     body?: never;
     path: {
         id: number | null;
@@ -210,7 +510,7 @@ export type GetIncidentsByIdResponseTimesData = {
     url: '/incidents/{id}/response-times';
 };
 
-export type GetIncidentsByIdResponseTimesErrors = {
+export type GetIncidentResponseTimesErrors = {
     /**
      * Incident not found
      */
@@ -219,35 +519,72 @@ export type GetIncidentsByIdResponseTimesErrors = {
     };
 };
 
-export type GetIncidentsByIdResponseTimesError = GetIncidentsByIdResponseTimesErrors[keyof GetIncidentsByIdResponseTimesErrors];
+export type GetIncidentResponseTimesError = GetIncidentResponseTimesErrors[keyof GetIncidentResponseTimesErrors];
 
-export type GetIncidentsByIdResponseTimesResponses = {
+export type GetIncidentResponseTimesResponses = {
     /**
      * Response time breakdown for dispatched vehicles
      */
     200: {
-        incidentId: number;
-        isOpen: boolean;
+        /**
+         * Array of vehicle response time data.
+         */
         vehicles: Array<{
+            /**
+             * The vehicle dispatch ID.
+             */
             id: number;
+            /**
+             * The vehicle internal number.
+             */
             vehicle: string;
+            /**
+             * The station name.
+             */
             station: string;
+            /**
+             * Time when the vehicle was dispatched.
+             */
             dispatchedTime: string | null;
+            /**
+             * Time when the vehicle arrived at the scene.
+             */
             arrivalTime: string | null;
+            /**
+             * Time when the vehicle departed from the scene.
+             */
             departureTime: string | null;
+            /**
+             * Time when the vehicle returned to base.
+             */
             baseReturnTime: string | null;
+            /**
+             * Time in seconds from dispatch to arrival.
+             */
             responseTimeSeconds: number;
+            /**
+             * Time in seconds the vehicle was on scene.
+             */
             onSceneTimeSeconds: number;
+            /**
+             * Time in seconds from departure to base return.
+             */
             returnTimeSeconds: number;
+            /**
+             * Total time in seconds (response + on scene + return).
+             */
             totalTimeSeconds: number;
+            /**
+             * Whether the vehicle is still en route (departed but not returned).
+             */
             isEnRoute: boolean;
         }>;
     };
 };
 
-export type GetIncidentsByIdResponseTimesResponse = GetIncidentsByIdResponseTimesResponses[keyof GetIncidentsByIdResponseTimesResponses];
+export type GetIncidentResponseTimesResponse = GetIncidentResponseTimesResponses[keyof GetIncidentResponseTimesResponses];
 
-export type GetIncidentsByIdOgData = {
+export type GetIncidentOgImageData = {
     body?: never;
     path: {
         id: number | null;
@@ -256,7 +593,7 @@ export type GetIncidentsByIdOgData = {
     url: '/incidents/{id}/og';
 };
 
-export type GetIncidentsByIdOgErrors = {
+export type GetIncidentOgImageErrors = {
     /**
      * Incident not found
      */
@@ -265,67 +602,18 @@ export type GetIncidentsByIdOgErrors = {
     };
 };
 
-export type GetIncidentsByIdOgError = GetIncidentsByIdOgErrors[keyof GetIncidentsByIdOgErrors];
+export type GetIncidentOgImageError = GetIncidentOgImageErrors[keyof GetIncidentOgImageErrors];
 
-export type GetIncidentsByIdOgResponses = {
+export type GetIncidentOgImageResponses = {
     /**
      * OG Image for the incident
      */
     200: Blob | File;
 };
 
-export type GetIncidentsByIdOgResponse = GetIncidentsByIdOgResponses[keyof GetIncidentsByIdOgResponses];
+export type GetIncidentOgImageResponse = GetIncidentOgImageResponses[keyof GetIncidentOgImageResponses];
 
-export type GetIncidentsByIdMapOriginalData = {
-    body?: never;
-    path: {
-        id: number | null;
-    };
-    query: {
-        token: string;
-    };
-    url: '/incidents/{id}/map/original';
-};
-
-export type GetIncidentsByIdMapOriginalErrors = {
-    /**
-     * Invalid coordinates
-     */
-    400: {
-        message: string;
-    };
-    /**
-     * Invalid or missing token
-     */
-    401: {
-        message: string;
-    };
-    /**
-     * Incident not found
-     */
-    404: {
-        message: string;
-    };
-    /**
-     * Failed to fetch map image
-     */
-    502: {
-        message: string;
-    };
-};
-
-export type GetIncidentsByIdMapOriginalError = GetIncidentsByIdMapOriginalErrors[keyof GetIncidentsByIdMapOriginalErrors];
-
-export type GetIncidentsByIdMapOriginalResponses = {
-    /**
-     * Original map image from Mapbox (PNG)
-     */
-    200: Blob | File;
-};
-
-export type GetIncidentsByIdMapOriginalResponse = GetIncidentsByIdMapOriginalResponses[keyof GetIncidentsByIdMapOriginalResponses];
-
-export type GetIncidentsByIdMapData = {
+export type GetIncidentMapData = {
     body?: never;
     path: {
         id: number | null;
@@ -334,7 +622,7 @@ export type GetIncidentsByIdMapData = {
     url: '/incidents/{id}/map';
 };
 
-export type GetIncidentsByIdMapErrors = {
+export type GetIncidentMapErrors = {
     /**
      * Invalid coordinates
      */
@@ -355,386 +643,38 @@ export type GetIncidentsByIdMapErrors = {
     };
 };
 
-export type GetIncidentsByIdMapError = GetIncidentsByIdMapErrors[keyof GetIncidentsByIdMapErrors];
+export type GetIncidentMapError = GetIncidentMapErrors[keyof GetIncidentMapErrors];
 
-export type GetIncidentsByIdMapResponses = {
+export type GetIncidentMapResponses = {
     /**
      * Map image for the incident
      */
     200: Blob | File;
 };
 
-export type GetIncidentsByIdMapResponse = GetIncidentsByIdMapResponses[keyof GetIncidentsByIdMapResponses];
+export type GetIncidentMapResponse = GetIncidentMapResponses[keyof GetIncidentMapResponses];
 
-export type GetStationsData = {
-    body?: never;
-    path?: never;
-    query?: {
-        limit?: number;
-        page?: number;
-        search?: string;
-        isOperative?: boolean | null;
-        view?: 'default' | 'map' | 'directory';
-    };
-    url: '/stations';
-};
-
-export type GetStationsResponses = {
-    /**
-     * Paginated list of stations
-     */
-    200: {
-        view: 'default';
-        stations: Array<{
-            id: number;
-            name: string;
-            stationKey: string;
-            address: string | null;
-            latitude: string;
-            longitude: string;
-            isOperative: boolean | null;
-        }>;
-        pagination: {
-            page: number;
-            limit: number;
-            total: number;
-            totalPages: number;
-            hasNext: boolean;
-            hasPrev: boolean;
-        };
-    } | {
-        view: 'map';
-        stations: Array<{
-            id: number;
-            name: string;
-            stationKey: string;
-            latitude: string;
-            longitude: string;
-        }>;
-    } | {
-        view: 'directory';
-        stations: Array<{
-            stationKey: string;
-            name: string;
-            address: string | null;
-        }>;
-    };
-};
-
-export type GetStationsResponse = GetStationsResponses[keyof GetStationsResponses];
-
-export type GetStationsByKeyData = {
+export type GetIncidentOriginalMapData = {
     body?: never;
     path: {
-        key: string;
-    };
-    query?: never;
-    url: '/stations/{key}';
-};
-
-export type GetStationsByKeyErrors = {
-    /**
-     * Station not found
-     */
-    404: {
-        message: string;
-    };
-};
-
-export type GetStationsByKeyError = GetStationsByKeyErrors[keyof GetStationsByKeyErrors];
-
-export type GetStationsByKeyResponses = {
-    /**
-     * Station details
-     */
-    200: {
-        station: {
-            id: number;
-            name: string;
-            stationKey: string;
-            radioChannel: string | null;
-            latitude: string;
-            longitude: string;
-            address: string | null;
-            phoneNumber: string | null;
-            fax: string | null;
-            email: string | null;
-            isOperative: boolean | null;
-        };
-    };
-};
-
-export type GetStationsByKeyResponse = GetStationsByKeyResponses[keyof GetStationsByKeyResponses];
-
-export type GetStationsByKeyHighlightedIncidentsData = {
-    body?: never;
-    path: {
-        key: string;
-    };
-    query?: {
-        /**
-         * Time range in days to look for incidents
-         */
-        timeRange?: number;
-        /**
-         * Maximum number of incidents to return
-         */
-        limit?: number;
-    };
-    url: '/stations/{key}/highlighted-incidents';
-};
-
-export type GetStationsByKeyHighlightedIncidentsErrors = {
-    /**
-     * Station not found
-     */
-    404: {
-        message: string;
-    };
-};
-
-export type GetStationsByKeyHighlightedIncidentsError = GetStationsByKeyHighlightedIncidentsErrors[keyof GetStationsByKeyHighlightedIncidentsErrors];
-
-export type GetStationsByKeyHighlightedIncidentsResponses = {
-    /**
-     * Highlighted incidents for the station
-     */
-    200: {
-        incidents: Array<{
-            id: number;
-            incidentTimestamp: string;
-            details: string | null;
-            address: string | null;
-            responsibleStation: string | null;
-            latitude: string;
-            longitude: string;
-            dispatchedVehiclesCount: number;
-            dispatchedStationsCount: number;
-        }>;
-    };
-};
-
-export type GetStationsByKeyHighlightedIncidentsResponse = GetStationsByKeyHighlightedIncidentsResponses[keyof GetStationsByKeyHighlightedIncidentsResponses];
-
-export type GetStationsByKeyHeatmapData = {
-    body?: never;
-    path: {
-        key: string;
-    };
-    query?: {
-        /**
-         * Number of days to include in heatmap data
-         */
-        days?: number;
-    };
-    url: '/stations/{key}/heatmap';
-};
-
-export type GetStationsByKeyHeatmapErrors = {
-    /**
-     * Station not found
-     */
-    404: {
-        message: string;
-    };
-};
-
-export type GetStationsByKeyHeatmapError = GetStationsByKeyHeatmapErrors[keyof GetStationsByKeyHeatmapErrors];
-
-export type GetStationsByKeyHeatmapResponses = {
-    /**
-     * Heatmap data showing incidents per day
-     */
-    200: {
-        data: Array<{
-            date: string;
-            count: number;
-        }>;
-        totalIncidents: number;
-    };
-};
-
-export type GetStationsByKeyHeatmapResponse = GetStationsByKeyHeatmapResponses[keyof GetStationsByKeyHeatmapResponses];
-
-export type GetStationsByKeyRecentIncidentsData = {
-    body?: never;
-    path: {
-        key: string;
-    };
-    query?: {
-        /**
-         * Maximum number of incidents to return
-         */
-        limit?: number;
-    };
-    url: '/stations/{key}/recent-incidents';
-};
-
-export type GetStationsByKeyRecentIncidentsErrors = {
-    /**
-     * Station not found
-     */
-    404: {
-        message: string;
-    };
-};
-
-export type GetStationsByKeyRecentIncidentsError = GetStationsByKeyRecentIncidentsErrors[keyof GetStationsByKeyRecentIncidentsErrors];
-
-export type GetStationsByKeyRecentIncidentsResponses = {
-    /**
-     * Most recent incidents for the station
-     */
-    200: {
-        incidents: Array<{
-            id: number;
-            incidentTimestamp: string;
-            address: string | null;
-            importantDetails: string | null;
-            responsibleStation: string | null;
-            latitude: string;
-            longitude: string;
-            dispatchedVehiclesCount: number;
-            dispatchedStationsCount: number;
-        }>;
-    };
-};
-
-export type GetStationsByKeyRecentIncidentsResponse = GetStationsByKeyRecentIncidentsResponses[keyof GetStationsByKeyRecentIncidentsResponses];
-
-export type GetStationsByKeyCollaborationsData = {
-    body?: never;
-    path: {
-        key: string;
-    };
-    query?: never;
-    url: '/stations/{key}/collaborations';
-};
-
-export type GetStationsByKeyCollaborationsErrors = {
-    /**
-     * Station not found
-     */
-    404: {
-        message: string;
-    };
-};
-
-export type GetStationsByKeyCollaborationsError = GetStationsByKeyCollaborationsErrors[keyof GetStationsByKeyCollaborationsErrors];
-
-export type GetStationsByKeyCollaborationsResponses = {
-    /**
-     * Stations that collaborated with this one
-     */
-    200: {
-        collaborations: Array<{
-            id: number;
-            name: string;
-            stationKey: string;
-            collaborationCount: number;
-        }>;
-    };
-};
-
-export type GetStationsByKeyCollaborationsResponse = GetStationsByKeyCollaborationsResponses[keyof GetStationsByKeyCollaborationsResponses];
-
-export type GetStationsByKeyVehiclesData = {
-    body?: never;
-    path: {
-        key: string;
-    };
-    query?: never;
-    url: '/stations/{key}/vehicles';
-};
-
-export type GetStationsByKeyVehiclesErrors = {
-    /**
-     * Station not found
-     */
-    404: {
-        message: string;
-    };
-};
-
-export type GetStationsByKeyVehiclesError = GetStationsByKeyVehiclesErrors[keyof GetStationsByKeyVehiclesErrors];
-
-export type GetStationsByKeyVehiclesResponses = {
-    /**
-     * Vehicles assigned to this station with stats
-     */
-    200: {
-        vehicles: Array<{
-            id: number;
-            internalNumber: string | null;
-            plate: string | null;
-            descriptionType: string | null;
-            class: string | null;
-            descriptionOperationalStatus: string | null;
-            stats: {
-                incidentCount: number;
-                avgResponseTimeSeconds: number | null;
-            };
-        }>;
-    };
-};
-
-export type GetStationsByKeyVehiclesResponse = GetStationsByKeyVehiclesResponses[keyof GetStationsByKeyVehiclesResponses];
-
-export type GetStationsByNameByNameData = {
-    body?: never;
-    path: {
-        name: string;
-    };
-    query?: never;
-    url: '/stations/by-name/{name}';
-};
-
-export type GetStationsByNameByNameErrors = {
-    /**
-     * Station not found
-     */
-    404: {
-        message: string;
-    };
-};
-
-export type GetStationsByNameByNameError = GetStationsByNameByNameErrors[keyof GetStationsByNameByNameErrors];
-
-export type GetStationsByNameByNameResponses = {
-    /**
-     * Station details
-     */
-    200: {
-        station: {
-            id: number;
-            name: string;
-            stationKey: string;
-            radioChannel: string | null;
-            latitude: string;
-            longitude: string;
-            address: string | null;
-            phoneNumber: string | null;
-            fax: string | null;
-            email: string | null;
-            isOperative: boolean | null;
-        };
-    };
-};
-
-export type GetStationsByNameByNameResponse = GetStationsByNameByNameResponses[keyof GetStationsByNameByNameResponses];
-
-export type GetStationsByKeyImageOriginalData = {
-    body?: never;
-    path: {
-        key: string;
+        id: number | null;
     };
     query: {
+        /**
+         * The admin token.
+         */
         token: string;
     };
-    url: '/stations/{key}/image/original';
+    url: '/incidents/{id}/map/original';
 };
 
-export type GetStationsByKeyImageOriginalErrors = {
+export type GetIncidentOriginalMapErrors = {
+    /**
+     * Invalid coordinates
+     */
+    400: {
+        message: string;
+    };
     /**
      * Invalid or missing token
      */
@@ -742,34 +682,541 @@ export type GetStationsByKeyImageOriginalErrors = {
         message: string;
     };
     /**
-     * Station image not found
+     * Incident not found
+     */
+    404: {
+        message: string;
+    };
+    /**
+     * Failed to fetch map image
+     */
+    502: {
+        message: string;
+    };
+};
+
+export type GetIncidentOriginalMapError = GetIncidentOriginalMapErrors[keyof GetIncidentOriginalMapErrors];
+
+export type GetIncidentOriginalMapResponses = {
+    /**
+     * Original map image from Mapbox (PNG)
+     */
+    200: Blob | File;
+};
+
+export type GetIncidentOriginalMapResponse = GetIncidentOriginalMapResponses[keyof GetIncidentOriginalMapResponses];
+
+export type ListStationsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Number of stations to return per page.
+         */
+        limit?: number;
+        /**
+         * Page number for pagination.
+         */
+        page?: number;
+        /**
+         * Sorting order as a tuple: [field, direction].
+         */
+        sort?: [
+            string,
+            string
+        ] | null;
+        /**
+         * Search by station name or key.
+         */
+        q?: string;
+        /**
+         * Filter by operative status.
+         */
+        operative?: string;
+        /**
+         * Bounding box for filtering stations by location.
+         */
+        bounds?: {
+            north: number | null;
+            south: number | null;
+            east: number | null;
+            west: number | null;
+        } | null;
+    };
+    url: '/stations';
+};
+
+export type ListStationsResponses = {
+    /**
+     * List of stations
+     */
+    200: {
+        data: Array<{
+            /**
+             * Station ID.
+             */
+            id: number;
+            /**
+             * Station name.
+             */
+            name: string;
+            /**
+             * Station key.
+             */
+            stationKey: string;
+            /**
+             * Radio channel designation.
+             */
+            radioChannel: string | null;
+            /**
+             * Station latitude.
+             */
+            latitude: string;
+            /**
+             * Station longitude.
+             */
+            longitude: string;
+            /**
+             * Station address.
+             */
+            address: string | null;
+            /**
+             * Station phone number.
+             */
+            phoneNumber: string | null;
+            /**
+             * Station fax number.
+             */
+            fax: string | null;
+            /**
+             * Station email.
+             */
+            email: string | null;
+            /**
+             * Whether the station is operative.
+             */
+            isOperative: boolean | null;
+            /**
+             * Station image URL.
+             */
+            imageUrl: string;
+        }>;
+        meta: {
+            /**
+             * Current page number.
+             */
+            page: number;
+            /**
+             * Items per page.
+             */
+            limit: number;
+            /**
+             * Total number of stations.
+             */
+            total: number;
+            /**
+             * Total number of pages.
+             */
+            totalPages: number;
+            /**
+             * Whether a next page exists.
+             */
+            hasNextPage: boolean;
+            /**
+             * Whether a previous page exists.
+             */
+            hasPreviousPage: boolean;
+        };
+    };
+};
+
+export type ListStationsResponse = ListStationsResponses[keyof ListStationsResponses];
+
+export type GetStationsOverviewData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/stations/overview';
+};
+
+export type GetStationsOverviewResponses = {
+    /**
+     * Stations overview statistics
+     */
+    200: {
+        /**
+         * Number of operative stations.
+         */
+        operativeStationsCount: number;
+        /**
+         * Number of active vehicles (available or in incident).
+         */
+        operativeVehiclesCount: number;
+        /**
+         * Average response time in seconds over the last 30 days (outliers removed).
+         */
+        averageResponseTimeSeconds: number | null;
+    };
+};
+
+export type GetStationsOverviewResponse = GetStationsOverviewResponses[keyof GetStationsOverviewResponses];
+
+export type GetStationByNameData = {
+    body?: never;
+    path: {
+        /**
+         * Station name.
+         */
+        name: string;
+    };
+    query?: never;
+    url: '/stations/{name}';
+};
+
+export type GetStationByNameErrors = {
+    /**
+     * Station not found
      */
     404: {
         message: string;
     };
 };
 
-export type GetStationsByKeyImageOriginalError = GetStationsByKeyImageOriginalErrors[keyof GetStationsByKeyImageOriginalErrors];
+export type GetStationByNameError = GetStationByNameErrors[keyof GetStationByNameErrors];
 
-export type GetStationsByKeyImageOriginalResponses = {
+export type GetStationByNameResponses = {
     /**
-     * Original station image
+     * Station details
      */
-    200: Blob | File;
+    200: {
+        station: {
+            /**
+             * Station ID.
+             */
+            id: number;
+            /**
+             * Station name.
+             */
+            name: string;
+            /**
+             * Station key.
+             */
+            stationKey: string;
+            /**
+             * Radio channel designation.
+             */
+            radioChannel: string | null;
+            /**
+             * Station latitude.
+             */
+            latitude: string;
+            /**
+             * Station longitude.
+             */
+            longitude: string;
+            /**
+             * Station address.
+             */
+            address: string | null;
+            /**
+             * Station phone number.
+             */
+            phoneNumber: string | null;
+            /**
+             * Station fax number.
+             */
+            fax: string | null;
+            /**
+             * Station email.
+             */
+            email: string | null;
+            /**
+             * Whether the station is operative.
+             */
+            isOperative: boolean | null;
+            /**
+             * Station image URL.
+             */
+            imageUrl: string;
+        };
+    };
 };
 
-export type GetStationsByKeyImageOriginalResponse = GetStationsByKeyImageOriginalResponses[keyof GetStationsByKeyImageOriginalResponses];
+export type GetStationByNameResponse = GetStationByNameResponses[keyof GetStationByNameResponses];
 
-export type GetStationsByKeyImageData = {
+export type GetStationHeatmapData = {
     body?: never;
     path: {
-        key: string;
+        /**
+         * Station name.
+         */
+        name: string;
     };
-    query?: never;
-    url: '/stations/{key}/image';
+    query?: {
+        /**
+         * Number of days to include in heatmap data.
+         */
+        days?: number;
+    };
+    url: '/stations/{name}/heatmap';
 };
 
-export type GetStationsByKeyImageErrors = {
+export type GetStationHeatmapErrors = {
+    /**
+     * Station not found
+     */
+    404: {
+        message: string;
+    };
+};
+
+export type GetStationHeatmapError = GetStationHeatmapErrors[keyof GetStationHeatmapErrors];
+
+export type GetStationHeatmapResponses = {
+    /**
+     * Incident heatmap data
+     */
+    200: {
+        data: Array<{
+            /**
+             * Day in YYYY-MM-DD format.
+             */
+            date: string;
+            /**
+             * Number of incidents on that day.
+             */
+            count: number;
+        }>;
+        /**
+         * Total incidents in the requested range.
+         */
+        totalIncidents: number;
+    };
+};
+
+export type GetStationHeatmapResponse = GetStationHeatmapResponses[keyof GetStationHeatmapResponses];
+
+export type GetStationHighlightedIncidentsData = {
+    body?: never;
+    path: {
+        /**
+         * Station name.
+         */
+        name: string;
+    };
+    query?: {
+        /**
+         * Time range in days to look for incidents.
+         */
+        timeRange?: number;
+        /**
+         * Maximum number of incidents to return.
+         */
+        limit?: number;
+    };
+    url: '/stations/{name}/highlighted-incidents';
+};
+
+export type GetStationHighlightedIncidentsErrors = {
+    /**
+     * Station not found
+     */
+    404: {
+        message: string;
+    };
+};
+
+export type GetStationHighlightedIncidentsError = GetStationHighlightedIncidentsErrors[keyof GetStationHighlightedIncidentsErrors];
+
+export type GetStationHighlightedIncidentsResponses = {
+    /**
+     * Highlighted incidents for the station
+     */
+    200: {
+        incidents: Array<{
+            /**
+             * Incident ID.
+             */
+            id: number;
+            /**
+             * Incident timestamp.
+             */
+            incidentTimestamp: string;
+            /**
+             * Incident details.
+             */
+            details: string | null;
+            /**
+             * Incident address.
+             */
+            address: string | null;
+            /**
+             * Responsible station name.
+             */
+            responsibleStation: string | null;
+            /**
+             * Incident latitude.
+             */
+            latitude: string;
+            /**
+             * Incident longitude.
+             */
+            longitude: string;
+            /**
+             * URL to the incident's map image.
+             */
+            mapImageUrl: string | null;
+            /**
+             * Number of dispatched vehicles.
+             */
+            dispatchedVehiclesCount: number;
+            /**
+             * Number of dispatched stations.
+             */
+            dispatchedStationsCount: number;
+        }>;
+    };
+};
+
+export type GetStationHighlightedIncidentsResponse = GetStationHighlightedIncidentsResponses[keyof GetStationHighlightedIncidentsResponses];
+
+export type GetStationCollaborationsData = {
+    body?: never;
+    path: {
+        /**
+         * Station name.
+         */
+        name: string;
+    };
+    query?: never;
+    url: '/stations/{name}/collaborations';
+};
+
+export type GetStationCollaborationsErrors = {
+    /**
+     * Station not found
+     */
+    404: {
+        message: string;
+    };
+};
+
+export type GetStationCollaborationsError = GetStationCollaborationsErrors[keyof GetStationCollaborationsErrors];
+
+export type GetStationCollaborationsResponses = {
+    /**
+     * Stations that collaborated with this one
+     */
+    200: {
+        collaborations: Array<{
+            /**
+             * Station ID.
+             */
+            id: number;
+            /**
+             * Station name.
+             */
+            name: string;
+            /**
+             * Station key.
+             */
+            stationKey: string;
+            /**
+             * Station image URL.
+             */
+            imageUrl: string;
+            /**
+             * Number of collaborations with the station.
+             */
+            collaborationCount: number;
+        }>;
+    };
+};
+
+export type GetStationCollaborationsResponse = GetStationCollaborationsResponses[keyof GetStationCollaborationsResponses];
+
+export type GetStationVehiclesData = {
+    body?: never;
+    path: {
+        /**
+         * Station name.
+         */
+        name: string;
+    };
+    query?: never;
+    url: '/stations/{name}/vehicles';
+};
+
+export type GetStationVehiclesErrors = {
+    /**
+     * Station not found
+     */
+    404: {
+        message: string;
+    };
+};
+
+export type GetStationVehiclesError = GetStationVehiclesErrors[keyof GetStationVehiclesErrors];
+
+export type GetStationVehiclesResponses = {
+    /**
+     * Vehicles assigned to this station with stats
+     */
+    200: {
+        vehicles: Array<{
+            /**
+             * Vehicle ID.
+             */
+            id: number;
+            /**
+             * Vehicle internal number.
+             */
+            internalNumber: string | null;
+            /**
+             * Vehicle plate number.
+             */
+            plate: string | null;
+            /**
+             * Vehicle type description.
+             */
+            descriptionType: string | null;
+            /**
+             * Vehicle class.
+             */
+            class: string | null;
+            /**
+             * Operational status description.
+             */
+            descriptionOperationalStatus: string | null;
+            stats: {
+                /**
+                 * Number of incidents the vehicle was dispatched to.
+                 */
+                incidentCount: number;
+                /**
+                 * Average response time in seconds.
+                 */
+                avgResponseTimeSeconds: number | null;
+            };
+        }>;
+    };
+};
+
+export type GetStationVehiclesResponse = GetStationVehiclesResponses[keyof GetStationVehiclesResponses];
+
+export type GetStationImageData = {
+    body?: never;
+    path: {
+        /**
+         * Station name.
+         */
+        name: string;
+    };
+    query?: never;
+    url: '/stations/{name}/image';
+};
+
+export type GetStationImageErrors = {
     /**
      * Station image not found
      */
@@ -784,332 +1231,626 @@ export type GetStationsByKeyImageErrors = {
     };
 };
 
-export type GetStationsByKeyImageError = GetStationsByKeyImageErrors[keyof GetStationsByKeyImageErrors];
+export type GetStationImageError = GetStationImageErrors[keyof GetStationImageErrors];
 
-export type GetStationsByKeyImageResponses = {
+export type GetStationImageResponses = {
     /**
      * Station image
      */
     200: Blob | File;
 };
 
-export type GetStationsByKeyImageResponse = GetStationsByKeyImageResponses[keyof GetStationsByKeyImageResponses];
+export type GetStationImageResponse = GetStationImageResponses[keyof GetStationImageResponses];
 
-export type GetAdminIncidentsData = {
-    body?: never;
-    path?: never;
-    query: {
-        from: string;
-        to: string;
-    };
-    url: '/admin/incidents';
-};
-
-export type GetAdminIncidentsErrors = {
-    /**
-     * Missing or invalid admin-token cookie
-     */
-    401: {
-        message: string;
-    };
-    /**
-     * Failed to fetch incident list from SIGAE
-     */
-    500: {
-        message: string;
-    };
-    /**
-     * Admin synchronization is disabled
-     */
-    503: {
-        message: string;
-    };
-};
-
-export type GetAdminIncidentsError = GetAdminIncidentsErrors[keyof GetAdminIncidentsErrors];
-
-export type GetAdminIncidentsResponses = {
-    /**
-     * List of incidents from SIGAE within the date range
-     */
-    200: {
-        incidents: Array<{
-            id: number;
-            consecutivo: string;
-            fecha: string;
-            hora: string;
-            direccion: string;
-            tipoIncidente: string;
-            estacionResponsable: string;
-            synced: boolean;
-        }>;
-    };
-};
-
-export type GetAdminIncidentsResponse = GetAdminIncidentsResponses[keyof GetAdminIncidentsResponses];
-
-export type PostAdminIncidentsData = {
-    body?: {
-        incidentIds: Array<number>;
-    };
-    path?: never;
-    query?: never;
-    url: '/admin/incidents';
-};
-
-export type PostAdminIncidentsErrors = {
-    /**
-     * Missing or invalid admin-token cookie
-     */
-    401: {
-        message: string;
-    };
-    /**
-     * Admin synchronization is disabled
-     */
-    503: {
-        message: string;
-    };
-};
-
-export type PostAdminIncidentsError = PostAdminIncidentsErrors[keyof PostAdminIncidentsErrors];
-
-export type PostAdminIncidentsResponses = {
-    /**
-     * Sync results for the provided incident IDs
-     */
-    200: {
-        success: boolean;
-        totalIncidents: number;
-        syncedIncidents: number;
-        failedIncidents: number;
-        failedResults: Array<{
-            incidentId: number;
-            success: boolean;
-            error?: string;
-        }>;
-    };
-};
-
-export type PostAdminIncidentsResponse = PostAdminIncidentsResponses[keyof PostAdminIncidentsResponses];
-
-export type PostAdminIncidentsByIdData = {
+export type GetStationOriginalImageData = {
     body?: never;
     path: {
-        id: number | null;
+        /**
+         * Station name.
+         */
+        name: string;
     };
-    query?: never;
-    url: '/admin/incidents/{id}';
+    query: {
+        /**
+         * Token required to access the original image.
+         */
+        token: string;
+    };
+    url: '/stations/{name}/image/original';
 };
 
-export type PostAdminIncidentsByIdErrors = {
+export type GetStationOriginalImageErrors = {
     /**
-     * Missing or invalid admin-token cookie
+     * Invalid or missing token
      */
     401: {
         message: string;
     };
     /**
-     * Admin synchronization is disabled
+     * Station image not found
      */
-    503: {
+    404: {
         message: string;
     };
 };
 
-export type PostAdminIncidentsByIdError = PostAdminIncidentsByIdErrors[keyof PostAdminIncidentsByIdErrors];
+export type GetStationOriginalImageError = GetStationOriginalImageErrors[keyof GetStationOriginalImageErrors];
 
-export type PostAdminIncidentsByIdResponses = {
+export type GetStationOriginalImageResponses = {
     /**
-     * Sync result for the incident
+     * Original station image
      */
-    200: {
-        incidentId: number;
-        success: boolean;
-        error?: string;
-    };
+    200: Blob | File;
 };
 
-export type PostAdminIncidentsByIdResponse = PostAdminIncidentsByIdResponses[keyof PostAdminIncidentsByIdResponses];
+export type GetStationOriginalImageResponse = GetStationOriginalImageResponses[keyof GetStationOriginalImageResponses];
 
-export type GetStatsYearRecapData = {
+export type GetYearRecapData = {
     body?: never;
     path?: never;
     query?: {
+        /**
+         * Year to get recap for.
+         */
         year?: number;
     };
     url: '/stats/year-recap';
 };
 
-export type GetStatsYearRecapResponses = {
+export type GetYearRecapResponses = {
     /**
      * Year-to-date statistics about emergency response
      */
     200: {
+        /**
+         * The year of the recap.
+         */
         year: number;
+        /**
+         * Total number of incidents for the year.
+         */
         totalIncidents: number;
+        /**
+         * Average minutes between incidents.
+         */
         frequency: number | null;
+        /**
+         * Date with the most incidents.
+         */
         busiestDate: {
+            /**
+             * Date in YYYY-MM-DD format.
+             */
             date: string;
+            /**
+             * Number of incidents on that date.
+             */
             count: number;
         } | null;
+        /**
+         * Station with the most dispatches.
+         */
         busiestStation: {
+            /**
+             * Station name.
+             */
             name: string;
+            /**
+             * Number of dispatches.
+             */
             count: number;
         } | null;
+        /**
+         * Vehicle with the most dispatches.
+         */
         busiestVehicle: {
+            /**
+             * Vehicle internal number.
+             */
             internalNumber: string;
+            /**
+             * Number of dispatches.
+             */
             count: number;
         } | null;
+        /**
+         * Most common incident type.
+         */
         mostPopularIncidentType: {
+            /**
+             * Incident type name.
+             */
             name: string;
+            /**
+             * Number of incidents of this type.
+             */
             count: number;
         } | null;
     };
 };
 
-export type GetStatsYearRecapResponse = GetStatsYearRecapResponses[keyof GetStatsYearRecapResponses];
+export type GetYearRecapResponse = GetYearRecapResponses[keyof GetYearRecapResponses];
 
-export type GetStatsTopDispatchedStationsData = {
+export type GetTopDispatchedStationsData = {
     body?: never;
     path?: never;
     query?: {
-        timeRange?: number;
+        /**
+         * Start date (inclusive) for filtering, in ISO 8601 format.
+         */
+        start?: string | null;
+        /**
+         * End date (inclusive) for filtering, in ISO 8601 format.
+         */
+        end?: string | null;
     };
     url: '/stats/top-dispatched-stations';
 };
 
-export type GetStatsTopDispatchedStationsResponses = {
+export type GetTopDispatchedStationsResponses = {
     /**
      * Top dispatched stations by count
      */
     200: Array<{
+        /**
+         * Station name.
+         */
         name: string;
+        /**
+         * Station key.
+         */
         key: string | null;
+        /**
+         * Total dispatches.
+         */
         total: number;
+        /**
+         * Dispatches as responsible station.
+         */
         responsible: number;
+        /**
+         * Dispatches as support station.
+         */
         support: number;
     }>;
 };
 
-export type GetStatsTopDispatchedStationsResponse = GetStatsTopDispatchedStationsResponses[keyof GetStatsTopDispatchedStationsResponses];
+export type GetTopDispatchedStationsResponse = GetTopDispatchedStationsResponses[keyof GetTopDispatchedStationsResponses];
 
-export type GetStatsTopResponseTimesData = {
+export type GetTopResponseTimesData = {
     body?: never;
     path?: never;
     query?: {
-        timeRange?: number;
+        /**
+         * Start date (inclusive) for filtering, in ISO 8601 format.
+         */
+        start?: string | null;
+        /**
+         * End date (inclusive) for filtering, in ISO 8601 format.
+         */
+        end?: string | null;
     };
     url: '/stats/top-response-times';
 };
 
-export type GetStatsTopResponseTimesResponses = {
+export type GetTopResponseTimesResponses = {
     /**
      * Station response time rankings (fastest, slowest, and national average)
      */
     200: Array<{
+        /**
+         * Station name.
+         */
         name: string;
+        /**
+         * Station key.
+         */
         key: string | null;
+        /**
+         * Average response time in minutes.
+         */
         avgResponseTimeMinutes: number;
+        /**
+         * Total number of dispatches.
+         */
         totalDispatches: number;
+        /**
+         * Fastest response time in minutes.
+         */
         fastestResponseMinutes: number;
+        /**
+         * Slowest response time in minutes.
+         */
         slowestResponseMinutes: number;
+        /**
+         * Category of the station in the ranking.
+         */
         category: 'fastest' | 'slowest' | 'average';
     }>;
 };
 
-export type GetStatsTopResponseTimesResponse = GetStatsTopResponseTimesResponses[keyof GetStatsTopResponseTimesResponses];
+export type GetTopResponseTimesResponse = GetTopResponseTimesResponses[keyof GetTopResponseTimesResponses];
 
-export type GetStatsIncidentsByDayOfWeekData = {
+export type GetIncidentsByDayOfWeekData = {
     body?: never;
     path?: never;
     query?: {
-        timeRange?: number;
+        /**
+         * Start date (inclusive) for filtering, in ISO 8601 format.
+         */
+        start?: string | null;
+        /**
+         * End date (inclusive) for filtering, in ISO 8601 format.
+         */
+        end?: string | null;
     };
     url: '/stats/incidents-by-day-of-week';
 };
 
-export type GetStatsIncidentsByDayOfWeekResponses = {
+export type GetIncidentsByDayOfWeekResponses = {
     /**
      * Incidents distribution by day of week
      */
     200: Array<{
+        /**
+         * Day of the week in Spanish.
+         */
         dayOfWeek: string;
+        /**
+         * Number of incidents on that day.
+         */
         count: number;
     }>;
 };
 
-export type GetStatsIncidentsByDayOfWeekResponse = GetStatsIncidentsByDayOfWeekResponses[keyof GetStatsIncidentsByDayOfWeekResponses];
+export type GetIncidentsByDayOfWeekResponse = GetIncidentsByDayOfWeekResponses[keyof GetIncidentsByDayOfWeekResponses];
 
-export type GetStatsIncidentsByHourData = {
+export type GetIncidentsByHourData = {
     body?: never;
     path?: never;
     query?: {
-        timeRange?: number;
+        /**
+         * Start date (inclusive) for filtering, in ISO 8601 format.
+         */
+        start?: string | null;
+        /**
+         * End date (inclusive) for filtering, in ISO 8601 format.
+         */
+        end?: string | null;
     };
     url: '/stats/incidents-by-hour';
 };
 
-export type GetStatsIncidentsByHourResponses = {
+export type GetIncidentsByHourResponses = {
     /**
      * Incidents distribution by hour of day
      */
     200: Array<{
+        /**
+         * Hour of the day (0-23).
+         */
         hour: number;
+        /**
+         * Number of incidents at that hour.
+         */
         count: number;
+        /**
+         * Formatted hour display.
+         */
         displayHour: string;
     }>;
 };
 
-export type GetStatsIncidentsByHourResponse = GetStatsIncidentsByHourResponses[keyof GetStatsIncidentsByHourResponses];
+export type GetIncidentsByHourResponse = GetIncidentsByHourResponses[keyof GetIncidentsByHourResponses];
 
-export type GetStatsDailyIncidentsData = {
+export type GetDailyIncidentsData = {
     body?: never;
     path?: never;
     query?: {
-        timeRange?: number;
+        /**
+         * Start date (inclusive) for filtering, in ISO 8601 format.
+         */
+        start?: string | null;
+        /**
+         * End date (inclusive) for filtering, in ISO 8601 format.
+         */
+        end?: string | null;
     };
     url: '/stats/daily-incidents';
 };
 
-export type GetStatsDailyIncidentsResponses = {
+export type GetDailyIncidentsResponses = {
     /**
      * Daily incidents comparison between current and previous period
      */
     200: {
         data: Array<{
+            /**
+             * Date in YYYY-MM-DD format.
+             */
             date: string;
+            /**
+             * Day offset from start of range.
+             */
             dayOffset: number;
+            /**
+             * Incidents in current period.
+             */
             current: number;
+            /**
+             * Incidents in previous period.
+             */
             previous: number;
+            /**
+             * Formatted date display.
+             */
             displayDate: string;
         }>;
         summary: {
+            /**
+             * Total incidents in current period.
+             */
             currentTotal: number;
+            /**
+             * Total incidents in previous period.
+             */
             previousTotal: number;
+            /**
+             * Percentage change between periods.
+             */
             percentageChange: number;
         };
     };
 };
 
-export type GetStatsDailyIncidentsResponse = GetStatsDailyIncidentsResponses[keyof GetStatsDailyIncidentsResponses];
+export type GetDailyIncidentsResponse = GetDailyIncidentsResponses[keyof GetDailyIncidentsResponses];
 
-export type GetStatsSystemOverviewData = {
+export type GetSystemOverviewData = {
     body?: never;
     path?: never;
     query?: never;
     url: '/stats/system-overview';
 };
 
-export type GetStatsSystemOverviewResponses = {
+export type GetSystemOverviewResponses = {
     /**
      * System overview statistics
      */
     200: {
+        /**
+         * Number of operative stations.
+         */
         stationCount: number;
+        /**
+         * Number of active vehicles.
+         */
         activeVehicleCount: number;
+        /**
+         * Average response time in minutes over last 30 days.
+         */
         avgResponseTimeMinutes: number | null;
     };
 };
 
-export type GetStatsSystemOverviewResponse = GetStatsSystemOverviewResponses[keyof GetStatsSystemOverviewResponses];
+export type GetSystemOverviewResponse = GetSystemOverviewResponses[keyof GetSystemOverviewResponses];
+
+export type ListIncidentTypesData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/types';
+};
+
+export type ListIncidentTypesResponses = {
+    /**
+     * List of incident types
+     */
+    200: {
+        /**
+         * Flat list of incident types
+         */
+        items: Array<{
+            /**
+             * Incident type code
+             */
+            code: string;
+            /**
+             * Incident type name
+             */
+            name: string;
+            /**
+             * URL to the incident type image
+             */
+            imageUrl: string;
+            /**
+             * Parent incident type code
+             */
+            parentCode: string | null;
+            /**
+             * Depth level based on code segments
+             */
+            level: number;
+        }>;
+    };
+};
+
+export type ListIncidentTypesResponse = ListIncidentTypesResponses[keyof ListIncidentTypesResponses];
+
+export type GetIncidentTypeData = {
+    body?: never;
+    path: {
+        /**
+         * Incident type code (e.g., '1' for fire, '6.1.1.2.1' for snake rescue)
+         */
+        code: string;
+    };
+    query?: {
+        /**
+         * Comma-separated includes: children, ancestors
+         */
+        include?: string;
+    };
+    url: '/types/{code}';
+};
+
+export type GetIncidentTypeErrors = {
+    /**
+     * Incident type not found
+     */
+    404: {
+        message: string;
+    };
+};
+
+export type GetIncidentTypeError = GetIncidentTypeErrors[keyof GetIncidentTypeErrors];
+
+export type GetIncidentTypeResponses = {
+    /**
+     * Incident type details
+     */
+    200: {
+        type: {
+            /**
+             * Incident type code
+             */
+            code: string;
+            /**
+             * Incident type name
+             */
+            name: string;
+            /**
+             * URL to the incident type image
+             */
+            imageUrl: string;
+            /**
+             * Parent incident type code
+             */
+            parentCode: string | null;
+            /**
+             * Depth level based on code segments
+             */
+            level: number;
+        };
+        /**
+         * Direct children of this incident type
+         */
+        children?: Array<{
+            /**
+             * Child incident type code
+             */
+            code: string;
+            /**
+             * Child incident type name
+             */
+            name: string;
+            /**
+             * URL to the incident type image
+             */
+            imageUrl: string;
+        }>;
+        /**
+         * Ancestors of this incident type
+         */
+        ancestors?: Array<{
+            /**
+             * Ancestor incident type code
+             */
+            code: string;
+            /**
+             * Ancestor incident type name
+             */
+            name: string;
+            /**
+             * URL to the incident type image
+             */
+            imageUrl: string;
+            /**
+             * Depth level based on code segments
+             */
+            level: number;
+        }>;
+    };
+};
+
+export type GetIncidentTypeResponse = GetIncidentTypeResponses[keyof GetIncidentTypeResponses];
+
+export type GetIncidentTypeImageData = {
+    body?: never;
+    path: {
+        /**
+         * Incident type code (e.g., '1' for fire, '6.1.1.2.1' for snake rescue)
+         */
+        code: string;
+    };
+    query?: never;
+    url: '/types/{code}/image';
+};
+
+export type GetIncidentTypeImageErrors = {
+    /**
+     * No image found for this incident type or its parents
+     */
+    404: {
+        message: string;
+    };
+    /**
+     * Failed to fetch image from image proxy
+     */
+    502: {
+        message: string;
+    };
+};
+
+export type GetIncidentTypeImageError = GetIncidentTypeImageErrors[keyof GetIncidentTypeImageErrors];
+
+export type GetIncidentTypeImageResponses = {
+    /**
+     * Incident type illustration image
+     */
+    200: Blob | File;
+};
+
+export type GetIncidentTypeImageResponse = GetIncidentTypeImageResponses[keyof GetIncidentTypeImageResponses];
+
+export type GetIncidentTypeOriginalImageData = {
+    body?: never;
+    path: {
+        /**
+         * Incident type code (e.g., '1' for fire, '6.1.1.2.1' for snake rescue)
+         */
+        code: string;
+    };
+    query: {
+        /**
+         * The admin token.
+         */
+        token: string;
+    };
+    url: '/types/{code}/image/original';
+};
+
+export type GetIncidentTypeOriginalImageErrors = {
+    /**
+     * Invalid or missing token
+     */
+    401: {
+        message: string;
+    };
+    /**
+     * No image found for this incident type or its parents
+     */
+    404: {
+        message: string;
+    };
+};
+
+export type GetIncidentTypeOriginalImageError = GetIncidentTypeOriginalImageErrors[keyof GetIncidentTypeOriginalImageErrors];
+
+export type GetIncidentTypeOriginalImageResponses = {
+    /**
+     * Original incident type image (PNG)
+     */
+    200: Blob | File;
+};
+
+export type GetIncidentTypeOriginalImageResponse = GetIncidentTypeOriginalImageResponses[keyof GetIncidentTypeOriginalImageResponses];

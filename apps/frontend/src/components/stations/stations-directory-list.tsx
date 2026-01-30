@@ -3,16 +3,13 @@ import { AnimatePresence, motion } from "motion/react";
 
 import { StationsDirectoryCard } from "@/components/stations/stations-directory-card";
 
-interface StationsDirectoryListProps {
-  stations: Array<{
-    id: number;
-    name: string;
-    stationKey: string;
-    address: string | null;
-  }>;
-}
+import type { GetStationByNameResponse } from "@/lib/api/types.gen";
 
-export function StationsDirectoryList({ stations }: StationsDirectoryListProps) {
+export function StationsDirectoryList({
+  stations
+}: {
+  stations: GetStationByNameResponse["station"][];
+}) {
   if (stations.length === 0) {
     return (
       <div className="flex h-64 flex-col items-center justify-center rounded-xl border border-dashed bg-muted/40 text-center">
