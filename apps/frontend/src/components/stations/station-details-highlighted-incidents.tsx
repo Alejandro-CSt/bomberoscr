@@ -4,10 +4,7 @@ import {
   StationDetailsHighlightedCard,
   StationDetailsHighlightedCardSkeleton
 } from "@/components/stations/station-details-highlighted-card";
-import {
-  getStationHighlightedIncidentsOptions,
-  listIncidentsOptions
-} from "@/lib/api/@tanstack/react-query.gen";
+import { listIncidentsOptions } from "@/lib/api/@tanstack/react-query.gen";
 import { Route } from "@/routes/_dashboard/estaciones/$name";
 
 export function StationDetailsHighlightedIncidents() {

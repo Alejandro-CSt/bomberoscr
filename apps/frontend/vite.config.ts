@@ -42,7 +42,10 @@ const config = defineConfig({
         plugins: ["babel-plugin-react-compiler"]
       }
     })
-  ]
+  ],
+  server: {
+    allowedHosts: true
+  }
 });
 
 export default config;

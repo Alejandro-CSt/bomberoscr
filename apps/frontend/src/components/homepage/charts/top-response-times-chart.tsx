@@ -160,19 +160,19 @@ function CustomTooltipContent({ active, payload }: CustomTooltipProps) {
             <div className="flex items-center justify-between gap-4">
               <span className="text-xs text-muted-foreground">Tiempo promedio:</span>
               <span className="font-mono text-sm font-medium">
-                {formatMinutesToHMS(Number(data.avgResponseTimeMinutes) ?? 0)}
+                {formatMinutesToHMS(Number(data.avgResponseTimeMinutes ?? 0))}
               </span>
             </div>
             <div className="flex items-center justify-between gap-4">
               <span className="text-xs text-muted-foreground">Mas rapido:</span>
               <span className="font-mono text-sm font-medium">
-                {formatMinutesToHMS(Number(data.fastestResponseMinutes) ?? 0)}
+                {formatMinutesToHMS(Number(data.fastestResponseMinutes ?? 0))}
               </span>
             </div>
             <div className="flex items-center justify-between gap-4">
               <span className="text-xs text-muted-foreground">Mas lento:</span>
               <span className="font-mono text-sm font-medium">
-                {formatMinutesToHMS(Number(data.slowestResponseMinutes) ?? 0)}
+                {formatMinutesToHMS(Number(data.slowestResponseMinutes ?? 0))}
               </span>
             </div>
             <div className="mt-2 border-t pt-2">

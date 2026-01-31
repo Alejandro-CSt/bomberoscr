@@ -272,7 +272,7 @@ function CustomTooltipContent({ active, payload }: CustomTooltipContentProps) {
           {segments.map((seg) => {
             const isReturnSegment = seg.key === "returnTime";
             const isEnRoute = Boolean(data.isEnRoute);
-            const valueSeconds = Number(data[seg.key]) ?? 0;
+            const valueSeconds = Number(data[seg.key] ?? 0);
             return (
               <div
                 className="flex items-center justify-between gap-4"
@@ -291,7 +291,7 @@ function CustomTooltipContent({ active, payload }: CustomTooltipContentProps) {
         <div className="mt-2 flex items-center justify-between gap-4 border-t pt-2">
           <span className="text-xs font-semibold">Total:</span>
           <span className="font-mono text-xs font-semibold">
-            {formatSecondsToHMS(Number(data.totalTime) ?? 0)}
+            {formatSecondsToHMS(Number(data.totalTime ?? 0))}
           </span>
         </div>
       </div>

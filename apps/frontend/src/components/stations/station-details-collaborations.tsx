@@ -3,7 +3,6 @@ import { Link } from "@tanstack/react-router";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { getStationCollaborationsOptions } from "@/lib/api/@tanstack/react-query.gen";
-import { client } from "@/lib/api/client.gen";
 import { Route } from "@/routes/_dashboard/estaciones/$name";
 
 export function StationDetailsCollaborations() {
