@@ -170,7 +170,9 @@ export async function getStationIdByName({ name }: { name: string }) {
       where: eq(sql`UPPER(${stations.name})`, normalizedName),
       columns: {
         id: true,
-        stationKey: true
+        name: true,
+        stationKey: true,
+        isOperative: true
       }
     })) ?? null
   );

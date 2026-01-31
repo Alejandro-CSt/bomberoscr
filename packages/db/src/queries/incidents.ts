@@ -272,7 +272,8 @@ export async function getIncidentById({ id }: { id: number }) {
             columns: {
               id: true,
               name: true,
-              stationKey: true
+              stationKey: true,
+              isOperative: true
             }
           }
         }
@@ -297,7 +298,8 @@ export async function getIncidentById({ id }: { id: number }) {
           station: {
             columns: {
               id: true,
-              name: true
+              name: true,
+              isOperative: true
             }
           }
         }

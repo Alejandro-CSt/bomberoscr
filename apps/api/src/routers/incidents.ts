@@ -91,7 +91,7 @@ function buildDispatchedStations(incident: {
   responsibleStation: number | null;
   dispatchedStations: Array<{
     serviceTypeId: number | null;
-    station: { id: number; name: string; stationKey: string };
+    station: { id: number; name: string; stationKey: string; isOperative: boolean | null };
   }>;
   dispatchedVehicles: Array<{
     id: number;
@@ -101,7 +101,7 @@ function buildDispatchedStations(incident: {
     departureTime: Date | null;
     baseReturnTime: Date | null;
     vehicle: { internalNumber: string; plate: string; descriptionType: string } | null;
-    station: { id: number; name: string } | null;
+    station: { id: number; name: string; isOperative: boolean | null } | null;
   }>;
 }) {
   const responsibleStationId =
@@ -114,6 +114,7 @@ function buildDispatchedStations(incident: {
       id: number;
       name: string;
       stationKey: string;
+      isOperative: boolean;
       isResponsible: boolean;
       vehicles: Array<{
         id: number;
@@ -142,6 +143,7 @@ function buildDispatchedStations(incident: {
       id: stationId,
       name: dispatched.station.name,
       stationKey: dispatched.station.stationKey,
+      isOperative: dispatched.station.isOperative ?? false,
       isResponsible,
       vehicles: []
     });
@@ -156,6 +158,7 @@ function buildDispatchedStations(incident: {
         id: stationId,
         name: vehicle.station?.name ?? "Estación desconocida",
         stationKey: "",
+        isOperative: vehicle.station?.isOperative ?? false,
         isResponsible: false,
         vehicles: []
       });

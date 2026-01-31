@@ -8,6 +8,8 @@ import {
   getStationsOverview,
   getStationVehiclesWithStats
 } from "@bomberoscr/db/queries/stations";
+import { glass } from "@dicebear/collection";
+import { createAvatar } from "@dicebear/core";
 import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
@@ -18,7 +20,7 @@ import {
   buildImgproxyUrl as buildImgproxyUrlBase,
   buildOriginalSourceUrl as buildOriginalSourceUrlBase
 } from "@/lib/imgproxy";
-import { getFromS3 } from "@/lib/s3";
+import { existsInS3, getFromS3 } from "@/lib/s3";
 import { buildMapImageUrl, buildStationImageUrl } from "@/lib/url-builder";
 import {
   stationByNameRequest,
@@ -39,6 +41,7 @@ const app = new OpenAPIHono();
 
 const IMAGE_EXTENSIONS = ["jpg", "jpeg", "png"] as const;
 const IMAGE_SIZE = { width: 800, height: 600 };
+const DICEBEAR_SIZE = 800;
 
 type ImageExtension = (typeof IMAGE_EXTENSIONS)[number];
 
@@ -76,6 +79,24 @@ async function getStationImage(
     }
   }
   return null;
+}
+
+async function stationHasImageInS3(stationKey: string): Promise<boolean> {
+  for (const ext of IMAGE_EXTENSIONS) {
+    const s3Key = `stations/${stationKey}.${ext}`;
+    if (await existsInS3(s3Key)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function createDicebearAvatar(seed: string): string {
+  const avatar = createAvatar(glass, {
+    seed,
+    size: DICEBEAR_SIZE
+  });
+  return avatar.toString();
 }
 
 app.openapi(
@@ -358,7 +379,8 @@ app.openapi(
     path: "/{name}/image",
     summary: "Retrieve station image",
     operationId: "getStationImage",
-    description: "Retrieve the station image",
+    description:
+      "Retrieve the station image. Returns processed image from S3 if available, otherwise returns a generated avatar.",
     tags: ["Stations"],
     request: {
       params: stationByNameRequest
@@ -390,12 +412,18 @@ app.openapi(
               type: "string",
               format: "binary"
             }
+          },
+          "image/svg+xml": {
+            schema: {
+              type: "string",
+              format: "binary"
+            }
           }
         }
       },
       [HttpStatusCodes.NOT_FOUND]: jsonContent(
-        createMessageObjectSchema("Station image not found"),
-        "Station image not found"
+        createMessageObjectSchema("Station not found"),
+        "Station not found"
       ),
       [HttpStatusCodes.BAD_GATEWAY]: jsonContent(
         createMessageObjectSchema("Failed to fetch station image"),
@@ -407,32 +435,52 @@ app.openapi(
     const { name } = c.req.valid("param");
     const decodedName = decodeURIComponent(name).trim();
 
-    const sourceUrl = buildOriginalSourceUrl(decodedName);
-    const imgproxyUrl = buildImgproxyUrl(sourceUrl);
-    const acceptHeader = c.req.header("accept");
-
-    const imgproxyResponse = await fetch(imgproxyUrl, {
-      headers: acceptHeader ? { Accept: acceptHeader } : undefined
-    });
-
-    if (!imgproxyResponse.ok) {
-      const status = imgproxyResponse.status;
-      if (status === 404) {
-        return c.json({ message: "Station image not found" }, HttpStatusCodes.NOT_FOUND);
-      }
-      return c.json({ message: "Failed to fetch station image" }, HttpStatusCodes.BAD_GATEWAY);
+    const station = await getStationIdByName({ name: decodedName });
+    if (!station) {
+      return c.json({ message: "Station not found" }, HttpStatusCodes.NOT_FOUND);
     }
 
-    const body = await imgproxyResponse.arrayBuffer();
-    const contentType = imgproxyResponse.headers.get("content-type") ?? "image/jpeg";
-    const cacheControl =
-      imgproxyResponse.headers.get("cache-control") ?? "public, max-age=31536000, immutable";
+    const isOperative = station.isOperative ?? false;
+    const hasS3Image = isOperative && (await stationHasImageInS3(station.stationKey));
 
-    return c.body(new Uint8Array(body), HttpStatusCodes.OK, {
-      "Content-Type": contentType,
-      "Cache-Control": cacheControl,
-      Vary: "Accept"
-    });
+    // If operative and has S3 image, serve via imgproxy
+    if (hasS3Image) {
+      const sourceUrl = buildOriginalSourceUrl(decodedName);
+      const imgproxyUrl = buildImgproxyUrl(sourceUrl);
+      const acceptHeader = c.req.header("accept");
+
+      const imgproxyResponse = await fetch(imgproxyUrl, {
+        headers: acceptHeader ? { Accept: acceptHeader } : undefined
+      });
+
+      if (!imgproxyResponse.ok) {
+        return c.json({ message: "Failed to fetch station image" }, HttpStatusCodes.BAD_GATEWAY);
+      }
+
+      const body = await imgproxyResponse.arrayBuffer();
+      const contentType = imgproxyResponse.headers.get("content-type") ?? "image/jpeg";
+      const cacheControl =
+        imgproxyResponse.headers.get("cache-control") ?? "public, max-age=31536000, immutable";
+
+      return c.body(new Uint8Array(body), HttpStatusCodes.OK, {
+        "Content-Type": contentType,
+        "Cache-Control": cacheControl,
+        Vary: "Accept"
+      });
+    }
+
+    // Fallback to dicebear avatar
+    const avatar = createDicebearAvatar(station.name);
+
+    // Non-operative stations get cache headers, operative ones don't (still adding images)
+    const headers: Record<string, string> = {
+      "Content-Type": "image/svg+xml"
+    };
+    if (!isOperative) {
+      headers["Cache-Control"] = "public, max-age=31536000, immutable";
+    }
+
+    return c.body(avatar, HttpStatusCodes.OK, headers);
   }
 );
 

@@ -19,6 +19,8 @@
     "@bomberoscr/db": "workspace:*",
     "@bomberoscr/lib": "workspace:*",
     "@bomberoscr/sync-domain": "workspace:*",
+    "@dicebear/collection": "^9.2.4",
+    "@dicebear/core": "^9.2.4",
     "@hono/node-server": "1.19.8",
     "@hono/zod-openapi": "1.2.0",
     "@scalar/hono-api-reference": "0.9.32",

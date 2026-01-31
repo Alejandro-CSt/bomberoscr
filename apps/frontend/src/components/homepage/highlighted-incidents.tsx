@@ -1,7 +1,6 @@
 import { WarningIcon } from "@phosphor-icons/react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { useQueryState } from "nuqs";
 
 import {
   HighlightedIncidentCard,
@@ -9,11 +8,11 @@ import {
 } from "@/components/homepage/highlighted-incident-card";
 import {
   ALLOWED_TIME_RANGE_VALUES,
-  TIME_RANGE_LABELS,
-  timeRangeParser
+  TIME_RANGE_LABELS
 } from "@/components/homepage/time-range-search-params";
 import { Tabs, TabsList, TabsTab } from "@/components/ui/tabs";
 import { listIncidentsOptions } from "@/lib/api/@tanstack/react-query.gen";
+import { Route } from "@/routes/_dashboard/index";
 
 function getDateRange(days: number) {
   const end = new Date();
@@ -26,12 +25,7 @@ function getDateRange(days: number) {
 }
 
 export function HighlightedIncidents() {
-  const [timeRange] = useQueryState(
-    "timeRange",
-    timeRangeParser.withOptions({
-      history: "replace"
-    })
-  );
+  const { timeRange } = Route.useSearch();
 
   const { start, end } = getDateRange(timeRange);
 

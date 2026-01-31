@@ -35,14 +35,15 @@
     "lucide-react": "^0.561.0",
     "motion": "^12.23.24",
     "nitro": "latest",
-    "nuqs": "^2.8.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "recharts": "2.15.4",
+    "spin-delay": "^2.0.1",
     "tailwind-merge": "^3.4.0",
     "tailwindcss": "^4.0.6",
     "unplugin-fonts": "^1.4.0",
-    "vite-tsconfig-paths": "^6.0.2"
+    "vite-tsconfig-paths": "^6.0.2",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@fontsource-variable/bricolage-grotesque": "^5.2.10",

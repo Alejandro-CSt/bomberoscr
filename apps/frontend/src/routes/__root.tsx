@@ -2,7 +2,6 @@ import { TanStackDevtools } from "@tanstack/react-devtools";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import { createRootRouteWithContext, HeadContent, Outlet, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
-import { NuqsAdapter } from "nuqs/adapters/tanstack-router";
 
 import { Header } from "@/components/layout/header";
 import { HeaderBackdrop } from "@/components/layout/header-backdrop";
@@ -71,9 +70,7 @@ export const Route = createRootRouteWithContext<{
 function RootComponent() {
   return (
     <RootDocument>
-      <NuqsAdapter>
-        <Outlet />
-      </NuqsAdapter>
+      <Outlet />
     </RootDocument>
   );
 }

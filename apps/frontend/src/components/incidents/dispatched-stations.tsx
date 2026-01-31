@@ -3,15 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Route } from "@/routes/_dashboard/incidentes/$slug";
 
-interface Station {
-  name: string;
-  stationKey: string;
-  imageUrl: string;
-  isResponsible: boolean;
-  vehicles: {
-    internalNumber: string;
-  }[];
-}
+import type { GetIncidentByIdResponse } from "@/lib/api";
 
 export function DispatchedStations() {
   const { incident } = Route.useLoaderData();
@@ -46,7 +38,11 @@ export function DispatchedStations() {
   );
 }
 
-function StationCard({ station }: { station: Station }) {
+function StationCard({
+  station
+}: {
+  station: GetIncidentByIdResponse["dispatchedStations"][number];
+}) {
   return (
     <Link
       to="/estaciones/$name"
