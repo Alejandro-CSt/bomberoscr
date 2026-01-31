@@ -26,7 +26,7 @@ export function DispatchedStations() {
 
   return (
     <section className="mt-6">
-      <h2>Estaciones despachadas</h2>
+      <h2 id="estaciones">Estaciones despachadas</h2>
       <ul className="not-typography mt-4 ml-0 grid list-none grid-cols-1 gap-4 pl-0 sm:grid-cols-2">
         {sortedStations.map((station) => (
           <li key={station.name}>

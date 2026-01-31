@@ -104,7 +104,7 @@ export function VehicleResponseTimes() {
   if (timeData.length === 0) {
     return (
       <section className="mt-6">
-        <h2>Desglose de tiempos de vehículos despachados</h2>
+        <h2 id="tiempos">Desglose de tiempos de vehículos despachados</h2>
         <p className="mt-2 text-muted-foreground">No hay datos de tiempo disponibles</p>
       </section>
     );
@@ -112,7 +112,7 @@ export function VehicleResponseTimes() {
 
   return (
     <section className="mt-6">
-      <h2>Desglose de tiempos de vehículos despachados</h2>
+      <h2 id="tiempos">Desglose de tiempos de vehículos despachados</h2>
       <Tabs
         defaultValue="chart"
         className="w-full">

@@ -50,7 +50,7 @@ export function IncidentArticle() {
     year: "numeric"
   });
   const formattedIncidentTime = incidentTimestamp.toLocaleTimeString("es-CR", {
-    hour: "2-digit",
+    hour: "numeric",
     minute: "2-digit",
     hour12: true
   });
@@ -97,7 +97,7 @@ export function IncidentArticle() {
   const singleVehicleWithDeparture = getSingleVehicleWithDeparture(allVehicles);
 
   return (
-    <article className="space-y-4">
+    <article className="flex flex-col gap-4 md:gap-6">
       <h1>{incident.title}</h1>
       <figure className="not-typography">
         {incident.mapImageUrl ? (
@@ -141,148 +141,178 @@ export function IncidentArticle() {
       <time dateTime={incidentTimestamp.toISOString()}>
         {formattedIncidentDate}, {formattedIncidentTime}
       </time>
-      <p>
-        Al ser {formatArticleForTime(incidentTimestamp)} {formattedIncidentTime}, Bomberos recibe
-        una alerta de "<em className="lowercase">{incident.specificDispatchType?.name}</em>" en la
-        dirección:
-      </p>
-      <blockquote>{incident.address}</blockquote>
-      {responsibleStation && (
+      <section className="space-y-4">
         <p>
-          Se asigna la estación{" "}
-          <Link
-            to={`/estaciones/$name`}
-            params={{ name: responsibleStation.name }}>
-            {responsibleStation.name}
-          </Link>{" "}
-          como responsable
-          {responsibleStation.vehicles.length > 0 && (
-            <>
-              {" "}
-              y se despachan las unidades{" "}
-              {formatListSpanish(responsibleStation.vehicles.map((v) => v.internalNumber))}
-            </>
-          )}
-          {firstBatchVehicles.length > 0 && (
-            <>
-              {" "}
-              que con un tiempo de respuesta de{" "}
-              {calculateResponseTime(
-                new Date(firstBatchVehicles[0].dispatchedTime ?? ""),
-                new Date(firstBatchVehicles[0].arrivalTime ?? "")
-              )}{" "}
-              {firstBatchVehicles.length > 1 ? "llegan" : "llega"} a la escena al ser{" "}
-              {formatArticleForTime(new Date(firstBatchVehicles[0].arrivalTime ?? ""))}{" "}
-              {new Date(firstBatchVehicles[0].arrivalTime ?? "").toLocaleTimeString("es-CR", {
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: true
-              })}
-            </>
-          )}
-          .
+          Al ser {formatArticleForTime(incidentTimestamp)} {formattedIncidentTime}, Bomberos recibe
+          una alerta de "
+          <em className="lowercase">
+            {[incident.dispatchType?.name, incident.specificDispatchType?.name]
+              .filter(Boolean)
+              .join(", ") || "incidente"}
+          </em>
+          ". En la dirección:
         </p>
-      )}
-      {singleVehicleWithDeparture && (
-        <p>
-          La unidad {singleVehicleWithDeparture.internalNumber} permanece en la escena por{" "}
-          {calculateDuration(
-            new Date(singleVehicleWithDeparture.arrivalTime ?? ""),
-            new Date(singleVehicleWithDeparture.departureTime ?? "")
-          )}{" "}
-          y se retira al ser{" "}
-          {formatArticleForTime(new Date(singleVehicleWithDeparture.departureTime ?? ""))}{" "}
-          {new Date(singleVehicleWithDeparture.departureTime ?? "").toLocaleTimeString("es-CR", {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: true
-          })}
-          .
-        </p>
-      )}
+        <blockquote>{incident.address}</blockquote>
+        {responsibleStation && (
+          <p>
+            Se asigna la estación{" "}
+            <Link
+              to={`/estaciones/$name`}
+              params={{ name: responsibleStation.name }}>
+              {responsibleStation.name}
+            </Link>{" "}
+            como responsable
+            {responsibleStation.vehicles.length > 0 && (
+              <>
+                {" "}
+                y se{" "}
+                {responsibleStation.vehicles.length > 1
+                  ? "despachan las unidades"
+                  : "despacha la unidad"}{" "}
+                {formatListSpanish(responsibleStation.vehicles.map((v) => v.internalNumber))}
+              </>
+            )}
+            {firstBatchVehicles.length > 0 && (
+              <>
+                {" "}
+                que con un tiempo de respuesta de{" "}
+                {calculateResponseTime(
+                  new Date(firstBatchVehicles[0].dispatchedTime ?? ""),
+                  new Date(firstBatchVehicles[0].arrivalTime ?? "")
+                )}{" "}
+                {firstBatchVehicles.length > 1 ? "llegan" : "llega"} a la escena al ser{" "}
+                {formatArticleForTime(new Date(firstBatchVehicles[0].arrivalTime ?? ""))}{" "}
+                {new Date(firstBatchVehicles[0].arrivalTime ?? "").toLocaleTimeString("es-CR", {
+                  hour: "numeric",
+                  minute: "2-digit",
+                  hour12: true
+                })}
+              </>
+            )}
+            .
+          </p>
+        )}
+        {singleVehicleWithDeparture && (
+          <p>
+            La unidad {singleVehicleWithDeparture.internalNumber} permanece en la escena por{" "}
+            {calculateDuration(
+              new Date(singleVehicleWithDeparture.arrivalTime ?? ""),
+              new Date(singleVehicleWithDeparture.departureTime ?? "")
+            )}{" "}
+            y se retira al ser{" "}
+            {formatArticleForTime(new Date(singleVehicleWithDeparture.departureTime ?? ""))}{" "}
+            {new Date(singleVehicleWithDeparture.departureTime ?? "").toLocaleTimeString("es-CR", {
+              hour: "numeric",
+              minute: "2-digit",
+              hour12: true
+            })}
+            .
+          </p>
+        )}
 
-      {supportingStations.length > 0 && (
-        <p>
-          Adicionalmente, se{" "}
-          {supportingStations.length > 1 ? "despachan las estaciones" : "despacha la estación"}{" "}
-          {supportingStations.map((s, index) => {
-            const isLast = index === supportingStations.length - 1;
-            const isSecondLast = index === supportingStations.length - 2;
+        {supportingStations.length > 0 && (
+          <p>
+            Adicionalmente, se{" "}
+            {supportingStations.length > 1 ? "despachan las estaciones" : "despacha la estación"}{" "}
+            {supportingStations.map((s, index) => {
+              const isLast = index === supportingStations.length - 1;
+              const isSecondLast = index === supportingStations.length - 2;
+
+              return (
+                <span key={s.name}>
+                  <Link
+                    to={`/estaciones/$name`}
+                    params={{ name: s.name }}>
+                    {s.name}
+                  </Link>
+                  {!isLast && (isSecondLast ? " y " : ", ")}
+                </span>
+              );
+            })}{" "}
+            que apoyan con {supportingStations.flatMap((s) => s.vehicles).length} unidades
+            adicionales.
+          </p>
+        )}
+
+        {(() => {
+          const dispatchTypeDisplay = [
+            incident.dispatchType?.name,
+            incident.specificDispatchType?.name
+          ]
+            .filter(Boolean)
+            .join(", ");
+          const actualTypeDisplay = [incident.actualType?.name, incident.specificActualType?.name]
+            .filter(Boolean)
+            .join(", ");
+
+          if (
+            (!incident.isOpen || dispatchTypeDisplay !== actualTypeDisplay) &&
+            actualTypeDisplay
+          ) {
+            return dispatchTypeDisplay !== actualTypeDisplay ? (
+              <p>
+                Los bomberos en la escena actualizan la clasificación del incidente a: "
+                <em className="lowercase">{actualTypeDisplay}</em>".
+              </p>
+            ) : (
+              <p>
+                Los bomberos en la escena confirman la categoría del incidente como "
+                <em className="lowercase">{actualTypeDisplay}</em>".
+              </p>
+            );
+          }
+          return null;
+        })()}
+
+        {incident.statistics.currentYearCount > 0 &&
+          (() => {
+            const currentYear = new Date().getFullYear();
+            const isCurrentYear = incident.statistics.currentYear === currentYear;
+            const count = incident.statistics.currentYearCount;
+            const cantonCount = incident.statistics.currentYearCantonCount;
+            const prevCount = incident.statistics.previousYearCount;
+
+            const typeDisplay = [
+              incident.actualType?.name ?? incident.dispatchType?.name,
+              incident.specificActualType?.name ?? incident.specificDispatchType?.name
+            ]
+              .filter(Boolean)
+              .join(", ");
+
+            // Verb conjugation based on tense and number
+            const verb = isCurrentYear
+              ? count === 1
+                ? "se ha reportado"
+                : "se han reportado"
+              : count === 1
+                ? "se reportó"
+                : "se reportaron";
 
             return (
-              <span key={s.name}>
-                <Link
-                  to={`/estaciones/$name`}
-                  params={{ name: s.name }}>
-                  {s.name}
-                </Link>
-                {!isLast && (isSecondLast ? " y " : ", ")}
-              </span>
+              <p>
+                En {isCurrentYear ? "lo que va del" : "el"} {incident.statistics.currentYear} {verb}{" "}
+                {count.toLocaleString("es-CR")} incidente{count !== 1 ? "s" : ""} de tipo "
+                <em className="lowercase">{typeDisplay}</em>"
+                {cantonCount > 0 && incident.cantonName && (
+                  <>
+                    {", "}
+                    {cantonCount === 1
+                      ? `siendo este el primero en el cantón de ${incident.cantonName}`
+                      : `${cantonCount.toLocaleString("es-CR")} de ellos en ${incident.cantonName}`}
+                  </>
+                )}
+                .
+                {prevCount > 0 && (
+                  <>
+                    {" "}
+                    En {incident.statistics.previousYear} hubo {prevCount.toLocaleString("es-CR")}{" "}
+                    incidente{prevCount !== 1 ? "s" : ""} de este tipo.
+                  </>
+                )}
+              </p>
             );
-          })}{" "}
-          que apoyan con {supportingStations.flatMap((s) => s.vehicles).length} unidades
-          adicionales.
-        </p>
-      )}
-
-      {(!incident.isOpen || incident.dispatchType?.code !== incident.actualType?.code) &&
-        incident.actualType &&
-        (incident.dispatchType?.code !== incident.actualType?.code ? (
-          <p>
-            Los bomberos en la escena actualizan la clasificación del incidente a: "
-            <em className="lowercase">{incident.actualType.name}</em>".
-          </p>
-        ) : (
-          <p>
-            Los bomberos en la escena confirman la categoría del incidente como "
-            <em className="lowercase">{incident.actualType.name}</em>".
-          </p>
-        ))}
-
-      {incident.statistics.currentYearCount > 0 &&
-        (() => {
-          const currentYear = new Date().getFullYear();
-          const isCurrentYear = incident.statistics.currentYear === currentYear;
-          const count = incident.statistics.currentYearCount;
-          const cantonCount = incident.statistics.currentYearCantonCount;
-          const prevCount = incident.statistics.previousYearCount;
-
-          // Verb conjugation based on tense and number
-          const verb = isCurrentYear
-            ? count === 1
-              ? "se ha reportado"
-              : "se han reportado"
-            : count === 1
-              ? "se reportó"
-              : "se reportaron";
-
-          return (
-            <p>
-              En {isCurrentYear ? "lo que va del" : "el"} {incident.statistics.currentYear} {verb}{" "}
-              {count.toLocaleString("es-CR")} incidente{count !== 1 ? "s" : ""} de tipo "
-              <em className="lowercase">
-                {incident.actualType?.name ?? incident.dispatchType?.name}
-              </em>
-              "
-              {cantonCount > 0 && incident.cantonName && (
-                <>
-                  {", "}
-                  {cantonCount === 1
-                    ? `siendo este el primero en el cantón de ${incident.cantonName}`
-                    : `${cantonCount.toLocaleString("es-CR")} de ellos en ${incident.cantonName}`}
-                </>
-              )}
-              .
-              {prevCount > 0 && (
-                <>
-                  {" "}
-                  En {incident.statistics.previousYear} hubo {prevCount.toLocaleString("es-CR")}{" "}
-                  incidente{prevCount !== 1 ? "s" : ""} de este tipo.
-                </>
-              )}
-            </p>
-          );
-        })()}
+          })()}
+      </section>
     </article>
   );
 }

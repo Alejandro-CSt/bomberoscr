@@ -156,30 +156,32 @@ function IncidenteDetailPage() {
   };
 
   return (
-    <div className="typography grid w-full max-w-none grid-cols-1 gap-6 pt-8 pb-24 md:gap-8 lg:grid-cols-3 lg:items-start">
+    <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c")
         }}
       />
-      {incident.isOpen && (
-        <OpenIncidentBanner
-          modifiedAt={incident.modifiedAt ?? ""}
-          className="not-typography col-span-full"
-        />
-      )}
-      <div className="order-1 flex flex-col gap-4 md:gap-6 lg:order-1 lg:col-span-2">
-        <IncidentArticle />
-        <VehicleResponseTimes />
-        <DispatchedStations />
+      <div className="typography grid w-full max-w-none grid-cols-1 gap-6 pt-8 pb-24 md:gap-8 lg:grid-cols-3 lg:items-start">
+        {incident.isOpen && (
+          <OpenIncidentBanner
+            modifiedAt={incident.modifiedAt ?? ""}
+            className="not-typography col-span-full"
+          />
+        )}
+        <div className="order-1 flex flex-col gap-4 md:gap-6 lg:order-1 lg:col-span-2">
+          <IncidentArticle />
+          <VehicleResponseTimes />
+          <DispatchedStations />
+        </div>
+        <aside
+          className="not-typography order-2 lg:sticky lg:top-16 lg:order-2 lg:col-span-1"
+          aria-label="Cronología del incidente">
+          <IncidentTimeline />
+        </aside>
       </div>
-      <aside
-        className="not-typography order-2 lg:sticky lg:top-16 lg:order-2 lg:col-span-1"
-        aria-label="Cronología del incidente">
-        <IncidentTimeline />
-      </aside>
-    </div>
+    </>
   );
 }
 
