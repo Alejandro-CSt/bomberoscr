@@ -3,9 +3,9 @@ import { Bar, BarChart, Cell, LabelList, XAxis, YAxis } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { type ChartConfig, ChartContainer, ChartTooltip } from "@/components/ui/chart";
 
-import type { getStatsIncidentsByHour } from "@/lib/api/sdk.gen";
+import type { GetIncidentsByHourResponse } from "@/lib/api/types.gen";
 
-type IncidentsByHour = Awaited<ReturnType<typeof getStatsIncidentsByHour>>;
+type IncidentsByHour = GetIncidentsByHourResponse;
 
 interface IncidentsByHourChartProps {
   incidents: IncidentsByHour;

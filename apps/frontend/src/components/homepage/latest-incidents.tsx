@@ -7,35 +7,22 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { listIncidentsOptions } from "@/lib/api/@tanstack/react-query.gen";
 import { formatRelativeTime } from "@/lib/utils";
 
-interface LatestIncident {
-  id: number;
-  slug: string;
-  details: string;
-  address: string;
-  dispatchedStationsCount: number;
-  dispatchedVehiclesCount: number;
-  responsibleStation: string;
-  incidentTimestamp: string;
-  incidentCode: {
-    code: string;
-    name: string;
-    imageUrl: string | null;
-  } | null;
-}
+import type { ListIncidentsResponses } from "@/lib/api/types.gen";
 
-function LatestIncidentCard({ incident }: { incident: LatestIncident }) {
-  const typeImageUrl = incident.incidentCode?.imageUrl ?? null;
-
+function LatestIncidentCard({
+  incident
+}: {
+  incident: ListIncidentsResponses["200"]["data"][number];
+}) {
   return (
     <Link
       to="/incidentes/$slug"
       params={{ slug: incident.slug }}
       className="group relative flex flex-col overflow-hidden rounded-xl border border-border bg-card">
-      {/* Background blurred image */}
-      {typeImageUrl && (
+      {incident.dispatchType?.imageUrl && (
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <img
-            src={typeImageUrl}
+            src={incident.dispatchType.imageUrl}
             alt=""
             aria-hidden="true"
             className="absolute top-1/2 left-1/2 h-[140%] w-[140%] -translate-x-1/2 -translate-y-1/2 scale-110 object-cover opacity-15 blur-2xl transition-transform duration-500 group-hover:scale-125"
@@ -48,12 +35,12 @@ function LatestIncidentCard({ incident }: { incident: LatestIncident }) {
       {/* Content */}
       <div className="relative flex flex-1 gap-3 p-3">
         {/* Foreground illustration */}
-        {typeImageUrl && (
+        {incident.dispatchType?.imageUrl && (
           <div className="flex shrink-0 items-center justify-center">
             <div className="relative size-16 overflow-hidden rounded-lg bg-muted/50">
               <img
-                src={typeImageUrl}
-                alt={`Ilustración de ${incident.details}`}
+                src={incident.dispatchType.imageUrl}
+                alt="Ilustración del tipo de incidente"
                 className="size-full object-contain p-1.5 drop-shadow-md transition-transform duration-300 group-hover:scale-110"
                 loading="lazy"
                 decoding="async"
@@ -64,10 +51,10 @@ function LatestIncidentCard({ incident }: { incident: LatestIncident }) {
 
         {/* Text content */}
         <div className="flex min-w-0 flex-1 flex-col justify-center gap-1">
-          <h3 className="line-clamp-1 text-sm leading-tight font-medium">{incident.details}</h3>
+          <h3 className="line-clamp-1 text-sm leading-tight font-medium">{incident.title}SS</h3>
           <p className="line-clamp-1 text-xs text-muted-foreground">{incident.address}</p>
           <span className="text-xs font-medium text-muted-foreground">
-            {incident.responsibleStation}
+            {incident.responsibleStationName}
           </span>
         </div>
       </div>
@@ -127,18 +114,6 @@ export function LatestIncidents() {
 
   const latestIncidents = data?.data ?? [];
 
-  const cards: LatestIncident[] = latestIncidents.map((incident) => ({
-    id: incident.id,
-    slug: incident.slug,
-    details: incident.importantDetails,
-    address: incident.address,
-    dispatchedStationsCount: incident.dispatchedStationsCount,
-    dispatchedVehiclesCount: incident.dispatchedVehiclesCount,
-    responsibleStation: incident.responsibleStationName ?? "Estación pendiente",
-    incidentTimestamp: incident.incidentTimestamp,
-    incidentCode: incident.specificActualType
-  }));
-
   return (
     <section className="flex flex-col gap-4">
       <div className="flex items-center gap-3">
@@ -163,7 +138,7 @@ export function LatestIncidents() {
                   </div>
                 ))
               : [1, 2, 3, 4, 5, 6].map((key) => <LatestIncidentCardSkeleton key={key} />)
-            : cards.map((incident) => (
+            : latestIncidents.map((incident) => (
                 <LatestIncidentCard
                   key={incident.id}
                   incident={incident}

@@ -9,9 +9,9 @@ import {
   ChartTooltip
 } from "@/components/ui/chart";
 
-import type { GetStatsTopDispatchedStationsResponse } from "@/lib/api/types.gen";
+import type { GetTopDispatchedStationsResponse } from "@/lib/api/types.gen";
 
-type TopDispatchedStations = GetStatsTopDispatchedStationsResponse;
+type TopDispatchedStations = GetTopDispatchedStationsResponse;
 
 interface TopDispatchedStationsChartProps {
   stations: TopDispatchedStations;

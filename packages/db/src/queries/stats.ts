@@ -256,9 +256,9 @@ export async function getTopResponseTimesStations({
         AND EXTRACT(EPOCH FROM (${dispatchedVehicles.arrivalTime} - ${dispatchedVehicles.dispatchedTime})) <= 10800
     ),
     stations_with_min_incidents AS (
-      SELECT station_id
+      SELECT "stationId"
       FROM valid_dispatches
-      GROUP BY station_id
+      GROUP BY "stationId"
       HAVING count(*) >= 10
     )
     SELECT 
@@ -269,7 +269,7 @@ export async function getTopResponseTimesStations({
       ROUND(MIN(vd.response_time_minutes), 2)::float as fastest_response_minutes,
       ROUND(MAX(vd.response_time_minutes), 2)::float as slowest_response_minutes
     FROM valid_dispatches vd
-    INNER JOIN stations_with_min_incidents swm ON vd.station_id = swm.station_id
+    INNER JOIN stations_with_min_incidents swm ON vd."stationId" = swm."stationId"
   `);
 
   const avgResult = nationalAverage as unknown as {

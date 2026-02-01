@@ -3,9 +3,9 @@ import { Bar, BarChart, Cell, LabelList, XAxis, YAxis } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { type ChartConfig, ChartContainer, ChartTooltip } from "@/components/ui/chart";
 
-import type { getStatsIncidentsByDayOfWeek } from "@/lib/api/sdk.gen";
+import type { GetIncidentsByDayOfWeekResponse } from "@/lib/api/types.gen";
 
-type IncidentsByDayOfWeek = Awaited<ReturnType<typeof getStatsIncidentsByDayOfWeek>>;
+type IncidentsByDayOfWeek = GetIncidentsByDayOfWeekResponse;
 
 interface IncidentsByDayOfWeekChartProps {
   incidents: IncidentsByDayOfWeek;

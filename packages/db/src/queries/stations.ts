@@ -167,7 +167,7 @@ export async function getStationIdByName({ name }: { name: string }) {
   const normalizedName = name.trim().toUpperCase();
   return (
     (await db.query.stations.findFirst({
-      where: eq(sql`UPPER(${stations.name})`, normalizedName),
+      where: eq(sql`UPPER(TRIM(${stations.name}))`, normalizedName),
       columns: {
         id: true,
         name: true,
@@ -182,7 +182,7 @@ export async function getStationByName({ name }: { name: string }) {
   const normalizedName = name.trim().toUpperCase();
   return (
     (await db.query.stations.findFirst({
-      where: eq(sql`UPPER(${stations.name})`, normalizedName)
+      where: eq(sql`UPPER(TRIM(${stations.name}))`, normalizedName)
     })) ?? null
   );
 }

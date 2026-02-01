@@ -16,9 +16,9 @@ import {
   ChartTooltip
 } from "@/components/ui/chart";
 
-import type { getStatsDailyIncidents } from "@/lib/api/sdk.gen";
+import type { GetDailyIncidentsResponse } from "@/lib/api/types.gen";
 
-type DailyIncidents = Awaited<ReturnType<typeof getStatsDailyIncidents>>;
+type DailyIncidents = GetDailyIncidentsResponse;
 
 interface DailyIncidentsChartProps {
   incidents: DailyIncidents;

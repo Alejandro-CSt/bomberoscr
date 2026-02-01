@@ -11,9 +11,9 @@ import {
 import { type ChartConfig, ChartContainer, ChartTooltip } from "@/components/ui/chart";
 import { formatMinutesToHMS } from "@/lib/utils";
 
-import type { GetStatsTopResponseTimesResponse } from "@/lib/api/types.gen";
+import type { GetTopResponseTimesResponse } from "@/lib/api/types.gen";
 
-type TopResponseTimesStations = GetStatsTopResponseTimesResponse;
+type TopResponseTimesStations = GetTopResponseTimesResponse;
 
 interface TopResponseTimesStationsChartProps {
   stations: TopResponseTimesStations;

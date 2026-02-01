@@ -13,7 +13,7 @@ export function StationDetailsRecentIncidents() {
     listIncidentsOptions({
       query: {
         stations: [station.id],
-        // sort: ["incidentTimestamp", "desc"], // desc id sorting works better
+        sort: ["id", "desc"],
         pageSize: 5
       }
     })

@@ -34,6 +34,7 @@ export function StationDetailsHighlightedIncidents() {
               id: incident.id,
               incidentTimestamp: incident.incidentTimestamp,
               details: incident.importantDetails,
+              mapImageUrl: incident.mapImageUrl,
               latitude: station.latitude,
               longitude: station.longitude,
               dispatchedVehiclesCount: incident.dispatchedVehiclesCount,

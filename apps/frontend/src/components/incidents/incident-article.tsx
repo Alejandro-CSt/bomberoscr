@@ -88,8 +88,9 @@ export function IncidentArticle() {
   ) => {
     if (allVehicles.length !== 1) return null;
     const vehicle = allVehicles[0];
-    if (isUndefinedDate(new Date(vehicle.departureTime ?? ""))) return null;
-    if (isUndefinedDate(new Date(vehicle.arrivalTime ?? ""))) return null;
+    // Check if departureTime and arrivalTime exist and are valid dates
+    if (!vehicle.departureTime || isUndefinedDate(new Date(vehicle.departureTime))) return null;
+    if (!vehicle.arrivalTime || isUndefinedDate(new Date(vehicle.arrivalTime))) return null;
 
     return vehicle;
   };
