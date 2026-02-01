@@ -14,10 +14,10 @@
   },
   "dependencies": {
     "winston": "^3.17.0",
-    "zod": "catalog:"
+    "zod": "^4.0.5"
   },
   "devDependencies": {
     "@bomberoscr/typescript-config": "workspace:*",
-    "@typescript/native-preview": "catalog:"
+    "@typescript/native-preview": "^7.0.0-dev.20260127.1"
   }
 }

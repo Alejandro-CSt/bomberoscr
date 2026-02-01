@@ -5,15 +5,10 @@ import { TriangleAlert } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn, formatRelativeTime } from "@/lib/utils";
 
+import type { ListIncidentsResponse } from "@/lib/api/types.gen";
+
 interface StationDetailsHighlightedCardProps {
-  incident: {
-    id: number;
-    incidentTimestamp: string;
-    details: string | null;
-    mapImageUrl: string | null;
-    dispatchedVehiclesCount: number;
-    dispatchedStationsCount: number;
-  };
+  incident: ListIncidentsResponse["data"][number];
 }
 
 /**
@@ -38,7 +33,7 @@ export function StationDetailsHighlightedCard({ incident }: StationDetailsHighli
           <div className="h-full w-full overflow-hidden rounded-lg">
             <img
               src={incident.mapImageUrl}
-              alt={`Mapa del incidente ${incident.details ?? ""}`}
+              alt={`Mapa del incidente ${incident.importantDetails ?? ""}`}
               className="h-full w-full rounded-lg object-cover"
               loading="lazy"
               decoding="async"
@@ -62,7 +57,7 @@ export function StationDetailsHighlightedCard({ incident }: StationDetailsHighli
       </div>
       <div className="flex min-w-0 flex-1 flex-col justify-center gap-2 py-3 pr-4 pl-2">
         <h3 className="line-clamp-2 text-base leading-snug font-medium">
-          {incident.details ?? "Sin detalles"}
+          {incident.importantDetails ?? "Sin detalles"}
         </h3>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">

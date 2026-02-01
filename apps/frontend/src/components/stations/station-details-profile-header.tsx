@@ -2,21 +2,10 @@ import { Mail, Phone } from "lucide-react";
 
 import { Skeleton } from "@/components/ui/skeleton";
 
+import type { GetStationByNameResponse } from "@/lib/api/types.gen";
+
 interface StationDetailsProfileHeaderProps {
-  station: {
-    id: number;
-    name: string;
-    stationKey: string;
-    radioChannel: string | null;
-    latitude: string;
-    longitude: string;
-    address: string | null;
-    phoneNumber: string | null;
-    fax: string | null;
-    email: string | null;
-    isOperative: boolean | null;
-    imageUrl: string;
-  };
+  station: GetStationByNameResponse["station"];
 }
 
 export function StationDetailsProfileHeader({ station }: StationDetailsProfileHeaderProps) {

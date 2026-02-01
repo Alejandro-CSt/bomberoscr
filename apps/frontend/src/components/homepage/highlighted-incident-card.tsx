@@ -5,19 +5,9 @@ import { TriangleAlert } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn, formatRelativeTime } from "@/lib/utils";
 
-type HighlightedIncident = {
-  id: number;
-  slug: string;
-  incidentTimestamp: string;
-  importantDetails: string;
-  address: string;
-  mapImageUrl: string | null;
-  dispatchedVehiclesCount: number;
-  dispatchedStationsCount: number;
-  dispatchType: {
-    name: string;
-  } | null;
-};
+import type { ListIncidentsResponse } from "@/lib/api/types.gen";
+
+type HighlightedIncident = ListIncidentsResponse["data"][number];
 
 /**
  * Get gradient classes based on heat level

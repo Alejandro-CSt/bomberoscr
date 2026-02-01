@@ -5,16 +5,10 @@ import { TriangleAlert } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn, formatRelativeTime } from "@/lib/utils";
 
+import type { ListIncidentsResponse } from "@/lib/api/types.gen";
+
 interface StationDetailsIncidentCardProps {
-  incident: {
-    id: number;
-    incidentTimestamp: string;
-    importantDetails: string | null;
-    address: string | null;
-    mapImageUrl: string | null;
-    dispatchedVehiclesCount: number;
-    dispatchedStationsCount: number;
-  };
+  incident: ListIncidentsResponse["data"][number];
 }
 
 /**

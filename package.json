@@ -5,35 +5,35 @@
     "packages/*"
   ],
   "scripts": {
-    "lint:check": "pnpm --filter api --filter frontend run lint",
-    "lint:safefix": "pnpm --filter api --filter frontend run lint:fix",
+    "dev": "mprocs",
+    "dev:api": "bun run --filter api dev",
+    "dev:frontend": "bun run --filter frontend dev",
+    "dev:sync": "bun run --filter sync-v2 dev",
+    "dev:all": "mprocs --config mprocs.all.yaml",
+    "lint:check": "bun run --filter api --filter frontend lint",
+    "lint:safefix": "bun run --filter api --filter frontend lint:fix",
     "lint:next": "next lint",
-    "format:check": "pnpm --filter api --filter frontend run format:check",
-    "format": "pnpm --filter api --filter frontend run format",
-    "prepare": "husky install"
+    "format:check": "bun run --filter api --filter frontend format:check",
+    "format": "bun run --filter api --filter frontend format",
+    "prepare": "husky"
   },
   "devDependencies": {
-    "@typescript/native-preview": "catalog:",
+    "@typescript/native-preview": "^7.0.0-dev.20260127.1",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
     "oxfmt": "^0.27.0",
-    "oxlint": "^1.42.0",
-    "turbo": "^2.7.4"
+    "oxlint": "^1.42.0"
+  },
+  "overrides": {
+    "hono-og@0.0.29": {
+      "satori": "0.12.2"
+    }
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,json,jsonc,css,scss,md,mdx,html,yml,yaml}": "pnpm exec oxfmt"
+    "*.{js,jsx,ts,tsx,json,jsonc,css,scss,md,mdx,html,yml,yaml}": "bunx oxfmt"
   },
   "engines": {
     "node": ">=18"
   },
-  "packageManager": "pnpm@10.6.3",
-  "pnpm": {
-    "packageExtensions": {
-      "hono-og@0.0.29": {
-        "dependencies": {
-          "satori": "0.12.2"
-        }
-      }
-    }
-  }
+  "packageManager": "bun@1.3.6"
 }

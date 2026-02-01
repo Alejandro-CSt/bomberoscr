@@ -5,6 +5,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { getStationCollaborationsOptions } from "@/lib/api/@tanstack/react-query.gen";
 import { Route } from "@/routes/_dashboard/estaciones/$name";
 
+import type { GetStationCollaborationsResponse } from "@/lib/api/types.gen";
+
 export function StationDetailsCollaborations() {
   const { station } = Route.useLoaderData();
   const { data } = useSuspenseQuery(
@@ -35,13 +37,7 @@ export function StationDetailsCollaborations() {
 }
 
 interface CollaborationCardProps {
-  station: {
-    id: number;
-    name: string;
-    stationKey: string;
-    imageUrl: string;
-    collaborationCount: number;
-  };
+  station: GetStationCollaborationsResponse["collaborations"][number];
 }
 
 function CollaborationCard({ station }: CollaborationCardProps) {

@@ -31,15 +31,7 @@ export function StationDetailsRecentIncidents() {
           {data.data.map((incident) => (
             <StationDetailsIncidentCard
               key={incident.id}
-              incident={{
-                id: incident.id,
-                incidentTimestamp: incident.incidentTimestamp,
-                importantDetails: incident.importantDetails,
-                address: incident.address,
-                mapImageUrl: incident.mapImageUrl,
-                dispatchedVehiclesCount: incident.dispatchedVehiclesCount,
-                dispatchedStationsCount: incident.dispatchedStationsCount
-              }}
+              incident={incident}
             />
           ))}
         </div>

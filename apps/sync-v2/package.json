@@ -40,13 +40,13 @@
     "rss-parser": "^3.13.0",
     "tsx": "^4.20.3",
     "winston": "^3.17.0",
-    "zod": "catalog:"
+    "zod": "^4.0.5"
   },
   "devDependencies": {
     "@bomberoscr/typescript-config": "workspace:*",
     "@types/node": "^20.19.1",
     "@types/node-cron": "^3.0.11",
-    "@typescript/native-preview": "catalog:",
+    "@typescript/native-preview": "^7.0.0-dev.20260127.1",
     "@vitest/ui": "^3.2.4",
     "jsdom": "^26.1.0",
     "nodemon": "^3.1.10",

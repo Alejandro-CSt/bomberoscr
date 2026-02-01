@@ -27,13 +27,13 @@
     "@bomberoscr/lib": "workspace:*",
     "dotenv": "^17.2.0",
     "dotenv-expand": "^12.0.2",
-    "drizzle-orm": "catalog:",
+    "drizzle-orm": "^0.44.3",
     "drizzle-zod": "^0.8.2",
-    "zod": "catalog:"
+    "zod": "^4.0.5"
   },
   "devDependencies": {
     "@bomberoscr/typescript-config": "workspace:*",
-    "@typescript/native-preview": "catalog:",
+    "@typescript/native-preview": "^7.0.0-dev.20260127.1",
     "drizzle-kit": "^0.31.4"
   }
 }

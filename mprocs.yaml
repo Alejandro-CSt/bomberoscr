@@ -1,0 +1,5 @@
+procs:
+  api:
+    cmd: ["bun", "run", "--filter", "api", "--elide-lines=0", "dev"]
+  frontend:
+    cmd: ["bun", "run", "--filter", "frontend", "--elide-lines=0", "dev"]

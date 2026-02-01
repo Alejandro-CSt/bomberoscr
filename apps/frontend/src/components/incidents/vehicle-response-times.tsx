@@ -23,6 +23,8 @@ import { getIncidentResponseTimesOptions } from "@/lib/api/@tanstack/react-query
 import { cn } from "@/lib/utils";
 import { Route } from "@/routes/_dashboard/incidentes/$slug";
 
+import type { GetIncidentResponseTimesResponse } from "@/lib/api/types.gen";
+
 const chartConfig = {
   responseTime: {
     label: "Tiempo de respuesta",
@@ -153,20 +155,7 @@ export function VehicleResponseTimes() {
   );
 }
 
-type VehicleTimeData = {
-  id: number;
-  vehicle: string;
-  station: string;
-  dispatchedTime: string | null;
-  arrivalTime: string | null;
-  departureTime: string | null;
-  baseReturnTime: string | null;
-  responseTimeSeconds: number;
-  onSceneTimeSeconds: number;
-  returnTimeSeconds: number;
-  totalTimeSeconds: number;
-  isEnRoute: boolean;
-};
+type VehicleTimeData = GetIncidentResponseTimesResponse["vehicles"][number];
 
 function VehicleResponseTimeChart({ vehicles }: { vehicles: VehicleTimeData[] }) {
   const chartData = vehicles.map((v) => ({
