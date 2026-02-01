@@ -114,7 +114,8 @@ function LatestIncidentCardSkeleton() {
 export function LatestIncidents() {
   const latestOptions = listIncidentsOptions({
     query: {
-      pageSize: 6
+      pageSize: 6,
+      sort: ["id", "desc"]
     }
   });
 
