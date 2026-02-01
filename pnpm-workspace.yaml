@@ -5,4 +5,4 @@ packages:
 catalog:
   zod: ^4.0.5
   drizzle-orm: ^0.44.3
-  "@typescript/native-preview": ^7.0.0-dev.20260112.1
+  "@typescript/native-preview": ^7.0.0-dev.20260127.1

@@ -57,8 +57,8 @@ export interface FileRoutesByFullPath {
   '/': typeof DashboardIndexRoute
   '/estaciones/$name': typeof DashboardEstacionesNameRoute
   '/incidentes/$slug': typeof DashboardIncidentesSlugRoute
-  '/estaciones': typeof DashboardEstacionesIndexRoute
-  '/incidentes': typeof IncidentsIncidentesIndexRoute
+  '/estaciones/': typeof DashboardEstacionesIndexRoute
+  '/incidentes/': typeof IncidentsIncidentesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof DashboardIndexRoute
@@ -83,8 +83,8 @@ export interface FileRouteTypes {
     | '/'
     | '/estaciones/$name'
     | '/incidentes/$slug'
-    | '/estaciones'
-    | '/incidentes'
+    | '/estaciones/'
+    | '/incidentes/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -113,14 +113,14 @@ declare module '@tanstack/react-router' {
     '/_incidents': {
       id: '/_incidents'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof IncidentsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_dashboard': {
       id: '/_dashboard'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -134,14 +134,14 @@ declare module '@tanstack/react-router' {
     '/_incidents/incidentes/': {
       id: '/_incidents/incidentes/'
       path: '/incidentes'
-      fullPath: '/incidentes'
+      fullPath: '/incidentes/'
       preLoaderRoute: typeof IncidentsIncidentesIndexRouteImport
       parentRoute: typeof IncidentsRoute
     }
     '/_dashboard/estaciones/': {
       id: '/_dashboard/estaciones/'
       path: '/estaciones'
-      fullPath: '/estaciones'
+      fullPath: '/estaciones/'
       preLoaderRoute: typeof DashboardEstacionesIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
