@@ -25,7 +25,7 @@ export function StationDetailsHighlightedIncidents() {
 
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="text-lg font-semibold">Destacados</h2>
+      <h2 className="text-lg font-semibold">Incidentes destacados</h2>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {data.data.map((incident) => (
           <StationDetailsHighlightedCard
@@ -43,7 +43,7 @@ export function StationDetailsHighlightedIncidentsSkeleton({ count = 6 }: { coun
 
   return (
     <section className="flex flex-col gap-4">
-      <div className="h-7 w-32 animate-pulse rounded bg-muted" />
+      <h2 className="text-lg font-semibold">Incidentes destacados</h2>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {keys.map((key) => (
           <StationDetailsHighlightedCardSkeleton key={key} />

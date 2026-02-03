@@ -47,7 +47,19 @@ export async function getIncidents(params: GetIncidentsParams) {
   }
 
   if (stations && stations.length > 0) {
-    whereConditions.push(inArray(incidents.responsibleStation, stations));
+    // Find incidents where the station is either responsible OR was dispatched
+    const dispatchedToStation = db
+      .select({ incidentId: dispatchedStations.incidentId })
+      .from(dispatchedStations)
+      .where(inArray(dispatchedStations.stationId, stations));
+
+    const stationsCondition = or(
+      inArray(incidents.responsibleStation, stations),
+      inArray(incidents.id, dispatchedToStation)
+    );
+    if (stationsCondition) {
+      whereConditions.push(stationsCondition);
+    }
   }
 
   if (types && types.length > 0) {

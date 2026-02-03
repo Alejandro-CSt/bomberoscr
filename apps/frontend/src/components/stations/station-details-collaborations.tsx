@@ -20,10 +20,8 @@ export function StationDetailsCollaborations() {
   }
 
   return (
-    <section>
-      <h2 className="mb-6 text-xl font-bold tracking-tight">
-        Incidentes conjuntos en el último mes
-      </h2>
+    <section className="my-6 flex flex-col gap-4">
+      <h2 className="text-lg font-semibold">Colaboraciones con otras estaciones</h2>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {data.collaborations.map((station) => (
           <CollaborationCard
@@ -74,8 +72,8 @@ function CollaborationCard({ station }: CollaborationCardProps) {
 
 export function StationDetailsCollaborationsSkeleton() {
   return (
-    <section>
-      <Skeleton className="mb-6 h-7 w-80" />
+    <section className="my-6 flex flex-col gap-4">
+      <h2 className="text-lg font-semibold">Colaboraciones con otras estaciones</h2>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {Array.from({ length: 5 }, (_, i) => (
           <CollaborationCardSkeleton key={i} />

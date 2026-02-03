@@ -24,8 +24,8 @@ export function StationDetailsVehicles() {
   if (data.vehicles.length === 0) return null;
 
   return (
-    <section>
-      <h2 className="mb-4 text-lg font-semibold">Unidades</h2>
+    <section className="flex flex-col gap-4">
+      <h2 className="text-lg font-semibold">Unidades</h2>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {data.vehicles.map((vehicle) => (
           <article
@@ -72,8 +72,8 @@ export function StationDetailsVehicles() {
 
 export function StationDetailsVehiclesSkeleton() {
   return (
-    <section>
-      <Skeleton className="mb-4 h-7 w-24" />
+    <section className="flex flex-col gap-4">
+      <h2 className="text-lg font-semibold">Unidades</h2>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {["skeleton-1", "skeleton-2", "skeleton-3"].map((id) => (
           <div

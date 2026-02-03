@@ -21,7 +21,7 @@ export function StationDetailsRecentIncidents() {
 
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="text-lg font-semibold">Incidentes recientes</h2>
+      <h2 className="text-lg font-semibold">Últimos incidentes</h2>
       {data.data.length === 0 ? (
         <p className="text-sm text-muted-foreground">
           No hay incidentes recientes para esta estación.
@@ -45,7 +45,7 @@ export function StationDetailsRecentIncidentsSkeleton({ count = 5 }: { count?: n
 
   return (
     <section className="flex flex-col gap-4">
-      <div className="h-7 w-40 animate-pulse rounded bg-muted" />
+      <h2 className="text-lg font-semibold">Últimos incidentes</h2>
       <div className="flex flex-col gap-2">
         {keys.map((key) => (
           <StationDetailsIncidentCardSkeleton key={key} />
