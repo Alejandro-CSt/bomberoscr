@@ -1,5 +1,3 @@
-"use client";
-
 import { ToggleGroup as ToggleGroupPrimitive } from "@base-ui/react/toggle-group";
 import * as React from "react";
 

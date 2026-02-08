@@ -77,18 +77,14 @@ function RootComponent() {
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html
-      lang="es-CR"
-      className="dark">
+    <html lang="es-CR">
       <head>
         <HeadContent />
       </head>
       <body className="font-sans antialiased">
-        <div className="gap-0 space-y-0">
-          <Header />
-          <HeaderBackdrop />
-        </div>
-        <main className="pt-(--app-header-height)">{children}</main>
+        <Header />
+        <HeaderBackdrop />
+        <main>{children}</main>
         <TanStackDevtools
           config={{
             position: "bottom-right"

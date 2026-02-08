@@ -1,5 +1,3 @@
-"use client";
-
 import { eachDayOfInterval, format, startOfWeek, subYears } from "date-fns";
 import { es } from "date-fns/locale";
 import * as React from "react";

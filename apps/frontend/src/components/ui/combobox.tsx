@@ -1,5 +1,3 @@
-"use client";
-
 import { Combobox as ComboboxPrimitive } from "@base-ui/react/combobox";
 import { ChevronsUpDownIcon, XIcon } from "lucide-react";
 import * as React from "react";
@@ -250,11 +248,19 @@ function ComboboxValue({ ...props }: ComboboxPrimitive.Value.Props) {
   );
 }
 
-function ComboboxList({ className, ...props }: ComboboxPrimitive.List.Props) {
+function ComboboxList({
+  className,
+  scrollFade = true,
+  scrollbarGutter = true,
+  ...props
+}: ComboboxPrimitive.List.Props & {
+  scrollFade?: React.ComponentProps<typeof ScrollArea>["scrollFade"];
+  scrollbarGutter?: boolean;
+}) {
   return (
     <ScrollArea
-      scrollbarGutter
-      scrollFade>
+      scrollbarGutter={scrollbarGutter}
+      scrollFade={scrollFade}>
       <ComboboxPrimitive.List
         className={cn(
           "not-empty:scroll-py-1 not-empty:px-1 not-empty:py-1 in-data-has-overflow-y:pe-3",

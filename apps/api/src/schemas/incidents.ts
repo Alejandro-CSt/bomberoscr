@@ -284,6 +284,11 @@ export const incidentByIdResponse = z
       description: "The longitude coordinate of the incident.",
       example: -84.0356
     }),
+    isTemporaryCoordinates: z.boolean().openapi({
+      description:
+        "Whether the incident coordinates are temporary placeholders derived from dispatched stations.",
+      example: false
+    }),
     cantonName: z.string().nullable().openapi({
       description: "Name of the canton where the incident occurred.",
       example: "SAN JOSE"

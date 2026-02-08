@@ -1,19 +1,19 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 
+import { IncidentArticle, IncidentArticleSkeleton } from "@/components/incidents/details/article";
 import {
   DispatchedStations,
   DispatchedStationsSkeleton
-} from "@/components/incidents/dispatched-stations";
-import { IncidentArticle, IncidentArticleSkeleton } from "@/components/incidents/incident-article";
+} from "@/components/incidents/details/dispatched-stations";
+import OpenIncidentBanner from "@/components/incidents/details/open-incident-banner";
 import {
   IncidentTimeline,
   IncidentTimelineSkeleton
-} from "@/components/incidents/incident-timeline";
-import OpenIncidentBanner from "@/components/incidents/open-incident-banner";
+} from "@/components/incidents/details/timeline";
 import {
   VehicleResponseTimes,
   VehicleResponseTimesSkeleton
-} from "@/components/incidents/vehicle-response-times";
+} from "@/components/incidents/details/vehicle-response-times";
 import { getIncidentById } from "@/lib/api";
 import { client } from "@/lib/api/client.gen";
 import { areCoordinatesValid, buildIncidentUrl } from "@/lib/utils";

@@ -42,6 +42,17 @@ import { adminAuthedRouteRequestSchema } from "@/schemas/shared";
 
 const app = new OpenAPIHono();
 
+const EARTH_METERS_PER_DEGREE_LATITUDE = 111_320;
+const TEMP_COORDINATE_RING_SPACING_METERS = 180;
+const TEMP_COORDINATE_RING_COUNT = 4;
+const GOLDEN_ANGLE_DEGREES = 137.50776405003785;
+
+function parseQueryNumber(value: string | undefined): number | undefined {
+  if (value == null) return undefined;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : undefined;
+}
+
 function buildIncidentType(
   code: string | null,
   name: string | null | undefined
@@ -56,8 +67,136 @@ function buildIncidentType(
 
 function isValidCoordinates(latitude: number | null, longitude: number | null): boolean {
   if (latitude === null || longitude === null) return false;
-  if (latitude === 0 && longitude === 0) return false;
+  if (latitude === 0 || longitude === 0) return false;
   return true;
+}
+
+function toCoordinateNumber(value: number | string | null | undefined): number | null {
+  if (value === null || value === undefined) return null;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function getFirstValidCoordinatePair(
+  pairs: Array<{ latitude: number | null; longitude: number | null } | null | undefined>
+): { latitude: number; longitude: number } | null {
+  for (const pair of pairs) {
+    if (!pair) continue;
+    if (isValidCoordinates(pair.latitude, pair.longitude)) {
+      return { latitude: pair.latitude, longitude: pair.longitude };
+    }
+  }
+  return null;
+}
+
+function getCoordinatesCentroid(
+  pairs: Array<{
+    latitude: number | string | null | undefined;
+    longitude: number | string | null | undefined;
+  }>
+): { latitude: number; longitude: number } | null {
+  let latitudeSum = 0;
+  let longitudeSum = 0;
+  let count = 0;
+
+  for (const pair of pairs) {
+    const latitude = toCoordinateNumber(pair.latitude);
+    const longitude = toCoordinateNumber(pair.longitude);
+
+    if (!isValidCoordinates(latitude, longitude)) continue;
+
+    latitudeSum += latitude;
+    longitudeSum += longitude;
+    count += 1;
+  }
+
+  if (count === 0) return null;
+
+  return {
+    latitude: latitudeSum / count,
+    longitude: longitudeSum / count
+  };
+}
+
+function applyTemporaryCoordinateOffset(
+  latitude: number,
+  longitude: number,
+  incidentId: number
+): { latitude: number; longitude: number } {
+  const angleInRadians = (((incidentId * GOLDEN_ANGLE_DEGREES) % 360) * Math.PI) / 180;
+  const ring = (Math.abs(incidentId) % TEMP_COORDINATE_RING_COUNT) + 1;
+  const radiusInMeters = ring * TEMP_COORDINATE_RING_SPACING_METERS;
+
+  const latitudeOffset =
+    (radiusInMeters / EARTH_METERS_PER_DEGREE_LATITUDE) * Math.sin(angleInRadians);
+
+  const metersPerDegreeLongitude = Math.max(
+    Math.abs(EARTH_METERS_PER_DEGREE_LATITUDE * Math.cos((latitude * Math.PI) / 180)),
+    1e-6
+  );
+
+  const longitudeOffset = (radiusInMeters / metersPerDegreeLongitude) * Math.cos(angleInRadians);
+
+  return {
+    latitude: latitude + latitudeOffset,
+    longitude: longitude + longitudeOffset
+  };
+}
+
+function resolveIncidentCoordinates({
+  incidentId,
+  latitude,
+  longitude,
+  fallbackLatitude,
+  fallbackLongitude
+}: {
+  incidentId: number;
+  latitude: number | string | null | undefined;
+  longitude: number | string | null | undefined;
+  fallbackLatitude: number | string | null | undefined;
+  fallbackLongitude: number | string | null | undefined;
+}): {
+  latitude: number;
+  longitude: number;
+  isTemporaryCoordinates: boolean;
+  hasStoredCoordinates: boolean;
+} {
+  const parsedLatitude = toCoordinateNumber(latitude);
+  const parsedLongitude = toCoordinateNumber(longitude);
+
+  if (isValidCoordinates(parsedLatitude, parsedLongitude)) {
+    return {
+      latitude: parsedLatitude,
+      longitude: parsedLongitude,
+      isTemporaryCoordinates: false,
+      hasStoredCoordinates: true
+    };
+  }
+
+  const parsedFallbackLatitude = toCoordinateNumber(fallbackLatitude);
+  const parsedFallbackLongitude = toCoordinateNumber(fallbackLongitude);
+
+  if (!isValidCoordinates(parsedFallbackLatitude, parsedFallbackLongitude)) {
+    return {
+      latitude: parsedLatitude ?? 0,
+      longitude: parsedLongitude ?? 0,
+      isTemporaryCoordinates: false,
+      hasStoredCoordinates: false
+    };
+  }
+
+  const offsetCoordinates = applyTemporaryCoordinateOffset(
+    parsedFallbackLatitude,
+    parsedFallbackLongitude,
+    incidentId
+  );
+
+  return {
+    latitude: offsetCoordinates.latitude,
+    longitude: offsetCoordinates.longitude,
+    isTemporaryCoordinates: true,
+    hasStoredCoordinates: false
+  };
 }
 
 function getIncidentTitle(
@@ -214,13 +353,38 @@ app.openapi(
   async (c) => {
     const { pageSize, cursor, sort, start, end, ...filter } = c.req.valid("query");
 
+    const fallbackNorth = parseQueryNumber(
+      c.req.query("bounds[north]") ?? c.req.query("northBound")
+    );
+    const fallbackSouth = parseQueryNumber(
+      c.req.query("bounds[south]") ?? c.req.query("southBound")
+    );
+    const fallbackEast = parseQueryNumber(c.req.query("bounds[east]") ?? c.req.query("eastBound"));
+    const fallbackWest = parseQueryNumber(c.req.query("bounds[west]") ?? c.req.query("westBound"));
+
+    const fallbackBounds =
+      fallbackNorth !== undefined &&
+      fallbackSouth !== undefined &&
+      fallbackEast !== undefined &&
+      fallbackWest !== undefined
+        ? {
+            north: fallbackNorth,
+            south: fallbackSouth,
+            east: fallbackEast,
+            west: fallbackWest
+          }
+        : undefined;
+
+    const bounds = filter.bounds ?? fallbackBounds;
+
     const { data, meta } = await getIncidents({
       pageSize: pageSize ?? 25,
       cursor: cursor ?? null,
       sort: sort ?? [],
       start: start ? new Date(start) : null,
       end: end ? new Date(end) : null,
-      ...filter
+      ...filter,
+      bounds
     });
 
     return c.json({
@@ -236,6 +400,26 @@ app.openapi(
             provinceName: incident.provinceName
           }
         );
+
+        const fallbackCoordinates = getFirstValidCoordinatePair([
+          {
+            latitude: toCoordinateNumber(incident.dispatchedStationsAverageLatitude),
+            longitude: toCoordinateNumber(incident.dispatchedStationsAverageLongitude)
+          },
+          {
+            latitude: toCoordinateNumber(incident.responsibleStationLatitude),
+            longitude: toCoordinateNumber(incident.responsibleStationLongitude)
+          }
+        ]);
+
+        const coordinates = resolveIncidentCoordinates({
+          incidentId: incident.id,
+          latitude: incident.latitude,
+          longitude: incident.longitude,
+          fallbackLatitude: fallbackCoordinates?.latitude,
+          fallbackLongitude: fallbackCoordinates?.longitude
+        });
+
         return {
           id: incident.id,
           slug: buildIncidentSlug(incident.id, title, incident.incidentTimestamp),
@@ -246,11 +430,10 @@ app.openapi(
           incidentTimestamp: incident.incidentTimestamp,
           modifiedAt: incident.modifiedAt,
           importantDetails: incident.importantDetails,
-          latitude: Number(incident.latitude),
-          longitude: Number(incident.longitude),
-          mapImageUrl: isValidCoordinates(Number(incident.latitude), Number(incident.longitude))
-            ? buildMapImageUrl(incident.id)
-            : null,
+          latitude: coordinates.latitude,
+          longitude: coordinates.longitude,
+          isTemporaryCoordinates: coordinates.isTemporaryCoordinates,
+          mapImageUrl: coordinates.hasStoredCoordinates ? buildMapImageUrl(incident.id) : null,
           dispatchType: buildIncidentType(
             incident.dispatchIncidentCode,
             incident.dispatchIncidentType
@@ -315,6 +498,29 @@ app.openapi(
       }
     );
 
+    const dispatchedStationsCoordinates = getCoordinatesCentroid(
+      incident.dispatchedStations.map((dispatchedStation) => ({
+        latitude: dispatchedStation.station.latitude,
+        longitude: dispatchedStation.station.longitude
+      }))
+    );
+
+    const fallbackCoordinates = getFirstValidCoordinatePair([
+      dispatchedStationsCoordinates,
+      {
+        latitude: toCoordinateNumber(incident.station?.latitude),
+        longitude: toCoordinateNumber(incident.station?.longitude)
+      }
+    ]);
+
+    const coordinates = resolveIncidentCoordinates({
+      incidentId: incident.id,
+      latitude: incident.latitude,
+      longitude: incident.longitude,
+      fallbackLatitude: fallbackCoordinates?.latitude,
+      fallbackLongitude: fallbackCoordinates?.longitude
+    });
+
     const statistics = await getIncidentStatistics({
       incidentTimestamp: incident.incidentTimestamp,
       incidentCode: incident.incidentCode,
@@ -334,12 +540,11 @@ app.openapi(
         incidentTimestamp: incident.incidentTimestamp,
         modifiedAt: incident.modifiedAt,
         importantDetails: incident.importantDetails,
-        latitude: Number(incident.latitude),
-        longitude: Number(incident.longitude),
+        latitude: coordinates.latitude,
+        longitude: coordinates.longitude,
+        isTemporaryCoordinates: coordinates.isTemporaryCoordinates,
         cantonName: incident.canton?.name ?? null,
-        mapImageUrl: isValidCoordinates(Number(incident.latitude), Number(incident.longitude))
-          ? buildMapImageUrl(incident.id)
-          : null,
+        mapImageUrl: coordinates.hasStoredCoordinates ? buildMapImageUrl(incident.id) : null,
         dispatchType: buildIncidentType(
           incident.dispatchIncidentCode,
           incident.dispatchIncidentType?.name

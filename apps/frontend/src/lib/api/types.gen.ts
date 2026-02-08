@@ -135,6 +135,10 @@ export type ListIncidentsResponses = {
              */
             longitude: number;
             /**
+             * Whether the incident coordinates are temporary placeholders derived from dispatched stations.
+             */
+            isTemporaryCoordinates: boolean;
+            /**
              * URL to the incident's map image.
              */
             mapImageUrl: string | null;
@@ -301,6 +305,10 @@ export type GetIncidentByIdResponses = {
          * The longitude coordinate of the incident.
          */
         longitude: number;
+        /**
+         * Whether the incident coordinates are temporary placeholders derived from dispatched stations.
+         */
+        isTemporaryCoordinates: boolean;
         /**
          * Name of the canton where the incident occurred.
          */

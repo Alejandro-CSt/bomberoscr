@@ -64,7 +64,7 @@ export function MobileHeaderNav({ className }: { className?: string }) {
         <PopoverContent
           align="start"
           alignOffset={0}
-          className="h-[calc(100dvh-var(--app-header-height))] w-screen overflow-y-auto rounded-none border-none bg-background/90 shadow-none backdrop-blur duration-100 before:rounded-none"
+          className="h-[calc(100dvh-var(--app-header-height))] w-[100dvw] overflow-y-auto rounded-none border-none bg-background/90 shadow-none backdrop-blur duration-100 before:rounded-none"
           noPadding
           positionerClassName="!h-auto !w-auto !max-w-none left-0!"
           side="bottom"

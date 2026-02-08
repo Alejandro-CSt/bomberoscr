@@ -1,11 +1,14 @@
-"use client";
-
+import { useLocation } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
 import { cn } from "@/lib/utils";
 
 export function HeaderBackdrop() {
   const [show, setShow] = useState(false);
+  const { pathname } = useLocation();
+
+  const normalizedPathname = pathname.replace(/\/+$/, "") || "/";
+  const isIncidentesRoot = normalizedPathname === "/incidentes";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -17,6 +20,10 @@ export function HeaderBackdrop() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  if (isIncidentesRoot) {
+    return null;
+  }
 
   return (
     <div

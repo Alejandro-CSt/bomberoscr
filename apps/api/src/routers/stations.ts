@@ -51,6 +51,12 @@ const CONTENT_TYPE_MAP: Record<ImageExtension, string> = {
   png: "image/png"
 };
 
+function parseQueryNumber(value: string | undefined): number | undefined {
+  if (value == null) return undefined;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : undefined;
+}
+
 function isValidCoordinates(latitude: string | null, longitude: string | null): boolean {
   if (latitude === null || longitude === null) return false;
   const lat = Number(latitude);
@@ -117,13 +123,37 @@ app.openapi(
   async (c) => {
     const { limit, page, q, operative, bounds, sort } = c.req.valid("query");
 
+    const fallbackNorth = parseQueryNumber(
+      c.req.query("bounds[north]") ?? c.req.query("northBound")
+    );
+    const fallbackSouth = parseQueryNumber(
+      c.req.query("bounds[south]") ?? c.req.query("southBound")
+    );
+    const fallbackEast = parseQueryNumber(c.req.query("bounds[east]") ?? c.req.query("eastBound"));
+    const fallbackWest = parseQueryNumber(c.req.query("bounds[west]") ?? c.req.query("westBound"));
+
+    const fallbackBounds =
+      fallbackNorth !== undefined &&
+      fallbackSouth !== undefined &&
+      fallbackEast !== undefined &&
+      fallbackWest !== undefined
+        ? {
+            north: fallbackNorth,
+            south: fallbackSouth,
+            east: fallbackEast,
+            west: fallbackWest
+          }
+        : undefined;
+
+    const resolvedBounds = bounds ?? fallbackBounds;
+
     const { data, meta } = await getStationsList({
       limit,
       page,
       sort: sort ?? [],
       q,
       operative,
-      bounds
+      bounds: resolvedBounds
     });
 
     return c.json(
