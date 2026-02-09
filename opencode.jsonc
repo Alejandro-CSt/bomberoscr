@@ -10,11 +10,6 @@
       "type": "local",
       "enabled": true,
       "command": ["bunx", "@modelcontextprotocol/server-postgres", "{env:DRIZZLE_POSTGRES_URL}"]
-    },
-    "playwright": {
-      "type": "local",
-      "command": ["bunx", "@playwright/mcp@latest", "--ignore-https-errors", "--headless"],
-      "enabled": true
     }
   }
 }
