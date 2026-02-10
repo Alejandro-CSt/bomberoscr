@@ -1,0 +1,225 @@
+import { WarningIcon } from "@phosphor-icons/react";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useMemo, useState } from "react";
+
+import { PieCenter } from "@/components/charts/pie-center";
+import { PieChart } from "@/components/charts/pie-chart";
+import { PieSlice } from "@/components/charts/pie-slice";
+import {
+  Select,
+  SelectItem,
+  SelectPopup,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import { getIncidentsByTypeOptions } from "@/lib/api/@tanstack/react-query.gen";
+import { cn } from "@/lib/utils";
+import {
+  ALLOWED_TIME_RANGE_VALUES,
+  DEFAULT_TIME_RANGE,
+  Route,
+  TIME_RANGE_LABELS
+} from "@/routes/_dashboard/index";
+
+import type { PieData } from "@/components/charts/pie-context";
+
+const chartColors = [
+  "var(--chart-1)",
+  "var(--chart-2)",
+  "var(--chart-3)",
+  "var(--chart-4)",
+  "var(--chart-5)",
+  "var(--accent-foreground)"
+];
+
+function getDateRange(days: number) {
+  const end = new Date();
+  const start = new Date();
+  start.setDate(start.getDate() - days);
+  return {
+    start: start.toISOString(),
+    end: end.toISOString()
+  };
+}
+
+export function IncidentTypesChart() {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const navigate = Route.useNavigate();
+  const { incidentTypesTimeRange } = Route.useSearch();
+  const selectedTimeRange = incidentTypesTimeRange ?? DEFAULT_TIME_RANGE;
+  const { start, end } = useMemo(() => getDateRange(selectedTimeRange), [selectedTimeRange]);
+
+  const timeRangeItems = ALLOWED_TIME_RANGE_VALUES.map((value) => ({
+    value: String(value),
+    label: TIME_RANGE_LABELS[value]
+  }));
+
+  const handleTimeRangeChange = (value: string | null) => {
+    if (!value) {
+      return;
+    }
+
+    const nextTimeRange = ALLOWED_TIME_RANGE_VALUES.find(
+      (timeRange) => String(timeRange) === value
+    );
+
+    if (!nextTimeRange) {
+      return;
+    }
+
+    navigate({
+      search: (prev) => ({
+        ...prev,
+        incidentTypesTimeRange: nextTimeRange === DEFAULT_TIME_RANGE ? undefined : nextTimeRange
+      }),
+      replace: true,
+      resetScroll: false
+    });
+  };
+
+  const { data, isLoading, isError } = useQuery({
+    ...getIncidentsByTypeOptions({
+      query: {
+        end,
+        limit: 6,
+        start
+      }
+    }),
+    placeholderData: keepPreviousData,
+    staleTime: 30 * 60 * 1000,
+    gcTime: 30 * 60 * 1000
+  });
+
+  const pieData = useMemo(() => {
+    return (data ?? []).map((item, index) => {
+      const isOther = item.name.toLowerCase() === "otros";
+      return {
+        label: item.name,
+        value: item.count,
+        color: isOther ? "var(--muted-foreground)" : chartColors[index % chartColors.length]
+      } satisfies PieData;
+    });
+  }, [data]);
+
+  const total = useMemo(() => pieData.reduce((sum, item) => sum + item.value, 0), [pieData]);
+  const isInitialLoading = isLoading && pieData.length === 0;
+  const hasError = !isInitialLoading && (isError || pieData.length === 0);
+
+  const numberFormatter = useMemo(() => new Intl.NumberFormat("es-CR"), []);
+
+  return (
+    <section className="flex flex-col gap-4">
+      <header className="space-y-2">
+        <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+          <h3 className="text-lg leading-none font-semibold">Tipos de incidente</h3>
+          <Select
+            items={timeRangeItems}
+            value={String(selectedTimeRange)}
+            onValueChange={handleTimeRangeChange}>
+            <SelectTrigger className="w-32">
+              <SelectValue placeholder="Rango" />
+            </SelectTrigger>
+            <SelectPopup>
+              {timeRangeItems.map((item) => (
+                <SelectItem
+                  key={item.value}
+                  value={item.value}>
+                  {item.label}
+                </SelectItem>
+              ))}
+            </SelectPopup>
+          </Select>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          Distribución de tipos de incidente más comunes
+        </p>
+      </header>
+
+      {isInitialLoading ? (
+        <div className="grid min-h-[360px] min-w-0 grid-cols-1 gap-6 rounded-lg bg-card p-4 md:p-6 lg:grid-cols-[minmax(0,360px)_1fr]">
+          <div className="mx-auto w-full max-w-[320px]">
+            <Skeleton className="aspect-square w-full rounded-full" />
+          </div>
+          <div className="grid min-w-0 content-start gap-0">
+            {Array.from({ length: 7 }).map((_, index) => (
+              <div
+                key={`incident-types-skeleton-item-${index}`}
+                className="py-1">
+                <Skeleton className="h-10 w-full rounded-md" />
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : hasError ? (
+        <div className="flex min-h-[360px] flex-col items-center justify-center gap-2 rounded-lg bg-card p-4 text-center text-sm text-muted-foreground">
+          <WarningIcon className="size-6" />
+          Ocurrió un error cargando los tipos de incidente
+        </div>
+      ) : (
+        <div className="grid min-h-[360px] min-w-0 grid-cols-1 gap-6 rounded-lg bg-card p-4 md:p-6 lg:grid-cols-[minmax(0,360px)_1fr]">
+          <div className="mx-auto w-full max-w-[320px]">
+            <PieChart
+              className="mx-auto"
+              cornerRadius={3}
+              data={pieData}
+              hoverOffset={8}
+              hoveredIndex={hoveredIndex}
+              innerRadius={72}
+              onHoverChange={setHoveredIndex}
+              padAngle={0.01}>
+              {pieData.map((item, index) => (
+                <PieSlice
+                  key={item.label}
+                  hoverEffect="translate"
+                  index={index}
+                />
+              ))}
+              <PieCenter defaultLabel="Incidentes" />
+            </PieChart>
+          </div>
+
+          <div className="grid min-w-0 content-start gap-0">
+            {pieData.map((item, index) => {
+              const percentage = total > 0 ? (item.value / total) * 100 : 0;
+              const isActive = hoveredIndex === index;
+              const isMuted = hoveredIndex !== null && hoveredIndex !== index;
+
+              return (
+                <button
+                  key={item.label}
+                  className={cn(
+                    "group w-full min-w-0 rounded-md py-1 text-left",
+                    isMuted && "opacity-60"
+                  )}
+                  onBlur={() => setHoveredIndex(null)}
+                  onFocus={() => setHoveredIndex(index)}
+                  onMouseEnter={() => setHoveredIndex(index)}
+                  onMouseLeave={() => setHoveredIndex(null)}
+                  type="button">
+                  <div
+                    className={cn(
+                      "flex w-full min-w-0 items-center gap-3 overflow-hidden rounded-md px-3 py-2 transition-colors",
+                      isActive ? "bg-primary/10" : "group-hover:bg-muted/50"
+                    )}>
+                    <span
+                      className="size-2.5 shrink-0 rounded-full"
+                      style={{ backgroundColor: item.color }}
+                    />
+                    <span className="min-w-0 flex-1 truncate text-sm">{item.label}</span>
+                    <span className="shrink-0 text-sm font-medium tabular-nums">
+                      {numberFormatter.format(item.value)}
+                    </span>
+                    <span className="hidden w-12 shrink-0 text-right text-xs text-muted-foreground tabular-nums sm:inline">
+                      {percentage.toFixed(1)}%
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}

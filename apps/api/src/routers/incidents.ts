@@ -53,6 +53,11 @@ function parseQueryNumber(value: string | undefined): number | undefined {
   return Number.isFinite(parsed) ? parsed : undefined;
 }
 
+function parseIsoDateTime(value: string | null | undefined): Date | null {
+  if (!value) return null;
+  return new Date(value);
+}
+
 function buildIncidentType(
   code: string | null,
   name: string | null | undefined
@@ -381,8 +386,8 @@ app.openapi(
       pageSize: pageSize ?? 25,
       cursor: cursor ?? null,
       sort: sort ?? [],
-      start: start ? new Date(start) : null,
-      end: end ? new Date(end) : null,
+      start: parseIsoDateTime(start),
+      end: parseIsoDateTime(end),
       ...filter,
       bounds
     });

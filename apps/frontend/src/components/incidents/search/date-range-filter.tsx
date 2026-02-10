@@ -4,6 +4,8 @@ import {
   endOfMonth,
   endOfYear,
   format,
+  isValid,
+  parseISO,
   startOfDay,
   startOfMonth,
   startOfYear,
@@ -36,8 +38,8 @@ function parseSearchDate(value?: string) {
     return undefined;
   }
 
-  const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) {
+  const parsed = parseISO(value);
+  if (!isValid(parsed)) {
     return undefined;
   }
 

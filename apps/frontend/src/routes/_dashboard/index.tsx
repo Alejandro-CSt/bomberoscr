@@ -1,12 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Suspense, lazy } from "react";
+import { z } from "zod";
 
 import { HighlightedIncidents } from "@/components/homepage/highlighted-incidents";
-import { IncidentDistributionCharts } from "@/components/homepage/incident-distribution-charts";
+import { IncidentTypesChart } from "@/components/homepage/incident-types-chart";
 import { LatestIncidents } from "@/components/homepage/latest-incidents";
 import { MapCTA } from "@/components/homepage/map-cta";
-import { timeRangeSearchSchema } from "@/components/homepage/time-range-search-params";
-import { TopStationsCharts } from "@/components/homepage/top-stations-charts";
 import { YearRecapHero } from "@/components/homepage/year-recap-hero";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -16,8 +15,26 @@ const title = "Emergencias CR";
 const description =
   "Visualiza incidentes recientes, métricas operativas y estaciones de bomberos con datos en vivo.";
 
+export const ALLOWED_TIME_RANGE_VALUES = [7, 30, 90, 365] as const;
+export const DEFAULT_TIME_RANGE = 30;
+
+export const TIME_RANGE_LABELS = {
+  7: "7 días",
+  30: "1 mes",
+  90: "3 meses",
+  365: "1 año"
+} as const;
+
+const timeRangeSchema = z
+  .union([z.literal(7), z.literal(30), z.literal(90), z.literal(365)])
+  .optional()
+  .catch(DEFAULT_TIME_RANGE);
+
 export const Route = createFileRoute("/_dashboard/")({
-  validateSearch: timeRangeSearchSchema,
+  validateSearch: z.object({
+    highlightedTimeRange: timeRangeSchema,
+    incidentTypesTimeRange: timeRangeSchema
+  }),
   head: () => ({
     meta: [
       { title },
@@ -38,8 +55,7 @@ function HomePage() {
       <LatestIncidents />
       <MapCTA />
       <YearRecapHero />
-      <TopStationsCharts />
-      <IncidentDistributionCharts />
+      <IncidentTypesChart />
       <Suspense
         fallback={
           <div className="flex w-full items-center justify-center p-8">

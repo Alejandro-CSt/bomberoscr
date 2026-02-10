@@ -31,6 +31,8 @@ const SORT_OPTIONS = [
   { value: "least-dispatched", label: "Menos despachados" }
 ] as const;
 
+const isoDateTimeSearchParam = z.iso.datetime({ offset: true }).optional().catch(undefined);
+
 export const Route = createFileRoute("/_incidents/incidentes/")({
   validateSearch: z.object({
     view: z.enum(["map", "list"]).optional().catch("list"),
@@ -39,8 +41,8 @@ export const Route = createFileRoute("/_incidents/incidentes/")({
       .optional()
       .catch("newest"),
     q: z.string().optional().catch(undefined),
-    start: z.string().optional().catch(undefined),
-    end: z.string().optional().catch(undefined),
+    start: isoDateTimeSearchParam,
+    end: isoDateTimeSearchParam,
     stations: z.array(z.string()).optional().catch(undefined),
     incidentCodes: z.array(z.string()).optional().catch(undefined),
     open: z.boolean().optional().catch(undefined),

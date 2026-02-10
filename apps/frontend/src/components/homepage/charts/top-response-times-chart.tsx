@@ -1,13 +1,5 @@
 import { Bar, BarChart, Cell, LabelList, XAxis, YAxis } from "recharts";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle
-} from "@/components/ui/card";
 import { type ChartConfig, ChartContainer, ChartTooltip } from "@/components/ui/chart";
 import { formatMinutesToHMS } from "@/lib/utils";
 
@@ -65,14 +57,14 @@ export function TopResponseTimesStationsChart({ stations }: TopResponseTimesStat
   });
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Tiempos de respuesta</CardTitle>
-        <CardDescription>
+    <section className="flex flex-col gap-4">
+      <header className="space-y-1">
+        <h3 className="text-lg leading-none font-semibold">Tiempos de respuesta</h3>
+        <p className="text-sm text-muted-foreground">
           Las 3 estaciones mas rapidas, mas lentas y promedio nacional - Ultimos 365 dias
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
+        </p>
+      </header>
+      <div>
         <ChartContainer
           config={chartConfig}
           className="w-full font-mono">
@@ -117,14 +109,14 @@ export function TopResponseTimesStationsChart({ stations }: TopResponseTimesStat
             </Bar>
           </BarChart>
         </ChartContainer>
-      </CardContent>
-      <CardFooter>
+      </div>
+      <footer>
         <p className="text-xs text-muted-foreground">
           No incluye tiempos de respuesta menores a 1 minuto ni estaciones con menos de 10
           despachos.
         </p>
-      </CardFooter>
-    </Card>
+      </footer>
+    </section>
   );
 }
 

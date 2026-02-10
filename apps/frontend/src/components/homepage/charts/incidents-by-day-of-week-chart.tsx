@@ -1,6 +1,5 @@
 import { Bar, BarChart, Cell, LabelList, XAxis, YAxis } from "recharts";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { type ChartConfig, ChartContainer, ChartTooltip } from "@/components/ui/chart";
 
 import type { GetIncidentsByDayOfWeekResponse } from "@/lib/api/types.gen";
@@ -54,14 +53,14 @@ export function IncidentsByDayOfWeekChart({
   const maxCount = Math.max(...incidents.map((incident) => incident.count));
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Incidentes por dia de la semana</CardTitle>
-        <CardDescription>
+    <section className="flex flex-col gap-4">
+      <header className="space-y-1">
+        <h3 className="text-lg leading-none font-semibold">Incidentes por dia de la semana</h3>
+        <p className="text-sm text-muted-foreground">
           Distribucion de incidentes por dia - Ultimos {getTimeRangeLabel(timeRange)}
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
+        </p>
+      </header>
+      <div>
         <ChartContainer
           config={chartConfig}
           className="w-full font-mono">
@@ -106,8 +105,8 @@ export function IncidentsByDayOfWeekChart({
             </Bar>
           </BarChart>
         </ChartContainer>
-      </CardContent>
-    </Card>
+      </div>
+    </section>
   );
 }
 

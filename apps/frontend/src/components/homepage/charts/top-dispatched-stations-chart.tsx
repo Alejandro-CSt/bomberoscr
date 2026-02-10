@@ -1,6 +1,5 @@
 import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   type ChartConfig,
   ChartContainer,
@@ -38,14 +37,14 @@ const chartConfig = {
 
 export function TopDispatchedStationsChart({ stations }: TopDispatchedStationsChartProps) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Estaciones mas despachadas</CardTitle>
-        <CardDescription>
+    <section className="flex flex-col gap-4">
+      <header className="space-y-1">
+        <h3 className="text-lg leading-none font-semibold">Estaciones mas despachadas</h3>
+        <p className="text-sm text-muted-foreground">
           Estaciones con mas despachos (responsable y apoyo) - Ultimos 30 dias
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
+        </p>
+      </header>
+      <div>
         <ChartContainer
           config={chartConfig}
           className="w-full font-mono">
@@ -92,8 +91,8 @@ export function TopDispatchedStationsChart({ stations }: TopDispatchedStationsCh
             <ChartLegend content={<ChartLegendContent />} />
           </BarChart>
         </ChartContainer>
-      </CardContent>
-    </Card>
+      </div>
+    </section>
   );
 }
 

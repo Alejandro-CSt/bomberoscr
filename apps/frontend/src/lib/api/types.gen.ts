@@ -28,11 +28,11 @@ export type ListIncidentsData = {
          */
         q?: string | null;
         /**
-         * Start date (inclusive) for filtering incidents, in ISO 8601 format.
+         * Start timestamp (inclusive) for filtering incidents, in ISO 8601 datetime format with timezone.
          */
         start?: string | null;
         /**
-         * End date (inclusive) for filtering incidents, in ISO 8601 format.
+         * End timestamp (inclusive) for filtering incidents, in ISO 8601 datetime format with timezone.
          */
         end?: string | null;
         /**
@@ -1384,11 +1384,11 @@ export type GetTopDispatchedStationsData = {
     path?: never;
     query?: {
         /**
-         * Start date (inclusive) for filtering, in ISO 8601 format.
+         * Start timestamp (inclusive) for filtering, in ISO 8601 datetime format with timezone.
          */
         start?: string | null;
         /**
-         * End date (inclusive) for filtering, in ISO 8601 format.
+         * End timestamp (inclusive) for filtering, in ISO 8601 datetime format with timezone.
          */
         end?: string | null;
     };
@@ -1430,11 +1430,11 @@ export type GetTopResponseTimesData = {
     path?: never;
     query?: {
         /**
-         * Start date (inclusive) for filtering, in ISO 8601 format.
+         * Start timestamp (inclusive) for filtering, in ISO 8601 datetime format with timezone.
          */
         start?: string | null;
         /**
-         * End date (inclusive) for filtering, in ISO 8601 format.
+         * End timestamp (inclusive) for filtering, in ISO 8601 datetime format with timezone.
          */
         end?: string | null;
     };
@@ -1479,16 +1479,54 @@ export type GetTopResponseTimesResponses = {
 
 export type GetTopResponseTimesResponse = GetTopResponseTimesResponses[keyof GetTopResponseTimesResponses];
 
+export type GetIncidentsByTypeData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Start timestamp (inclusive) for filtering, in ISO 8601 datetime format with timezone.
+         */
+        start?: string | null;
+        /**
+         * End timestamp (inclusive) for filtering, in ISO 8601 datetime format with timezone.
+         */
+        end?: string | null;
+        /**
+         * Maximum number of incident types to return before grouping the rest as 'Otros'.
+         */
+        limit?: number;
+    };
+    url: '/stats/incidents-by-type';
+};
+
+export type GetIncidentsByTypeResponses = {
+    /**
+     * Incidents grouped by type, including top N types and an optional 'Otros' bucket for the rest
+     */
+    200: Array<{
+        /**
+         * Incident type name.
+         */
+        name: string;
+        /**
+         * Number of incidents for this type.
+         */
+        count: number;
+    }>;
+};
+
+export type GetIncidentsByTypeResponse = GetIncidentsByTypeResponses[keyof GetIncidentsByTypeResponses];
+
 export type GetIncidentsByDayOfWeekData = {
     body?: never;
     path?: never;
     query?: {
         /**
-         * Start date (inclusive) for filtering, in ISO 8601 format.
+         * Start timestamp (inclusive) for filtering, in ISO 8601 datetime format with timezone.
          */
         start?: string | null;
         /**
-         * End date (inclusive) for filtering, in ISO 8601 format.
+         * End timestamp (inclusive) for filtering, in ISO 8601 datetime format with timezone.
          */
         end?: string | null;
     };
@@ -1518,11 +1556,11 @@ export type GetIncidentsByHourData = {
     path?: never;
     query?: {
         /**
-         * Start date (inclusive) for filtering, in ISO 8601 format.
+         * Start timestamp (inclusive) for filtering, in ISO 8601 datetime format with timezone.
          */
         start?: string | null;
         /**
-         * End date (inclusive) for filtering, in ISO 8601 format.
+         * End timestamp (inclusive) for filtering, in ISO 8601 datetime format with timezone.
          */
         end?: string | null;
     };
@@ -1556,11 +1594,11 @@ export type GetDailyIncidentsData = {
     path?: never;
     query?: {
         /**
-         * Start date (inclusive) for filtering, in ISO 8601 format.
+         * Start timestamp (inclusive) for filtering, in ISO 8601 datetime format with timezone.
          */
         start?: string | null;
         /**
-         * End date (inclusive) for filtering, in ISO 8601 format.
+         * End timestamp (inclusive) for filtering, in ISO 8601 datetime format with timezone.
          */
         end?: string | null;
     };

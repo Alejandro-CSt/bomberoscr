@@ -18,23 +18,25 @@ function validateDateRange(start: string | null, end: string | null) {
 }
 
 const dateRangeBase = {
-  start: z
-    .string()
+  start: z.iso
+    .datetime({ offset: true })
     .nullable()
     .optional()
     .openapi({
-      description: "Start date (inclusive) for filtering, in ISO 8601 format.",
+      description:
+        "Start timestamp (inclusive) for filtering, in ISO 8601 datetime format with timezone.",
       param: { in: "query" },
-      example: "2024-01-01"
+      example: "2024-01-01T00:00:00-06:00"
     }),
-  end: z
-    .string()
+  end: z.iso
+    .datetime({ offset: true })
     .nullable()
     .optional()
     .openapi({
-      description: "End date (inclusive) for filtering, in ISO 8601 format.",
+      description:
+        "End timestamp (inclusive) for filtering, in ISO 8601 datetime format with timezone.",
       param: { in: "query" },
-      example: "2024-01-31"
+      example: "2024-01-31T23:59:59.999-06:00"
     })
 };
 
@@ -222,6 +224,50 @@ export const topResponseTimesResponse = z
   )
   .openapi({
     description: "Station response time rankings (fastest, slowest, and national average)"
+  });
+
+// ============================================================================
+// Incidents by Type
+// ============================================================================
+
+export const incidentsByTypeRequest = z
+  .object({
+    ...dateRangeBase,
+    limit: z.coerce
+      .number()
+      .int()
+      .min(1)
+      .max(12)
+      .optional()
+      .default(6)
+      .openapi({
+        description:
+          "Maximum number of incident types to return before grouping the rest as 'Otros'.",
+        param: { in: "query" },
+        example: 6
+      })
+  })
+  .refine((data) => validateDateRange(data.start ?? null, data.end ?? null), {
+    message: `Date range cannot exceed ${MAX_DAYS} days`,
+    path: ["end"]
+  });
+
+export const incidentsByTypeResponse = z
+  .array(
+    z.object({
+      name: z.string().openapi({
+        description: "Incident type name.",
+        example: "EMERGENCIAS MÉDICAS"
+      }),
+      count: z.number().openapi({
+        description: "Number of incidents for this type.",
+        example: 2450
+      })
+    })
+  )
+  .openapi({
+    description:
+      "Incidents grouped by type, including top N types and an optional 'Otros' bucket for the rest"
   });
 
 // ============================================================================

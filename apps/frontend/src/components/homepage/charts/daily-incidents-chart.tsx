@@ -1,14 +1,6 @@
 import { Area, AreaChart, XAxis, YAxis } from "recharts";
 
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle
-} from "@/components/ui/card";
-import {
   type ChartConfig,
   ChartContainer,
   ChartLegend,
@@ -69,14 +61,14 @@ export function DailyIncidentsChart({ incidents, timeRange = 30 }: DailyIncident
   const { data, summary } = incidents;
 
   return (
-    <Card className="col-span-full">
-      <CardHeader>
-        <CardTitle>Incidentes diarios</CardTitle>
-        <CardDescription>
+    <section className="col-span-full flex flex-col gap-4">
+      <header className="space-y-1">
+        <h3 className="text-lg leading-none font-semibold">Incidentes diarios</h3>
+        <p className="text-sm text-muted-foreground">
           Comparacion de incidentes por dia - {getTimeRangeLabel(timeRange)} actual vs anterior
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="px-2">
+        </p>
+      </header>
+      <div className="px-2">
         <ChartContainer
           config={chartConfig}
           className="max-h-[300px] w-full font-mono">
@@ -126,8 +118,8 @@ export function DailyIncidentsChart({ incidents, timeRange = 30 }: DailyIncident
             <ChartLegend content={<ChartLegendContent />} />
           </AreaChart>
         </ChartContainer>
-      </CardContent>
-      <CardFooter className="flex-col items-start gap-2 text-sm">
+      </div>
+      <footer className="flex flex-col items-start gap-2 text-sm">
         <div className="flex gap-2 leading-none font-medium">
           <span>Total actual: {summary.currentTotal}</span>
           <span>-</span>
@@ -137,8 +129,8 @@ export function DailyIncidentsChart({ incidents, timeRange = 30 }: DailyIncident
             {formatChange(summary.percentageChange)}
           </span>
         </div>
-      </CardFooter>
-    </Card>
+      </footer>
+    </section>
   );
 }
 

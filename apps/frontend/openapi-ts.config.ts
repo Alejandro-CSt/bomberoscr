@@ -4,7 +4,7 @@ export default defineConfig({
   input: "http://localhost:9998/bomberos/hono/doc",
   output: {
     path: "src/lib/api/",
-    lint: "oxlint"
+    postProcess: ["oxlint"]
   },
   plugins: ["@hey-api/typescript", "@hey-api/sdk", "@tanstack/react-query"]
 });

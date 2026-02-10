@@ -1,18 +1,20 @@
 import { WarningIcon } from "@phosphor-icons/react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
+import { useMemo } from "react";
 
 import {
   HighlightedIncidentCard,
   HighlightedIncidentCardSkeleton
 } from "@/components/homepage/highlighted-incident-card";
-import {
-  ALLOWED_TIME_RANGE_VALUES,
-  TIME_RANGE_LABELS
-} from "@/components/homepage/time-range-search-params";
 import { Tabs, TabsList, TabsTab } from "@/components/ui/tabs";
 import { listIncidentsOptions } from "@/lib/api/@tanstack/react-query.gen";
-import { Route } from "@/routes/_dashboard/index";
+import {
+  ALLOWED_TIME_RANGE_VALUES,
+  DEFAULT_TIME_RANGE,
+  Route,
+  TIME_RANGE_LABELS
+} from "@/routes/_dashboard/index";
 
 function getDateRange(days: number) {
   const end = new Date();
@@ -25,9 +27,10 @@ function getDateRange(days: number) {
 }
 
 export function HighlightedIncidents() {
-  const { timeRange } = Route.useSearch();
+  const { highlightedTimeRange } = Route.useSearch();
+  const selectedTimeRange = highlightedTimeRange ?? DEFAULT_TIME_RANGE;
 
-  const { start, end } = getDateRange(timeRange);
+  const { start, end } = useMemo(() => getDateRange(selectedTimeRange), [selectedTimeRange]);
 
   const { data, isLoading, isError } = useQuery({
     ...listIncidentsOptions({
@@ -48,7 +51,7 @@ export function HighlightedIncidents() {
     <section className="flex flex-col gap-4 pt-8">
       <div className="flex flex-wrap items-center gap-3">
         <h2 className="text-xl font-semibold lg:text-2xl">Destacados</h2>
-        <Tabs value={String(timeRange)}>
+        <Tabs value={String(selectedTimeRange)}>
           <TabsList
             variant="underline"
             className="h-8">
@@ -61,7 +64,7 @@ export function HighlightedIncidents() {
                     to="."
                     search={(prev) => ({
                       ...prev,
-                      timeRange: value
+                      highlightedTimeRange: value === DEFAULT_TIME_RANGE ? undefined : value
                     })}
                   />
                 }

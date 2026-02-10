@@ -1,7 +1,7 @@
 procs:
   api:
-    cmd: ["bun", "run", "--filter", "api", "--elide-lines=0", "dev"]
+    cmd: ["bun", "run", "--cwd", "apps/api", "dev"]
   frontend:
-    cmd: ["bun", "run", "--filter", "frontend", "--elide-lines=0", "dev"]
+    cmd: ["bun", "run", "--cwd", "apps/frontend", "dev"]
   sync-v2:
-    cmd: ["bun", "run", "--filter", "sync-v2", "--elide-lines=0", "dev"]
+    cmd: ["bun", "run", "--cwd", "apps/sync-v2", "dev"]

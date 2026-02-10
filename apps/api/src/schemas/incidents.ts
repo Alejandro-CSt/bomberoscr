@@ -68,23 +68,25 @@ export const incidentsListRequest = z.object({
       param: { in: "query" },
       example: "Acme"
     }),
-  start: z
-    .string()
+  start: z.iso
+    .datetime({ offset: true })
     .nullable()
     .optional()
     .openapi({
-      description: "Start date (inclusive) for filtering incidents, in ISO 8601 format.",
+      description:
+        "Start timestamp (inclusive) for filtering incidents, in ISO 8601 datetime format with timezone.",
       param: { in: "query" },
-      example: "2024-01-01"
+      example: "2024-01-01T00:00:00-06:00"
     }),
-  end: z
-    .string()
+  end: z.iso
+    .datetime({ offset: true })
     .nullable()
     .optional()
     .openapi({
-      description: "End date (inclusive) for filtering incidents, in ISO 8601 format.",
+      description:
+        "End timestamp (inclusive) for filtering incidents, in ISO 8601 datetime format with timezone.",
       param: { in: "query" },
-      example: "2024-01-31"
+      example: "2024-01-31T23:59:59.999-06:00"
     }),
   stations: z.coerce
     .number()

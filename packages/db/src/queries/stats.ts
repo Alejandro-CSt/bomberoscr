@@ -133,6 +133,49 @@ export async function getYearRecap(year: number) {
 }
 
 // ============================================================================
+// Incidents by Type
+// ============================================================================
+
+export async function getIncidentsByType({
+  startDate,
+  endDate,
+  limit = 6
+}: {
+  startDate: Date;
+  endDate: Date;
+  limit?: number;
+}) {
+  const incidentTypesBreakdown = await db
+    .select({
+      name: sql<string>`coalesce(${incidentTypes.name}, 'Sin clasificar')`,
+      count: sql<number>`count(*)::int`
+    })
+    .from(incidents)
+    .leftJoin(incidentTypes, eq(incidents.specificIncidentCode, incidentTypes.incidentCode))
+    .where(sql`${incidents.incidentTimestamp} BETWEEN ${startDate} AND ${endDate}`)
+    .groupBy(incidentTypes.incidentCode, incidentTypes.name)
+    .orderBy(desc(sql`count(*)`));
+
+  const topTypes = incidentTypesBreakdown.slice(0, limit).map((item) => ({
+    name: item.name,
+    count: Number(item.count)
+  }));
+
+  const otherCount = incidentTypesBreakdown
+    .slice(limit)
+    .reduce((sum, item) => sum + Number(item.count), 0);
+
+  if (otherCount > 0) {
+    topTypes.push({
+      name: "Otros",
+      count: otherCount
+    });
+  }
+
+  return topTypes;
+}
+
+// ============================================================================
 // Top Dispatched Stations
 // ============================================================================
 

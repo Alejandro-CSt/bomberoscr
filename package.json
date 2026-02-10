@@ -6,23 +6,25 @@
   ],
   "scripts": {
     "dev": "mprocs",
-    "dev:api": "bun run --filter api dev",
-    "dev:frontend": "bun run --filter frontend dev",
-    "dev:sync": "bun run --filter sync-v2 dev",
+    "dev:api": "bun run --cwd apps/api dev",
+    "dev:frontend": "bun run --cwd apps/frontend dev",
+    "dev:sync": "bun run --cwd apps/sync-v2 dev",
     "dev:all": "mprocs --config mprocs.all.yaml",
-    "lint:check": "bun run --filter api --filter frontend lint",
-    "lint:safefix": "bun run --filter api --filter frontend lint:fix",
+    "lint:check": "bun run --cwd apps/api lint && bun run --cwd apps/frontend lint",
+    "lint:safefix": "bun run --cwd apps/api lint:fix && bun run --cwd apps/frontend lint:fix",
     "lint:next": "next lint",
-    "format:check": "bun run --filter api --filter frontend format:check",
-    "format": "bun run --filter api --filter frontend format",
+    "typecheck:frontend": "bun run --cwd apps/frontend typecheck",
+    "format:check": "bun run --cwd apps/api format:check && bun run --cwd apps/frontend format:check",
+    "format": "bun run --cwd apps/api format && bun run --cwd apps/frontend format",
     "prepare": "husky"
   },
   "devDependencies": {
     "@typescript/native-preview": "^7.0.0-dev.20260127.1",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
-    "oxfmt": "^0.27.0",
-    "oxlint": "^1.42.0"
+    "oxfmt": "^0.28.0",
+    "oxlint": "^1.43.0",
+    "oxlint-tsgolint": "^0.11.5"
   },
   "overrides": {
     "hono-og@0.0.29": {

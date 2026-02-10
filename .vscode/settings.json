@@ -8,6 +8,7 @@
     "source.fixAll.oxc": "explicit"
   },
   "oxc.enable": true,
+  "oxc.typeAware": true,
   "[typescript]": {
     "editor.defaultFormatter": "oxc.oxc-vscode"
   },
