@@ -44,7 +44,7 @@ export function StationFilterContent({
   const handleSelect = (value: StationOption[]) => {
     const selectedStations = value.map((item) => item.value);
 
-    navigate({
+    void navigate({
       search: (prev) => ({
         ...prev,
         stations: selectedStations.length > 0 ? selectedStations : undefined

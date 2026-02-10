@@ -130,7 +130,7 @@ function Page() {
     }
 
     debounceRef.current = setTimeout(() => {
-      navigate({
+      void navigate({
         search: (prev) => ({ ...prev, q: value || undefined, page: 1 }),
         replace: true,
         resetScroll: false
@@ -139,7 +139,7 @@ function Page() {
   };
 
   const handleStatusChange = (newStatus: "all" | "operative" | "non-operative") => {
-    navigate({
+    void navigate({
       search: (prev) => ({ ...prev, status: newStatus, page: 1 }),
       replace: true,
       resetScroll: false
@@ -147,7 +147,7 @@ function Page() {
   };
 
   const handleSortChange = (newSort: "name-asc" | "name-desc" | "key-asc" | "key-desc") => {
-    navigate({
+    void navigate({
       search: (prev) => ({ ...prev, sort: newSort, page: 1 }),
       replace: true,
       resetScroll: false
@@ -267,7 +267,7 @@ function Page() {
                 disabled={isFirstPage || isFetching}
                 onClick={() => {
                   if (!isFirstPage && !isFetching)
-                    navigate({
+                    void navigate({
                       search: (prev) => ({ ...prev, page: page - 1 }),
                       replace: true,
                       resetScroll: false
@@ -290,7 +290,7 @@ function Page() {
                 disabled={isLastPage || isFetching}
                 onClick={() => {
                   if (!isLastPage && !isFetching)
-                    navigate({
+                    void navigate({
                       search: (prev) => ({ ...prev, page: page + 1 }),
                       replace: true,
                       resetScroll: false

@@ -179,7 +179,7 @@ export function DateRangeFilterContent({ className }: { className?: string }) {
 
     setMonth(nextMonth);
 
-    navigate({
+    void navigate({
       search: (prev) => ({
         ...prev,
         start: nextSearchRange.start,

@@ -552,7 +552,7 @@ export function IncidentsMap({
         map.on("moveend", () => {
           const bounds = map.getBounds();
 
-          navigate({
+          void navigate({
             search: (prev) => ({
               ...prev,
               northBound: roundCoordinate(bounds.getNorth()),
@@ -583,7 +583,7 @@ export function IncidentsMap({
     };
 
     let cleanupObserver: (() => void) | undefined;
-    initializeMap().then((cleanup) => {
+    void initializeMap().then((cleanup) => {
       cleanupObserver = cleanup;
     });
 

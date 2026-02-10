@@ -147,7 +147,7 @@ export function IncidentTypeFilterContent({
   const handleSelect = (value: IncidentTypeOption[]) => {
     const selectedCodes = value.map((item) => item.value);
 
-    navigate({
+    void navigate({
       search: (prev) => ({
         ...prev,
         incidentCodes: selectedCodes.length > 0 ? selectedCodes : undefined

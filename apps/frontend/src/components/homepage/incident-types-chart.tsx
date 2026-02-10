@@ -68,7 +68,7 @@ export function IncidentTypesChart() {
       return;
     }
 
-    navigate({
+    void navigate({
       search: (prev) => ({
         ...prev,
         incidentTypesTimeRange: nextTimeRange === DEFAULT_TIME_RANGE ? undefined : nextTimeRange

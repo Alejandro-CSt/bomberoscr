@@ -127,7 +127,7 @@ function IncidentesPage() {
     : "flex h-[calc(100dvh-var(--app-header-height))] flex-col overflow-hidden";
 
   const handleToggleView = () => {
-    navigate({
+    void navigate({
       search: (prev) => ({ ...prev, view: isMapView ? "list" : "map" }),
       replace: true,
       resetScroll: false
@@ -135,7 +135,7 @@ function IncidentesPage() {
   };
 
   const handleSortChange = (sort: (typeof SORT_OPTIONS)[number]["value"]) => {
-    navigate({
+    void navigate({
       search: (prev) => ({ ...prev, sort }),
       replace: true,
       resetScroll: false

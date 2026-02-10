@@ -88,7 +88,7 @@ export function IncidentsSearchHeader({
     }
 
     debounceRef.current = setTimeout(() => {
-      navigate({
+      void navigate({
         search: (prev) => ({ ...prev, q: value || undefined }),
         replace: true,
         resetScroll: false
@@ -151,7 +151,7 @@ function FilterSheet({
   const navigate = Route.useNavigate();
 
   const handleResetFilters = () => {
-    navigate({
+    void navigate({
       search: (prev) => ({
         view: prev.view,
         q: prev.q,
