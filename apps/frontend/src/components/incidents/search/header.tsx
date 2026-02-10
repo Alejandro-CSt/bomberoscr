@@ -40,10 +40,17 @@ export function IncidentsSearchHeader({
   incidentTypes: ListIncidentTypesResponse["items"];
 }) {
   const [autoAnimating, setAutoAnimating] = useState(false);
-  const { q } = Route.useSearch();
+  const search = Route.useSearch();
+  const { q } = search;
   const navigate = Route.useNavigate();
   const [searchInputValue, setSearchInputValue] = useState(q ?? "");
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const activeFiltersCount =
+    (search.stations?.length ?? 0) +
+    (search.incidentCodes?.length ?? 0) +
+    (search.start || search.end ? 1 : 0) +
+    (search.open != null ? 1 : 0);
 
   useEffect(() => {
     let startTimeout: number;
@@ -101,8 +108,25 @@ export function IncidentsSearchHeader({
     label: station.name
   }));
 
+  const handleResetFilters = () => {
+    void navigate({
+      search: (prev) => ({
+        view: prev.view,
+        q: prev.q,
+        sort: prev.sort,
+        zoom: prev.zoom,
+        northBound: prev.northBound,
+        southBound: prev.southBound,
+        eastBound: prev.eastBound,
+        westBound: prev.westBound
+      }),
+      replace: true,
+      resetScroll: false
+    });
+  };
+
   return (
-    <div className="flex items-center gap-4 p-4 max-md:justify-between">
+    <div className="flex items-center gap-4 max-md:justify-between max-md:p-4 md:px-4 md:py-2">
       <Link
         to="/"
         aria-label="Inicio"
@@ -129,9 +153,21 @@ export function IncidentsSearchHeader({
         <div className="max-md:hidden">
           <DateRangeFilterPopover />
         </div>
+        {activeFiltersCount > 0 && (
+          <div className="max-md:hidden">
+            <Button
+              size="sm"
+              variant="link"
+              onClick={handleResetFilters}>
+              Reestablecer filtros
+            </Button>
+          </div>
+        )}
         <div className="md:hidden">
           <FilterSheet
+            activeFiltersCount={activeFiltersCount}
             incidentTypes={incidentTypes}
+            onResetFilters={handleResetFilters}
             stationItems={stationItems}
           />
         </div>
@@ -142,31 +178,16 @@ export function IncidentsSearchHeader({
 }
 
 function FilterSheet({
+  activeFiltersCount,
   stationItems,
+  onResetFilters,
   incidentTypes
 }: {
+  activeFiltersCount: number;
   stationItems: { value: string; label: string }[];
+  onResetFilters: () => void;
   incidentTypes: ListIncidentTypesResponse["items"];
 }) {
-  const navigate = Route.useNavigate();
-
-  const handleResetFilters = () => {
-    void navigate({
-      search: (prev) => ({
-        view: prev.view,
-        q: prev.q,
-        sort: prev.sort,
-        zoom: prev.zoom,
-        northBound: prev.northBound,
-        southBound: prev.southBound,
-        eastBound: prev.eastBound,
-        westBound: prev.westBound
-      }),
-      replace: true,
-      resetScroll: false
-    });
-  };
-
   return (
     <Sheet>
       <SheetTrigger
@@ -177,6 +198,11 @@ function FilterSheet({
           />
         }>
         <span>Filtros</span>
+        {activeFiltersCount > 0 && (
+          <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[11px] font-semibold text-primary-foreground">
+            {activeFiltersCount}
+          </span>
+        )}
         <CaretDownIcon className="size-4" />
       </SheetTrigger>
       <SheetPopup
@@ -205,8 +231,9 @@ function FilterSheet({
             render={
               <Button
                 className="w-full"
+                disabled={activeFiltersCount === 0}
                 variant="outline"
-                onClick={handleResetFilters}
+                onClick={onResetFilters}
               />
             }>
             Reestablecer filtros

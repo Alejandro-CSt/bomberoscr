@@ -1505,6 +1505,10 @@ export type GetIncidentsByTypeResponses = {
      */
     200: Array<{
         /**
+         * Incident type code used for filtering. Null when the bucket cannot be filtered directly.
+         */
+        code: string | null;
+        /**
          * Incident type name.
          */
         name: string;

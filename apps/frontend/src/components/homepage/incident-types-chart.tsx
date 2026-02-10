@@ -1,6 +1,8 @@
 import { WarningIcon } from "@phosphor-icons/react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { Link } from "@tanstack/react-router";
+import { ArrowRightIcon } from "lucide-react";
+import { Fragment, useMemo, useState } from "react";
 
 import { PieCenter } from "@/components/charts/pie-center";
 import { PieChart } from "@/components/charts/pie-chart";
@@ -18,7 +20,7 @@ import { cn } from "@/lib/utils";
 import {
   ALLOWED_TIME_RANGE_VALUES,
   DEFAULT_TIME_RANGE,
-  Route,
+  Route as DashboardRoute,
   TIME_RANGE_LABELS
 } from "@/routes/_dashboard/index";
 
@@ -33,6 +35,15 @@ const chartColors = [
   "var(--accent-foreground)"
 ];
 
+type IncidentTypeChartData = PieData & {
+  code: string | null;
+  incidentsSearch: {
+    incidentCodes: string[];
+    start: string;
+    end: string;
+  } | null;
+};
+
 function getDateRange(days: number) {
   const end = new Date();
   const start = new Date();
@@ -45,8 +56,8 @@ function getDateRange(days: number) {
 
 export function IncidentTypesChart() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const navigate = Route.useNavigate();
-  const { incidentTypesTimeRange } = Route.useSearch();
+  const navigate = DashboardRoute.useNavigate();
+  const { incidentTypesTimeRange } = DashboardRoute.useSearch();
   const selectedTimeRange = incidentTypesTimeRange ?? DEFAULT_TIME_RANGE;
   const { start, end } = useMemo(() => getDateRange(selectedTimeRange), [selectedTimeRange]);
 
@@ -91,16 +102,25 @@ export function IncidentTypesChart() {
     gcTime: 30 * 60 * 1000
   });
 
-  const pieData = useMemo(() => {
+  const pieData = useMemo<IncidentTypeChartData[]>(() => {
     return (data ?? []).map((item, index) => {
       const isOther = item.name.toLowerCase() === "otros";
+      const code = isOther ? null : item.code;
       return {
         label: item.name,
         value: item.count,
-        color: isOther ? "var(--muted-foreground)" : chartColors[index % chartColors.length]
-      } satisfies PieData;
+        color: isOther ? "var(--muted-foreground)" : chartColors[index % chartColors.length],
+        code,
+        incidentsSearch: code
+          ? {
+              incidentCodes: [code],
+              start,
+              end
+            }
+          : null
+      } satisfies IncidentTypeChartData;
     });
-  }, [data]);
+  }, [data, end, start]);
 
   const total = useMemo(() => pieData.reduce((sum, item) => sum + item.value, 0), [pieData]);
   const isInitialLoading = isLoading && pieData.length === 0;
@@ -170,7 +190,7 @@ export function IncidentTypesChart() {
               padAngle={0.01}>
               {pieData.map((item, index) => (
                 <PieSlice
-                  key={item.label}
+                  key={item.code ?? `${item.label}-${index}`}
                   hoverEffect="translate"
                   index={index}
                 />
@@ -184,12 +204,78 @@ export function IncidentTypesChart() {
               const percentage = total > 0 ? (item.value / total) * 100 : 0;
               const isActive = hoveredIndex === index;
               const isMuted = hoveredIndex !== null && hoveredIndex !== index;
+              const itemKey = item.code ?? `${item.label}-${index}`;
+              const rowClassName = cn(
+                "flex w-full min-w-0 items-center gap-3 overflow-hidden rounded-md px-3 py-2 transition-colors",
+                isActive ? "bg-primary/10" : "group-hover:bg-muted/50"
+              );
+
+              if (item.incidentsSearch) {
+                return (
+                  <Fragment key={itemKey}>
+                    <Link
+                      to="/incidentes"
+                      search={item.incidentsSearch}
+                      className={cn(
+                        "group hidden w-full min-w-0 cursor-pointer rounded-md py-1 text-left no-underline sm:block",
+                        isMuted && "opacity-60"
+                      )}
+                      onBlur={() => setHoveredIndex(null)}
+                      onFocus={() => setHoveredIndex(index)}
+                      onMouseEnter={() => setHoveredIndex(index)}
+                      onMouseLeave={() => setHoveredIndex(null)}>
+                      <div className={rowClassName}>
+                        <span
+                          className="size-2.5 shrink-0 rounded-full"
+                          style={{ backgroundColor: item.color }}
+                        />
+                        <span className="min-w-0 flex-1 truncate text-sm">{item.label}</span>
+                        <span className="shrink-0 text-sm font-medium tabular-nums">
+                          {numberFormatter.format(item.value)}
+                        </span>
+                        <span className="w-12 shrink-0 text-right text-xs text-muted-foreground tabular-nums">
+                          {percentage.toFixed(1)}%
+                        </span>
+                      </div>
+                    </Link>
+
+                    <div
+                      className={cn(
+                        "group w-full min-w-0 rounded-md py-1 text-left sm:hidden",
+                        isMuted && "opacity-60"
+                      )}
+                      onMouseEnter={() => setHoveredIndex(index)}
+                      onMouseLeave={() => setHoveredIndex(null)}>
+                      <div className={rowClassName}>
+                        <span
+                          className="size-2.5 shrink-0 rounded-full"
+                          style={{ backgroundColor: item.color }}
+                        />
+                        <span className="min-w-0 flex-1 truncate text-sm">{item.label}</span>
+                        <span className="shrink-0 text-sm font-medium tabular-nums">
+                          {numberFormatter.format(item.value)}
+                        </span>
+                        <Link
+                          to="/incidentes"
+                          search={item.incidentsSearch}
+                          className="inline-flex shrink-0 items-center justify-between gap-2 text-xs font-medium text-primary no-underline"
+                          onBlur={() => setHoveredIndex(null)}
+                          onFocus={() => setHoveredIndex(index)}>
+                          <span>Ver</span>
+                          <ArrowRightIcon className="size-3.5" />
+                        </Link>
+                      </div>
+                    </div>
+                  </Fragment>
+                );
+              }
 
               return (
                 <button
-                  key={item.label}
+                  key={itemKey}
                   className={cn(
                     "group w-full min-w-0 rounded-md py-1 text-left",
+                    "cursor-default",
                     isMuted && "opacity-60"
                   )}
                   onBlur={() => setHoveredIndex(null)}
@@ -197,11 +283,7 @@ export function IncidentTypesChart() {
                   onMouseEnter={() => setHoveredIndex(index)}
                   onMouseLeave={() => setHoveredIndex(null)}
                   type="button">
-                  <div
-                    className={cn(
-                      "flex w-full min-w-0 items-center gap-3 overflow-hidden rounded-md px-3 py-2 transition-colors",
-                      isActive ? "bg-primary/10" : "group-hover:bg-muted/50"
-                    )}>
+                  <div className={rowClassName}>
                     <span
                       className="size-2.5 shrink-0 rounded-full"
                       style={{ backgroundColor: item.color }}

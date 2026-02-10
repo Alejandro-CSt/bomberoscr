@@ -147,6 +147,7 @@ export async function getIncidentsByType({
 }) {
   const incidentTypesBreakdown = await db
     .select({
+      code: incidentTypes.incidentCode,
       name: sql<string>`coalesce(${incidentTypes.name}, 'Sin clasificar')`,
       count: sql<number>`count(*)::int`
     })
@@ -157,6 +158,7 @@ export async function getIncidentsByType({
     .orderBy(desc(sql`count(*)`));
 
   const topTypes = incidentTypesBreakdown.slice(0, limit).map((item) => ({
+    code: item.code,
     name: item.name,
     count: Number(item.count)
   }));
@@ -167,6 +169,7 @@ export async function getIncidentsByType({
 
   if (otherCount > 0) {
     topTypes.push({
+      code: null,
       name: "Otros",
       count: otherCount
     });

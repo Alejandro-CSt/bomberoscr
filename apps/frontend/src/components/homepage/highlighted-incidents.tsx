@@ -9,6 +9,7 @@ import {
 } from "@/components/homepage/highlighted-incident-card";
 import { Tabs, TabsList, TabsTab } from "@/components/ui/tabs";
 import { listIncidentsOptions } from "@/lib/api/@tanstack/react-query.gen";
+import { cn } from "@/lib/utils";
 import {
   ALLOWED_TIME_RANGE_VALUES,
   DEFAULT_TIME_RANGE,
@@ -84,7 +85,7 @@ export function HighlightedIncidents() {
                 [1, 2, 3, 4, 5, 6].map((key) => (
                   <div
                     key={key}
-                    className={key > 1 ? "hidden md:block" : undefined}>
+                    className={cn(key > 1 && "hidden md:block")}>
                     <HighlightedIncidentCardSkeleton />
                   </div>
                 ))

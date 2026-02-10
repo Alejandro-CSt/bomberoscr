@@ -19,6 +19,7 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 import { listIncidentTypes, listStations } from "@/lib/api";
 import { client } from "@/lib/api/client.gen";
+import { cn } from "@/lib/utils";
 
 const title = "Incidentes — Emergencias CR";
 const description =
@@ -123,7 +124,7 @@ function IncidentesPage() {
   const pageClassName = isMobile
     ? isMapView
       ? "flex h-dvh flex-col overflow-hidden"
-      : "overflow-x-hidden"
+      : "overflow-x-clip"
     : "flex h-[calc(100dvh-var(--app-header-height))] flex-col overflow-hidden";
 
   const handleToggleView = () => {
@@ -145,15 +146,17 @@ function IncidentesPage() {
 
   return (
     <div className={pageClassName}>
-      <IncidentsSearchHeader
-        incidentTypes={incidentTypes}
-        stations={stations}
-      />
+      <div className="max-md:sticky max-md:top-0 max-md:z-30 max-md:border-b max-md:border-border max-md:bg-background">
+        <IncidentsSearchHeader
+          incidentTypes={incidentTypes}
+          stations={stations}
+        />
+      </div>
 
       {isMobile ? (
         <>
           {(isMapView || hasVisitedMap) && (
-            <div className={isMapView ? "min-h-0 flex-1" : "hidden"}>
+            <div className={cn("min-h-0 flex-1", !isMapView && "hidden")}>
               <IncidentsMap
                 className="h-full w-full"
                 highlightedIncidentId={hoveredIncidentId}
@@ -168,7 +171,7 @@ function IncidentesPage() {
             className="h-full w-full"
             highlightedIncidentId={hoveredIncidentId}
           />
-          <div className="h-full overflow-y-auto border-l border-border bg-background/35 p-3">
+          <div className="h-full overflow-y-auto border-l border-border bg-background/35 px-3 pb-3">
             <IncidentsList
               variant="sidebar"
               onIncidentHoverChange={setHoveredIncidentId}

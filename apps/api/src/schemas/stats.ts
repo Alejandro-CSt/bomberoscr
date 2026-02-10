@@ -255,6 +255,11 @@ export const incidentsByTypeRequest = z
 export const incidentsByTypeResponse = z
   .array(
     z.object({
+      code: z.string().nullable().openapi({
+        description:
+          "Incident type code used for filtering. Null when the bucket cannot be filtered directly.",
+        example: "6.1.1.2.1"
+      }),
       name: z.string().openapi({
         description: "Incident type name.",
         example: "EMERGENCIAS MÉDICAS"
