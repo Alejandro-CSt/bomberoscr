@@ -81,7 +81,7 @@ function EstacionDetailPage() {
   return (
     <div className="flex flex-col gap-6">
       <div className="grid w-full grid-cols-1 gap-6 md:gap-8 lg:grid-cols-3">
-        <aside className="top-[calc(var(--app-top-offset)+2rem)] self-start md:sticky">
+        <aside className="top-[calc(var(--app-top-offset)+2rem)] self-start lg:sticky">
           <StationDetailsProfileHeader station={station} />
         </aside>
 
@@ -112,7 +112,7 @@ function PageSkeleton() {
   return (
     <div className="flex flex-col gap-6">
       <div className="grid w-full grid-cols-1 gap-6 md:gap-8 lg:grid-cols-3">
-        <aside className="top-(--app-top-offset) self-start md:sticky">
+        <aside className="top-(--app-top-offset) self-start lg:sticky">
           <StationDetailsProfileHeaderSkeleton />
         </aside>
         <div className="flex flex-col gap-6 lg:col-span-2">

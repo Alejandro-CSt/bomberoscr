@@ -181,7 +181,7 @@ function IncidentesPage() {
       )}
 
       {isMobile && (
-        <div className="fixed bottom-4 left-1/2 z-50 mb-4 flex -translate-x-1/2 transform items-center rounded-md bg-muted">
+        <div className="fixed bottom-4 left-1/2 z-50 mb-4 flex -translate-x-1/2 transform items-center rounded-md border border-border bg-background/45 px-2 py-1 shadow-md backdrop-blur">
           <button
             className="flex items-center gap-2 px-4 py-2"
             onClick={handleToggleView}
@@ -210,7 +210,7 @@ function IncidentesPage() {
                 </SheetTrigger>
                 <SheetPopup
                   side="right"
-                  className="h-dvh w-[100dvw] max-w-none overflow-hidden rounded-none border-none">
+                  className="h-dvh w-dvw max-w-none overflow-hidden rounded-none border-none">
                   <SheetHeader>
                     <SheetTitle>Ordenar</SheetTitle>
                   </SheetHeader>

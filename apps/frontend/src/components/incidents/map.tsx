@@ -12,7 +12,6 @@ const MAPBOX_CSS_HREF = "https://api.mapbox.com/mapbox-gl-js/v3.18.1/mapbox-gl.c
 
 const DEFAULT_CENTER: [number, number] = [-84.1, 9.93];
 const DEFAULT_ZOOM = 7;
-const DEFAULT_PITCH = 45;
 const DEFAULT_BEARING = 0;
 const COSTA_RICA_BOUNDS: [number, number, number, number] = [-86.2, 8.0, -82.0, 11.5];
 const TERRAIN_SOURCE_ID = "mapbox-dem";
@@ -489,7 +488,6 @@ export function IncidentsMap({
           style: "mapbox://styles/mapbox/standard",
           center: DEFAULT_CENTER,
           zoom: initialZoomRef.current,
-          pitch: DEFAULT_PITCH,
           bearing: DEFAULT_BEARING,
           maxBounds: COSTA_RICA_BOUNDS
         });
@@ -514,7 +512,7 @@ export function IncidentsMap({
             map.fitBounds(initialBoundsRef.current, {
               padding: 40,
               duration: 0,
-              maxZoom: 12
+              maxZoom: 14
             });
             didInitialFitRef.current = true;
           } else {
