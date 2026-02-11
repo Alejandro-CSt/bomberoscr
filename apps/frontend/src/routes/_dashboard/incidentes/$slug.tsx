@@ -105,7 +105,7 @@ function IncidentDetailSkeleton() {
         <VehicleResponseTimesSkeleton />
         <DispatchedStationsSkeleton />
       </div>
-      <aside className="order-2 lg:sticky lg:top-16 lg:order-2 lg:col-span-1">
+      <aside className="order-2 lg:sticky lg:top-[calc(var(--app-header-height)+2rem)] lg:order-2 lg:col-span-1">
         <IncidentTimelineSkeleton />
       </aside>
     </article>
@@ -176,7 +176,7 @@ function IncidenteDetailPage() {
           <DispatchedStations />
         </div>
         <aside
-          className="not-typography order-2 lg:sticky lg:top-16 lg:order-2 lg:col-span-1"
+          className="not-typography order-2 lg:sticky lg:top-[calc(var(--app-header-height)+2rem)] lg:order-2 lg:col-span-1"
           aria-label="Cronología del incidente">
           <IncidentTimeline />
         </aside>
