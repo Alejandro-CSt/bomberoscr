@@ -1,4 +1,3 @@
-import env from "@/config/env";
 import { metrics } from "@opentelemetry/api";
 import * as logsApi from "@opentelemetry/api-logs";
 import { OTLPLogExporter } from "@opentelemetry/exporter-logs-otlp-http";
@@ -8,6 +7,8 @@ import { WinstonInstrumentation } from "@opentelemetry/instrumentation-winston";
 import { BatchLogRecordProcessor, LoggerProvider } from "@opentelemetry/sdk-logs";
 import { MeterProvider, PeriodicExportingMetricReader } from "@opentelemetry/sdk-metrics";
 import { NodeSDK } from "@opentelemetry/sdk-node";
+
+import env from "@/config/env";
 
 const serviceName = env.OTEL_SERVICE_NAME ?? "sync-v2";
 const otlpEndpoint = env.OTEL_EXPORTER_OTLP_ENDPOINT ?? "http://localhost:4318";

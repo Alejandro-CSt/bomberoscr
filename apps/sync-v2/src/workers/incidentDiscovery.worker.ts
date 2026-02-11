@@ -1,11 +1,13 @@
+import logger from "@bomberoscr/lib/logger";
+import { Worker } from "bullmq";
+import { BullMQOtel } from "bullmq-otel";
+
 import { redis } from "@/config/redis";
 import { metricsRegistry } from "@/config/telemetry";
 import { openIncidentsQueue } from "@/queues/openIncidents.queue";
 import { getNewIncidents } from "@/services/incidentDiscovery.service";
+
 import type { IncidentSyncJobData } from "@/workers/openIncidents.worker";
-import logger from "@bomberoscr/lib/logger";
-import { Worker } from "bullmq";
-import { BullMQOtel } from "bullmq-otel";
 
 export const worker = new Worker(
   "incident-discovery",

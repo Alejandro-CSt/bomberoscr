@@ -1,5 +1,6 @@
-import env from "@/config/env";
 import { createFetcher } from "@bomberoscr/sync-domain/fetcher";
+
+import env from "@/config/env";
 
 export const fetcher = createFetcher({
   baseUrl: env.SIGAE_API_URL,

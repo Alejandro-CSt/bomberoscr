@@ -1,20 +1,41 @@
 {
   "private": true,
-  "workspaces": ["apps/*", "packages/*"],
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "lint:check": "biome lint --error-on-warnings .",
-    "lint:safefix": "biome lint --write .",
+    "dev": "mprocs",
+    "dev:api": "bun run --cwd apps/api dev",
+    "dev:frontend": "bun run --cwd apps/frontend dev",
+    "dev:sync": "bun run --cwd apps/sync-v2 dev",
+    "dev:all": "mprocs --config mprocs.all.yaml",
+    "lint:check": "bun run --cwd apps/api lint && bun run --cwd apps/frontend lint",
+    "lint:safefix": "bun run --cwd apps/api lint:fix && bun run --cwd apps/frontend lint:fix",
     "lint:next": "next lint",
-    "format:check": "biome check .",
-    "format": "biome check --write ."
+    "typecheck:frontend": "bun run --cwd apps/frontend typecheck",
+    "format:check": "bun run --cwd apps/api format:check && bun run --cwd apps/frontend format:check",
+    "format": "bun run --cwd apps/api format && bun run --cwd apps/frontend format",
+    "prepare": "husky"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.9.4",
-    "turbo": "^2.5.4",
-    "typescript": "^5.8.3"
+    "@typescript/native-preview": "7.0.0-dev.20260210.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "oxfmt": "0.31.0",
+    "oxlint": "1.46.0",
+    "oxlint-tsgolint": "0.12.0"
   },
-  "packageManager": "pnpm@10.6.3",
+  "overrides": {
+    "hono-og@0.0.29": {
+      "satori": "0.12.2"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json,jsonc,css,scss,md,mdx,html,yml,yaml}": "bunx oxfmt"
+  },
   "engines": {
     "node": ">=18"
-  }
+  },
+  "packageManager": "bun@1.3.9"
 }

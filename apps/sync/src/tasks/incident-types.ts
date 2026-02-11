@@ -6,8 +6,9 @@ import {
 import { conflictUpdateSetAllColumns } from "@bomberoscr/db/utils";
 import logger from "@bomberoscr/lib/logger";
 import { getIncidentTypes } from "@bomberoscr/sigae/api";
-import type { ItemObtenerTiposIncidente } from "@bomberoscr/sigae/types";
 import * as Sentry from "@sentry/node";
+
+import type { ItemObtenerTiposIncidente } from "@bomberoscr/sigae/types";
 import type { z } from "zod";
 
 type IncidentType = z.infer<typeof incidentTypesInsertSchema>;

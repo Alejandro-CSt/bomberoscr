@@ -1,4 +1,3 @@
-import { fetcher } from "@/config/fetcher";
 import { and, db, eq } from "@bomberoscr/db/index";
 import { dispatchedVehicles, incidents } from "@bomberoscr/db/schema";
 import {
@@ -8,11 +7,14 @@ import {
   getVehiclesDispatchedToIncident
 } from "@bomberoscr/sync-domain/api";
 import { upsertIncident } from "@bomberoscr/sync-domain/persist/upsertIncident";
+import { ResultAsync, errAsync, okAsync } from "neverthrow";
+
+import { fetcher } from "@/config/fetcher";
+
 import type {
   ObtenerEstacionesAtiendeIncidente,
   ObtenerUnidadesDespachadasIncidente
 } from "@bomberoscr/sync-domain/types";
-import { ResultAsync, errAsync, okAsync } from "neverthrow";
 
 const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
 
@@ -56,7 +58,9 @@ export const ERROR_MESSAGES: Record<CloseIncidentError["type"], string> = {
  */
 export async function closeIncident({
   id
-}: { id: number }): Promise<ResultAsync<void, CloseIncidentError>> {
+}: {
+  id: number;
+}): Promise<ResultAsync<void, CloseIncidentError>> {
   const incidentQuery = db.query.incidents.findFirst({
     where: eq(incidents.id, id),
     columns: {

@@ -19,9 +19,11 @@ export {
   sql
 } from "drizzle-orm";
 import * as schema from "@bomberoscr/db/schema";
-import type { NodePgDatabase } from "drizzle-orm/node-postgres";
 import { drizzle } from "drizzle-orm/node-postgres";
+
 import env from "./env";
+
+import type { NodePgDatabase } from "drizzle-orm/node-postgres";
 
 export const db: NodePgDatabase<typeof schema> = drizzle(env.DRIZZLE_POSTGRES_URL, {
   schema

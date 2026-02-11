@@ -11,6 +11,10 @@
     "test:ui": "vitest --ui"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^2.0.28",
+    "@bomberoscr/db": "workspace:*",
+    "@bomberoscr/lib": "workspace:*",
+    "@bomberoscr/sync-domain": "workspace:*",
     "@opentelemetry/api": "^1.9.0",
     "@opentelemetry/api-logs": "^0.205.0",
     "@opentelemetry/exporter-logs-otlp-http": "^0.205.0",
@@ -23,14 +27,10 @@
     "@opentelemetry/sdk-node": "^0.205.0",
     "@opentelemetry/semantic-conventions": "^1.37.0",
     "@opentelemetry/winston-transport": "^0.16.0",
-    "bullmq-otel": "^1.0.1",
-    "@ai-sdk/openai": "^2.0.28",
-    "@bomberoscr/db": "workspace:*",
-    "@bomberoscr/lib": "workspace:*",
-    "@bomberoscr/sync-domain": "workspace:*",
     "@sentry/node": "^9.33.0",
     "ai": "^5.0.40",
     "bullmq": "^5.56.0",
+    "bullmq-otel": "^1.0.1",
     "dotenv": "^16.6.1",
     "dotenv-expand": "^12.0.2",
     "ioredis": "^5.6.1",
@@ -40,18 +40,18 @@
     "rss-parser": "^3.13.0",
     "tsx": "^4.20.3",
     "winston": "^3.17.0",
-    "zod": "catalog:"
+    "zod": "^4.0.5"
   },
   "devDependencies": {
     "@bomberoscr/typescript-config": "workspace:*",
     "@types/node": "^20.19.1",
     "@types/node-cron": "^3.0.11",
+    "@typescript/native-preview": "^7.0.0-dev.20260127.1",
     "@vitest/ui": "^3.2.4",
     "jsdom": "^26.1.0",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
     "tsup": "^8.5.0",
-    "typescript": "^5.8.3",
     "vitest": "^3.2.4"
   }
 }

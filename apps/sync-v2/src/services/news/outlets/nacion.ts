@@ -1,6 +1,7 @@
-import type { Outlet, OutletError, RawArticle } from "@/services/news/types";
 import { ResultAsync } from "neverthrow";
 import Parser from "rss-parser";
+
+import type { Outlet, OutletError, RawArticle } from "@/services/news/types";
 
 export class Nacion implements Outlet {
   id = "nacion";

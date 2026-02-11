@@ -1,10 +1,11 @@
+import logger from "@bomberoscr/lib/logger";
+import { Worker } from "bullmq";
+import { BullMQOtel } from "bullmq-otel";
+
 import { redis } from "@/config/redis";
 import { metricsRegistry } from "@/config/telemetry";
 import { openIncidentsQueue } from "@/queues/openIncidents.queue";
 import { ERROR_MESSAGES, closeIncident, updateIncident } from "@/services/openIncidents.service";
-import logger from "@bomberoscr/lib/logger";
-import { Worker } from "bullmq";
-import { BullMQOtel } from "bullmq-otel";
 
 export interface IncidentSyncJobData {
   incidentId: number;

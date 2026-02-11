@@ -4,6 +4,7 @@ import { conflictUpdateSetAllColumns } from "@bomberoscr/db/utils";
 import logger from "@bomberoscr/lib/logger";
 import { getAllVehicles, getVehicleDetails } from "@bomberoscr/sigae/api";
 import * as Sentry from "@sentry/node";
+
 import type { z } from "zod";
 
 type VehicleType = z.infer<typeof vehiclesInsertSchema>;

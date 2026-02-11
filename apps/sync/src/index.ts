@@ -1,3 +1,7 @@
+import logger from "@bomberoscr/lib/logger";
+import * as Sentry from "@sentry/node";
+import * as cron from "node-cron";
+
 import env from "@/env";
 import { initializeData, isFirstRun } from "@/init";
 import { syncDistricts } from "@/tasks/districts";
@@ -6,9 +10,6 @@ import { syncLatestIncidents, syncOpenIncidents } from "@/tasks/incidents";
 import { syncStations } from "@/tasks/stations";
 import { syncVehicleDisponibility } from "@/tasks/vehicle-disponibility";
 import { syncVehicles } from "@/tasks/vehicles";
-import logger from "@bomberoscr/lib/logger";
-import * as Sentry from "@sentry/node";
-import * as cron from "node-cron";
 
 Sentry.init({
   dsn: env.SENTRY_DSN,

@@ -1,6 +1,7 @@
 import { db } from "@bomberoscr/db/index";
 import { provinces as provincesTable } from "@bomberoscr/db/schema";
 import { conflictUpdateSetAllColumns } from "@bomberoscr/db/utils";
+
 import type { ItemObtenerProvinciaLista } from "@bomberoscr/sync-domain/types";
 
 export async function upsertProvince(provinces: ItemObtenerProvinciaLista[]) {

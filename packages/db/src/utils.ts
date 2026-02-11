@@ -1,6 +1,7 @@
 import { getTableColumns, sql } from "drizzle-orm";
-import type { PgTable, PgUpdateSetSource } from "drizzle-orm/pg-core";
 import { getTableConfig } from "drizzle-orm/pg-core";
+
+import type { PgTable, PgUpdateSetSource } from "drizzle-orm/pg-core";
 
 export function conflictUpdateSetAllColumns<TTable extends PgTable>(
   table: TTable

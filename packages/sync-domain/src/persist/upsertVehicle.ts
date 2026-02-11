@@ -1,6 +1,7 @@
 import { db } from "@bomberoscr/db/index";
 import { type vehiclesInsertSchema, vehicles as vehiclesTable } from "@bomberoscr/db/schema";
 import { conflictUpdateSetAllColumns } from "@bomberoscr/db/utils";
+
 import type { z } from "zod";
 
 type Vehicle = z.infer<typeof vehiclesInsertSchema>;

@@ -1,8 +1,9 @@
-import { fetcher } from "@/config/fetcher";
 import db, { inArray } from "@bomberoscr/db/index";
 import { incidents } from "@bomberoscr/db/schema";
 import { getLatestIncidentsListApp } from "@bomberoscr/sync-domain/api";
 import { ResultAsync, okAsync } from "neverthrow";
+
+import { fetcher } from "@/config/fetcher";
 
 export function getNewIncidents() {
   return getLatestIncidentsListApp(fetcher, 50).andThen((data) => {

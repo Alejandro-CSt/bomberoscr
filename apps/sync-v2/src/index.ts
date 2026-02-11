@@ -1,10 +1,11 @@
 import "@/config/telemetry";
+import logger from "@bomberoscr/lib/logger";
+import { type Span, SpanStatusCode, trace } from "@opentelemetry/api";
+import { ResultAsync } from "neverthrow";
+
 import { districtsQueue } from "@/queues/districts.queue";
 import { incidentDiscoveryQueue } from "@/queues/incidentDiscovery.queue";
 import { incidentTypesQueue } from "@/queues/incidentTypes.queue";
-import { stationsQueue } from "@/queues/stations.queue";
-import { vehicleDisponibilityQueue } from "@/queues/vehicleDisponibility.queue";
-import { vehiclesQueue } from "@/queues/vehicles.queue";
 import "@/workers/districts.worker";
 import "@/workers/incidentDiscovery.worker";
 import "@/workers/incidentTypes.worker";
@@ -12,9 +13,9 @@ import "@/workers/openIncidents.worker";
 import "@/workers/stations.worker";
 import "@/workers/vehicleDisponibility.worker";
 import "@/workers/vehicles.worker";
-import logger from "@bomberoscr/lib/logger";
-import { type Span, SpanStatusCode, trace } from "@opentelemetry/api";
-import { ResultAsync } from "neverthrow";
+import { stationsQueue } from "@/queues/stations.queue";
+import { vehicleDisponibilityQueue } from "@/queues/vehicleDisponibility.queue";
+import { vehiclesQueue } from "@/queues/vehicles.queue";
 
 async function startDiscoveryScheduler() {
   await incidentDiscoveryQueue.add(

@@ -1,0 +1,85 @@
+import { extname, join, normalize, sep } from "node:path";
+
+import startServer from "./dist/server/server.js";
+
+const BASE_PATH = "/bomberos";
+const PORT = Number(process.env.PORT ?? 3000);
+
+const startFetch =
+  ("fetch" in startServer && typeof startServer.fetch === "function"
+    ? startServer.fetch
+    : undefined) ??
+  ("default" in startServer &&
+  typeof startServer.default === "object" &&
+  startServer.default !== null &&
+  "fetch" in startServer.default &&
+  typeof startServer.default.fetch === "function"
+    ? startServer.default.fetch
+    : undefined);
+
+if (!startFetch) {
+  throw new Error("Missing fetch handler in dist/server/server.js");
+}
+
+const clientRoot = normalize(join(import.meta.dir, "dist", "client"));
+const clientRootWithSep = clientRoot.endsWith(sep) ? clientRoot : `${clientRoot}${sep}`;
+
+function toStaticRelativePath(pathname: string): string | null {
+  let relativePath = pathname;
+
+  if (relativePath.startsWith(`${BASE_PATH}/`)) {
+    relativePath = relativePath.slice(BASE_PATH.length + 1);
+  } else if (relativePath.startsWith("/")) {
+    relativePath = relativePath.slice(1);
+  }
+
+  if (!relativePath || !extname(relativePath)) {
+    return null;
+  }
+
+  return relativePath;
+}
+
+function resolveStaticFilePath(pathname: string): string | null {
+  const relativePath = toStaticRelativePath(pathname);
+
+  if (!relativePath) {
+    return null;
+  }
+
+  const filePath = normalize(join(clientRoot, relativePath));
+
+  if (!(filePath === clientRoot || filePath.startsWith(clientRootWithSep))) {
+    return null;
+  }
+
+  return filePath;
+}
+
+Bun.serve({
+  port: PORT,
+  async fetch(request) {
+    const url = new URL(request.url);
+    const staticFilePath = resolveStaticFilePath(url.pathname);
+
+    if (staticFilePath) {
+      const file = Bun.file(staticFilePath);
+
+      if (await file.exists()) {
+        const headers = new Headers();
+
+        if (url.pathname.includes("/assets/")) {
+          headers.set("Cache-Control", "public, max-age=31536000, immutable");
+        } else {
+          headers.set("Cache-Control", "public, max-age=3600");
+        }
+
+        return new Response(file, { headers });
+      }
+    }
+
+    return startFetch(request);
+  }
+});
+
+console.log(`frontend listening on http://0.0.0.0:${PORT}`);

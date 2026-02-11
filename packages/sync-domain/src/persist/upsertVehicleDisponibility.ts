@@ -4,6 +4,7 @@ import {
   vehicleDisponibility as vehicleDisponibilityTable
 } from "@bomberoscr/db/schema";
 import { conflictUpdateSetAllColumns } from "@bomberoscr/db/utils";
+
 import type { z } from "zod";
 
 type VehicleDisponibility = z.infer<typeof vehicleDisponibilityInsertSchema>;

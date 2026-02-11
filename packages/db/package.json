@@ -1,5 +1,20 @@
 {
   "name": "@bomberoscr/db",
+  "type": "module",
+  "exports": {
+    "./utils": "./src/utils.ts",
+    "./index": "./src/index.ts",
+    "./schema": "./src/schema.ts",
+    "./queries/incidents": "./src/queries/incidents.ts",
+    "./queries/stations": "./src/queries/stations.ts",
+    "./queries/stats": "./src/queries/stats.ts",
+    "./queries/incidentsTable": "./src/queries/incidentsTable.ts",
+    "./queries/search/*": "./src/queries/search/*.ts",
+    "./queries/map/*": "./src/queries/map/*.ts"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc",
     "drizzle:migrate": "drizzle-kit migrate",
@@ -8,26 +23,17 @@
     "drizzle:pull": "drizzle-kit pull",
     "drizzle:studio": "drizzle-kit studio"
   },
-  "publishConfig": {
-    "access": "public"
-  },
-  "exports": {
-    "./utils": "./src/utils.ts",
-    "./index": "./src/index.ts",
-    "./schema": "./src/schema.ts",
-    "./queries/*": "./src/queries/*.ts"
-  },
-  "devDependencies": {
-    "@bomberoscr/typescript-config": "workspace:*",
-    "drizzle-kit": "^0.31.4",
-    "typescript": "^5.8.3"
-  },
   "dependencies": {
     "@bomberoscr/lib": "workspace:*",
     "dotenv": "^17.2.0",
     "dotenv-expand": "^12.0.2",
     "drizzle-orm": "^0.44.3",
     "drizzle-zod": "^0.8.2",
-    "zod": "catalog:"
+    "zod": "^4.0.5"
+  },
+  "devDependencies": {
+    "@bomberoscr/typescript-config": "workspace:*",
+    "@typescript/native-preview": "^7.0.0-dev.20260127.1",
+    "drizzle-kit": "^0.31.4"
   }
 }

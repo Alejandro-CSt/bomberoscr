@@ -12,8 +12,12 @@ coverage
 
 # logs
 logs
-_.log
+*.log
 report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
+
+# agent
+.opencode/
+
 
 # dotenv environment variable files
 .env
@@ -34,3 +38,5 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 .DS_Store
 
 .turbo
+
+.agents

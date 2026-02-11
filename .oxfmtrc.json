@@ -1,0 +1,24 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 100,
+  "tabWidth": 2,
+  "useTabs": false,
+  "semi": true,
+  "singleQuote": false,
+  "quoteProps": "as-needed",
+  "trailingComma": "none",
+  "arrowParens": "always",
+  "bracketSpacing": true,
+  "endOfLine": "lf",
+  "singleAttributePerLine": true,
+  "bracketSameLine": true,
+  "experimentalSortImports": {
+    "groups": [["builtin", "external"], ["internal"], ["parent", "sibling", "index"], ["type"]],
+    "internalPattern": ["@/"]
+  },
+  "experimentalSortPackageJson": true,
+  "experimentalTailwindcss": {
+    "functions": ["cn", "clsx", "cva", "tw", "twMerge"],
+    "stylesheet": "apps/frontend/src/styles.css"
+  }
+}

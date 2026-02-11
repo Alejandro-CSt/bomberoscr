@@ -1,0 +1,10 @@
+apps/web/
+
+apps/frontend/src/routeTree.gen.ts
+apps/frontend/src/lib/api/
+apps/frontend/src/styles.css
+apps/frontend/dist/
+apps/frontend/src/data/costa_rica.json
+
+
+apps/api/dist/

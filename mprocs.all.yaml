@@ -1,0 +1,7 @@
+procs:
+  api:
+    cmd: ["bun", "run", "--cwd", "apps/api", "dev"]
+  frontend:
+    cmd: ["bun", "run", "--cwd", "apps/frontend", "dev"]
+  sync-v2:
+    cmd: ["bun", "run", "--cwd", "apps/sync-v2", "dev"]

@@ -1,11 +1,12 @@
-import { fetcher } from "@/config/fetcher";
-import { redis } from "@/config/redis";
-import { vehiclesQueue } from "@/queues/vehicles.queue";
-import { syncSingleVehicle } from "@/services/vehicles.service";
 import logger from "@bomberoscr/lib/logger";
 import { getAllVehicles } from "@bomberoscr/sync-domain/api";
 import { Worker } from "bullmq";
 import { BullMQOtel } from "bullmq-otel";
+
+import { fetcher } from "@/config/fetcher";
+import { redis } from "@/config/redis";
+import { vehiclesQueue } from "@/queues/vehicles.queue";
+import { syncSingleVehicle } from "@/services/vehicles.service";
 
 type VehiclesListResponse = { Items: Array<{ IdVehiculo: number }> };
 

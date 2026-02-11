@@ -1,11 +1,11 @@
 {
   "name": "@bomberoscr/sync-core",
-  "scripts": {
-    "build": "tsc"
-  },
   "exports": {
     "./upsert-incident": "./src/upsert-incident.ts",
     "./transform": "./src/transform.ts"
+  },
+  "scripts": {
+    "build": "tsc"
   },
   "dependencies": {
     "@bomberoscr/db": "workspace:*",
@@ -14,7 +14,7 @@
     "dotenv": "^16.6.1",
     "dotenv-expand": "^12.0.2",
     "drizzle-orm": "^0.41.0",
-    "zod": "catalog:"
+    "zod": "^4.0.5"
   },
   "devDependencies": {
     "@bomberoscr/typescript-config": "workspace:*",

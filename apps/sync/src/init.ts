@@ -1,12 +1,13 @@
+import db from "@bomberoscr/db/db";
+import { districts, incidentTypes, stations, vehicleDisponibility } from "@bomberoscr/db/schema";
+import logger from "@bomberoscr/lib/logger";
+import * as Sentry from "@sentry/node";
+
 import { syncDistricts } from "@/tasks/districts";
 import { syncIncidentTypes } from "@/tasks/incident-types";
 import { syncStations } from "@/tasks/stations";
 import { syncVehicleDisponibility } from "@/tasks/vehicle-disponibility";
 import { syncVehicles } from "@/tasks/vehicles";
-import db from "@bomberoscr/db/db";
-import { districts, incidentTypes, stations, vehicleDisponibility } from "@bomberoscr/db/schema";
-import logger from "@bomberoscr/lib/logger";
-import * as Sentry from "@sentry/node";
 
 export async function isFirstRun() {
   const vehicleDisponibilityCount = await db.$count(vehicleDisponibility);

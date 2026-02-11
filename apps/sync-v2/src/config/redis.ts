@@ -1,6 +1,7 @@
-import env from "@/config/env";
 import logger from "@bomberoscr/lib/logger";
 import Redis from "ioredis";
+
+import env from "@/config/env";
 
 export const redis = new Redis(env.REDIS_URL, {
   enableReadyCheck: false,
