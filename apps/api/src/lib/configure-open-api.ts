@@ -25,7 +25,7 @@ export default function configureOpenAPI(app: AppOpenAPI) {
       url: `${BASE_PATH}/doc`,
       theme: "moon",
       layout: "modern",
-      defaultOpenAllTags: true,
+      defaultOpenAllTags: false,
       hideClientButton: true,
       showDeveloperTools: "localhost",
       telemetry: false,

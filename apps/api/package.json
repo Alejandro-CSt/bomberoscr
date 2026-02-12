@@ -1,11 +1,11 @@
 {
   "name": "api",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
-    "start": "node ./dist/index.mjs",
+    "dev": "bun run --hot src/index.ts",
+    "start": "bun ./dist/index.mjs",
     "typecheck": "tsc --noEmit",
     "test": "cross-env NODE_ENV=test vitest",
     "build": "tsdown",
@@ -21,7 +21,6 @@
     "@bomberoscr/sync-domain": "workspace:*",
     "@dicebear/collection": "^9.2.4",
     "@dicebear/core": "^9.2.4",
-    "@hono/node-server": "1.19.8",
     "@hono/zod-openapi": "1.2.0",
     "@scalar/hono-api-reference": "0.9.32",
     "dotenv": "17.2.3",
@@ -42,7 +41,6 @@
     "@typescript/native-preview": "^7.0.0-dev.20260127.1",
     "cross-env": "10.1.0",
     "tsdown": "0.19.0",
-    "tsx": "4.21.0",
     "vitest": "4.0.17"
   }
 }
