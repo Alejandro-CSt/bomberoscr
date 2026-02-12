@@ -2,7 +2,6 @@
   "extends": "@bomberoscr/typescript-config/base.json",
   "compilerOptions": {
     "module": "NodeNext",
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     },
