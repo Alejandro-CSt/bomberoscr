@@ -46,6 +46,12 @@ const EARTH_METERS_PER_DEGREE_LATITUDE = 111_320;
 const TEMP_COORDINATE_RING_SPACING_METERS = 180;
 const TEMP_COORDINATE_RING_COUNT = 4;
 const GOLDEN_ANGLE_DEGREES = 137.50776405003785;
+const ONE_MINUTE_SECONDS = 60;
+const THREE_HOURS_SECONDS = 3 * 60 * 60;
+
+function buildCacheControlHeader(ttlSeconds: number, swrSeconds: number = ttlSeconds): string {
+  return `public, max-age=${ttlSeconds}, s-maxage=${ttlSeconds}, stale-while-revalidate=${swrSeconds}`;
+}
 
 function parseQueryNumber(value: string | undefined): number | undefined {
   if (value == null) return undefined;
@@ -392,6 +398,8 @@ app.openapi(
       bounds
     });
 
+    c.header("Cache-Control", buildCacheControlHeader(ONE_MINUTE_SECONDS));
+
     return c.json({
       meta,
       data: data.map((incident) => {
@@ -534,6 +542,9 @@ app.openapi(
       cantonName: incident.canton?.name ?? null
     });
 
+    const ttlSeconds = incident.isOpen ? ONE_MINUTE_SECONDS : THREE_HOURS_SECONDS;
+    c.header("Cache-Control", buildCacheControlHeader(ttlSeconds));
+
     return c.json(
       {
         id: incident.id,
@@ -608,6 +619,9 @@ app.openapi(
       return c.json({ message: HttpStatusPhrases.NOT_FOUND }, HttpStatusCodes.NOT_FOUND);
     }
 
+    const ttlSeconds = incident.isOpen ? ONE_MINUTE_SECONDS : THREE_HOURS_SECONDS;
+    c.header("Cache-Control", buildCacheControlHeader(ttlSeconds));
+
     const events = buildTimelineEvents(incident, incident.dispatchedVehicles).map((event) => ({
       id: event.id,
       date: event.date.toISOString(),
@@ -649,6 +663,9 @@ app.openapi(
     if (!incident) {
       return c.json({ message: HttpStatusPhrases.NOT_FOUND }, HttpStatusCodes.NOT_FOUND);
     }
+
+    const ttlSeconds = incident.isOpen ? ONE_MINUTE_SECONDS : THREE_HOURS_SECONDS;
+    c.header("Cache-Control", buildCacheControlHeader(ttlSeconds));
 
     const vehicles = incident.dispatchedVehicles.map((vehicle) => {
       const responseTimeSeconds = calculateTimeDiffInSeconds(
@@ -735,7 +752,12 @@ app.openapi(
       cantonId: incident.cantonId,
       cantonName: incident.canton?.name ?? null
     });
-    return generateOgImage(incident, statistics);
+
+    const ttlSeconds = incident.isOpen ? ONE_MINUTE_SECONDS : THREE_HOURS_SECONDS;
+    const ogResponse = await generateOgImage(incident, statistics);
+    ogResponse.headers.set("Cache-Control", buildCacheControlHeader(ttlSeconds));
+
+    return ogResponse;
   }
 );
 

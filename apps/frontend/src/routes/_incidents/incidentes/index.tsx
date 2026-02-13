@@ -54,6 +54,7 @@ export const Route = createFileRoute("/_incidents/incidentes/")({
     zoom: z.number().optional().catch(undefined)
   }),
   ssr: false,
+  staleTime: Infinity,
   loader: async () => {
     const isServer = typeof window === "undefined";
     const baseUrl = isServer
