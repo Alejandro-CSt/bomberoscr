@@ -50,9 +50,9 @@
     "zod": "^4.0.5"
   },
   "devDependencies": {
-    "@fontsource-variable/bricolage-grotesque": "5.2.10",
-    "@fontsource-variable/geist": "5.2.8",
-    "@fontsource-variable/geist-mono": "5.2.7",
+    "@fontsource/ibm-plex-mono": "^5.2.7",
+    "@fontsource/ibm-plex-sans": "^5.2.8",
+    "@fontsource/ibm-plex-serif": "^5.2.7",
     "@hey-api/openapi-ts": "0.91.1",
     "@tanstack/devtools-vite": "0.5.0",
     "@types/d3-shape": "^3.1.8",

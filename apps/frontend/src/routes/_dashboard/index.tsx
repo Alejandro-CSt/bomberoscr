@@ -5,8 +5,9 @@ import { z } from "zod";
 import { HighlightedIncidents } from "@/components/homepage/highlighted-incidents";
 import { IncidentTypesChart } from "@/components/homepage/incident-types-chart";
 import { LatestIncidents } from "@/components/homepage/latest-incidents";
-import { MapCTA } from "@/components/homepage/map-cta";
-import { YearRecapHero } from "@/components/homepage/year-recap-hero";
+// import { MapCTA } from "@/components/homepage/map-cta";
+import { Separator } from "@/components/homepage/separator";
+// import { YearRecapHero } from "@/components/homepage/year-recap-hero";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const ParticlesMap = lazy(() => import("@/components/homepage/particles-map"));
@@ -52,9 +53,11 @@ function HomePage() {
   return (
     <div className="flex flex-col gap-8">
       <HighlightedIncidents />
+      {/* <Separator /> */}
       <LatestIncidents />
-      <MapCTA />
-      <YearRecapHero />
+      {/* <MapCTA /> */}
+      {/* <YearRecapHero /> */}
+      <Separator />
       <IncidentTypesChart />
       <Suspense
         fallback={

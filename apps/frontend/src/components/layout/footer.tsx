@@ -21,11 +21,11 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="mt-20 border-t bg-background/95 px-6 backdrop-blur supports-backdrop-filter:bg-background/60 xl:px-0">
-      <div className="mx-auto w-full max-w-6xl px-0 py-12">
+    <footer className="app-footer rail-divider-top mt-20 bg-background/95 px-6 backdrop-blur supports-backdrop-filter:bg-background/60">
+      <div className="mx-auto w-full max-w-6xl px-2 py-12 sm:px-0">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           <div className="flex flex-col gap-4 md:col-span-2">
-            <div className="-ml-2 w-fit">
+            <div className="w-fit">
               <Logo />
             </div>
             <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
@@ -71,7 +71,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t pt-8 md:flex-row">
+        <div className="-mx-2 mt-12 flex flex-col items-center justify-between gap-4 border-t px-2 pt-8 sm:mx-0 sm:px-0 md:flex-row">
           <p className="text-xs text-muted-foreground">
             © {currentYear} Emergencias CR. No afiliado oficialmente al Benemérito Cuerpo de
             Bomberos de Costa Rica.

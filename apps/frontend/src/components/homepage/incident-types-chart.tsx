@@ -1,12 +1,13 @@
 import { WarningIcon } from "@phosphor-icons/react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { ArrowRightIcon } from "lucide-react";
+import { ArrowRightIcon, CircleHelpIcon } from "lucide-react";
 import { Fragment, useMemo, useState } from "react";
 
 import { PieCenter } from "@/components/charts/pie-center";
 import { PieChart } from "@/components/charts/pie-chart";
 import { PieSlice } from "@/components/charts/pie-slice";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Select,
   SelectItem,
@@ -130,8 +131,22 @@ export function IncidentTypesChart() {
 
   return (
     <section className="flex flex-col gap-4">
-      <header className="space-y-2">
+      <header>
         <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+          <Popover>
+            <PopoverTrigger
+              aria-label="Información sobre tipos de incidente"
+              className="text-muted-foreground transition-colors hover:text-foreground"
+              delay={150}
+              openOnHover>
+              <CircleHelpIcon className="size-4" />
+            </PopoverTrigger>
+            <PopoverContent
+              side="top"
+              tooltipStyle>
+              Distribución de tipos de incidente más comunes.
+            </PopoverContent>
+          </Popover>
           <h3 className="text-lg leading-none font-semibold">Tipos de incidente</h3>
           <Select
             items={timeRangeItems}
@@ -151,13 +166,10 @@ export function IncidentTypesChart() {
             </SelectPopup>
           </Select>
         </div>
-        <p className="text-sm text-muted-foreground">
-          Distribución de tipos de incidente más comunes
-        </p>
       </header>
 
       {isInitialLoading ? (
-        <div className="grid min-h-[360px] min-w-0 grid-cols-1 gap-6 rounded-lg bg-card p-4 md:p-6 lg:grid-cols-[minmax(0,360px)_1fr]">
+        <div className="grid min-h-[360px] min-w-0 grid-cols-1 gap-6 rounded-lg p-4 md:p-6 lg:grid-cols-[minmax(0,360px)_1fr]">
           <div className="mx-auto w-full max-w-[320px]">
             <Skeleton className="aspect-square w-full rounded-full" />
           </div>
@@ -172,12 +184,12 @@ export function IncidentTypesChart() {
           </div>
         </div>
       ) : hasError ? (
-        <div className="flex min-h-[360px] flex-col items-center justify-center gap-2 rounded-lg bg-card p-4 text-center text-sm text-muted-foreground">
+        <div className="flex min-h-[360px] flex-col items-center justify-center gap-2 rounded-lg p-4 text-center text-sm text-muted-foreground">
           <WarningIcon className="size-6" />
           Ocurrió un error cargando los tipos de incidente
         </div>
       ) : (
-        <div className="grid min-h-[360px] min-w-0 grid-cols-1 gap-6 rounded-lg bg-card p-4 md:p-6 lg:grid-cols-[minmax(0,360px)_1fr]">
+        <div className="grid min-h-[360px] min-w-0 grid-cols-1 gap-6 rounded-lg p-4 md:p-6 lg:grid-cols-[minmax(0,360px)_1fr]">
           <div className="mx-auto w-full max-w-[320px]">
             <PieChart
               className="mx-auto"

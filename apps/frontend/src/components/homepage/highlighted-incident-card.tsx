@@ -9,93 +9,83 @@ import type { ListIncidentsResponse } from "@/lib/api/types.gen";
 
 type HighlightedIncident = ListIncidentsResponse["data"][number];
 
-/**
- * Get gradient classes based on heat level
- */
 function getHeatGradient(heat: number): string {
-  if (heat < 0.2) {
-    return "from-blue-600/80 to-cyan-500/80";
+  if (heat < 0.25) {
+    return "from-sky-600/90 via-cyan-500/90 to-teal-500/90";
   }
-  if (heat < 0.4) {
-    return "from-cyan-500/80 to-teal-500/80";
+  if (heat < 0.45) {
+    return "from-cyan-500/90 via-teal-500/90 to-emerald-500/90";
   }
-  if (heat < 0.6) {
-    return "from-teal-500/80 to-green-500/80";
+  if (heat < 0.65) {
+    return "from-emerald-500/90 via-lime-500/90 to-amber-500/90";
   }
-  if (heat < 0.75) {
-    return "from-green-500/80 to-yellow-500/80";
+  if (heat < 0.85) {
+    return "from-amber-500/90 via-orange-500/90 to-rose-500/90";
   }
-  if (heat < 0.9) {
-    return "from-yellow-500/80 to-orange-500/80";
-  }
-  return "from-orange-500/80 to-red-500/80";
+  return "from-orange-500/90 via-red-500/90 to-red-700/90";
 }
 
 export function HighlightedIncidentCard({ incident }: { incident: HighlightedIncident }) {
   const total = incident.dispatchedStationsCount + incident.dispatchedVehiclesCount;
   const heat = Math.max(0, Math.min((total - 2) / 13, 1));
+  const dispatchType = incident.dispatchType?.name ?? "Sin tipo";
 
   return (
     <Link
       to="/incidentes/$slug"
       params={{ slug: incident.slug }}
-      className="group flex flex-col overflow-hidden rounded-lg bg-card md:flex-row">
-      <div className="relative flex aspect-video w-full items-center justify-center p-1.5 md:aspect-4/3 md:w-[50%] md:p-2">
+      className="group relative flex h-full flex-col overflow-hidden bg-card transition-colors hover:bg-accent/40">
+      <div className="relative aspect-2/1 w-full overflow-hidden">
         {incident.mapImageUrl ? (
-          <div className="h-full w-full overflow-hidden rounded-lg">
+          <div className="h-full w-full overflow-hidden">
             <img
               src={incident.mapImageUrl}
               alt={`Mapa del incidente ${incident.importantDetails}`}
-              className="h-full w-full scale-125 rounded-lg object-cover transition-transform duration-300 ease-out group-hover:scale-150"
+              className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
               loading="lazy"
               decoding="async"
             />
           </div>
         ) : (
-          <div className="relative h-full w-full overflow-hidden rounded-lg">
-            <div
-              className={cn(
-                "absolute inset-0 scale-125 rounded-lg bg-linear-to-r transition-transform duration-300 ease-out group-hover:scale-150",
-                getHeatGradient(heat)
-              )}
-            />
+          <div className="relative h-full w-full overflow-hidden">
+            <div className={cn("absolute inset-0 bg-linear-to-br", getHeatGradient(heat))} />
             <div className="relative flex h-full w-full items-center justify-center">
-              <div className="w-fit rounded-md bg-background/60 px-3 py-2 backdrop-blur-3xl">
+              <div className="w-fit border border-white/20 bg-black/30 px-3 py-1.5 backdrop-blur-md">
                 <p className="flex items-center gap-1.5 text-xs whitespace-nowrap select-none">
                   <TriangleAlert
-                    className="size-3.5 shrink-0 text-amber-500"
+                    className="size-3.5 shrink-0 text-amber-300"
                     aria-hidden="true"
                   />
-                  Coordenadas aún no disponibles.
+                  Sin coordenadas disponibles
                 </p>
               </div>
             </div>
           </div>
         )}
-      </div>
-      <div className="flex flex-col gap-2 p-3 md:flex-1 md:py-3 md:pr-3 md:pl-1">
-        <div className="flex flex-col gap-0.5">
-          <h3 className="line-clamp-1 text-base font-medium">{incident.importantDetails}</h3>
-          <span className="text-sm text-muted-foreground">
-            {incident.dispatchType?.name ?? "Sin tipo"}
+        <div className="absolute top-2 left-2 flex max-w-[80%] flex-col items-start gap-0.5">
+          <span className="max-w-full truncate bg-black/60 px-1.5 py-0.5 text-[11px] font-medium text-white backdrop-blur-sm">
+            {dispatchType}
           </span>
-          <p className="line-clamp-1 text-xs text-muted-foreground md:line-clamp-2">
-            {incident.address}
-          </p>
-        </div>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1 text-muted-foreground">
-              <GarageIcon className="size-4.5" />
-              <span className="text-sm font-medium">{incident.dispatchedStationsCount}</span>
-            </div>
-            <div className="flex items-center gap-1 text-muted-foreground">
-              <FireTruckIcon className="size-4.5" />
-              <span className="text-sm font-medium">{incident.dispatchedVehiclesCount}</span>
-            </div>
-          </div>
-          <span className="shrink-0 text-sm whitespace-nowrap text-muted-foreground first-letter:uppercase">
+          <span className="bg-black/60 px-1.5 py-0.5 text-[11px] font-medium whitespace-nowrap text-white backdrop-blur-sm first-letter:uppercase">
             {formatRelativeTime(incident.incidentTimestamp)}
+          </span>
+        </div>
+      </div>
+      <div className="flex flex-1 flex-col border-t">
+        <div className="space-y-0.5 p-3">
+          <h3 className="line-clamp-2 text-sm leading-snug font-semibold tracking-tight">
+            {incident.importantDetails}
+          </h3>
+          <p className="line-clamp-1 text-xs text-muted-foreground">{incident.address}</p>
+        </div>
+        <div className="mt-auto flex flex-wrap items-center gap-1.5 border-t border-border/60 px-3 py-1.5">
+          <span className="inline-flex items-center gap-1 bg-muted px-1.5 py-0.5 text-[11px] font-medium text-muted-foreground">
+            <GarageIcon className="size-3.5" />
+            {incident.dispatchedStationsCount} estaciones
+          </span>
+          <span className="inline-flex items-center gap-1 bg-muted px-1.5 py-0.5 text-[11px] font-medium text-muted-foreground">
+            <FireTruckIcon className="size-3.5" />
+            {incident.dispatchedVehiclesCount} vehículos
           </span>
         </div>
       </div>
@@ -105,22 +95,22 @@ export function HighlightedIncidentCard({ incident }: { incident: HighlightedInc
 
 export function HighlightedIncidentCardSkeleton({ className }: { className?: string }) {
   return (
-    <div className={cn("flex flex-col overflow-hidden rounded-lg bg-card md:flex-row", className)}>
-      <div className="relative aspect-video w-full p-1.5 md:aspect-4/3 md:w-[50%] md:p-2">
-        <Skeleton className="h-full w-full rounded-lg" />
-      </div>
-      <div className="flex flex-col gap-2 p-3 md:flex-1 md:py-3 md:pr-3 md:pl-1">
-        <div className="flex flex-col gap-0.5">
-          <Skeleton className="h-6 w-3/4" />
-          <Skeleton className="h-5 w-1/3" />
-          <Skeleton className="h-4 w-full md:h-8" />
+    <div className={cn("flex h-full flex-col overflow-hidden bg-card", className)}>
+      <div className="relative aspect-2/1 w-full overflow-hidden">
+        <Skeleton className="h-full w-full rounded-none" />
+        <div className="absolute top-2 left-2 flex max-w-[80%] flex-col items-start gap-0.5">
+          <Skeleton className="h-4 w-24 rounded-none" />
+          <Skeleton className="h-4 w-20 rounded-none" />
         </div>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Skeleton className="h-5 w-10" />
-            <Skeleton className="h-5 w-10" />
-          </div>
-          <Skeleton className="h-5 w-24" />
+      </div>
+      <div className="flex flex-1 flex-col border-t">
+        <div className="space-y-0.5 p-3">
+          <Skeleton className="h-5 w-11/12" />
+          <Skeleton className="h-4 w-full" />
+        </div>
+        <div className="mt-auto flex flex-wrap items-center gap-1.5 border-t border-border/60 px-3 py-1.5">
+          <Skeleton className="h-5 w-24 rounded-none" />
+          <Skeleton className="h-5 w-24 rounded-none" />
         </div>
       </div>
     </div>

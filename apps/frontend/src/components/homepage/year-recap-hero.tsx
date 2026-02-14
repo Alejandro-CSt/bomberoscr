@@ -29,7 +29,7 @@ function YearRecapContent({ data }: { data: GetYearRecapResponse }) {
 
   return (
     <div className="z-10 grid grid-cols-1 gap-4 md:auto-rows-[140px] md:grid-cols-12 lg:grid-cols-12">
-      <div className="flex flex-col justify-center rounded-lg bg-gradient-to-br from-background/60 to-muted/60 p-6 backdrop-blur-sm transition-all duration-300 ease-out will-change-transform hover:-translate-y-0.5 hover:shadow-lg hover:ring-1 hover:ring-ring/30 md:col-span-6 md:row-span-2 lg:col-span-6">
+      <div className="flex flex-col justify-center rounded-lg bg-linear-to-br from-background/60 to-muted/60 p-6 backdrop-blur-sm transition-all duration-300 ease-out will-change-transform hover:-translate-y-0.5 hover:shadow-lg hover:ring-1 hover:ring-ring/30 md:col-span-6 md:row-span-2 lg:col-span-6">
         <h2 className="mb-4 text-2xl font-bold md:text-3xl lg:text-4xl">{headingText}</h2>
         <p className="text-lg leading-relaxed text-muted-foreground md:text-xl">
           Bomberos atendió en promedio un incidente
@@ -80,7 +80,7 @@ function YearRecapContent({ data }: { data: GetYearRecapResponse }) {
 function YearRecapSkeleton() {
   return (
     <div className="z-10 grid grid-cols-1 gap-4 md:auto-rows-[140px] md:grid-cols-12 lg:grid-cols-12">
-      <div className="flex flex-col justify-center rounded-lg bg-gradient-to-br from-background/60 to-muted/60 p-6 backdrop-blur-sm md:col-span-6 md:row-span-2 lg:col-span-6">
+      <div className="flex flex-col justify-center rounded-lg bg-linear-to-br from-background/60 to-muted/60 p-6 backdrop-blur-sm md:col-span-6 md:row-span-2 lg:col-span-6">
         <Skeleton className="mb-4 h-10 w-3/4" />
         <div className="space-y-2">
           <Skeleton className="h-6 w-full" />

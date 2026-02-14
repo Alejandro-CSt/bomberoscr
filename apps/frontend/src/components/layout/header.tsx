@@ -7,8 +7,9 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 export function Header() {
   const isMobile = useIsMobile();
-  const location = useLocation();
-  const isIncidentesPage = location.pathname === "/incidentes";
+  const { pathname } = useLocation();
+  const normalizedPathname = pathname.replace(/\/+$/, "") || "/";
+  const isIncidentesPage = normalizedPathname === "/incidentes";
 
   // Hide header on /incidentes page when on mobile
   if (isMobile && isIncidentesPage) {
@@ -16,8 +17,8 @@ export function Header() {
   }
 
   return (
-    <header className="app-header fixed inset-x-0 top-0 z-40 flex shrink-0 items-center bg-background px-6 xl:px-0">
-      <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-3">
+    <header className="app-header rail-divider-bottom fixed inset-x-0 top-0 flex shrink-0 items-center bg-background px-6">
+      <div className="mx-auto flex h-full w-full max-w-6xl items-center justify-between gap-3 px-2 sm:px-0">
         <Logo />
         <HeaderNav className="max-sm:hidden" />
         <MobileHeaderNav className="sm:hidden" />

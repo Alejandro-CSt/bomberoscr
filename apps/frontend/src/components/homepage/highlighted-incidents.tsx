@@ -1,12 +1,14 @@
 import { WarningIcon } from "@phosphor-icons/react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
+import { CircleHelpIcon } from "lucide-react";
 import { useMemo } from "react";
 
 import {
   HighlightedIncidentCard,
   HighlightedIncidentCardSkeleton
 } from "@/components/homepage/highlighted-incident-card";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Tabs, TabsList, TabsTab } from "@/components/ui/tabs";
 import { listIncidentsOptions } from "@/lib/api/@tanstack/react-query.gen";
 import { cn } from "@/lib/utils";
@@ -49,9 +51,25 @@ export function HighlightedIncidents() {
   const incidents = data?.data ?? [];
 
   return (
-    <section className="flex flex-col gap-4 pt-8">
-      <div className="flex flex-wrap items-center gap-3">
-        <h2 className="text-xl font-semibold lg:text-2xl">Destacados</h2>
+    <section className="rail-divider-top mt-16 flex flex-col py-8">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2 py-4 max-lgx:py-2">
+        <div className="flex shrink-0 items-center gap-2">
+          <Popover>
+            <PopoverTrigger
+              aria-label="Información sobre incidentes destacados"
+              className="text-muted-foreground transition-colors hover:text-foreground"
+              delay={150}
+              openOnHover>
+              <CircleHelpIcon className="size-4" />
+            </PopoverTrigger>
+            <PopoverContent
+              side="top"
+              tooltipStyle>
+              Incidentes con mayor cantidad de despachos en el periodo seleccionado.
+            </PopoverContent>
+          </Popover>
+          <h2 className="text-sm font-semibold tracking-wide uppercase">Destacados</h2>
+        </div>
         <Tabs value={String(selectedTimeRange)}>
           <TabsList
             variant="underline"
@@ -78,27 +96,41 @@ export function HighlightedIncidents() {
       </div>
 
       <div className="relative">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="grid grid-cols-1 divide-y md:grid-cols-2 md:divide-y-0">
           {isLoading || isError
             ? isError
               ? // On error: show 1 card on mobile, 6 on md+
                 [1, 2, 3, 4, 5, 6].map((key) => (
                   <div
                     key={key}
-                    className={cn(key > 1 && "hidden md:block")}>
+                    className={cn(
+                      "border-b md:border-r md:border-b md:odd:border-r md:even:border-r-0 md:nth-last-[-n+2]:border-b-0",
+                      key > 1 && "hidden md:block"
+                    )}>
                     <HighlightedIncidentCardSkeleton />
                   </div>
                 ))
-              : [1, 2, 3, 4, 5, 6].map((key) => <HighlightedIncidentCardSkeleton key={key} />)
-            : incidents.map((incident) => (
-                <HighlightedIncidentCard
+              : [1, 2, 3, 4, 5, 6].map((key) => (
+                  <div
+                    key={key}
+                    className="border-b md:border-r md:border-b md:odd:border-r md:even:border-r-0 md:nth-last-[-n+2]:border-b-0">
+                    <HighlightedIncidentCardSkeleton />
+                  </div>
+                ))
+            : incidents.map((incident, idx) => (
+                <div
                   key={incident.id}
-                  incident={incident}
-                />
+                  className={cn(
+                    "border-b md:border-r md:even:border-r-0",
+                    idx >= incidents.length - 2 && "md:border-b-0",
+                    idx === incidents.length - 1 && "border-b-0"
+                  )}>
+                  <HighlightedIncidentCard incident={incident} />
+                </div>
               ))}
         </div>
         {isError ? (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 rounded-lg bg-background/70 p-4 text-center text-sm text-muted-foreground backdrop-blur-sm">
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-background/80 p-4 text-center text-sm text-muted-foreground backdrop-blur-sm">
             <WarningIcon className="size-6" />
             Ocurrió un error cargando los incidentes destacados
           </div>

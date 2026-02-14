@@ -1,10 +1,16 @@
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
-import { createRootRouteWithContext, HeadContent, Outlet, Scripts } from "@tanstack/react-router";
+import {
+  createRootRouteWithContext,
+  HeadContent,
+  Outlet,
+  Scripts,
+  useLocation
+} from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import { useEffect } from "react";
 
 import { Header } from "@/components/layout/header";
-import { HeaderBackdrop } from "@/components/layout/header-backdrop";
 
 import appCss from "../styles.css?url";
 
@@ -76,14 +82,35 @@ function RootComponent() {
 }
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  const { pathname } = useLocation();
+  const normalizedPathname = pathname.replace(/\/+$/, "") || "/";
+  const isIncidentesPage = normalizedPathname === "/incidentes";
+
+  useEffect(() => {
+    const updateViewportInlineSize = () => {
+      document.documentElement.style.setProperty(
+        "--viewport-inline-size",
+        `${document.documentElement.clientWidth}px`
+      );
+    };
+
+    updateViewportInlineSize();
+    window.addEventListener("resize", updateViewportInlineSize);
+
+    return () => {
+      window.removeEventListener("resize", updateViewportInlineSize);
+    };
+  }, []);
+
   return (
-    <html lang="es-CR">
+    <html
+      lang="es-CR"
+      className="dark">
       <head>
         <HeadContent />
       </head>
-      <body className="font-sans antialiased">
+      <body className={`font-sans antialiased${isIncidentesPage ? " no-page-rails" : ""}`}>
         <Header />
-        <HeaderBackdrop />
         <main>{children}</main>
         <TanStackDevtools
           config={{

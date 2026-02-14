@@ -41,7 +41,7 @@ function PopoverPopup({
         align={align}
         alignOffset={alignOffset}
         className={cn(
-          "z-50 h-(--positioner-height) w-(--positioner-width) max-w-(--available-width) transition-[top,left,right,bottom,transform] data-instant:transition-none",
+          "z-[60] h-(--positioner-height) w-(--positioner-width) max-w-(--available-width) transition-[top,left,right,bottom,transform] data-instant:transition-none",
           positionerClassName
         )}
         data-slot="popover-positioner"
