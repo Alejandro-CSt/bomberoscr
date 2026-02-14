@@ -65,7 +65,8 @@ export function HighlightedIncidents() {
             <PopoverContent
               side="top"
               tooltipStyle>
-              Incidentes con mayor cantidad de despachos en el periodo seleccionado.
+              Incidentes a los que se despachó la mayor cantidad de estaciones y vehículos en el
+              periodo seleccionado.
             </PopoverContent>
           </Popover>
           <h2 className="text-sm font-semibold tracking-wide uppercase">Destacados</h2>

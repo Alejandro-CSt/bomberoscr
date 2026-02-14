@@ -4,6 +4,7 @@ import { z } from "zod";
 
 import { HighlightedIncidents } from "@/components/homepage/highlighted-incidents";
 import { IncidentTypesChart } from "@/components/homepage/incident-types-chart";
+import { LandingHero } from "@/components/homepage/landing-hero";
 import { LatestIncidents } from "@/components/homepage/latest-incidents";
 // import { MapCTA } from "@/components/homepage/map-cta";
 import { Separator } from "@/components/homepage/separator";
@@ -12,9 +13,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const ParticlesMap = lazy(() => import("@/components/homepage/particles-map"));
 
-const title = "Emergencias CR";
+const title = "Emergencias CR - Incidentes de Bomberos en Tiempo Real";
 const description =
-  "Visualiza incidentes recientes, métricas operativas y estaciones de bomberos con datos en vivo.";
+  "Monitoreo en tiempo real de incidentes del Cuerpo de Bomberos de Costa Rica. Visualiza emergencias activas, mapa de estaciones y estadísticas operativas.";
 
 export const ALLOWED_TIME_RANGE_VALUES = [7, 30, 90, 365] as const;
 export const DEFAULT_TIME_RANGE = 30;
@@ -51,7 +52,8 @@ export const Route = createFileRoute("/_dashboard/")({
 
 function HomePage() {
   return (
-    <div className="flex flex-col gap-8">
+    <div className="-mt-8 flex flex-col gap-8">
+      <LandingHero />
       <HighlightedIncidents />
       {/* <Separator /> */}
       <LatestIncidents />

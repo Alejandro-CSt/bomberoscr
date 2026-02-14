@@ -1,19 +1,17 @@
-import { GithubLogoIcon, GlobeIcon } from "@phosphor-icons/react";
+import { ArrowUpRightIcon, CopyrightIcon } from "@phosphor-icons/react";
 import { Link } from "@tanstack/react-router";
 
-import { Logo } from "@/components/layout/logo";
+import { LogoIcon } from "@/components/layout/logo-icon";
 import { navItems } from "@/components/layout/nav-items";
 
 const SOCIAL_LINKS = [
   {
     title: "GitHub",
-    url: "https://github.com/Alejandro-CSt/bomberoscr",
-    icon: GithubLogoIcon
+    url: "https://github.com/alechdev/emergenciascr"
   },
   {
-    title: "Página Oficial de Bomberos",
-    url: "https://www.bomberos.go.cr",
-    icon: GlobeIcon
+    title: "Web oficial de Bomberos",
+    url: "https://www.bomberos.go.cr"
   }
 ] as const;
 
@@ -23,18 +21,28 @@ export function Footer() {
   return (
     <footer className="app-footer rail-divider-top mt-20 bg-background/95 px-6 backdrop-blur supports-backdrop-filter:bg-background/60">
       <div className="mx-auto w-full max-w-6xl px-2 py-12 sm:px-0">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
-          <div className="flex flex-col gap-4 md:col-span-2">
-            <div className="w-fit">
-              <Logo />
-            </div>
-            <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
-              Monitoreo en tiempo real de incidentes atendidos por el Benemérito Cuerpo de Bomberos
-              de Costa Rica.
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-[minmax(0,1.4fr)_minmax(0,0.8fr)_minmax(0,0.8fr)] md:gap-6">
+          <div className="flex flex-col gap-4">
+            <Link
+              to="/"
+              className="w-fit">
+              <LogoIcon className="size-14 sm:size-16" />
+              <span className="sr-only">Emergencias CR</span>
+            </Link>
+            <p className="flex items-center gap-1.5 text-sm font-medium text-foreground">
+              <span>Emergencias CR</span>
+              <CopyrightIcon
+                size={14}
+                weight="duotone"
+              />
+              <span>{currentYear}</span>
+            </p>
+            <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
+              No relacionado al Benemérito Cuerpo de Bomberos de Costa Rica.
             </p>
           </div>
 
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 md:border-l md:pl-8">
             <h3 className="text-sm font-semibold tracking-tight">Navegación</h3>
             <nav className="flex flex-col gap-3">
               {navItems
@@ -50,7 +58,7 @@ export function Footer() {
             </nav>
           </div>
 
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 md:border-l md:pl-8">
             <h3 className="text-sm font-semibold tracking-tight">Enlaces</h3>
             <nav className="flex flex-col gap-3">
               {SOCIAL_LINKS.map((link) => (
@@ -59,23 +67,16 @@ export function Footer() {
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex w-fit items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
-                  <link.icon
-                    size={16}
-                    weight="duotone"
-                  />
+                  className="flex w-fit items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground">
                   <span>{link.title}</span>
+                  <ArrowUpRightIcon
+                    size={14}
+                    aria-hidden="true"
+                  />
                 </a>
               ))}
             </nav>
           </div>
-        </div>
-
-        <div className="-mx-2 mt-12 flex flex-col items-center justify-between gap-4 border-t px-2 pt-8 sm:mx-0 sm:px-0 md:flex-row">
-          <p className="text-xs text-muted-foreground">
-            © {currentYear} Emergencias CR. No afiliado oficialmente al Benemérito Cuerpo de
-            Bomberos de Costa Rica.
-          </p>
         </div>
       </div>
     </footer>
