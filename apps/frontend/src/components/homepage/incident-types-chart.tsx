@@ -8,14 +8,8 @@ import { PieCenter } from "@/components/charts/pie-center";
 import { PieChart } from "@/components/charts/pie-chart";
 import { PieSlice } from "@/components/charts/pie-slice";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import {
-  Select,
-  SelectItem,
-  SelectPopup,
-  SelectTrigger,
-  SelectValue
-} from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsList, TabsTab } from "@/components/ui/tabs";
 import { getIncidentsByTypeOptions } from "@/lib/api/@tanstack/react-query.gen";
 import { cn } from "@/lib/utils";
 import {
@@ -57,38 +51,9 @@ function getDateRange(days: number) {
 
 export function IncidentTypesChart() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const navigate = DashboardRoute.useNavigate();
   const { incidentTypesTimeRange } = DashboardRoute.useSearch();
   const selectedTimeRange = incidentTypesTimeRange ?? DEFAULT_TIME_RANGE;
   const { start, end } = useMemo(() => getDateRange(selectedTimeRange), [selectedTimeRange]);
-
-  const timeRangeItems = ALLOWED_TIME_RANGE_VALUES.map((value) => ({
-    value: String(value),
-    label: TIME_RANGE_LABELS[value]
-  }));
-
-  const handleTimeRangeChange = (value: string | null) => {
-    if (!value) {
-      return;
-    }
-
-    const nextTimeRange = ALLOWED_TIME_RANGE_VALUES.find(
-      (timeRange) => String(timeRange) === value
-    );
-
-    if (!nextTimeRange) {
-      return;
-    }
-
-    void navigate({
-      search: (prev) => ({
-        ...prev,
-        incidentTypesTimeRange: nextTimeRange === DEFAULT_TIME_RANGE ? undefined : nextTimeRange
-      }),
-      replace: true,
-      resetScroll: false
-    });
-  };
 
   const { data, isLoading, isError } = useQuery({
     ...getIncidentsByTypeOptions({
@@ -148,23 +113,31 @@ export function IncidentTypesChart() {
             </PopoverContent>
           </Popover>
           <h3 className="text-lg leading-none font-semibold">Tipos de incidente</h3>
-          <Select
-            items={timeRangeItems}
-            value={String(selectedTimeRange)}
-            onValueChange={handleTimeRangeChange}>
-            <SelectTrigger className="w-32">
-              <SelectValue placeholder="Rango" />
-            </SelectTrigger>
-            <SelectPopup>
-              {timeRangeItems.map((item) => (
-                <SelectItem
-                  key={item.value}
-                  value={item.value}>
-                  {item.label}
-                </SelectItem>
+          <Tabs value={String(selectedTimeRange)}>
+            <TabsList
+              variant="underline"
+              className="h-8">
+              {ALLOWED_TIME_RANGE_VALUES.map((value) => (
+                <TabsTab
+                  key={value}
+                  value={String(value)}
+                  render={
+                    <Link
+                      to="."
+                      search={(prev) => ({
+                        ...prev,
+                        incidentTypesTimeRange: value === DEFAULT_TIME_RANGE ? undefined : value
+                      })}
+                      replace
+                      resetScroll={false}
+                    />
+                  }
+                  className="rounded-none border-none px-3 py-1.5 text-sm">
+                  {TIME_RANGE_LABELS[value]}
+                </TabsTab>
               ))}
-            </SelectPopup>
-          </Select>
+            </TabsList>
+          </Tabs>
         </div>
       </header>
 
@@ -174,11 +147,11 @@ export function IncidentTypesChart() {
             <Skeleton className="aspect-square w-full rounded-full" />
           </div>
           <div className="grid min-w-0 content-start gap-0">
-            {Array.from({ length: 7 }).map((_, index) => (
+            {Array.from({ length: 6 }).map((_, index) => (
               <div
                 key={`incident-types-skeleton-item-${index}`}
                 className="py-1">
-                <Skeleton className="h-10 w-full rounded-md" />
+                <Skeleton className="h-9 w-full rounded-md" />
               </div>
             ))}
           </div>
