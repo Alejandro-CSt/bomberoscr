@@ -41,7 +41,7 @@ function buildImgproxyUrl(sourceUrl: string, options: { width: number; height: n
  */
 function buildOriginalSourceUrl(apiPath: string): string {
   const baseUrl = normalizeBaseUrl(env.INTERNAL_API_URL);
-  return `${baseUrl}/bomberos/hono/${apiPath}?token=${env.IMGPROXY_TOKEN}`;
+  return `${baseUrl}/bomberos/api/${apiPath}?token=${env.IMGPROXY_TOKEN}`;
 }
 
 export { buildImgproxyUrl, buildOriginalSourceUrl };

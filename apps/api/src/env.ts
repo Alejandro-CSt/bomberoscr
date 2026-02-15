@@ -26,6 +26,7 @@ const EnvSchema = z.object({
   IMGPROXY_KEY: z.string(),
   IMGPROXY_SALT: z.string(),
   IMGPROXY_TOKEN: z.string(),
+  SITEMAP_TOKEN: z.string().optional(),
   S3_ENDPOINT: z.string().url(),
   S3_KEY_ID: z.string(),
   S3_SECRET_KEY: z.string(),
