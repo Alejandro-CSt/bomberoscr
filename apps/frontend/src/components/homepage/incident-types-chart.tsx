@@ -96,8 +96,8 @@ export function IncidentTypesChart() {
 
   return (
     <section className="flex flex-col gap-4">
-      <header>
-        <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2 py-4 max-lgx:py-2">
+        <div className="flex shrink-0 items-center gap-2">
           <Popover>
             <PopoverTrigger
               aria-label="Información sobre tipos de incidente"
@@ -112,34 +112,34 @@ export function IncidentTypesChart() {
               Distribución de tipos de incidente más comunes.
             </PopoverContent>
           </Popover>
-          <h3 className="text-lg leading-none font-semibold">Tipos de incidente</h3>
-          <Tabs value={String(selectedTimeRange)}>
-            <TabsList
-              variant="underline"
-              className="h-8">
-              {ALLOWED_TIME_RANGE_VALUES.map((value) => (
-                <TabsTab
-                  key={value}
-                  value={String(value)}
-                  render={
-                    <Link
-                      to="."
-                      search={(prev) => ({
-                        ...prev,
-                        incidentTypesTimeRange: value === DEFAULT_TIME_RANGE ? undefined : value
-                      })}
-                      replace
-                      resetScroll={false}
-                    />
-                  }
-                  className="rounded-none border-none px-3 py-1.5 text-sm">
-                  {TIME_RANGE_LABELS[value]}
-                </TabsTab>
-              ))}
-            </TabsList>
-          </Tabs>
+          <h2 className="text-sm font-semibold tracking-wide uppercase">Tipos de incidente</h2>
         </div>
-      </header>
+        <Tabs value={String(selectedTimeRange)}>
+          <TabsList
+            variant="underline"
+            className="h-8">
+            {ALLOWED_TIME_RANGE_VALUES.map((value) => (
+              <TabsTab
+                key={value}
+                value={String(value)}
+                render={
+                  <Link
+                    to="."
+                    search={(prev) => ({
+                      ...prev,
+                      incidentTypesTimeRange: value === DEFAULT_TIME_RANGE ? undefined : value
+                    })}
+                    replace
+                    resetScroll={false}
+                  />
+                }
+                className="rounded-none border-none px-3 py-1.5 text-sm">
+                {TIME_RANGE_LABELS[value]}
+              </TabsTab>
+            ))}
+          </TabsList>
+        </Tabs>
+      </div>
 
       {isInitialLoading ? (
         <div className="grid min-h-[360px] min-w-0 grid-cols-1 gap-6 rounded-lg p-4 md:p-6 lg:grid-cols-[minmax(0,360px)_1fr]">
