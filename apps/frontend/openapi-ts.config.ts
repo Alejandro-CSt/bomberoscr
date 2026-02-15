@@ -1,7 +1,7 @@
 import { defineConfig } from "@hey-api/openapi-ts";
 
 export default defineConfig({
-  input: "http://localhost:9998/bomberos/hono/doc",
+  input: "http://localhost:9998/bomberos/api/doc",
   output: {
     path: "src/lib/api/",
     postProcess: ["oxlint"]

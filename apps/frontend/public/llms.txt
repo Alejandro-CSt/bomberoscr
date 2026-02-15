@@ -1,0 +1,25 @@
+# Emergencias CR - Bomberos de Costa Rica
+
+> Sistema de monitoreo en tiempo real de incidentes atendidos por el Cuerpo de Bomberos de Costa Rica. Datos obtenidos del Sistema de Gestion de Emergencias (SIGAE).
+
+## Paginas principales
+
+- [Inicio](https://alech.dev/bomberos): Resumen general con incidentes destacados, ultimos incidentes y estadisticas.
+- [Incidentes](https://alech.dev/bomberos/incidentes): Explorador de incidentes con mapa interactivo y lista filtrable. Permite buscar por tipo, estacion, fecha y ubicacion.
+- [Estaciones](https://alech.dev/bomberos/estaciones): Directorio de todas las estaciones de bomberos del pais con estado operativo, ubicacion y estadisticas.
+
+## Contenido dinamico
+
+- Cada incidente tiene su propia pagina en `/bomberos/incidentes/{slug}` con detalles completos: tipo de incidente, estaciones despachadas, vehiculos, tiempos de respuesta y linea de tiempo.
+- Cada estacion tiene su propia pagina en `/bomberos/estaciones/{nombre}` con perfil, incidentes destacados, mapa de calor de actividad, vehiculos y colaboraciones con otras estaciones.
+
+## Datos
+
+- Mas de 43,000 incidentes registrados
+- Aproximadamente 150 estaciones de bomberos
+- Datos actualizados en tiempo real desde SIGAE - Sistema de Información Geográfica para la Atención de Emergencias
+- API publica disponible en `https://alech.dev/bomberos/api`
+
+## Sitemap
+
+- [sitemap.xml](https://alech.dev/bomberos/sitemap.xml)

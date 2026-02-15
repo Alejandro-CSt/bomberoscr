@@ -59,7 +59,7 @@ export const Route = createFileRoute("/_incidents/incidentes/")({
     const isServer = typeof window === "undefined";
     const baseUrl = isServer
       ? process.env.SERVER_INTERNAL_URL
-      : import.meta.env.VITE_SERVER_URL || "/bomberos/hono";
+      : import.meta.env.VITE_SERVER_URL || "/bomberos/api";
 
     client.setConfig({ baseUrl });
 

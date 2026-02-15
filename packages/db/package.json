@@ -9,6 +9,7 @@
     "./queries/stations": "./src/queries/stations.ts",
     "./queries/stats": "./src/queries/stats.ts",
     "./queries/incidentsTable": "./src/queries/incidentsTable.ts",
+    "./queries/sitemap": "./src/queries/sitemap.ts",
     "./queries/search/*": "./src/queries/search/*.ts",
     "./queries/map/*": "./src/queries/map/*.ts"
   },

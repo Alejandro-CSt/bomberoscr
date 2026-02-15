@@ -9,6 +9,9 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SitemapStationsDotxmlRouteImport } from './routes/sitemap-stations[.]xml'
+import { Route as SitemapIncidentsDotxmlRouteImport } from './routes/sitemap-incidents[.]xml'
 import { Route as IncidentsRouteImport } from './routes/_incidents'
 import { Route as DashboardRouteImport } from './routes/_dashboard'
 import { Route as DashboardIndexRouteImport } from './routes/_dashboard/index'
@@ -17,6 +20,21 @@ import { Route as DashboardEstacionesIndexRouteImport } from './routes/_dashboar
 import { Route as DashboardIncidentesSlugRouteImport } from './routes/_dashboard/incidentes/$slug'
 import { Route as DashboardEstacionesNameRouteImport } from './routes/_dashboard/estaciones/$name'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapStationsDotxmlRoute = SitemapStationsDotxmlRouteImport.update({
+  id: '/sitemap-stations.xml',
+  path: '/sitemap-stations.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapIncidentsDotxmlRoute = SitemapIncidentsDotxmlRouteImport.update({
+  id: '/sitemap-incidents.xml',
+  path: '/sitemap-incidents.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IncidentsRoute = IncidentsRouteImport.update({
   id: '/_incidents',
   getParentRoute: () => rootRouteImport,
@@ -55,6 +73,9 @@ const DashboardEstacionesNameRoute = DashboardEstacionesNameRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof DashboardIndexRoute
+  '/sitemap-incidents.xml': typeof SitemapIncidentsDotxmlRoute
+  '/sitemap-stations.xml': typeof SitemapStationsDotxmlRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/estaciones/$name': typeof DashboardEstacionesNameRoute
   '/incidentes/$slug': typeof DashboardIncidentesSlugRoute
   '/estaciones/': typeof DashboardEstacionesIndexRoute
@@ -62,6 +83,9 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof DashboardIndexRoute
+  '/sitemap-incidents.xml': typeof SitemapIncidentsDotxmlRoute
+  '/sitemap-stations.xml': typeof SitemapStationsDotxmlRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/estaciones/$name': typeof DashboardEstacionesNameRoute
   '/incidentes/$slug': typeof DashboardIncidentesSlugRoute
   '/estaciones': typeof DashboardEstacionesIndexRoute
@@ -71,6 +95,9 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_dashboard': typeof DashboardRouteWithChildren
   '/_incidents': typeof IncidentsRouteWithChildren
+  '/sitemap-incidents.xml': typeof SitemapIncidentsDotxmlRoute
+  '/sitemap-stations.xml': typeof SitemapStationsDotxmlRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_dashboard/': typeof DashboardIndexRoute
   '/_dashboard/estaciones/$name': typeof DashboardEstacionesNameRoute
   '/_dashboard/incidentes/$slug': typeof DashboardIncidentesSlugRoute
@@ -81,6 +108,9 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/sitemap-incidents.xml'
+    | '/sitemap-stations.xml'
+    | '/sitemap.xml'
     | '/estaciones/$name'
     | '/incidentes/$slug'
     | '/estaciones/'
@@ -88,6 +118,9 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/sitemap-incidents.xml'
+    | '/sitemap-stations.xml'
+    | '/sitemap.xml'
     | '/estaciones/$name'
     | '/incidentes/$slug'
     | '/estaciones'
@@ -96,6 +129,9 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_dashboard'
     | '/_incidents'
+    | '/sitemap-incidents.xml'
+    | '/sitemap-stations.xml'
+    | '/sitemap.xml'
     | '/_dashboard/'
     | '/_dashboard/estaciones/$name'
     | '/_dashboard/incidentes/$slug'
@@ -106,10 +142,34 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRouteWithChildren
   IncidentsRoute: typeof IncidentsRouteWithChildren
+  SitemapIncidentsDotxmlRoute: typeof SitemapIncidentsDotxmlRoute
+  SitemapStationsDotxmlRoute: typeof SitemapStationsDotxmlRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-stations.xml': {
+      id: '/sitemap-stations.xml'
+      path: '/sitemap-stations.xml'
+      fullPath: '/sitemap-stations.xml'
+      preLoaderRoute: typeof SitemapStationsDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-incidents.xml': {
+      id: '/sitemap-incidents.xml'
+      path: '/sitemap-incidents.xml'
+      fullPath: '/sitemap-incidents.xml'
+      preLoaderRoute: typeof SitemapIncidentsDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_incidents': {
       id: '/_incidents'
       path: ''
@@ -195,6 +255,9 @@ const IncidentsRouteWithChildren = IncidentsRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRouteWithChildren,
   IncidentsRoute: IncidentsRouteWithChildren,
+  SitemapIncidentsDotxmlRoute: SitemapIncidentsDotxmlRoute,
+  SitemapStationsDotxmlRoute: SitemapStationsDotxmlRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
