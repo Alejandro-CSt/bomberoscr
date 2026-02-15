@@ -50,6 +50,8 @@ jobs:
           context: .
           file: ./apps/frontend/Dockerfile
           platforms: linux/amd64
+          build-args: |
+            VITE_BASE=${{ vars.VITE_BASE || '/bomberos' }}
           push: true
           tags: ${{ secrets.REGISTRY }}/${{ secrets.FRONTEND_IMAGE_NAME }}:latest
 
