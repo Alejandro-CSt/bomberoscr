@@ -2,7 +2,7 @@ import { extname, join, normalize, sep } from "node:path";
 
 import startServer from "./dist/server/server.js";
 
-const BASE_PATH = process.env.VITE_BASE ?? "/bomberos";
+const BASE_PATH = "/bomberos";
 const PORT = Number(process.env.PORT ?? 3000);
 
 const startFetch =
