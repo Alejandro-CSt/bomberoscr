@@ -78,7 +78,22 @@ Bun.serve({
       }
     }
 
-    return startFetch(request);
+    try {
+      return await startFetch(request);
+    } catch (error) {
+      console.error("Unhandled frontend request error", {
+        path: url.pathname,
+        method: request.method,
+        error
+      });
+
+      return new Response("Internal Server Error", {
+        status: 500,
+        headers: {
+          "Content-Type": "text/plain; charset=utf-8"
+        }
+      });
+    }
   }
 });
 

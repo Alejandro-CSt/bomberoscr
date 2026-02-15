@@ -10,6 +10,10 @@ const SOCIAL_LINKS = [
     url: "https://github.com/alechdev/emergenciascr"
   },
   {
+    title: "API",
+    url: "https://alech.dev/bomberos/api"
+  },
+  {
     title: "Web oficial de Bomberos",
     url: "https://www.bomberos.go.cr"
   }
