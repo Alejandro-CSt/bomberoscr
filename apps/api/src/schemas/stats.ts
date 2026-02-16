@@ -102,6 +102,10 @@ export const yearRecapResponse = z
             description: "Vehicle internal number.",
             example: "M-05"
           }),
+          stationName: z.string().openapi({
+            description: "Station name assigned to the vehicle.",
+            example: "METROPOLITANA SUR"
+          }),
           count: z.number().openapi({
             description: "Number of dispatches.",
             example: 1200

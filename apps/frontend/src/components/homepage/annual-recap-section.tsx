@@ -1,5 +1,6 @@
 import { WarningIcon } from "@phosphor-icons/react";
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 import { PatternLines } from "@visx/pattern";
 import { motion, useSpring } from "motion/react";
 import { useEffect, useMemo } from "react";
@@ -18,6 +19,9 @@ type TopFiveDatum = {
   label: string;
   shortLabel: string;
   value: number;
+  tooltipLabel?: string;
+  tooltipSubtitle?: string;
+  stationRouteParamName?: string;
 };
 
 type RankedTopFiveDatum = TopFiveDatum & {
@@ -217,12 +221,24 @@ function TopFiveRecapBarPanel({
                 showDatePill={false}
                 showDots={false}
                 content={({ point }) => {
-                  const pointLabel = typeof point.label === "string" ? point.label : "";
+                  const pointLabel =
+                    typeof point.tooltipLabel === "string"
+                      ? point.tooltipLabel
+                      : typeof point.label === "string"
+                        ? point.label
+                        : "";
+                  const pointSubtitle =
+                    typeof point.tooltipSubtitle === "string" ? point.tooltipSubtitle : "";
                   const pointValue = typeof point.value === "number" ? point.value : 0;
 
                   return (
                     <div className="rounded-md border border-zinc-700/80 bg-zinc-950/95 px-2.5 py-2 text-xs text-zinc-200 shadow-lg">
                       <p className="max-w-48 truncate font-medium text-zinc-100">{pointLabel}</p>
+                      {pointSubtitle && (
+                        <p className="mt-0.5 max-w-48 truncate text-[11px] text-zinc-400">
+                          {pointSubtitle}
+                        </p>
+                      )}
                       <p className="mt-1 text-zinc-400">
                         {formatNumber(pointValue)} {unit}
                       </p>
@@ -238,11 +254,21 @@ function TopFiveRecapBarPanel({
                 <li
                   key={`${item.rankLabel}-${item.label}`}
                   className="min-w-0 text-center">
-                  <p
-                    className="truncate text-[11px] leading-4 text-zinc-400"
-                    title={item.label}>
-                    {item.shortLabel}
-                  </p>
+                  {item.stationRouteParamName ? (
+                    <Link
+                      to="/estaciones/$name"
+                      params={{ name: item.stationRouteParamName }}
+                      className="block truncate text-[11px] leading-4 text-zinc-400 transition-colors hover:text-zinc-200"
+                      title={item.label}>
+                      {item.shortLabel}
+                    </Link>
+                  ) : (
+                    <p
+                      className="truncate text-[11px] leading-4 text-zinc-400"
+                      title={item.label}>
+                      {item.shortLabel}
+                    </p>
+                  )}
                 </li>
               ))}
             </ol>
@@ -274,7 +300,8 @@ function AnnualRecapBoard({ data }: { data: GetYearRecapResponse }) {
       data.topDispatchedStations.map((item) => ({
         label: item.name,
         shortLabel: compactLabel(item.name),
-        value: item.count
+        value: item.count,
+        stationRouteParamName: item.name
       })),
     [data.topDispatchedStations]
   );
@@ -284,6 +311,8 @@ function AnnualRecapBoard({ data }: { data: GetYearRecapResponse }) {
       data.topDispatchedVehicles.map((item) => ({
         label: item.internalNumber,
         shortLabel: item.internalNumber,
+        tooltipLabel: item.internalNumber,
+        tooltipSubtitle: item.stationName,
         value: item.count
       })),
     [data.topDispatchedVehicles]

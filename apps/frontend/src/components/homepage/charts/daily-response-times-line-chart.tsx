@@ -1,11 +1,9 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { CircleHelpIcon } from "lucide-react";
 import { useMemo } from "react";
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 
 import { type ChartConfig, ChartContainer, ChartTooltip } from "@/components/ui/chart";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTab } from "@/components/ui/tabs";
 import { getDailyResponseTimesOptions } from "@/lib/api/@tanstack/react-query.gen";
@@ -21,6 +19,11 @@ type DailyResponseTimeDatum = {
   date: Date;
   label: string;
   avgResponseMinutes: number;
+};
+
+type DailyResponseTimeChartDatum = DailyResponseTimeDatum & {
+  avgResponseMinutesSolid: number | null;
+  avgResponseMinutesTodaySegment: number | null;
 };
 
 interface CustomTooltipProps {
@@ -43,8 +46,26 @@ const dayFormatter = new Intl.DateTimeFormat("es-CR", {
   timeZone: "America/Costa_Rica"
 });
 
+const tooltipDateFormatter = new Intl.DateTimeFormat("es-CR", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+  timeZone: "America/Costa_Rica"
+});
+
+const costaRicaDateKeyFormatter = new Intl.DateTimeFormat("en-CA", {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  timeZone: "America/Costa_Rica"
+});
+
 function parseDateInCostaRica(dateString: string) {
   return new Date(`${dateString}T00:00:00-06:00`);
+}
+
+function getCostaRicaDateKey(date: Date) {
+  return costaRicaDateKeyFormatter.format(date);
 }
 
 function getTickStep(timeRange: number) {
@@ -52,6 +73,14 @@ function getTickStep(timeRange: number) {
   if (timeRange <= 30) return 5;
   if (timeRange <= 90) return 14;
   return 30;
+}
+
+function formatYAxisMinutesTick(value: number) {
+  if (value < 10) {
+    return `${Number(value.toFixed(1))}m`;
+  }
+
+  return `${Math.round(value)}m`;
 }
 
 export function DailyResponseTimesLineChart() {
@@ -84,6 +113,29 @@ export function DailyResponseTimesLineChart() {
       } satisfies DailyResponseTimeDatum;
     });
   }, [data]);
+
+  const chartSeriesData = useMemo(() => {
+    if (!chartData.length) {
+      return [];
+    }
+
+    const todayDateKey = getCostaRicaDateKey(new Date());
+    const todayIndex = chartData.findIndex(
+      (item) => getCostaRicaDateKey(item.date) === todayDateKey
+    );
+
+    return chartData.map((item, index) => {
+      const isToday = index === todayIndex;
+      const isTodaySegmentPoint =
+        todayIndex >= 0 && (index === todayIndex || index === todayIndex - 1);
+
+      return {
+        ...item,
+        avgResponseMinutesSolid: isToday ? null : item.avgResponseMinutes,
+        avgResponseMinutesTodaySegment: isTodaySegmentPoint ? item.avgResponseMinutes : null
+      } satisfies DailyResponseTimeChartDatum;
+    });
+  }, [chartData]);
 
   const tickStep = useMemo(() => getTickStep(selectedTimeRange), [selectedTimeRange]);
 
@@ -141,30 +193,10 @@ export function DailyResponseTimesLineChart() {
               <ChartContainer
                 config={chartConfig}
                 className="max-h-[320px] w-full px-2 pb-2 font-mono sm:px-3 sm:pb-3">
-                <AreaChart
+                <LineChart
                   accessibilityLayer
-                  data={chartData}
+                  data={chartSeriesData}
                   margin={{ top: 12, right: 12, bottom: 6, left: 0 }}>
-                  <defs>
-                    <linearGradient
-                      id="fillAvgResponseMinutes"
-                      x1="0"
-                      y1="0"
-                      x2="0"
-                      y2="1">
-                      <stop
-                        offset="5%"
-                        stopColor="var(--color-avgResponseMinutes)"
-                        stopOpacity={0.6}
-                      />
-                      <stop
-                        offset="95%"
-                        stopColor="var(--color-avgResponseMinutes)"
-                        stopOpacity={0.08}
-                      />
-                    </linearGradient>
-                  </defs>
-
                   <CartesianGrid
                     vertical={false}
                     strokeDasharray="3 3"
@@ -175,22 +207,31 @@ export function DailyResponseTimesLineChart() {
                     axisLine={false}
                     tickMargin={8}
                     tickFormatter={(value, index) => {
-                      if (index % tickStep === 0 || index === chartData.length - 1) {
+                      if (index % tickStep === 0 || index === chartSeriesData.length - 1) {
                         return value;
                       }
 
                       return "";
                     }}
                   />
+                  <YAxis
+                    tickLine={false}
+                    axisLine={false}
+                    width={1}
+                    mirror
+                    tickMargin={6}
+                    tickCount={5}
+                    tick={{ fill: "var(--muted-foreground)", fontSize: 10, opacity: 0.65, dy: -5 }}
+                    tickFormatter={(value) => formatYAxisMinutesTick(Number(value))}
+                  />
                   <ChartTooltip
                     cursor={{ stroke: "var(--color-avgResponseMinutes)", strokeOpacity: 0.25 }}
                     content={<CustomTooltipContent />}
                   />
-                  <Area
+                  <Line
                     type="monotone"
-                    dataKey="avgResponseMinutes"
+                    dataKey="avgResponseMinutesSolid"
                     stroke="var(--color-avgResponseMinutes)"
-                    fill="url(#fillAvgResponseMinutes)"
                     strokeWidth={2.5}
                     dot={false}
                     activeDot={{
@@ -200,7 +241,21 @@ export function DailyResponseTimesLineChart() {
                       strokeWidth: 2
                     }}
                   />
-                </AreaChart>
+                  <Line
+                    type="monotone"
+                    dataKey="avgResponseMinutesTodaySegment"
+                    stroke="var(--color-avgResponseMinutes)"
+                    strokeDasharray="3 2"
+                    strokeWidth={2.5}
+                    dot={false}
+                    activeDot={{
+                      r: 5,
+                      fill: "var(--color-avgResponseMinutes)",
+                      stroke: "var(--background)",
+                      strokeWidth: 2
+                    }}
+                  />
+                </LineChart>
               </ChartContainer>
             )}
           </div>
@@ -224,7 +279,7 @@ function CustomTooltipContent({ active, payload }: CustomTooltipProps) {
   return (
     <div className="rounded-lg border bg-background p-3 shadow-sm">
       <div className="space-y-1">
-        <div className="font-medium">{point.label}</div>
+        <div className="font-medium">{tooltipDateFormatter.format(point.date)}</div>
         <div className="flex items-center justify-between gap-4">
           <span className="text-xs text-muted-foreground">Tiempo promedio:</span>
           <span className="font-mono text-sm font-medium">

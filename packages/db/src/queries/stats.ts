@@ -58,20 +58,23 @@ export async function getYearRecap(year: number) {
   const topDispatchedVehiclesResults = await db
     .select({
       internalNumber: vehicles.internalNumber,
+      stationName: stations.name,
       count: sql<number>`count(*)::int`
     })
     .from(vehicles)
+    .innerJoin(stations, eq(vehicles.stationId, stations.id))
     .innerJoin(dispatchedVehicles, eq(vehicles.id, dispatchedVehicles.vehicleId))
     .innerJoin(incidents, eq(dispatchedVehicles.incidentId, incidents.id))
     .where(
       and(gte(incidents.incidentTimestamp, startOfYear), lt(incidents.incidentTimestamp, endOfYear))
     )
-    .groupBy(vehicles.id, vehicles.internalNumber)
+    .groupBy(vehicles.id, vehicles.internalNumber, stations.name)
     .orderBy(desc(sql`count(*)`), vehicles.internalNumber)
     .limit(5);
 
   const topDispatchedVehicles = topDispatchedVehiclesResults.map((item) => ({
     internalNumber: item.internalNumber,
+    stationName: item.stationName,
     count: Number(item.count)
   }));
 

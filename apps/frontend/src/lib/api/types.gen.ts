@@ -1366,6 +1366,10 @@ export type GetYearRecapResponses = {
              */
             internalNumber: string;
             /**
+             * Station name assigned to the vehicle.
+             */
+            stationName: string;
+            /**
              * Number of dispatches.
              */
             count: number;
