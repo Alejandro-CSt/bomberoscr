@@ -51,7 +51,7 @@ export function HighlightedIncidents() {
   const incidents = data?.data ?? [];
 
   return (
-    <section className="rail-divider-top mt-16 flex flex-col py-8">
+    <section className="flex flex-col py-8">
       <div className="flex flex-wrap items-center gap-x-3 gap-y-2 py-4 max-lgx:py-2">
         <div className="flex shrink-0 items-center gap-2">
           <Popover>
@@ -86,6 +86,8 @@ export function HighlightedIncidents() {
                       ...prev,
                       highlightedTimeRange: value === DEFAULT_TIME_RANGE ? undefined : value
                     })}
+                    replace
+                    resetScroll={false}
                   />
                 }
                 className="rounded-none border-none px-3 py-1.5 text-sm">

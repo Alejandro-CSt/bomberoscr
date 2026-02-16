@@ -3,8 +3,8 @@
 import { type DefaultError, type InfiniteData, infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { getDailyIncidents, getHealthcheck, getIncidentById, getIncidentMap, getIncidentOgImage, getIncidentOriginalMap, getIncidentResponseTimes, getIncidentsByDayOfWeek, getIncidentsByHour, getIncidentsByType, getIncidentTimeline, getIncidentType, getIncidentTypeImage, getIncidentTypeOriginalImage, getStationByName, getStationCollaborations, getStationHeatmap, getStationHighlightedIncidents, getStationImage, getStationOriginalImage, getStationsOverview, getStationVehicles, getSystemOverview, getTopDispatchedStations, getTopResponseTimes, getYearRecap, listIncidents, listIncidentTypes, listStations, type Options } from '../sdk.gen';
-import type { GetDailyIncidentsData, GetDailyIncidentsResponse, GetHealthcheckData, GetHealthcheckResponse, GetIncidentByIdData, GetIncidentByIdError, GetIncidentByIdResponse, GetIncidentMapData, GetIncidentMapError, GetIncidentMapResponse, GetIncidentOgImageData, GetIncidentOgImageError, GetIncidentOgImageResponse, GetIncidentOriginalMapData, GetIncidentOriginalMapError, GetIncidentOriginalMapResponse, GetIncidentResponseTimesData, GetIncidentResponseTimesError, GetIncidentResponseTimesResponse, GetIncidentsByDayOfWeekData, GetIncidentsByDayOfWeekResponse, GetIncidentsByHourData, GetIncidentsByHourResponse, GetIncidentsByTypeData, GetIncidentsByTypeResponse, GetIncidentTimelineData, GetIncidentTimelineError, GetIncidentTimelineResponse, GetIncidentTypeData, GetIncidentTypeError, GetIncidentTypeImageData, GetIncidentTypeImageError, GetIncidentTypeImageResponse, GetIncidentTypeOriginalImageData, GetIncidentTypeOriginalImageError, GetIncidentTypeOriginalImageResponse, GetIncidentTypeResponse, GetStationByNameData, GetStationByNameError, GetStationByNameResponse, GetStationCollaborationsData, GetStationCollaborationsError, GetStationCollaborationsResponse, GetStationHeatmapData, GetStationHeatmapError, GetStationHeatmapResponse, GetStationHighlightedIncidentsData, GetStationHighlightedIncidentsError, GetStationHighlightedIncidentsResponse, GetStationImageData, GetStationImageError, GetStationImageResponse, GetStationOriginalImageData, GetStationOriginalImageError, GetStationOriginalImageResponse, GetStationsOverviewData, GetStationsOverviewResponse, GetStationVehiclesData, GetStationVehiclesError, GetStationVehiclesResponse, GetSystemOverviewData, GetSystemOverviewResponse, GetTopDispatchedStationsData, GetTopDispatchedStationsResponse, GetTopResponseTimesData, GetTopResponseTimesResponse, GetYearRecapData, GetYearRecapResponse, ListIncidentsData, ListIncidentsResponse, ListIncidentTypesData, ListIncidentTypesResponse, ListStationsData, ListStationsResponse } from '../types.gen';
+import { getDailyIncidents, getDailyResponseTimes, getHealthcheck, getIncidentById, getIncidentMap, getIncidentOgImage, getIncidentOriginalMap, getIncidentResponseTimes, getIncidentsByDayOfWeek, getIncidentsByHour, getIncidentsByType, getIncidentTimeline, getIncidentType, getIncidentTypeImage, getIncidentTypeOriginalImage, getStationByName, getStationCollaborations, getStationHeatmap, getStationHighlightedIncidents, getStationImage, getStationOriginalImage, getStationsOverview, getStationVehicles, getSystemOverview, getTopDispatchedStations, getTopResponseTimes, getYearRecap, listIncidents, listIncidentTypes, listStations, type Options } from '../sdk.gen';
+import type { GetDailyIncidentsData, GetDailyIncidentsResponse, GetDailyResponseTimesData, GetDailyResponseTimesResponse, GetHealthcheckData, GetHealthcheckResponse, GetIncidentByIdData, GetIncidentByIdError, GetIncidentByIdResponse, GetIncidentMapData, GetIncidentMapError, GetIncidentMapResponse, GetIncidentOgImageData, GetIncidentOgImageError, GetIncidentOgImageResponse, GetIncidentOriginalMapData, GetIncidentOriginalMapError, GetIncidentOriginalMapResponse, GetIncidentResponseTimesData, GetIncidentResponseTimesError, GetIncidentResponseTimesResponse, GetIncidentsByDayOfWeekData, GetIncidentsByDayOfWeekResponse, GetIncidentsByHourData, GetIncidentsByHourResponse, GetIncidentsByTypeData, GetIncidentsByTypeResponse, GetIncidentTimelineData, GetIncidentTimelineError, GetIncidentTimelineResponse, GetIncidentTypeData, GetIncidentTypeError, GetIncidentTypeImageData, GetIncidentTypeImageError, GetIncidentTypeImageResponse, GetIncidentTypeOriginalImageData, GetIncidentTypeOriginalImageError, GetIncidentTypeOriginalImageResponse, GetIncidentTypeResponse, GetStationByNameData, GetStationByNameError, GetStationByNameResponse, GetStationCollaborationsData, GetStationCollaborationsError, GetStationCollaborationsResponse, GetStationHeatmapData, GetStationHeatmapError, GetStationHeatmapResponse, GetStationHighlightedIncidentsData, GetStationHighlightedIncidentsError, GetStationHighlightedIncidentsResponse, GetStationImageData, GetStationImageError, GetStationImageResponse, GetStationOriginalImageData, GetStationOriginalImageError, GetStationOriginalImageResponse, GetStationsOverviewData, GetStationsOverviewResponse, GetStationVehiclesData, GetStationVehiclesError, GetStationVehiclesResponse, GetSystemOverviewData, GetSystemOverviewResponse, GetTopDispatchedStationsData, GetTopDispatchedStationsResponse, GetTopResponseTimesData, GetTopResponseTimesResponse, GetYearRecapData, GetYearRecapResponse, ListIncidentsData, ListIncidentsResponse, ListIncidentTypesData, ListIncidentTypesResponse, ListStationsData, ListStationsResponse } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -778,6 +778,26 @@ export const getDailyIncidentsInfiniteOptions = (options?: Options<GetDailyIncid
         return data;
     },
     queryKey: getDailyIncidentsInfiniteQueryKey(options)
+});
+
+export const getDailyResponseTimesQueryKey = (options?: Options<GetDailyResponseTimesData>) => createQueryKey('getDailyResponseTimes', options);
+
+/**
+ * Get daily response times
+ *
+ * Daily average response times for dispatched vehicles
+ */
+export const getDailyResponseTimesOptions = (options?: Options<GetDailyResponseTimesData>) => queryOptions<GetDailyResponseTimesResponse, DefaultError, GetDailyResponseTimesResponse, ReturnType<typeof getDailyResponseTimesQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await getDailyResponseTimes({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getDailyResponseTimesQueryKey(options)
 });
 
 export const getSystemOverviewQueryKey = (options?: Options<GetSystemOverviewData>) => createQueryKey('getSystemOverview', options);

@@ -5,6 +5,8 @@ import { z } from "@hono/zod-openapi";
 // ============================================================================
 
 const MAX_DAYS = 365;
+const DAILY_RESPONSE_TIME_RANGE_VALUES = [7, 30, 90, 365] as const;
+type DailyResponseTimeRange = (typeof DAILY_RESPONSE_TIME_RANGE_VALUES)[number];
 
 function validateDateRange(start: string | null, end: string | null) {
   if (!start || !end) return true;
@@ -61,77 +63,53 @@ export const yearRecapRequest = z.object({
 
 export const yearRecapResponse = z
   .object({
-    year: z.number().openapi({
-      description: "The year of the recap.",
-      example: 2025
-    }),
-    totalIncidents: z.number().openapi({
-      description: "Total number of incidents for the year.",
-      example: 42500
-    }),
-    frequency: z.number().nullable().openapi({
-      description: "Average minutes between incidents.",
-      example: 12
-    }),
-    busiestDate: z
-      .object({
-        date: z.string().openapi({
-          description: "Date in YYYY-MM-DD format.",
-          example: "2025-03-15"
-        }),
-        count: z.number().openapi({
-          description: "Number of incidents on that date.",
-          example: 245
+    topIncidentDays: z
+      .array(
+        z.object({
+          date: z.string().openapi({
+            description: "Date in YYYY-MM-DD format.",
+            example: "2025-03-15"
+          }),
+          count: z.number().openapi({
+            description: "Number of incidents on that date.",
+            example: 245
+          })
         })
-      })
-      .nullable()
+      )
       .openapi({
-        description: "Date with the most incidents."
+        description: "Top 5 days with the most incidents in the selected year."
       }),
-    busiestStation: z
-      .object({
-        name: z.string().openapi({
-          description: "Station name.",
-          example: "METROPOLITANA SUR"
-        }),
-        count: z.number().openapi({
-          description: "Number of dispatches.",
-          example: 3500
+    topDispatchedStations: z
+      .array(
+        z.object({
+          name: z.string().openapi({
+            description: "Station name.",
+            example: "METROPOLITANA SUR"
+          }),
+          count: z.number().openapi({
+            description: "Number of dispatches.",
+            example: 3500
+          })
         })
-      })
-      .nullable()
+      )
       .openapi({
-        description: "Station with the most dispatches."
+        description: "Top 5 stations with the most dispatches in the selected year."
       }),
-    busiestVehicle: z
-      .object({
-        internalNumber: z.string().openapi({
-          description: "Vehicle internal number.",
-          example: "M-05"
-        }),
-        count: z.number().openapi({
-          description: "Number of dispatches.",
-          example: 1200
+    topDispatchedVehicles: z
+      .array(
+        z.object({
+          internalNumber: z.string().openapi({
+            description: "Vehicle internal number.",
+            example: "M-05"
+          }),
+          count: z.number().openapi({
+            description: "Number of dispatches.",
+            example: 1200
+          })
         })
-      })
-      .nullable()
+      )
       .openapi({
-        description: "Vehicle with the most dispatches."
-      }),
-    mostPopularIncidentType: z
-      .object({
-        name: z.string().openapi({
-          description: "Incident type name.",
-          example: "EMERGENCIAS MÉDICAS"
-        }),
-        count: z.number().openapi({
-          description: "Number of incidents of this type.",
-          example: 15000
-        })
-      })
-      .nullable()
-      .openapi({
-        description: "Most common incident type."
+        description: "Top 5 vehicles with the most dispatches in the selected year."
       })
   })
   .openapi({
@@ -389,6 +367,57 @@ export const dailyIncidentsResponse = z
   })
   .openapi({
     description: "Daily incidents comparison between current and previous period"
+  });
+
+// ============================================================================
+// Daily Response Times
+// ============================================================================
+
+export const dailyResponseTimesRequest = z.object({
+  timeRange: z.coerce
+    .number()
+    .int()
+    .refine(
+      (value): value is DailyResponseTimeRange =>
+        DAILY_RESPONSE_TIME_RANGE_VALUES.includes(value as DailyResponseTimeRange),
+      {
+        message: "timeRange must be one of: 7, 30, 90, 365"
+      }
+    )
+    .optional()
+    .default(7)
+    .openapi({
+      description: "Time range in days. Allowed values: 7, 30, 90, 365.",
+      param: { in: "query" },
+      example: 30
+    })
+});
+
+export const dailyResponseTimesResponse = z
+  .object({
+    data: z.array(
+      z.object({
+        date: z.string().openapi({
+          description: "Day in YYYY-MM-DD format.",
+          example: "2026-01-16"
+        }),
+        averageResponseTimeSeconds: z.number().openapi({
+          description: "Average response time in seconds for that day.",
+          example: 492
+        }),
+        dispatchCount: z.number().openapi({
+          description: "Number of dispatched vehicles considered for that day.",
+          example: 284
+        })
+      })
+    ),
+    totalDispatches: z.number().openapi({
+      description: "Total dispatched vehicles considered in the requested range.",
+      example: 8291
+    })
+  })
+  .openapi({
+    description: "Daily average response times for dispatched vehicles"
   });
 
 // ============================================================================

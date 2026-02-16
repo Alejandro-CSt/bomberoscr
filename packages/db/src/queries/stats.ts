@@ -17,46 +17,28 @@ export async function getYearRecap(year: number) {
   const startOfYear = new Date(year, 0, 1);
   const endOfYear = new Date(year + 1, 0, 1);
 
-  const [totalIncidentsResult] = await db
-    .select({
-      count: sql<number>`count(*)`
-    })
-    .from(incidents)
-    .where(
-      and(gte(incidents.incidentTimestamp, startOfYear), lt(incidents.incidentTimestamp, endOfYear))
-    );
-
-  const totalIncidents = totalIncidentsResult?.count || 0;
-
-  const now = new Date();
-  const effectiveEnd = now < endOfYear ? now : endOfYear;
-  const elapsedMinutes = Math.floor((effectiveEnd.getTime() - startOfYear.getTime()) / (1000 * 60));
-  const frequency = totalIncidents > 0 ? Math.round(elapsedMinutes / totalIncidents) : null;
-
-  const [busiestDateResult] = await db
+  const topIncidentDaysResults = await db
     .select({
       date: sql<string>`DATE(${incidents.incidentTimestamp})`,
-      count: sql<number>`count(*)`
+      count: sql<number>`count(*)::int`
     })
     .from(incidents)
     .where(
       and(gte(incidents.incidentTimestamp, startOfYear), lt(incidents.incidentTimestamp, endOfYear))
     )
     .groupBy(sql`DATE(${incidents.incidentTimestamp})`)
-    .orderBy(desc(sql`count(*)`))
-    .limit(1);
+    .orderBy(desc(sql`count(*)`), desc(sql`DATE(${incidents.incidentTimestamp})`))
+    .limit(5);
 
-  const busiestDate = busiestDateResult
-    ? {
-        date: busiestDateResult.date,
-        count: busiestDateResult.count
-      }
-    : null;
+  const topIncidentDays = topIncidentDaysResults.map((item) => ({
+    date: item.date,
+    count: Number(item.count)
+  }));
 
-  const [busiestStationResult] = await db
+  const topDispatchedStationsResults = await db
     .select({
       name: stations.name,
-      count: sql<number>`count(*)`
+      count: sql<number>`count(*)::int`
     })
     .from(stations)
     .innerJoin(dispatchedStations, eq(stations.id, dispatchedStations.stationId))
@@ -65,21 +47,18 @@ export async function getYearRecap(year: number) {
       and(gte(incidents.incidentTimestamp, startOfYear), lt(incidents.incidentTimestamp, endOfYear))
     )
     .groupBy(stations.id, stations.name)
-    .orderBy(desc(sql`count(*)`))
-    .limit(1);
+    .orderBy(desc(sql`count(*)`), stations.name)
+    .limit(5);
 
-  const busiestStation = busiestStationResult
-    ? {
-        name: busiestStationResult.name,
-        count: busiestStationResult.count
-      }
-    : null;
+  const topDispatchedStations = topDispatchedStationsResults.map((item) => ({
+    name: item.name,
+    count: Number(item.count)
+  }));
 
-  const [busiestVehicleResult] = await db
+  const topDispatchedVehiclesResults = await db
     .select({
       internalNumber: vehicles.internalNumber,
-      plate: vehicles.plate,
-      count: sql<number>`count(*)`
+      count: sql<number>`count(*)::int`
     })
     .from(vehicles)
     .innerJoin(dispatchedVehicles, eq(vehicles.id, dispatchedVehicles.vehicleId))
@@ -87,48 +66,19 @@ export async function getYearRecap(year: number) {
     .where(
       and(gte(incidents.incidentTimestamp, startOfYear), lt(incidents.incidentTimestamp, endOfYear))
     )
-    .groupBy(vehicles.id, vehicles.internalNumber, vehicles.plate)
-    .orderBy(desc(sql`count(*)`))
-    .limit(1);
+    .groupBy(vehicles.id, vehicles.internalNumber)
+    .orderBy(desc(sql`count(*)`), vehicles.internalNumber)
+    .limit(5);
 
-  const busiestVehicle = busiestVehicleResult
-    ? {
-        internalNumber: busiestVehicleResult.internalNumber,
-        plate: busiestVehicleResult.plate,
-        count: busiestVehicleResult.count
-      }
-    : null;
-
-  const [mostPopularIncidentTypeResult] = await db
-    .select({
-      name: incidentTypes.name,
-      code: incidentTypes.incidentCode,
-      count: sql<number>`count(*)`
-    })
-    .from(incidentTypes)
-    .innerJoin(incidents, eq(incidentTypes.incidentCode, incidents.specificIncidentCode))
-    .where(
-      and(gte(incidents.incidentTimestamp, startOfYear), lt(incidents.incidentTimestamp, endOfYear))
-    )
-    .groupBy(incidentTypes.id, incidentTypes.name, incidentTypes.incidentCode)
-    .orderBy(desc(sql`count(*)`))
-    .limit(1);
-
-  const mostPopularIncidentType = mostPopularIncidentTypeResult
-    ? {
-        name: mostPopularIncidentTypeResult.name,
-        code: mostPopularIncidentTypeResult.code,
-        count: mostPopularIncidentTypeResult.count
-      }
-    : null;
+  const topDispatchedVehicles = topDispatchedVehiclesResults.map((item) => ({
+    internalNumber: item.internalNumber,
+    count: Number(item.count)
+  }));
 
   return {
-    totalIncidents,
-    frequency,
-    busiestDate,
-    busiestStation,
-    busiestVehicle,
-    mostPopularIncidentType
+    topIncidentDays,
+    topDispatchedStations,
+    topDispatchedVehicles
   };
 }
 
@@ -556,6 +506,44 @@ export async function getDailyIncidents({
       percentageChange
     }
   };
+}
+
+// ============================================================================
+// Daily Response Times
+// ============================================================================
+
+export async function getDailyResponseTimes({
+  startDate,
+  endDate
+}: {
+  startDate: Date;
+  endDate: Date;
+}) {
+  return await db
+    .select({
+      date: sql<string>`date_trunc('day', ${incidents.incidentTimestamp} - interval '6 hours')::date::text`,
+      averageResponseTimeSeconds: sql<number>`
+        ROUND(
+          AVG(
+            EXTRACT(EPOCH FROM (${dispatchedVehicles.arrivalTime} - ${dispatchedVehicles.dispatchedTime}))
+          )::numeric,
+          0
+        )::int
+      `,
+      dispatchCount: sql<number>`count(*)::int`
+    })
+    .from(dispatchedVehicles)
+    .innerJoin(incidents, eq(dispatchedVehicles.incidentId, incidents.id))
+    .where(sql`
+      ${incidents.incidentTimestamp} BETWEEN ${startDate} AND ${endDate}
+      AND ${dispatchedVehicles.arrivalTime} IS NOT NULL
+      AND ${dispatchedVehicles.dispatchedTime} IS NOT NULL
+      AND ${dispatchedVehicles.arrivalTime} > ${dispatchedVehicles.dispatchedTime}
+      AND EXTRACT(EPOCH FROM (${dispatchedVehicles.arrivalTime} - ${dispatchedVehicles.dispatchedTime})) >= 60
+      AND EXTRACT(EPOCH FROM (${dispatchedVehicles.arrivalTime} - ${dispatchedVehicles.dispatchedTime})) <= 10800
+    `)
+    .groupBy(sql`date_trunc('day', ${incidents.incidentTimestamp} - interval '6 hours')`)
+    .orderBy(sql`date_trunc('day', ${incidents.incidentTimestamp} - interval '6 hours')`);
 }
 
 // ============================================================================

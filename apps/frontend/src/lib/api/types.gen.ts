@@ -1332,21 +1332,9 @@ export type GetYearRecapResponses = {
      */
     200: {
         /**
-         * The year of the recap.
+         * Top 5 days with the most incidents in the selected year.
          */
-        year: number;
-        /**
-         * Total number of incidents for the year.
-         */
-        totalIncidents: number;
-        /**
-         * Average minutes between incidents.
-         */
-        frequency: number | null;
-        /**
-         * Date with the most incidents.
-         */
-        busiestDate: {
+        topIncidentDays: Array<{
             /**
              * Date in YYYY-MM-DD format.
              */
@@ -1355,11 +1343,11 @@ export type GetYearRecapResponses = {
              * Number of incidents on that date.
              */
             count: number;
-        } | null;
+        }>;
         /**
-         * Station with the most dispatches.
+         * Top 5 stations with the most dispatches in the selected year.
          */
-        busiestStation: {
+        topDispatchedStations: Array<{
             /**
              * Station name.
              */
@@ -1368,11 +1356,11 @@ export type GetYearRecapResponses = {
              * Number of dispatches.
              */
             count: number;
-        } | null;
+        }>;
         /**
-         * Vehicle with the most dispatches.
+         * Top 5 vehicles with the most dispatches in the selected year.
          */
-        busiestVehicle: {
+        topDispatchedVehicles: Array<{
             /**
              * Vehicle internal number.
              */
@@ -1381,20 +1369,7 @@ export type GetYearRecapResponses = {
              * Number of dispatches.
              */
             count: number;
-        } | null;
-        /**
-         * Most common incident type.
-         */
-        mostPopularIncidentType: {
-            /**
-             * Incident type name.
-             */
-            name: string;
-            /**
-             * Number of incidents of this type.
-             */
-            count: number;
-        } | null;
+        }>;
     };
 };
 
@@ -1675,6 +1650,46 @@ export type GetDailyIncidentsResponses = {
 };
 
 export type GetDailyIncidentsResponse = GetDailyIncidentsResponses[keyof GetDailyIncidentsResponses];
+
+export type GetDailyResponseTimesData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Time range in days. Allowed values: 7, 30, 90, 365.
+         */
+        timeRange?: number;
+    };
+    url: '/stats/daily-response-times';
+};
+
+export type GetDailyResponseTimesResponses = {
+    /**
+     * Daily average response times for dispatched vehicles
+     */
+    200: {
+        data: Array<{
+            /**
+             * Day in YYYY-MM-DD format.
+             */
+            date: string;
+            /**
+             * Average response time in seconds for that day.
+             */
+            averageResponseTimeSeconds: number;
+            /**
+             * Number of dispatched vehicles considered for that day.
+             */
+            dispatchCount: number;
+        }>;
+        /**
+         * Total dispatched vehicles considered in the requested range.
+         */
+        totalDispatches: number;
+    };
+};
+
+export type GetDailyResponseTimesResponse = GetDailyResponseTimesResponses[keyof GetDailyResponseTimesResponses];
 
 export type GetSystemOverviewData = {
     body?: never;

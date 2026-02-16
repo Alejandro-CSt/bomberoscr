@@ -2,13 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Suspense, lazy } from "react";
 import { z } from "zod";
 
+import { AnnualRecapSection } from "@/components/homepage/annual-recap-section";
+import { DailyResponseTimesLineChart } from "@/components/homepage/charts/daily-response-times-line-chart";
 import { HighlightedIncidents } from "@/components/homepage/highlighted-incidents";
 import { IncidentTypesChart } from "@/components/homepage/incident-types-chart";
 import { LandingHero } from "@/components/homepage/landing-hero";
 import { LatestIncidents } from "@/components/homepage/latest-incidents";
 // import { MapCTA } from "@/components/homepage/map-cta";
 import { Separator } from "@/components/homepage/separator";
-// import { YearRecapHero } from "@/components/homepage/year-recap-hero";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const ParticlesMap = lazy(() => import("@/components/homepage/particles-map"));
@@ -35,7 +36,8 @@ const timeRangeSchema = z
 export const Route = createFileRoute("/_dashboard/")({
   validateSearch: z.object({
     highlightedTimeRange: timeRangeSchema,
-    incidentTypesTimeRange: timeRangeSchema
+    incidentTypesTimeRange: timeRangeSchema,
+    dailyResponseTimesTimeRange: timeRangeSchema
   }),
   head: () => ({
     meta: [
@@ -54,11 +56,14 @@ function HomePage() {
   return (
     <div className="-mt-8 flex flex-col gap-8">
       <LandingHero />
+      <section className="flex flex-col py-8">
+        <AnnualRecapSection />
+        <DailyResponseTimesLineChart />
+      </section>
+      <Separator />
       <HighlightedIncidents />
-      {/* <Separator /> */}
       <LatestIncidents />
       {/* <MapCTA /> */}
-      {/* <YearRecapHero /> */}
       <Separator />
       <IncidentTypesChart />
       <Suspense

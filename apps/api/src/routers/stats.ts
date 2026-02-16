@@ -1,5 +1,6 @@
 import {
   getDailyIncidents,
+  getDailyResponseTimes,
   getIncidentsByType,
   getIncidentsByDayOfWeek,
   getIncidentsByHour,
@@ -13,6 +14,8 @@ import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
 
 import {
+  dailyResponseTimesRequest,
+  dailyResponseTimesResponse,
   dailyIncidentsRequest,
   dailyIncidentsResponse,
   incidentsByTypeRequest,
@@ -34,9 +37,39 @@ const app = new OpenAPIHono();
 
 const DEFAULT_RANGE_DAYS = 30;
 const DAY_IN_MS = 24 * 60 * 60 * 1000;
+const ONE_MINUTE_SECONDS = 60;
+const COSTA_RICA_TIME_ZONE = "America/Costa_Rica";
+const COSTA_RICA_UTC_OFFSET = "-06:00";
+
+function buildCacheControlHeader(ttlSeconds: number, swrSeconds: number = ttlSeconds): string {
+  return `public, max-age=${ttlSeconds}, s-maxage=${ttlSeconds}, stale-while-revalidate=${swrSeconds}`;
+}
 
 function parseIsoDateTime(value: string): Date {
   return new Date(value);
+}
+
+function getDatePartsInTimeZone(date: Date, timeZone: string) {
+  const formatter = new Intl.DateTimeFormat("en-CA", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  });
+
+  const parts = formatter.formatToParts(date);
+
+  return {
+    year: parts.find((part) => part.type === "year")?.value,
+    month: parts.find((part) => part.type === "month")?.value,
+    day: parts.find((part) => part.type === "day")?.value
+  };
+}
+
+function getCostaRicaMidnight(date: Date): Date {
+  const { year, month, day } = getDatePartsInTimeZone(date, COSTA_RICA_TIME_ZONE);
+
+  return new Date(`${year}-${month}-${day}T00:00:00${COSTA_RICA_UTC_OFFSET}`);
 }
 
 function resolveDateRange(start: string | null | undefined, end: string | null | undefined) {
@@ -70,23 +103,9 @@ app.openapi(
 
     return c.json(
       {
-        year,
-        totalIncidents: data.totalIncidents,
-        frequency: data.frequency,
-        busiestDate: data.busiestDate,
-        busiestStation: data.busiestStation,
-        busiestVehicle: data.busiestVehicle
-          ? {
-              internalNumber: data.busiestVehicle.internalNumber,
-              count: data.busiestVehicle.count
-            }
-          : null,
-        mostPopularIncidentType: data.mostPopularIncidentType
-          ? {
-              name: data.mostPopularIncidentType.name,
-              count: data.mostPopularIncidentType.count
-            }
-          : null
+        topIncidentDays: data.topIncidentDays,
+        topDispatchedStations: data.topDispatchedStations,
+        topDispatchedVehicles: data.topDispatchedVehicles
       },
       HttpStatusCodes.OK
     );
@@ -240,6 +259,37 @@ app.openapi(
     const incidents = await getDailyIncidents({ startDate, endDate });
 
     return c.json(incidents, HttpStatusCodes.OK);
+  }
+);
+
+app.openapi(
+  createRoute({
+    method: "get",
+    path: "/daily-response-times",
+    summary: "Get daily response times",
+    operationId: "getDailyResponseTimes",
+    description: "Daily average response times for dispatched vehicles",
+    tags: ["Stats"],
+    request: {
+      query: dailyResponseTimesRequest
+    },
+    responses: {
+      [HttpStatusCodes.OK]: jsonContent(dailyResponseTimesResponse, "Daily response times")
+    }
+  }),
+  async (c) => {
+    const { timeRange } = c.req.valid("query");
+
+    const endDate = new Date();
+    const startOfTodayCostaRica = getCostaRicaMidnight(endDate);
+    const startDate = new Date(startOfTodayCostaRica.getTime() - (timeRange - 1) * DAY_IN_MS);
+
+    const data = await getDailyResponseTimes({ startDate, endDate });
+    const totalDispatches = data.reduce((sum, day) => sum + day.dispatchCount, 0);
+
+    c.header("Cache-Control", buildCacheControlHeader(ONE_MINUTE_SECONDS));
+
+    return c.json({ data, totalDispatches }, HttpStatusCodes.OK);
   }
 );
 
