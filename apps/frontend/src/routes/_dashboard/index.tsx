@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Suspense, lazy } from "react";
 import { z } from "zod";
 
 import { AnnualRecapSection } from "@/components/homepage/annual-recap-section";
@@ -8,11 +7,8 @@ import { HighlightedIncidents } from "@/components/homepage/highlighted-incident
 import { IncidentTypesChart } from "@/components/homepage/incident-types-chart";
 import { LandingHero } from "@/components/homepage/landing-hero";
 import { LatestIncidents } from "@/components/homepage/latest-incidents";
-// import { MapCTA } from "@/components/homepage/map-cta";
 import { Separator } from "@/components/homepage/separator";
-import { Skeleton } from "@/components/ui/skeleton";
-
-const ParticlesMap = lazy(() => import("@/components/homepage/particles-map"));
+// import { MapCTA } from "@/components/homepage/map-cta";
 
 const title = "Emergencias CR - Incidentes de Bomberos en Tiempo Real";
 const description =
@@ -66,14 +62,6 @@ function HomePage() {
       {/* <MapCTA /> */}
       <Separator />
       <IncidentTypesChart />
-      <Suspense
-        fallback={
-          <div className="flex w-full items-center justify-center p-8">
-            <Skeleton className="aspect-square w-full max-w-[600px]" />
-          </div>
-        }>
-        <ParticlesMap />
-      </Suspense>
     </div>
   );
 }

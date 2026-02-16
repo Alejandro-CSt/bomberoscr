@@ -1,6 +1,7 @@
 import { memo, useCallback, useEffect, useRef } from "react";
 
 import mapData from "@/data/costa_rica.json";
+import { cn } from "@/lib/utils";
 
 import type React from "react";
 
@@ -16,7 +17,13 @@ interface ParticleOrigin {
   y: number;
 }
 
-function ParticlesMap() {
+interface ParticlesMapProps {
+  className?: string;
+  canvasClassName?: string;
+  interactive?: boolean;
+}
+
+function ParticlesMap({ className, canvasClassName, interactive = true }: ParticlesMapProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number | undefined>(undefined);
   const mouseRef = useRef({ x: -1000, y: -1000 });
@@ -220,23 +227,39 @@ function ParticlesMap() {
   };
 
   return (
-    <div className="flex w-full items-center justify-center p-8">
+    <div className={cn("flex w-full items-center justify-center p-8", className)}>
       <canvas
         ref={canvasRef}
-        onMouseMove={handleMouseMove}
-        onMouseDown={() => {
-          isMouseDownRef.current = true;
-        }}
-        onMouseUp={() => {
-          isMouseDownRef.current = false;
-        }}
-        onMouseLeave={() => {
-          isMouseDownRef.current = false;
-        }}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        className="w-full max-w-[600px]"
+        onMouseMove={interactive ? handleMouseMove : undefined}
+        onMouseDown={
+          interactive
+            ? () => {
+                isMouseDownRef.current = true;
+              }
+            : undefined
+        }
+        onMouseUp={
+          interactive
+            ? () => {
+                isMouseDownRef.current = false;
+              }
+            : undefined
+        }
+        onMouseLeave={
+          interactive
+            ? () => {
+                isMouseDownRef.current = false;
+              }
+            : undefined
+        }
+        onTouchStart={interactive ? handleTouchStart : undefined}
+        onTouchMove={interactive ? handleTouchMove : undefined}
+        onTouchEnd={interactive ? handleTouchEnd : undefined}
+        className={cn(
+          "w-full max-w-[600px]",
+          !interactive && "pointer-events-none",
+          canvasClassName
+        )}
         style={{ aspectRatio: "600/600", touchAction: "none" }}
       />
     </div>
