@@ -59,10 +59,18 @@ function getDatePartsInTimeZone(date: Date, timeZone: string) {
 
   const parts = formatter.formatToParts(date);
 
+  const year = parts.find((part) => part.type === "year")?.value;
+  const month = parts.find((part) => part.type === "month")?.value;
+  const day = parts.find((part) => part.type === "day")?.value;
+
+  if (!year || !month || !day) {
+    throw new Error("Unable to resolve date parts for timezone");
+  }
+
   return {
-    year: parts.find((part) => part.type === "year")?.value,
-    month: parts.find((part) => part.type === "month")?.value,
-    day: parts.find((part) => part.type === "day")?.value
+    year,
+    month,
+    day
   };
 }
 

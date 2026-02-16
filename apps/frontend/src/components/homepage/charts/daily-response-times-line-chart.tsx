@@ -93,25 +93,9 @@ export function DailyResponseTimesLineChart() {
         <div className="xl:col-span-3">
           <div className="border border-t-0 border-zinc-800/70 bg-card">
             <div className="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 py-3 max-lgx:py-2">
-              <div className="flex shrink-0 items-center gap-2">
-                <Popover>
-                  <PopoverTrigger
-                    aria-label="Informacion sobre tiempos de respuesta diarios"
-                    className="text-muted-foreground transition-colors hover:text-foreground"
-                    delay={150}
-                    openOnHover>
-                    <CircleHelpIcon className="size-4" />
-                  </PopoverTrigger>
-                  <PopoverContent
-                    side="top"
-                    tooltipStyle>
-                    Tiempo de respuesta promedio diario durante el periodo seleccionado.
-                  </PopoverContent>
-                </Popover>
-                <h2 className="text-sm font-semibold tracking-wide uppercase">
-                  Tiempos de respuesta
-                </h2>
-              </div>
+              <h2 className="text-sm font-semibold tracking-wide uppercase">
+                Tiempos de respuesta
+              </h2>
 
               <Tabs value={String(selectedTimeRange)}>
                 <TabsList
