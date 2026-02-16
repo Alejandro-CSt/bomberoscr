@@ -23,7 +23,7 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="app-footer rail-divider-top mt-20 bg-background/95 px-6 backdrop-blur supports-backdrop-filter:bg-background/60">
+    <footer className="app-footer rail-divider-top mt-20 bg-background px-6">
       <div className="mx-auto w-full max-w-6xl px-2 py-12 sm:px-0">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-[minmax(0,1.4fr)_minmax(0,0.8fr)_minmax(0,0.8fr)] md:gap-6">
           <div className="flex flex-col gap-4">
