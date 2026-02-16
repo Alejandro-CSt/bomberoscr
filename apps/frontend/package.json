@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "private": true,
   "type": "module",
   "scripts": {
@@ -40,7 +40,6 @@
     "d3-array": "^3.2.4",
     "d3-shape": "^3.2.0",
     "date-fns": "^4.1.0",
-    "lucide-react": "0.563.0",
     "motion": "^12.34.0",
     "react": "19.2.4",
     "react-day-picker": "^9.13.0",

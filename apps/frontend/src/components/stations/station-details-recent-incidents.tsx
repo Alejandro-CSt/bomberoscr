@@ -1,6 +1,6 @@
+import { ArrowRightIcon } from "@phosphor-icons/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { ArrowRightIcon } from "lucide-react";
 
 import {
   StationDetailsIncidentCard,

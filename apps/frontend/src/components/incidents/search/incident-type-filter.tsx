@@ -1,5 +1,4 @@
-import { CaretDownIcon } from "@phosphor-icons/react";
-import { SearchIcon, XIcon } from "lucide-react";
+import { CaretDownIcon, MagnifyingGlassIcon, XIcon } from "@phosphor-icons/react";
 import { Fragment, useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -167,7 +166,7 @@ export function IncidentTypeFilterContent({
         multiple
         value={selectedItems}
         onValueChange={handleSelect}>
-        <ComboboxChips startAddon={<SearchIcon />}>
+        <ComboboxChips startAddon={<MagnifyingGlassIcon />}>
           <ComboboxValue>
             {(value: IncidentTypeOption[]) => {
               const selected = value ?? [];

@@ -1,4 +1,4 @@
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { CaretLeftIcon, CaretRightIcon } from "@phosphor-icons/react";
 import { DayPicker } from "react-day-picker";
 
 import { buttonVariants } from "@/components/ui/button";
@@ -62,7 +62,7 @@ function Calendar({
     }) => {
       if (props.orientation === "left") {
         return (
-          <ChevronLeftIcon
+          <CaretLeftIcon
             size={16}
             {...props}
             aria-hidden="true"
@@ -70,7 +70,7 @@ function Calendar({
         );
       }
       return (
-        <ChevronRightIcon
+        <CaretRightIcon
           size={16}
           {...props}
           aria-hidden="true"

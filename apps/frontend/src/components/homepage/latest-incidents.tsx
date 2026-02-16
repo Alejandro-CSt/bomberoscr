@@ -1,7 +1,6 @@
-import { WarningIcon } from "@phosphor-icons/react";
+import { ArrowRightIcon, QuestionIcon, WarningIcon } from "@phosphor-icons/react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { ArrowRightIcon, CircleHelpIcon } from "lucide-react";
 
 import { IncidentCard, IncidentCardSkeleton } from "@/components/incidents/card";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -52,7 +51,7 @@ export function LatestIncidents() {
             className="text-muted-foreground transition-colors hover:text-foreground"
             delay={150}
             openOnHover>
-            <CircleHelpIcon className="size-4" />
+            <QuestionIcon className="size-4" />
           </PopoverTrigger>
           <PopoverContent
             side="top"

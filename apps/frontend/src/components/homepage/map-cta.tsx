@@ -1,5 +1,5 @@
+import { ArrowRightIcon } from "@phosphor-icons/react";
 import { Link } from "@tanstack/react-router";
-import { ArrowRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -30,7 +30,7 @@ export function MapCTA() {
           variant="secondary"
           className="group/btn rounded-xl !bg-white text-black hover:!bg-white">
           Ver mapa
-          <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
+          <ArrowRightIcon className="ml-2 h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
         </Button>
       </div>
     </Link>

@@ -1,6 +1,5 @@
-import { FireTruckIcon, GarageIcon } from "@phosphor-icons/react";
+import { FireTruckIcon, GarageIcon, WarningIcon } from "@phosphor-icons/react";
 import { Link } from "@tanstack/react-router";
-import { TriangleAlert } from "lucide-react";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn, formatRelativeTime } from "@/lib/utils";
@@ -46,7 +45,7 @@ export function StationDetailsHighlightedCard({ incident }: StationDetailsHighli
             />
             <div className="relative flex h-full w-full items-center justify-center">
               <div className="w-fit rounded-md bg-background/60 px-2 py-1.5 backdrop-blur-3xl">
-                <TriangleAlert
+                <WarningIcon
                   className="size-5 text-amber-500"
                   aria-hidden="true"
                 />

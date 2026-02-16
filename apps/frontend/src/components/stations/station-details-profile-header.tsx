@@ -1,4 +1,4 @@
-import { Mail, Phone } from "lucide-react";
+import { EnvelopeSimpleIcon, PhoneIcon } from "@phosphor-icons/react";
 
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -40,7 +40,7 @@ export function StationDetailsProfileHeader({ station }: StationDetailsProfileHe
               <a
                 href={`tel:${station.phoneNumber}`}
                 className="flex items-center gap-1.5 transition-colors hover:text-foreground">
-                <Phone className="h-4 w-4" />
+                <PhoneIcon className="h-4 w-4" />
                 {station.phoneNumber}
               </a>
             )}
@@ -48,7 +48,7 @@ export function StationDetailsProfileHeader({ station }: StationDetailsProfileHe
               <a
                 href={`mailto:${station.email}`}
                 className="flex items-center gap-1.5 transition-colors hover:text-foreground">
-                <Mail className="h-4 w-4" />
+                <EnvelopeSimpleIcon className="h-4 w-4" />
                 {station.email}
               </a>
             )}

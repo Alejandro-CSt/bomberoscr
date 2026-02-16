@@ -1,5 +1,5 @@
 import { Select as SelectPrimitive } from "@base-ui/react/select";
-import { ChevronDownIcon, ChevronsUpDownIcon, ChevronUpIcon } from "lucide-react";
+import { CaretDownIcon, CaretUpDownIcon, CaretUpIcon } from "@phosphor-icons/react";
 
 import { cn } from "@/lib/utils";
 
@@ -25,7 +25,7 @@ function SelectTrigger({
       {...props}>
       {children}
       <SelectPrimitive.Icon data-slot="select-icon">
-        <ChevronsUpDownIcon className="-me-1 size-4.5 opacity-80 sm:size-4" />
+        <CaretUpDownIcon className="-me-1 size-4.5 opacity-80 sm:size-4" />
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
   );
@@ -65,7 +65,7 @@ function SelectPopup({
           <SelectPrimitive.ScrollUpArrow
             className="top-0 z-50 flex h-6 w-full cursor-default items-center justify-center before:pointer-events-none before:absolute before:inset-x-px before:top-px before:h-[200%] before:rounded-t-[calc(var(--radius-lg)-1px)] before:bg-linear-to-b before:from-popover before:from-50%"
             data-slot="select-scroll-up-arrow">
-            <ChevronUpIcon className="relative size-4.5 sm:size-4" />
+            <CaretUpIcon className="relative size-4.5 sm:size-4" />
           </SelectPrimitive.ScrollUpArrow>
           <div className="relative h-full rounded-lg border bg-popover shadow-lg/5 not-dark:bg-clip-padding before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] before:shadow-[0_1px_--theme(--color-black/6%)] dark:before:shadow-[0_-1px_--theme(--color-white/6%)]">
             <SelectPrimitive.List
@@ -80,7 +80,7 @@ function SelectPopup({
           <SelectPrimitive.ScrollDownArrow
             className="bottom-0 z-50 flex h-6 w-full cursor-default items-center justify-center before:pointer-events-none before:absolute before:inset-x-px before:bottom-px before:h-[200%] before:rounded-b-[calc(var(--radius-lg)-1px)] before:bg-linear-to-t before:from-popover before:from-50%"
             data-slot="select-scroll-down-arrow">
-            <ChevronDownIcon className="relative size-4.5 sm:size-4" />
+            <CaretDownIcon className="relative size-4.5 sm:size-4" />
           </SelectPrimitive.ScrollDownArrow>
         </SelectPrimitive.Popup>
       </SelectPrimitive.Positioner>

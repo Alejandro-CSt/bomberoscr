@@ -1,6 +1,5 @@
-import { GarageIcon, FireTruckIcon } from "@phosphor-icons/react";
+import { FireTruckIcon, GarageIcon, WarningIcon } from "@phosphor-icons/react";
 import { Link } from "@tanstack/react-router";
-import { TriangleAlert } from "lucide-react";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn, formatRelativeTime } from "@/lib/utils";
@@ -52,7 +51,7 @@ export function HighlightedIncidentCard({ incident }: { incident: HighlightedInc
             <div className="relative flex h-full w-full items-center justify-center">
               <div className="w-fit border border-white/20 bg-black/30 px-3 py-1.5 backdrop-blur-md">
                 <p className="flex items-center gap-1.5 text-xs whitespace-nowrap select-none">
-                  <TriangleAlert
+                  <WarningIcon
                     className="size-3.5 shrink-0 text-amber-300"
                     aria-hidden="true"
                   />

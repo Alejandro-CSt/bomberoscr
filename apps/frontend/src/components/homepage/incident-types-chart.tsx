@@ -1,7 +1,6 @@
-import { WarningIcon } from "@phosphor-icons/react";
+import { ArrowRightIcon, QuestionIcon, WarningIcon } from "@phosphor-icons/react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { ArrowRightIcon, CircleHelpIcon } from "lucide-react";
 import { Fragment, useMemo, useState } from "react";
 
 import { PieCenter } from "@/components/charts/pie-center";
@@ -104,7 +103,7 @@ export function IncidentTypesChart() {
               className="text-muted-foreground transition-colors hover:text-foreground"
               delay={150}
               openOnHover>
-              <CircleHelpIcon className="size-4" />
+              <QuestionIcon className="size-4" />
             </PopoverTrigger>
             <PopoverContent
               side="top"
