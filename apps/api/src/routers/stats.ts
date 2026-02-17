@@ -1,5 +1,6 @@
 import {
   getDailyResponseTimes,
+  getIncidentsByHourRange,
   getIncidentsByType,
   getSystemOverview,
   getYearRecap
@@ -11,6 +12,8 @@ import { jsonContent } from "stoker/openapi/helpers";
 import {
   dailyResponseTimesRequest,
   dailyResponseTimesResponse,
+  incidentsByHourRequest,
+  incidentsByHourResponse,
   incidentsByTypeRequest,
   incidentsByTypeResponse,
   systemOverviewResponse,
@@ -22,6 +25,7 @@ const app = new OpenAPIHono();
 
 const DEFAULT_RANGE_DAYS = 30;
 const DAY_IN_MS = 24 * 60 * 60 * 1000;
+const HOUR_IN_MS = 60 * 60 * 1000;
 const ONE_MINUTE_SECONDS = 60;
 const COSTA_RICA_TIME_ZONE = "America/Costa_Rica";
 const COSTA_RICA_UTC_OFFSET = "-06:00";
@@ -63,6 +67,30 @@ function getCostaRicaMidnight(date: Date): Date {
   const { year, month, day } = getDatePartsInTimeZone(date, COSTA_RICA_TIME_ZONE);
 
   return new Date(`${year}-${month}-${day}T00:00:00${COSTA_RICA_UTC_OFFSET}`);
+}
+
+function getHourPartInTimeZone(date: Date, timeZone: string) {
+  const formatter = new Intl.DateTimeFormat("en-CA", {
+    timeZone,
+    hour: "2-digit",
+    hourCycle: "h23"
+  });
+
+  const parts = formatter.formatToParts(date);
+  const hour = parts.find((part) => part.type === "hour")?.value;
+
+  if (!hour) {
+    throw new Error("Unable to resolve hour part for timezone");
+  }
+
+  return hour;
+}
+
+function getCostaRicaHourStart(date: Date): Date {
+  const { year, month, day } = getDatePartsInTimeZone(date, COSTA_RICA_TIME_ZONE);
+  const hour = getHourPartInTimeZone(date, COSTA_RICA_TIME_ZONE);
+
+  return new Date(`${year}-${month}-${day}T${hour}:00:00${COSTA_RICA_UTC_OFFSET}`);
 }
 
 function resolveDateRange(start: string | null | undefined, end: string | null | undefined) {
@@ -158,6 +186,39 @@ app.openapi(
     c.header("Cache-Control", buildCacheControlHeader(ONE_MINUTE_SECONDS));
 
     return c.json({ data, totalDispatches }, HttpStatusCodes.OK);
+  }
+);
+
+app.openapi(
+  createRoute({
+    method: "get",
+    path: "/incidents-by-hour",
+    summary: "Get incidents by hour",
+    operationId: "getIncidentsByHour",
+    description: "Hourly incident counts for the last 24, 48, or 72 hours",
+    tags: ["Stats"],
+    request: {
+      query: incidentsByHourRequest
+    },
+    responses: {
+      [HttpStatusCodes.OK]: jsonContent(incidentsByHourResponse, "Incidents by hour")
+    }
+  }),
+  async (c) => {
+    const { timeRange } = c.req.valid("query");
+
+    const endDate = new Date();
+    const startOfCurrentHourCostaRica = getCostaRicaHourStart(endDate);
+    const startDate = new Date(
+      startOfCurrentHourCostaRica.getTime() - (timeRange - 1) * HOUR_IN_MS
+    );
+
+    const data = await getIncidentsByHourRange({ startDate, endDate });
+    const totalIncidents = data.reduce((sum, hour) => sum + hour.incidents, 0);
+
+    c.header("Cache-Control", buildCacheControlHeader(ONE_MINUTE_SECONDS));
+
+    return c.json({ data, totalIncidents }, HttpStatusCodes.OK);
   }
 );
 

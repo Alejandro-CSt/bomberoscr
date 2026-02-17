@@ -373,6 +373,65 @@ export async function getIncidentsByDayOfWeek({
 // Incidents by Hour
 // ============================================================================
 
+const HOUR_IN_MS = 60 * 60 * 1000;
+const COSTA_RICA_UTC_OFFSET_HOURS = 6;
+
+function formatShiftedHourBucketKey(date: Date) {
+  const year = date.getUTCFullYear();
+  const month = `${date.getUTCMonth() + 1}`.padStart(2, "0");
+  const day = `${date.getUTCDate()}`.padStart(2, "0");
+  const hour = `${date.getUTCHours()}`.padStart(2, "0");
+
+  return `${year}-${month}-${day} ${hour}:00:00`;
+}
+
+export async function getIncidentsByHourRange({
+  startDate,
+  endDate
+}: {
+  startDate: Date;
+  endDate: Date;
+}) {
+  const groupedByHour = await db
+    .select({
+      hourBucket: sql<string>`to_char(date_trunc('hour', ${incidents.incidentTimestamp} - interval '6 hours'), 'YYYY-MM-DD HH24:00:00')`,
+      incidents: sql<number>`count(*)::int`
+    })
+    .from(incidents)
+    .where(
+      and(gte(incidents.incidentTimestamp, startDate), lt(incidents.incidentTimestamp, endDate))
+    )
+    .groupBy(sql`date_trunc('hour', ${incidents.incidentTimestamp} - interval '6 hours')`)
+    .orderBy(sql`date_trunc('hour', ${incidents.incidentTimestamp} - interval '6 hours')`);
+
+  const incidentsByHourBucket = new Map(
+    groupedByHour.map((row) => [row.hourBucket, Number(row.incidents)])
+  );
+
+  const costaRicaOffsetMs = COSTA_RICA_UTC_OFFSET_HOURS * HOUR_IN_MS;
+  const shiftedStartHourMs =
+    Math.floor((startDate.getTime() - costaRicaOffsetMs) / HOUR_IN_MS) * HOUR_IN_MS;
+  const shiftedEndHourMs =
+    Math.floor((endDate.getTime() - costaRicaOffsetMs) / HOUR_IN_MS) * HOUR_IN_MS;
+  const totalBuckets = Math.max(
+    0,
+    Math.floor((shiftedEndHourMs - shiftedStartHourMs) / HOUR_IN_MS) + 1
+  );
+
+  return Array.from({ length: totalBuckets }, (_, index) => {
+    const shiftedBucketDate = new Date(shiftedStartHourMs + index * HOUR_IN_MS);
+    const hourBucketKey = formatShiftedHourBucketKey(shiftedBucketDate);
+    const hourValue = shiftedBucketDate.getUTCHours();
+
+    return {
+      hourStart: new Date(shiftedBucketDate.getTime() + costaRicaOffsetMs).toISOString(),
+      hourLabel: `${hourValue.toString().padStart(2, "0")}:00`,
+      hoursAgo: totalBuckets - index - 1,
+      incidents: incidentsByHourBucket.get(hourBucketKey) ?? 0
+    };
+  });
+}
+
 export async function getIncidentsByHour({
   startDate,
   endDate

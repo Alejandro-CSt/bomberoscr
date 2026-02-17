@@ -7,9 +7,14 @@ import viteTsConfigPaths from "vite-tsconfig-paths";
 
 const config = defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "VITE_");
+  const tweakcnLivePreviewSrc =
+    mode === "development" ? "https://tweakcn.com/live-preview.min.js" : "";
 
   return {
     base: env.VITE_BASE ?? "/bomberos",
+    define: {
+      __TWEAKCN_LIVE_PREVIEW_SRC__: JSON.stringify(tweakcnLivePreviewSrc)
+    },
     build: {
       rollupOptions: {
         output: {

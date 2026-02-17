@@ -144,7 +144,7 @@ export function DailyResponseTimesLineChart() {
       <div className="grid grid-cols-1 gap-0 xl:grid-cols-3">
         <div className="xl:col-span-3">
           <div className="border border-t-0 border-zinc-800/70 bg-card">
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 py-3 max-lgx:py-2">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 pt-3">
               <h2 className="text-sm font-semibold tracking-wide uppercase">
                 Tiempos de respuesta
               </h2>

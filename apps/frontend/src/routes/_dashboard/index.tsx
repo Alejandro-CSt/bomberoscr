@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { AnnualRecapSection } from "@/components/homepage/annual-recap-section";
 import { DailyResponseTimesLineChart } from "@/components/homepage/charts/daily-response-times-line-chart";
+import { RecentIncidentsHoursBarChart } from "@/components/homepage/charts/recent-incidents-hours-bar-chart";
 import { HighlightedIncidents } from "@/components/homepage/highlighted-incidents";
 import { IncidentTypesChart } from "@/components/homepage/incident-types-chart";
 import { LandingHero } from "@/components/homepage/landing-hero";
@@ -29,11 +30,17 @@ const timeRangeSchema = z
   .optional()
   .catch(DEFAULT_TIME_RANGE);
 
+const hourlyIncidentsTimeRangeSchema = z
+  .union([z.literal(24), z.literal(48), z.literal(72)])
+  .optional()
+  .catch(24);
+
 export const Route = createFileRoute("/_dashboard/")({
   validateSearch: z.object({
     highlightedTimeRange: timeRangeSchema,
     incidentTypesTimeRange: timeRangeSchema,
-    dailyResponseTimesTimeRange: timeRangeSchema
+    dailyResponseTimesTimeRange: timeRangeSchema,
+    incidentsByHourTimeRange: hourlyIncidentsTimeRangeSchema
   }),
   head: () => ({
     meta: [
@@ -52,9 +59,10 @@ function HomePage() {
   return (
     <div className="-mt-8 flex flex-col gap-8">
       <LandingHero />
-      <section className="flex flex-col py-8">
+      <section className="mt-6 flex flex-col py-8">
         <AnnualRecapSection />
         <DailyResponseTimesLineChart />
+        <RecentIncidentsHoursBarChart />
       </section>
       <Separator />
       <HighlightedIncidents />

@@ -3,8 +3,8 @@
 import { type DefaultError, type InfiniteData, infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen';
-import { getDailyResponseTimes, getHealthcheck, getIncidentById, getIncidentMap, getIncidentOgImage, getIncidentOriginalMap, getIncidentResponseTimes, getIncidentsByType, getIncidentTimeline, getIncidentType, getIncidentTypeImage, getIncidentTypeOriginalImage, getStationByName, getStationCollaborations, getStationHeatmap, getStationHighlightedIncidents, getStationImage, getStationOriginalImage, getStationsOverview, getStationVehicles, getSystemOverview, getYearRecap, listIncidents, listIncidentTypes, listStations, type Options } from '../sdk.gen';
-import type { GetDailyResponseTimesData, GetDailyResponseTimesResponse, GetHealthcheckData, GetHealthcheckResponse, GetIncidentByIdData, GetIncidentByIdError, GetIncidentByIdResponse, GetIncidentMapData, GetIncidentMapError, GetIncidentMapResponse, GetIncidentOgImageData, GetIncidentOgImageError, GetIncidentOgImageResponse, GetIncidentOriginalMapData, GetIncidentOriginalMapError, GetIncidentOriginalMapResponse, GetIncidentResponseTimesData, GetIncidentResponseTimesError, GetIncidentResponseTimesResponse, GetIncidentsByTypeData, GetIncidentsByTypeResponse, GetIncidentTimelineData, GetIncidentTimelineError, GetIncidentTimelineResponse, GetIncidentTypeData, GetIncidentTypeError, GetIncidentTypeImageData, GetIncidentTypeImageError, GetIncidentTypeImageResponse, GetIncidentTypeOriginalImageData, GetIncidentTypeOriginalImageError, GetIncidentTypeOriginalImageResponse, GetIncidentTypeResponse, GetStationByNameData, GetStationByNameError, GetStationByNameResponse, GetStationCollaborationsData, GetStationCollaborationsError, GetStationCollaborationsResponse, GetStationHeatmapData, GetStationHeatmapError, GetStationHeatmapResponse, GetStationHighlightedIncidentsData, GetStationHighlightedIncidentsError, GetStationHighlightedIncidentsResponse, GetStationImageData, GetStationImageError, GetStationImageResponse, GetStationOriginalImageData, GetStationOriginalImageError, GetStationOriginalImageResponse, GetStationsOverviewData, GetStationsOverviewResponse, GetStationVehiclesData, GetStationVehiclesError, GetStationVehiclesResponse, GetSystemOverviewData, GetSystemOverviewResponse, GetYearRecapData, GetYearRecapResponse, ListIncidentsData, ListIncidentsResponse, ListIncidentTypesData, ListIncidentTypesResponse, ListStationsData, ListStationsResponse } from '../types.gen';
+import { getDailyResponseTimes, getHealthcheck, getIncidentById, getIncidentMap, getIncidentOgImage, getIncidentOriginalMap, getIncidentResponseTimes, getIncidentsByHour, getIncidentsByType, getIncidentTimeline, getIncidentType, getIncidentTypeImage, getIncidentTypeOriginalImage, getStationByName, getStationCollaborations, getStationHeatmap, getStationHighlightedIncidents, getStationImage, getStationOriginalImage, getStationsOverview, getStationVehicles, getSystemOverview, getYearRecap, listIncidents, listIncidentTypes, listStations, type Options } from '../sdk.gen';
+import type { GetDailyResponseTimesData, GetDailyResponseTimesResponse, GetHealthcheckData, GetHealthcheckResponse, GetIncidentByIdData, GetIncidentByIdError, GetIncidentByIdResponse, GetIncidentMapData, GetIncidentMapError, GetIncidentMapResponse, GetIncidentOgImageData, GetIncidentOgImageError, GetIncidentOgImageResponse, GetIncidentOriginalMapData, GetIncidentOriginalMapError, GetIncidentOriginalMapResponse, GetIncidentResponseTimesData, GetIncidentResponseTimesError, GetIncidentResponseTimesResponse, GetIncidentsByHourData, GetIncidentsByHourResponse, GetIncidentsByTypeData, GetIncidentsByTypeResponse, GetIncidentTimelineData, GetIncidentTimelineError, GetIncidentTimelineResponse, GetIncidentTypeData, GetIncidentTypeError, GetIncidentTypeImageData, GetIncidentTypeImageError, GetIncidentTypeImageResponse, GetIncidentTypeOriginalImageData, GetIncidentTypeOriginalImageError, GetIncidentTypeOriginalImageResponse, GetIncidentTypeResponse, GetStationByNameData, GetStationByNameError, GetStationByNameResponse, GetStationCollaborationsData, GetStationCollaborationsError, GetStationCollaborationsResponse, GetStationHeatmapData, GetStationHeatmapError, GetStationHeatmapResponse, GetStationHighlightedIncidentsData, GetStationHighlightedIncidentsError, GetStationHighlightedIncidentsResponse, GetStationImageData, GetStationImageError, GetStationImageResponse, GetStationOriginalImageData, GetStationOriginalImageError, GetStationOriginalImageResponse, GetStationsOverviewData, GetStationsOverviewResponse, GetStationVehiclesData, GetStationVehiclesError, GetStationVehiclesResponse, GetSystemOverviewData, GetSystemOverviewResponse, GetYearRecapData, GetYearRecapResponse, ListIncidentsData, ListIncidentsResponse, ListIncidentTypesData, ListIncidentTypesResponse, ListStationsData, ListStationsResponse } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -553,6 +553,26 @@ export const getDailyResponseTimesOptions = (options?: Options<GetDailyResponseT
         return data;
     },
     queryKey: getDailyResponseTimesQueryKey(options)
+});
+
+export const getIncidentsByHourQueryKey = (options?: Options<GetIncidentsByHourData>) => createQueryKey('getIncidentsByHour', options);
+
+/**
+ * Get incidents by hour
+ *
+ * Hourly incident counts for the last 24, 48, or 72 hours
+ */
+export const getIncidentsByHourOptions = (options?: Options<GetIncidentsByHourData>) => queryOptions<GetIncidentsByHourResponse, DefaultError, GetIncidentsByHourResponse, ReturnType<typeof getIncidentsByHourQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await getIncidentsByHour({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: getIncidentsByHourQueryKey(options)
 });
 
 export const getSystemOverviewQueryKey = (options?: Options<GetSystemOverviewData>) => createQueryKey('getSystemOverview', options);

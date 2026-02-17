@@ -16,6 +16,8 @@ import appCss from "../styles.css?url";
 
 import type { QueryClient } from "@tanstack/react-query";
 
+declare const __TWEAKCN_LIVE_PREVIEW_SRC__: string;
+
 const brandName = "Emergencias CR";
 const defaultTitle = "Emergencias CR";
 const description =
@@ -108,6 +110,12 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       className="dark">
       <head>
         <HeadContent />
+        {__TWEAKCN_LIVE_PREVIEW_SRC__ ? (
+          <script
+            crossOrigin="anonymous"
+            src={__TWEAKCN_LIVE_PREVIEW_SRC__}
+          />
+        ) : null}
       </head>
       <body className={`font-sans antialiased${isIncidentesPage ? " no-page-rails" : ""}`}>
         <Header />

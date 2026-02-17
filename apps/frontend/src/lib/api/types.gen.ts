@@ -1461,6 +1461,50 @@ export type GetDailyResponseTimesResponses = {
 
 export type GetDailyResponseTimesResponse = GetDailyResponseTimesResponses[keyof GetDailyResponseTimesResponses];
 
+export type GetIncidentsByHourData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Time range in hours. Allowed values: 24, 48, 72.
+         */
+        timeRange?: number;
+    };
+    url: '/stats/incidents-by-hour';
+};
+
+export type GetIncidentsByHourResponses = {
+    /**
+     * Hourly incident counts for the requested 24, 48, or 72 hour range
+     */
+    200: {
+        data: Array<{
+            /**
+             * Hour bucket start timestamp in ISO 8601 format.
+             */
+            hourStart: string;
+            /**
+             * Localized hour label in Costa Rica time.
+             */
+            hourLabel: string;
+            /**
+             * How many hours ago this bucket starts from the current hour.
+             */
+            hoursAgo: number;
+            /**
+             * Number of incidents in that hour bucket.
+             */
+            incidents: number;
+        }>;
+        /**
+         * Total incidents in the requested hourly range.
+         */
+        totalIncidents: number;
+    };
+};
+
+export type GetIncidentsByHourResponse = GetIncidentsByHourResponses[keyof GetIncidentsByHourResponses];
+
 export type GetSystemOverviewData = {
     body?: never;
     path?: never;

@@ -6,7 +6,9 @@ import { z } from "@hono/zod-openapi";
 
 const MAX_DAYS = 365;
 const DAILY_RESPONSE_TIME_RANGE_VALUES = [7, 30, 90, 365] as const;
+const HOURLY_INCIDENTS_TIME_RANGE_VALUES = [24, 48, 72] as const;
 type DailyResponseTimeRange = (typeof DAILY_RESPONSE_TIME_RANGE_VALUES)[number];
+type HourlyIncidentsTimeRange = (typeof HOURLY_INCIDENTS_TIME_RANGE_VALUES)[number];
 
 function validateDateRange(start: string | null, end: string | null) {
   if (!start || !end) return true;
@@ -218,6 +220,61 @@ export const dailyResponseTimesResponse = z
   })
   .openapi({
     description: "Daily average response times for dispatched vehicles"
+  });
+
+// ============================================================================
+// Incidents by Hour
+// ============================================================================
+
+export const incidentsByHourRequest = z.object({
+  timeRange: z.coerce
+    .number()
+    .int()
+    .refine(
+      (value): value is HourlyIncidentsTimeRange =>
+        HOURLY_INCIDENTS_TIME_RANGE_VALUES.includes(value as HourlyIncidentsTimeRange),
+      {
+        message: "timeRange must be one of: 24, 48, 72"
+      }
+    )
+    .optional()
+    .default(24)
+    .openapi({
+      description: "Time range in hours. Allowed values: 24, 48, 72.",
+      param: { in: "query" },
+      example: 24
+    })
+});
+
+export const incidentsByHourResponse = z
+  .object({
+    data: z.array(
+      z.object({
+        hourStart: z.string().openapi({
+          description: "Hour bucket start timestamp in ISO 8601 format.",
+          example: "2026-02-16T18:00:00.000Z"
+        }),
+        hourLabel: z.string().openapi({
+          description: "Localized hour label in Costa Rica time.",
+          example: "12:00"
+        }),
+        hoursAgo: z.number().int().min(0).openapi({
+          description: "How many hours ago this bucket starts from the current hour.",
+          example: 5
+        }),
+        incidents: z.number().openapi({
+          description: "Number of incidents in that hour bucket.",
+          example: 14
+        })
+      })
+    ),
+    totalIncidents: z.number().openapi({
+      description: "Total incidents in the requested hourly range.",
+      example: 327
+    })
+  })
+  .openapi({
+    description: "Hourly incident counts for the requested 24, 48, or 72 hour range"
   });
 
 // ============================================================================

@@ -46,6 +46,8 @@ export interface BarChartProps {
   stacked?: boolean;
   /** Gap between stacked bar segments in pixels. Default: 0 */
   stackGap?: number;
+  /** Extra headroom as a fraction of max value. Default: 0.1 (10%) */
+  valueDomainPadding?: number;
   /** Child components (Bar, Grid, ChartTooltip, etc.) */
   children: ReactNode;
 }
@@ -118,6 +120,7 @@ interface ChartInnerProps {
   orientation: BarOrientation;
   stacked: boolean;
   stackGap: number;
+  valueDomainPadding: number;
   children: ReactNode;
   containerRef: React.RefObject<HTMLDivElement | null>;
 }
@@ -134,6 +137,7 @@ function ChartInner({
   orientation,
   stacked,
   stackGap,
+  valueDomainPadding,
   children,
   containerRef
 }: ChartInnerProps) {
@@ -230,13 +234,14 @@ function ChartInner({
 
   // Value scale (linear) - for the value axis
   const valueScale = useMemo(() => {
+    const safeDomainPadding = Math.max(0, valueDomainPadding);
     const range = isHorizontal ? [0, innerWidth] : [innerHeight, 0];
     return scaleLinear({
       range,
-      domain: [0, maxValue * 1.1],
+      domain: [0, maxValue * (1 + safeDomainPadding)],
       nice: true
     });
-  }, [innerWidth, innerHeight, maxValue, isHorizontal]);
+  }, [innerWidth, innerHeight, maxValue, isHorizontal, valueDomainPadding]);
 
   // Compute stack offsets for stacked bars
   const stackOffsets = useMemo(() => {
@@ -543,6 +548,7 @@ export function BarChart({
   orientation = "vertical",
   stacked = false,
   stackGap = 0,
+  valueDomainPadding = 0.1,
   children
 }: BarChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -566,6 +572,7 @@ export function BarChart({
             orientation={orientation}
             stacked={stacked}
             stackGap={stackGap}
+            valueDomainPadding={valueDomainPadding}
             width={width}
             xDataKey={xDataKey}>
             {children}
