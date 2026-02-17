@@ -4,7 +4,6 @@ import { motion } from "motion/react";
 import { Suspense, lazy, useId } from "react";
 
 import { buttonVariants } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 
 const ParticlesMap = lazy(() => import("@/components/homepage/particles-map"));
 
@@ -95,17 +94,18 @@ export function LandingHero() {
 
         <div className="relative hidden min-h-[360px] overflow-visible pt-14 lg:block">
           <div className="absolute inset-0">
-            <Suspense
-              fallback={
-                <div className="flex h-full items-center justify-center px-6 py-2">
-                  <Skeleton className="aspect-square w-full max-w-[520px] rounded-3xl" />
-                </div>
-              }>
-              <ParticlesMap
-                interactive
-                className="h-full items-end justify-end p-0 pt-10"
-                canvasClassName="h-auto w-full max-w-[520px] opacity-65 lg:translate-y-8 xl:translate-y-16 [mask-image:radial-gradient(circle_at_45%_50%,black_45%,transparent_82%)]"
-              />
+            <Suspense fallback={null}>
+              <motion.div
+                className="h-full w-full"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}>
+                <ParticlesMap
+                  interactive
+                  className="h-full items-end justify-end p-0 pt-10"
+                  canvasClassName="h-auto w-full max-w-[520px] opacity-65 lg:translate-y-8 xl:translate-y-16 [mask-image:radial-gradient(circle_at_45%_50%,black_45%,transparent_82%)]"
+                />
+              </motion.div>
             </Suspense>
           </div>
         </div>
