@@ -1,15 +1,40 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { z } from "zod";
 
-import { AnnualRecapSection } from "@/components/homepage/annual-recap-section";
-import { DailyResponseTimesLineChart } from "@/components/homepage/charts/daily-response-times-line-chart";
-import { RecentIncidentsHoursBarChart } from "@/components/homepage/charts/recent-incidents-hours-bar-chart";
-import { HighlightedIncidents } from "@/components/homepage/highlighted-incidents";
-import { IncidentTypesChart } from "@/components/homepage/incident-types-chart";
 import { LandingHero } from "@/components/homepage/landing-hero";
-import { LatestIncidents } from "@/components/homepage/latest-incidents";
 import { Separator } from "@/components/homepage/separator";
 // import { MapCTA } from "@/components/homepage/map-cta";
+
+const AnnualRecapSection = lazy(async () => {
+  const module = await import("@/components/homepage/annual-recap-section");
+  return { default: module.AnnualRecapSection };
+});
+
+const DailyResponseTimesLineChart = lazy(async () => {
+  const module = await import("@/components/homepage/charts/daily-response-times-line-chart");
+  return { default: module.DailyResponseTimesLineChart };
+});
+
+const RecentIncidentsHoursBarChart = lazy(async () => {
+  const module = await import("@/components/homepage/charts/recent-incidents-hours-bar-chart");
+  return { default: module.RecentIncidentsHoursBarChart };
+});
+
+const HighlightedIncidents = lazy(async () => {
+  const module = await import("@/components/homepage/highlighted-incidents");
+  return { default: module.HighlightedIncidents };
+});
+
+const LatestIncidents = lazy(async () => {
+  const module = await import("@/components/homepage/latest-incidents");
+  return { default: module.LatestIncidents };
+});
+
+const IncidentTypesChart = lazy(async () => {
+  const module = await import("@/components/homepage/incident-types-chart");
+  return { default: module.IncidentTypesChart };
+});
 
 const title = "Emergencias CR - Incidentes de Bomberos en Tiempo Real";
 const description =
@@ -55,21 +80,106 @@ export const Route = createFileRoute("/_dashboard/")({
   component: HomePage
 });
 
+function SectionPlaceholder({ className }: { className: string }) {
+  return (
+    <div
+      aria-hidden="true"
+      className={`w-full animate-pulse bg-muted/20 ${className}`}
+    />
+  );
+}
+
+function DeferredSection({
+  children,
+  placeholderClassName,
+  rootMargin = "320px 0px"
+}: {
+  children: JSX.Element;
+  placeholderClassName: string;
+  rootMargin?: string;
+}) {
+  const [isVisible, setIsVisible] = useState(false);
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isVisible) {
+      return;
+    }
+
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    if (!("IntersectionObserver" in window)) {
+      setIsVisible(true);
+      return;
+    }
+
+    const element = sectionRef.current;
+
+    if (!element) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin }
+    );
+
+    observer.observe(element);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [isVisible, rootMargin]);
+
+  return (
+    <div ref={sectionRef}>
+      {isVisible ? (
+        <Suspense fallback={<SectionPlaceholder className={placeholderClassName} />}>
+          {children}
+        </Suspense>
+      ) : (
+        <SectionPlaceholder className={placeholderClassName} />
+      )}
+    </div>
+  );
+}
+
 function HomePage() {
   return (
     <div className="-mt-8 flex flex-col gap-8">
       <LandingHero />
-      <section className="mt-6 flex flex-col py-8">
-        <AnnualRecapSection />
-        <DailyResponseTimesLineChart />
-        <RecentIncidentsHoursBarChart />
-      </section>
+      <DeferredSection placeholderClassName="mt-6 h-[920px] py-8 md:h-[980px] lg:h-[860px]">
+        <section className="mt-6 flex flex-col py-8">
+          <AnnualRecapSection />
+          <DailyResponseTimesLineChart />
+          <RecentIncidentsHoursBarChart />
+        </section>
+      </DeferredSection>
       <Separator />
-      <HighlightedIncidents />
-      <LatestIncidents />
+      <DeferredSection
+        rootMargin="420px 0px"
+        placeholderClassName="h-[560px] md:h-[620px]">
+        <HighlightedIncidents />
+      </DeferredSection>
+      <DeferredSection
+        rootMargin="520px 0px"
+        placeholderClassName="h-[560px] md:h-[620px]">
+        <LatestIncidents />
+      </DeferredSection>
       {/* <MapCTA /> */}
       <Separator />
-      <IncidentTypesChart />
+      <DeferredSection
+        rootMargin="620px 0px"
+        placeholderClassName="h-[420px] md:h-[460px]">
+        <IncidentTypesChart />
+      </DeferredSection>
     </div>
   );
 }

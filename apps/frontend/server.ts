@@ -24,6 +24,23 @@ if (!startFetch) {
 const clientRoot = normalize(join(import.meta.dir, "dist", "client"));
 const clientRootWithSep = clientRoot.endsWith(sep) ? clientRoot : `${clientRoot}${sep}`;
 
+function normalizeBasePathRequest(request: Request): Request {
+  if (request.method !== "GET" && request.method !== "HEAD") {
+    return request;
+  }
+
+  const url = new URL(request.url);
+
+  // TanStack Start canonicalizes the base path root to `/bomberos/`.
+  // Serve `/bomberos` as that same document to avoid an external redirect hop.
+  if (url.pathname !== BASE_PATH) {
+    return request;
+  }
+
+  url.pathname = `${BASE_PATH}/`;
+  return new Request(url.toString(), request);
+}
+
 function toStaticRelativePath(pathname: string): string | null {
   let relativePath = pathname;
 
@@ -59,7 +76,8 @@ function resolveStaticFilePath(pathname: string): string | null {
 Bun.serve({
   port: PORT,
   async fetch(request) {
-    const url = new URL(request.url);
+    const normalizedRequest = normalizeBasePathRequest(request);
+    const url = new URL(normalizedRequest.url);
     const staticFilePath = resolveStaticFilePath(url.pathname);
 
     if (staticFilePath) {
@@ -79,7 +97,7 @@ Bun.serve({
     }
 
     try {
-      return await startFetch(request);
+      return await startFetch(normalizedRequest);
     } catch (error) {
       console.error("Unhandled frontend request error", {
         path: url.pathname,

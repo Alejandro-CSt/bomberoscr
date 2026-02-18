@@ -15,27 +15,6 @@ const config = defineConfig(({ mode }) => {
     define: {
       __TWEAKCN_LIVE_PREVIEW_SRC__: JSON.stringify(tweakcnLivePreviewSrc)
     },
-    build: {
-      rollupOptions: {
-        output: {
-          manualChunks(moduleId) {
-            if (!moduleId.includes("node_modules")) {
-              return;
-            }
-
-            if (moduleId.includes("@tanstack")) {
-              return "vendor-tanstack";
-            }
-
-            if (moduleId.includes("react")) {
-              return "vendor-react";
-            }
-
-            return "vendor";
-          }
-        }
-      }
-    },
     plugins: [
       devtools(),
       tanstackStart(),

@@ -13,6 +13,7 @@ const SIX_HOURS_SECONDS = 6 * 60 * 60;
 
 const internalSitemapToken = env.SITEMAP_TOKEN ?? env.ADMIN_TOKEN ?? env.IMGPROXY_TOKEN;
 const siteUrl = env.API_URL.replace(/\/?api\/?$/, "").replace(/\/$/, "");
+const siteRootUrl = `${siteUrl}/`;
 
 type UrlEntry = {
   loc: string;
@@ -111,7 +112,7 @@ async function buildStationsXml(): Promise<string> {
   const stations = await getSitemapStations();
 
   const entries: UrlEntry[] = [
-    { loc: siteUrl, changefreq: "daily", priority: "1.0" },
+    { loc: siteRootUrl, changefreq: "daily", priority: "1.0" },
     { loc: `${siteUrl}/incidentes`, changefreq: "hourly" },
     { loc: `${siteUrl}/estaciones`, changefreq: "daily" },
     ...stations.map((station) => ({
