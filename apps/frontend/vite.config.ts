@@ -38,15 +38,7 @@ const config = defineConfig(({ mode }) => {
       allowedHosts: true
     },
     ssr: {
-      noExternal: true,
-      external: [
-        "react",
-        "react/jsx-runtime",
-        "react/jsx-dev-runtime",
-        "react-dom",
-        "react-dom/server",
-        "react-dom/client"
-      ]
+      noExternal: [/^(?!react|react-dom)/]
     }
   };
 });
