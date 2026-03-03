@@ -5,13 +5,9 @@ import {
   Scripts,
   useLocation
 } from "@tanstack/react-router";
-import { lazy, Suspense, useEffect } from "react";
+import { useEffect } from "react";
 
-const Header = lazy(() =>
-  import("@/components/layout/header").then((mod) => ({
-    default: mod.Header
-  }))
-);
+import { Header } from "@/components/layout/header";
 
 import appCss from "../styles.css?url";
 
@@ -119,9 +115,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         ) : null}
       </head>
       <body className={`font-sans antialiased${isIncidentesPage ? " no-page-rails" : ""}`}>
-        <Suspense fallback={<div className="app-header rail-divider-bottom fixed inset-x-0 top-0 flex shrink-0 items-center bg-background px-6" />}>
-          <Header />
-        </Suspense>
+        <Header />
         <main>{children}</main>
         <Scripts />
       </body>

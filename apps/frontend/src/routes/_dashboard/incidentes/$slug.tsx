@@ -19,7 +19,6 @@ import { client } from "@/lib/api/client.gen";
 import { areCoordinatesValid, buildIncidentUrl } from "@/lib/utils";
 
 export const Route = createFileRoute("/_dashboard/incidentes/$slug")({
-  ssr: true,
   loader: async ({ params }) => {
     const { slug } = params;
 

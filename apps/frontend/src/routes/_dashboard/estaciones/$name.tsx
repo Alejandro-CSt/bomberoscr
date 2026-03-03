@@ -29,7 +29,6 @@ import { getStationByName } from "@/lib/api";
 import { client } from "@/lib/api/client.gen";
 
 export const Route = createFileRoute("/_dashboard/estaciones/$name")({
-  ssr: true,
   loader: async ({ params }) => {
     const { name } = params;
     const decodedName = decodeURIComponent(name);

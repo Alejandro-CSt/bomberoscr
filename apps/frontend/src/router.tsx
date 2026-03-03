@@ -13,7 +13,8 @@ export const getRouter = () => {
     context: { queryClient },
 
     scrollRestoration: true,
-    defaultPreloadStaleTime: 0
+    defaultPreloadStaleTime: 0,
+    defaultSsr: false
   });
 
   setupRouterSsrQueryIntegration({
