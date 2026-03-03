@@ -28,13 +28,6 @@ const config = defineConfig(({ mode }) => {
     ],
     server: {
       allowedHosts: true
-    },
-    optimizeDeps: {
-      exclude: ["@tanstack/react-devtools", "@tanstack/react-query-devtools", "@tanstack/react-router-devtools"],
-      include: ["@tanstack/react-start", "@tanstack/start-client-core", "@tanstack/start-server-core", "@tanstack/start-fn-stubs"]
-    },
-    ssr: {
-      noExternal: ["@tanstack/react-start", "@tanstack/start-client-core", "@tanstack/start-server-core", "@tanstack/start-fn-stubs"]
     }
   };
 });
