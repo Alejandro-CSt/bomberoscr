@@ -15,6 +15,14 @@ const config = defineConfig(({ mode }) => {
       __TWEAKCN_LIVE_PREVIEW_SRC__: JSON.stringify(tweakcnLivePreviewSrc)
     },
     plugins: [
+      {
+        name: "fix-ssr-external",
+        configResolved(config) {
+          if (config.environments.ssr) {
+            config.environments.ssr.resolve.external = [];
+          }
+        }
+      },
       tanstackStart(),
       viteTsConfigPaths({
         projects: ["./tsconfig.json"]
@@ -28,6 +36,9 @@ const config = defineConfig(({ mode }) => {
     ],
     server: {
       allowedHosts: true
+    },
+    ssr: {
+      noExternal: true
     }
   };
 });
