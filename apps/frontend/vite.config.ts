@@ -28,6 +28,9 @@ const config = defineConfig(({ mode }) => {
     ],
     server: {
       allowedHosts: true
+    },
+    ssr: {
+      external: ["@base-ui/react"]
     }
   };
 });
