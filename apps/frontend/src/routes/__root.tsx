@@ -1,5 +1,3 @@
-import { TanStackDevtools } from "@tanstack/react-devtools";
-import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import {
   createRootRouteWithContext,
   HeadContent,
@@ -7,8 +5,19 @@ import {
   Scripts,
   useLocation
 } from "@tanstack/react-router";
-import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
+
+const TanStackDevtools = lazy(() =>
+  import("@tanstack/react-devtools").then((mod) => ({ default: mod.TanStackDevtools }))
+);
+const ReactQueryDevtoolsPanel = lazy(() =>
+  import("@tanstack/react-query-devtools").then((mod) => ({ default: mod.ReactQueryDevtoolsPanel }))
+);
+const TanStackRouterDevtoolsPanel = lazy(() =>
+  import("@tanstack/react-router-devtools").then((mod) => ({
+    default: mod.TanStackRouterDevtoolsPanel
+  }))
+);
 
 import { Header } from "@/components/layout/header";
 
@@ -120,22 +129,34 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <body className={`font-sans antialiased${isIncidentesPage ? " no-page-rails" : ""}`}>
         <Header />
         <main>{children}</main>
-        <TanStackDevtools
-          config={{
-            position: "bottom-right"
-          }}
-          plugins={[
-            {
-              name: "Tanstack Router",
-              render: <TanStackRouterDevtoolsPanel />
-            },
-            {
-              name: "TanStack Query",
-              render: <ReactQueryDevtoolsPanel />,
-              defaultOpen: true
-            }
-          ]}
-        />
+        {typeof window !== "undefined" && (
+          <Suspense fallback={null}>
+            <TanStackDevtools
+              config={{
+                position: "bottom-right"
+              }}
+              plugins={[
+                {
+                  name: "Tanstack Router",
+                  render: (
+                    <Suspense fallback={null}>
+                      <TanStackRouterDevtoolsPanel />
+                    </Suspense>
+                  )
+                },
+                {
+                  name: "TanStack Query",
+                  render: (
+                    <Suspense fallback={null}>
+                      <ReactQueryDevtoolsPanel />
+                    </Suspense>
+                  ),
+                  defaultOpen: true
+                }
+              ]}
+            />
+          </Suspense>
+        )}
         <Scripts />
       </body>
     </html>
