@@ -28,46 +28,6 @@ const config = defineConfig(({ mode }) => {
     ],
     server: {
       allowedHosts: true
-    },
-    ssr: {
-      optimizeDeps: {
-        include: [
-          "@base-ui/react/popover",
-          "@base-ui/react/dialog",
-          "@base-ui/react/tooltip",
-          "@base-ui/react/toolbar",
-          "@base-ui/react/separator",
-          "@base-ui/react/merge-props",
-          "@base-ui/react/use-render",
-          "@base-ui/react/select",
-          "@base-ui/react/toggle",
-          "@base-ui/react/form",
-          "@base-ui/react/scroll-area",
-          "@base-ui/react/toggle-group",
-          "@base-ui/react/fieldset",
-          "@base-ui/react/radio",
-          "@base-ui/react/radio-group",
-          "@base-ui/react/field",
-          "@base-ui/react/progress",
-          "@base-ui/react/toast",
-          "@base-ui/react/preview-card",
-          "@base-ui/react/tabs",
-          "@base-ui/react/number-field",
-          "@base-ui/react/combobox",
-          "@base-ui/react/meter",
-          "@base-ui/react/switch",
-          "@base-ui/react/collapsible",
-          "@base-ui/react/checkbox",
-          "@base-ui/react/menu",
-          "@base-ui/react/slider",
-          "@base-ui/react/checkbox-group",
-          "@base-ui/react/input",
-          "@base-ui/react/alert-dialog",
-          "@base-ui/react/accordion",
-          "@base-ui/react/avatar",
-          "@base-ui/react/autocomplete"
-        ]
-      }
     }
   };
 });
