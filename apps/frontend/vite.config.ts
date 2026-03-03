@@ -1,5 +1,4 @@
 import tailwindcss from "@tailwindcss/vite";
-import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import { defineConfig, loadEnv } from "vite";
@@ -16,7 +15,6 @@ const config = defineConfig(({ mode }) => {
       __TWEAKCN_LIVE_PREVIEW_SRC__: JSON.stringify(tweakcnLivePreviewSrc)
     },
     plugins: [
-      devtools(),
       tanstackStart(),
       viteTsConfigPaths({
         projects: ["./tsconfig.json"]
@@ -30,6 +28,9 @@ const config = defineConfig(({ mode }) => {
     ],
     server: {
       allowedHosts: true
+    },
+    optimizeDeps: {
+      exclude: ["@tanstack/react-devtools", "@tanstack/react-query-devtools", "@tanstack/react-router-devtools"]
     }
   };
 });

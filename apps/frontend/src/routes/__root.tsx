@@ -5,19 +5,7 @@ import {
   Scripts,
   useLocation
 } from "@tanstack/react-router";
-import { lazy, Suspense, useEffect } from "react";
-
-const TanStackDevtools = lazy(() =>
-  import("@tanstack/react-devtools").then((mod) => ({ default: mod.TanStackDevtools }))
-);
-const ReactQueryDevtoolsPanel = lazy(() =>
-  import("@tanstack/react-query-devtools").then((mod) => ({ default: mod.ReactQueryDevtoolsPanel }))
-);
-const TanStackRouterDevtoolsPanel = lazy(() =>
-  import("@tanstack/react-router-devtools").then((mod) => ({
-    default: mod.TanStackRouterDevtoolsPanel
-  }))
-);
+import { useEffect } from "react";
 
 import { Header } from "@/components/layout/header";
 
@@ -129,34 +117,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <body className={`font-sans antialiased${isIncidentesPage ? " no-page-rails" : ""}`}>
         <Header />
         <main>{children}</main>
-        {typeof window !== "undefined" && (
-          <Suspense fallback={null}>
-            <TanStackDevtools
-              config={{
-                position: "bottom-right"
-              }}
-              plugins={[
-                {
-                  name: "Tanstack Router",
-                  render: (
-                    <Suspense fallback={null}>
-                      <TanStackRouterDevtoolsPanel />
-                    </Suspense>
-                  )
-                },
-                {
-                  name: "TanStack Query",
-                  render: (
-                    <Suspense fallback={null}>
-                      <ReactQueryDevtoolsPanel />
-                    </Suspense>
-                  ),
-                  defaultOpen: true
-                }
-              ]}
-            />
-          </Suspense>
-        )}
         <Scripts />
       </body>
     </html>
