@@ -14,7 +14,7 @@
     },
     "apps/api": {
       "name": "api",
-      "version": "0.1.8",
+      "version": "0.1.9",
       "dependencies": {
         "@aws-sdk/client-s3": "3.966.0",
         "@bomberoscr/db": "workspace:*",
@@ -47,7 +47,7 @@
     },
     "apps/frontend": {
       "name": "frontend",
-      "version": "0.1.15",
+      "version": "0.1.16",
       "dependencies": {
         "@base-ui/react": "1.1.0",
         "@number-flow/react": "^0.5.12",
@@ -174,7 +174,7 @@
         "jsdom": "^26.1.0",
         "nodemon": "^3.1.10",
         "ts-node": "^10.9.2",
-        "tsdown": "0.19.0",
+        "tsup": "^8.5.0",
         "vitest": "^3.2.4",
       },
     },

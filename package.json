@@ -5,7 +5,7 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "mprocs",
+    "dev": "bun run --cwd apps/frontend dev",
     "dev:api": "bun run --cwd apps/api dev",
     "dev:frontend": "bun run --cwd apps/frontend dev",
     "dev:sync": "bun run --cwd apps/sync-v2 dev",
