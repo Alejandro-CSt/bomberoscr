@@ -1,6 +1,7 @@
 import {
   createRootRouteWithContext,
   HeadContent,
+  Link,
   Outlet,
   Scripts,
   useLocation
@@ -35,8 +36,7 @@ const keywords = [
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
 }>()({
-  head: () => ({
-    meta: [
+  head: () => ({    meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: defaultTitle },
@@ -69,8 +69,26 @@ export const Route = createRootRouteWithContext<{
     ]
   }),
 
-  component: RootComponent
+  component: RootComponent,
+  notFoundComponent: NotFound
 });
+
+function NotFound() {
+  return (
+    <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 text-center">
+      <h1 className="text-4xl font-bold text-foreground">404</h1>
+      <p className="text-lg text-muted-foreground">
+        La pagina que buscas no existe.
+      </p>
+      <Link
+        to="/"
+        className="text-sm font-medium text-primary underline underline-offset-4 hover:text-primary/80"
+      >
+        Volver al inicio
+      </Link>
+    </div>
+  );
+}
 
 function RootComponent() {
   return (
