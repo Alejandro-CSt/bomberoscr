@@ -11,7 +11,7 @@ const SOCIAL_LINKS = [
   },
   {
     title: "API",
-    url: "https://alech.dev/bomberos/api"
+    url: "https://emergencias.alech.dev/api"
   },
   {
     title: "Web oficial de Bomberos",

@@ -37,7 +37,7 @@ export const Route = createFileRoute("/_dashboard/estaciones/$name")({
     const isServer = typeof window === "undefined";
     const baseUrl = isServer
       ? process.env.SERVER_INTERNAL_URL
-      : import.meta.env.VITE_SERVER_URL || "/bomberos/api";
+      : import.meta.env.VITE_SERVER_URL || "/api";
 
     client.setConfig({ baseUrl });
 

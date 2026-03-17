@@ -261,7 +261,7 @@
     content: "";
     position: fixed;
     inset: 0;
-    background-image: url("/bomberos/noise.png");
+    background-image: url("/noise.png");
     background-size: 180px;
     background-repeat: repeat;
     opacity: 0.035;

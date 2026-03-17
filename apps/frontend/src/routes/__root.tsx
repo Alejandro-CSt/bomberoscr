@@ -54,21 +54,21 @@ export const Route = createRootRouteWithContext<{
       // Open Graph
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: brandName },
-      { property: "og:url", content: "/bomberos/" },
+      { property: "og:url", content: "/" },
       { property: "og:title", content: defaultTitle },
       { property: "og:description", content: description },
-      { property: "og:image", content: "/bomberos/og.png" },
+      { property: "og:image", content: "/og.png" },
       // Twitter
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:url", content: "/bomberos/" },
+      { name: "twitter:url", content: "/" },
       { name: "twitter:title", content: defaultTitle },
       { name: "twitter:description", content: description },
-      { name: "twitter:image", content: "/bomberos/og.png" }
+      { name: "twitter:image", content: "/og.png" }
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/bomberos/favicon.svg", type: "image/svg+xml" },
-      { rel: "manifest", href: "/bomberos/manifest.json" }
+      { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
+      { rel: "manifest", href: "/manifest.json" }
     ]
   }),
 

@@ -2,7 +2,7 @@ import { Scalar } from "@scalar/hono-api-reference";
 
 import type { AppOpenAPI } from "@/lib/types";
 
-const BASE_PATH = "/bomberos/api";
+const BASE_PATH = "/api";
 
 export default function configureOpenAPI(app: AppOpenAPI) {
   app.doc("/doc", {

@@ -51,7 +51,7 @@ jobs:
           file: ./apps/frontend/Dockerfile
           platforms: linux/amd64
           build-args: |
-            VITE_BASE=${{ vars.VITE_BASE || '/bomberos' }}
+            VITE_BASE=${{ vars.VITE_BASE || '/' }}
             VITE_MAPBOX_TOKEN=${{ secrets.VITE_MAPBOX_TOKEN }}
             VITE_SERVER_URL=${{ vars.VITE_SERVER_URL }}
           push: true

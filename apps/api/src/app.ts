@@ -20,6 +20,6 @@ api.route("/stations", stationsRouter);
 api.route("/stats", statsRouter);
 api.route("/types", typesRouter);
 
-app.route("/bomberos/api", api);
+app.route("/api", api);
 
 export default app;

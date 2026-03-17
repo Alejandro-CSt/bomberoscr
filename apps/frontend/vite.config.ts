@@ -11,7 +11,7 @@ const config = defineConfig(({ mode }) => {
     mode === "development" ? "https://tweakcn.com/live-preview.min.js" : "";
 
   return {
-    base: env.VITE_BASE ?? "/bomberos",
+    base: env.VITE_BASE ?? "/",
     define: {
       __TWEAKCN_LIVE_PREVIEW_SRC__: JSON.stringify(tweakcnLivePreviewSrc)
     },

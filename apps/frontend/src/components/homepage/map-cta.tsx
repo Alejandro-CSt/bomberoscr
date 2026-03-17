@@ -9,7 +9,7 @@ export function MapCTA() {
       to="/mapa"
       className="group relative block h-[300px] w-full overflow-hidden rounded-xl bg-black transition-all duration-300 hover:shadow-xl">
       <img
-        src="/bomberos/map-dark.png"
+        src="/map-dark.png"
         alt="Mapa de incidentes en tiempo real"
         width={1000}
         height={1000}

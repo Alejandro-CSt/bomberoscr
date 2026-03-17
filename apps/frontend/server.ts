@@ -2,7 +2,7 @@ import { extname, join, normalize, sep } from "node:path";
 
 import startServer from "./dist/server/server.js";
 
-const BASE_PATH = "/bomberos";
+const BASE_PATH = "";
 const PORT = Number(process.env.PORT ?? 3000);
 
 const startFetch =
@@ -31,8 +31,8 @@ function normalizeBasePathRequest(request: Request): Request {
 
   const url = new URL(request.url);
 
-  // TanStack Start canonicalizes the base path root to `/bomberos/`.
-  // Serve `/bomberos` as that same document to avoid an external redirect hop.
+  // TanStack Start canonicalizes the base path root to `BASE_PATH/`.
+  // Serve the bare base path as that same document to avoid an external redirect hop.
   if (url.pathname !== BASE_PATH) {
     return request;
   }
