@@ -11,7 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SitemapStationsDotxmlRouteImport } from './routes/sitemap-stations[.]xml'
+import { Route as SitemapPagesDotxmlRouteImport } from './routes/sitemap-pages[.]xml'
 import { Route as SitemapIncidentsDotxmlRouteImport } from './routes/sitemap-incidents[.]xml'
+import { Route as SitemapIncidentsChar123yearMonthChar125DotxmlRouteImport } from './routes/sitemap-incidents-{$yearMonth}[.]xml'
 import { Route as IncidentsRouteImport } from './routes/_incidents'
 import { Route as DashboardRouteImport } from './routes/_dashboard'
 import { Route as DashboardIndexRouteImport } from './routes/_dashboard/index'
@@ -30,11 +32,22 @@ const SitemapStationsDotxmlRoute = SitemapStationsDotxmlRouteImport.update({
   path: '/sitemap-stations.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SitemapPagesDotxmlRoute = SitemapPagesDotxmlRouteImport.update({
+  id: '/sitemap-pages.xml',
+  path: '/sitemap-pages.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapIncidentsDotxmlRoute = SitemapIncidentsDotxmlRouteImport.update({
   id: '/sitemap-incidents.xml',
   path: '/sitemap-incidents.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SitemapIncidentsChar123yearMonthChar125DotxmlRoute =
+  SitemapIncidentsChar123yearMonthChar125DotxmlRouteImport.update({
+    id: '/sitemap-incidents-{$yearMonth}.xml',
+    path: '/sitemap-incidents-{$yearMonth}.xml',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const IncidentsRoute = IncidentsRouteImport.update({
   id: '/_incidents',
   getParentRoute: () => rootRouteImport,
@@ -73,7 +86,9 @@ const DashboardEstacionesNameRoute = DashboardEstacionesNameRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof DashboardIndexRoute
+  '/sitemap-incidents-{$yearMonth}.xml': typeof SitemapIncidentsChar123yearMonthChar125DotxmlRoute
   '/sitemap-incidents.xml': typeof SitemapIncidentsDotxmlRoute
+  '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
   '/sitemap-stations.xml': typeof SitemapStationsDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/estaciones/$name': typeof DashboardEstacionesNameRoute
@@ -83,7 +98,9 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof DashboardIndexRoute
+  '/sitemap-incidents-{$yearMonth}.xml': typeof SitemapIncidentsChar123yearMonthChar125DotxmlRoute
   '/sitemap-incidents.xml': typeof SitemapIncidentsDotxmlRoute
+  '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
   '/sitemap-stations.xml': typeof SitemapStationsDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/estaciones/$name': typeof DashboardEstacionesNameRoute
@@ -95,7 +112,9 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_dashboard': typeof DashboardRouteWithChildren
   '/_incidents': typeof IncidentsRouteWithChildren
+  '/sitemap-incidents-{$yearMonth}.xml': typeof SitemapIncidentsChar123yearMonthChar125DotxmlRoute
   '/sitemap-incidents.xml': typeof SitemapIncidentsDotxmlRoute
+  '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
   '/sitemap-stations.xml': typeof SitemapStationsDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_dashboard/': typeof DashboardIndexRoute
@@ -108,7 +127,9 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/sitemap-incidents-{$yearMonth}.xml'
     | '/sitemap-incidents.xml'
+    | '/sitemap-pages.xml'
     | '/sitemap-stations.xml'
     | '/sitemap.xml'
     | '/estaciones/$name'
@@ -118,7 +139,9 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/sitemap-incidents-{$yearMonth}.xml'
     | '/sitemap-incidents.xml'
+    | '/sitemap-pages.xml'
     | '/sitemap-stations.xml'
     | '/sitemap.xml'
     | '/estaciones/$name'
@@ -129,7 +152,9 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_dashboard'
     | '/_incidents'
+    | '/sitemap-incidents-{$yearMonth}.xml'
     | '/sitemap-incidents.xml'
+    | '/sitemap-pages.xml'
     | '/sitemap-stations.xml'
     | '/sitemap.xml'
     | '/_dashboard/'
@@ -142,7 +167,9 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRouteWithChildren
   IncidentsRoute: typeof IncidentsRouteWithChildren
+  SitemapIncidentsChar123yearMonthChar125DotxmlRoute: typeof SitemapIncidentsChar123yearMonthChar125DotxmlRoute
   SitemapIncidentsDotxmlRoute: typeof SitemapIncidentsDotxmlRoute
+  SitemapPagesDotxmlRoute: typeof SitemapPagesDotxmlRoute
   SitemapStationsDotxmlRoute: typeof SitemapStationsDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
 }
@@ -163,11 +190,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapStationsDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sitemap-pages.xml': {
+      id: '/sitemap-pages.xml'
+      path: '/sitemap-pages.xml'
+      fullPath: '/sitemap-pages.xml'
+      preLoaderRoute: typeof SitemapPagesDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap-incidents.xml': {
       id: '/sitemap-incidents.xml'
       path: '/sitemap-incidents.xml'
       fullPath: '/sitemap-incidents.xml'
       preLoaderRoute: typeof SitemapIncidentsDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-incidents-{$yearMonth}.xml': {
+      id: '/sitemap-incidents-{$yearMonth}.xml'
+      path: '/sitemap-incidents-{$yearMonth}.xml'
+      fullPath: '/sitemap-incidents-{$yearMonth}.xml'
+      preLoaderRoute: typeof SitemapIncidentsChar123yearMonthChar125DotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_incidents': {
@@ -255,7 +296,10 @@ const IncidentsRouteWithChildren = IncidentsRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRouteWithChildren,
   IncidentsRoute: IncidentsRouteWithChildren,
+  SitemapIncidentsChar123yearMonthChar125DotxmlRoute:
+    SitemapIncidentsChar123yearMonthChar125DotxmlRoute,
   SitemapIncidentsDotxmlRoute: SitemapIncidentsDotxmlRoute,
+  SitemapPagesDotxmlRoute: SitemapPagesDotxmlRoute,
   SitemapStationsDotxmlRoute: SitemapStationsDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
 }

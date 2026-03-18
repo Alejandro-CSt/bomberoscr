@@ -1,4 +1,8 @@
-import { getSitemapIncidents, getSitemapStations } from "@bomberoscr/db/queries/sitemap";
+import {
+  getSitemapIncidentMonths,
+  getSitemapIncidentsByMonth,
+  getSitemapStations
+} from "@bomberoscr/db/queries/sitemap";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import * as HttpStatusPhrases from "stoker/http-status-phrases";
@@ -10,6 +14,7 @@ const app = new OpenAPIHono();
 
 const ONE_HOUR_SECONDS = 60 * 60;
 const SIX_HOURS_SECONDS = 6 * 60 * 60;
+const YEAR_MONTH_PATTERN = /^\d{4}-(0[1-9]|1[0-2])$/;
 
 const internalSitemapToken = env.SITEMAP_TOKEN ?? env.ADMIN_TOKEN ?? env.IMGPROXY_TOKEN;
 const siteUrl = env.API_URL.replace(/\/?api\/?$/, "").replace(/\/$/, "");
@@ -43,9 +48,26 @@ function escapeXml(value: string): string {
     .replaceAll("'", "&apos;");
 }
 
-function formatLastmod(date: Date | null | undefined): string | undefined {
+function formatLastmod(date: Date | string | null | undefined): string | undefined {
   if (!date) return undefined;
+
+  if (typeof date === "string") {
+    return new Date(date).toISOString();
+  }
+
   return date.toISOString();
+}
+
+function buildIncidentSitemapPath(yearMonth: string): string {
+  return `sitemap-incidents-${yearMonth}.xml`;
+}
+
+function buildIncidentSitemapUrl(yearMonth: string): string {
+  return `${siteUrl}/${buildIncidentSitemapPath(yearMonth)}`;
+}
+
+function buildPagesSitemapUrl(): string {
+  return `${siteUrl}/sitemap-pages.xml`;
 }
 
 function buildUrlSetXml(entries: UrlEntry[]): string {
@@ -93,39 +115,58 @@ function isAuthorized(token: string | undefined): boolean {
   return token === internalSitemapToken;
 }
 
-function buildIndexXml(): string {
+async function buildIndexXml(): Promise<string> {
+  const incidentMonths = await getSitemapIncidentMonths();
   const now = new Date().toISOString();
 
   return buildSitemapIndexXml([
     {
-      loc: `${siteUrl}/sitemap-stations.xml`,
+      loc: buildPagesSitemapUrl(),
       lastmod: now
     },
     {
-      loc: `${siteUrl}/sitemap-incidents.xml`,
+      loc: `${siteUrl}/sitemap-stations.xml`,
       lastmod: now
-    }
+    },
+    ...incidentMonths.map((incidentMonth) => ({
+      loc: buildIncidentSitemapUrl(incidentMonth.month),
+      lastmod: formatLastmod(incidentMonth.lastmod)
+    }))
   ]);
 }
 
 async function buildStationsXml(): Promise<string> {
   const stations = await getSitemapStations();
 
-  const entries: UrlEntry[] = [
-    { loc: siteRootUrl, changefreq: "daily", priority: "1.0" },
-    { loc: `${siteUrl}/incidentes`, changefreq: "hourly" },
-    { loc: `${siteUrl}/estaciones`, changefreq: "daily" },
-    ...stations.map((station) => ({
-      loc: `${siteUrl}/estaciones/${encodeURIComponent(station.name)}`,
-      changefreq: "daily" as const
-    }))
-  ];
+  const entries: UrlEntry[] = stations.map((station) => ({
+    loc: `${siteUrl}/estaciones/${encodeURIComponent(station.name)}`,
+    changefreq: "daily" as const
+  }));
 
   return buildUrlSetXml(entries);
 }
 
-async function buildIncidentsXml(): Promise<string> {
-  const incidents = await getSitemapIncidents();
+function buildPagesXml(): string {
+  return buildUrlSetXml([
+    { loc: siteRootUrl, changefreq: "daily", priority: "1.0" },
+    { loc: `${siteUrl}/incidentes`, changefreq: "hourly" },
+    { loc: `${siteUrl}/estaciones`, changefreq: "daily" }
+  ]);
+}
+
+async function buildIncidentsIndexXml(): Promise<string> {
+  const incidentMonths = await getSitemapIncidentMonths();
+
+  return buildSitemapIndexXml(
+    incidentMonths.map((incidentMonth) => ({
+      loc: buildIncidentSitemapUrl(incidentMonth.month),
+      lastmod: formatLastmod(incidentMonth.lastmod)
+    }))
+  );
+}
+
+async function buildIncidentsXml(yearMonth: string): Promise<string> {
+  const incidents = await getSitemapIncidentsByMonth(yearMonth);
 
   const entries: UrlEntry[] = incidents.map((incident) => ({
     loc: `${siteUrl}/incidentes/${buildIncidentSlugFromPartial({
@@ -148,7 +189,7 @@ app.get("/internal/index.xml", async (c) => {
     return c.json({ message: HttpStatusPhrases.UNAUTHORIZED }, HttpStatusCodes.UNAUTHORIZED);
   }
 
-  const xml = buildIndexXml();
+  const xml = await buildIndexXml();
   return c.body(xml, HttpStatusCodes.OK, getXmlHeaders(ONE_HOUR_SECONDS));
 });
 
@@ -163,6 +204,17 @@ app.get("/internal/stations.xml", async (c) => {
   return c.body(xml, HttpStatusCodes.OK, getXmlHeaders(SIX_HOURS_SECONDS));
 });
 
+app.get("/internal/pages.xml", async (c) => {
+  const token = c.req.query("token");
+
+  if (!isAuthorized(token)) {
+    return c.json({ message: HttpStatusPhrases.UNAUTHORIZED }, HttpStatusCodes.UNAUTHORIZED);
+  }
+
+  const xml = buildPagesXml();
+  return c.body(xml, HttpStatusCodes.OK, getXmlHeaders(SIX_HOURS_SECONDS));
+});
+
 app.get("/internal/incidents.xml", async (c) => {
   const token = c.req.query("token");
 
@@ -170,7 +222,24 @@ app.get("/internal/incidents.xml", async (c) => {
     return c.json({ message: HttpStatusPhrases.UNAUTHORIZED }, HttpStatusCodes.UNAUTHORIZED);
   }
 
-  const xml = await buildIncidentsXml();
+  const xml = await buildIncidentsIndexXml();
+  return c.body(xml, HttpStatusCodes.OK, getXmlHeaders(ONE_HOUR_SECONDS));
+});
+
+app.get("/internal/incidents/:yearMonth", async (c) => {
+  const token = c.req.query("token");
+
+  if (!isAuthorized(token)) {
+    return c.json({ message: HttpStatusPhrases.UNAUTHORIZED }, HttpStatusCodes.UNAUTHORIZED);
+  }
+
+  const yearMonth = c.req.param("yearMonth");
+
+  if (!YEAR_MONTH_PATTERN.test(yearMonth)) {
+    return c.json({ message: HttpStatusPhrases.NOT_FOUND }, HttpStatusCodes.NOT_FOUND);
+  }
+
+  const xml = await buildIncidentsXml(yearMonth);
   return c.body(xml, HttpStatusCodes.OK, getXmlHeaders(ONE_HOUR_SECONDS));
 });
 

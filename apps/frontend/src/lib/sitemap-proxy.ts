@@ -12,7 +12,7 @@ function getPublicApiBaseUrl(): string | null {
   return value.replace(/\/$/, "");
 }
 
-export async function proxyInternalSitemap(path: "index.xml" | "stations.xml" | "incidents.xml") {
+export async function proxyInternalSitemap(path: string) {
   const apiBaseUrl = getPublicApiBaseUrl();
   const sitemapToken = process.env.SITEMAP_TOKEN;
 
