@@ -4,6 +4,7 @@ import { z } from "zod";
 
 import { LandingHero } from "@/components/homepage/landing-hero";
 import { Separator } from "@/components/homepage/separator";
+import { SITE_URL } from "@/lib/site";
 // import { MapCTA } from "@/components/homepage/map-cta";
 
 const AnnualRecapSection = lazy(async () => {
@@ -73,9 +74,12 @@ export const Route = createFileRoute("/_dashboard/")({
       { name: "description", content: description },
       { property: "og:title", content: title },
       { property: "og:description", content: description },
+      { property: "og:url", content: SITE_URL },
       { name: "twitter:title", content: title },
-      { name: "twitter:description", content: description }
-    ]
+      { name: "twitter:description", content: description },
+      { name: "twitter:url", content: SITE_URL }
+    ],
+    links: [{ rel: "canonical", href: SITE_URL }]
   }),
   component: HomePage
 });

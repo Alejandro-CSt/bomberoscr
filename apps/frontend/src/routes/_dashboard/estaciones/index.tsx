@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/select";
 import { StatCard, StatCardSkeleton } from "@/components/ui/stat-card";
 import { getSystemOverviewOptions, listStationsOptions } from "@/lib/api/@tanstack/react-query.gen";
+import { SITE_URL } from "@/lib/site";
 import { formatMinutesToHMS } from "@/lib/utils";
 
 import type { ListStationsResponse } from "@/lib/api/types.gen";
@@ -43,16 +44,23 @@ const DEFAULT_SEARCH = {
 } as const;
 
 export const Route = createFileRoute("/_dashboard/estaciones/")({
-  head: () => ({
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-      { name: "twitter:title", content: title },
-      { name: "twitter:description", content: description }
-    ]
-  }),
+  head: () => {
+    const stationsUrl = `${SITE_URL}/estaciones`;
+
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:url", content: stationsUrl },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: description },
+        { name: "twitter:url", content: stationsUrl }
+      ],
+      links: [{ rel: "canonical", href: stationsUrl }]
+    };
+  },
   validateSearch: z.object({
     q: z.string().optional().catch(undefined),
     page: z.number().catch(1),

@@ -27,6 +27,7 @@ import {
 } from "@/components/stations/station-details-vehicles";
 import { getStationByName } from "@/lib/api";
 import { client } from "@/lib/api/client.gen";
+import { SITE_URL } from "@/lib/site";
 
 export const Route = createFileRoute("/_dashboard/estaciones/$name")({
   ssr: true,
@@ -60,15 +61,20 @@ export const Route = createFileRoute("/_dashboard/estaciones/$name")({
       loaderData?.station?.name ?? decodeURIComponent(params.name).replace(/-/g, " ");
     const title = `Estación ${stationName} — Emergencias CR`;
     const description = `Detalles y estadísticas de incidentes atendidos por la estación de ${stationName}.`;
+    const stationUrl = `${SITE_URL}/estaciones/${encodeURIComponent(stationName)}`;
+
     return {
       meta: [
         { title },
         { name: "description", content: description },
         { property: "og:title", content: title },
         { property: "og:description", content: description },
+        { property: "og:url", content: stationUrl },
         { name: "twitter:title", content: title },
-        { name: "twitter:description", content: description }
-      ]
+        { name: "twitter:description", content: description },
+        { name: "twitter:url", content: stationUrl }
+      ],
+      links: [{ rel: "canonical", href: stationUrl }]
     };
   },
   component: EstacionDetailPage,

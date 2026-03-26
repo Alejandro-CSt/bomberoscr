@@ -19,6 +19,7 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 import { listIncidentTypes, listStations } from "@/lib/api";
 import { client } from "@/lib/api/client.gen";
+import { SITE_URL } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 const title = "Incidentes — Emergencias CR";
@@ -79,16 +80,23 @@ export const Route = createFileRoute("/_incidents/incidentes/")({
       incidentTypes: incidentTypesData?.items ?? []
     };
   },
-  head: () => ({
-    meta: [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-      { name: "twitter:title", content: title },
-      { name: "twitter:description", content: description }
-    ]
-  }),
+  head: () => {
+    const incidentsUrl = `${SITE_URL}/incidentes`;
+
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:url", content: incidentsUrl },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: description },
+        { name: "twitter:url", content: incidentsUrl }
+      ],
+      links: [{ rel: "canonical", href: incidentsUrl }]
+    };
+  },
 
   component: IncidentesPage,
   pendingComponent: () => (

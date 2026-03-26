@@ -16,6 +16,7 @@ import {
 } from "@/components/incidents/details/vehicle-response-times";
 import { getIncidentById } from "@/lib/api";
 import { client } from "@/lib/api/client.gen";
+import { SITE_URL } from "@/lib/site";
 import { areCoordinatesValid, buildIncidentUrl } from "@/lib/utils";
 
 export const Route = createFileRoute("/_dashboard/incidentes/$slug")({
@@ -65,7 +66,6 @@ export const Route = createFileRoute("/_dashboard/incidentes/$slug")({
     const description = `Incidente reportado el ${formattedDate}${incident.address ? ` en ${incident.address}` : ""}. EE-${incident.EEConsecutive}. ${dispatchedStationsCount} estación(es) y ${dispatchedVehiclesCount} unidad(es) despachadas.`;
 
     const titleWithLocation = incident.title;
-    const siteUrl = "https://emergencias.cr";
 
     const canonicalUrl = buildIncidentUrl(
       incident.id,
@@ -73,8 +73,8 @@ export const Route = createFileRoute("/_dashboard/incidentes/$slug")({
       new Date(incident.incidentTimestamp)
     );
 
-    const fullUrl = `${siteUrl}${canonicalUrl}`;
-    const ogImageUrl = `${fullUrl}/og`;
+    const fullUrl = `${SITE_URL}${canonicalUrl}`;
+    const ogImageUrl = `${SITE_URL}/api/incidents/${incident.id}/og`;
 
     return {
       meta: [

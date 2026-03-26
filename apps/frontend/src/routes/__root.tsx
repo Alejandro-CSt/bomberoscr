@@ -11,6 +11,7 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { useEffect } from "react";
 
 import { Header } from "@/components/layout/header";
+import { SITE_URL, STATIC_OG_IMAGE_URL } from "@/lib/site";
 
 import appCss from "../styles.css?url";
 
@@ -52,21 +53,22 @@ export const Route = createRootRouteWithContext<{
       // Open Graph
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: brandName },
-      { property: "og:url", content: "/" },
+      { property: "og:url", content: SITE_URL },
       { property: "og:title", content: defaultTitle },
       { property: "og:description", content: description },
-      { property: "og:image", content: "/og.png" },
+      { property: "og:image", content: STATIC_OG_IMAGE_URL },
       // Twitter
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:url", content: "/" },
+      { name: "twitter:url", content: SITE_URL },
       { name: "twitter:title", content: defaultTitle },
       { name: "twitter:description", content: description },
-      { name: "twitter:image", content: "/og.png" }
+      { name: "twitter:image", content: STATIC_OG_IMAGE_URL }
     ],
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
-      { rel: "manifest", href: "/manifest.json" }
+      { rel: "manifest", href: "/manifest.json" },
+      { rel: "canonical", href: SITE_URL }
     ],
     scripts: [
       {
