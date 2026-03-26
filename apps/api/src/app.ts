@@ -2,6 +2,7 @@ import configureOpenAPI from "@/lib/configure-open-api";
 import createApp from "@/lib/create-app";
 import { healthRouter } from "@/routers/health";
 import { incidentsRouter } from "@/routers/incidents";
+import { ogRouter } from "@/routers/og";
 import { sitemapRouter } from "@/routers/sitemap";
 import { stationsRouter } from "@/routers/stations";
 import { statsRouter } from "@/routers/stats";
@@ -15,6 +16,7 @@ configureOpenAPI(api);
 
 api.route("/health", healthRouter);
 api.route("/incidents", incidentsRouter);
+api.route("/og", ogRouter);
 api.route("/sitemap", sitemapRouter);
 api.route("/stations", stationsRouter);
 api.route("/stats", statsRouter);
