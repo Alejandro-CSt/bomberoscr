@@ -54,6 +54,7 @@ jobs:
             VITE_BASE=${{ vars.VITE_BASE || '/' }}
             VITE_MAPBOX_TOKEN=${{ secrets.VITE_MAPBOX_TOKEN }}
             VITE_SERVER_URL=${{ vars.VITE_SERVER_URL }}
+            VITE_SITE_URL=${{ secrets.VITE_SITE_URL }}
           push: true
           tags: ${{ secrets.REGISTRY }}/${{ secrets.FRONTEND_IMAGE_NAME }}:latest
 
