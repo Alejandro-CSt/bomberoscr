@@ -16,8 +16,6 @@ import appCss from "../styles.css?url";
 
 import type { QueryClient } from "@tanstack/react-query";
 
-declare const __TWEAKCN_LIVE_PREVIEW_SRC__: string;
-
 const brandName = "Emergencias CR";
 const defaultTitle = "Emergencias CR";
 const description =
@@ -69,6 +67,13 @@ export const Route = createRootRouteWithContext<{
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
       { rel: "manifest", href: "/manifest.json" }
+    ],
+    scripts: [
+      {
+        defer: true,
+        src: "https://u.alech.dev/script.js",
+        "data-website-id": "876f9c97-a6a7-4262-b125-b763e4126706"
+      }
     ]
   }),
 
@@ -110,12 +115,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       className="dark">
       <head>
         <HeadContent />
-        {__TWEAKCN_LIVE_PREVIEW_SRC__ ? (
-          <script
-            crossOrigin="anonymous"
-            src={__TWEAKCN_LIVE_PREVIEW_SRC__}
-          />
-        ) : null}
       </head>
       <body className={`font-sans antialiased${isIncidentesPage ? " no-page-rails" : ""}`}>
         <Header />
