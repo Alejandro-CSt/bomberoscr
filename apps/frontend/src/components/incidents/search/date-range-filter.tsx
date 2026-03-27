@@ -214,7 +214,7 @@ export function DateRangeFilterContent({ className }: { className?: string }) {
                     size="sm"
                     variant="ghost"
                     onClick={() => applyRange(undefined)}>
-                    Restablecer a últimos {DEFAULT_INCIDENTS_RANGE_DAYS} días
+                    Reestablecer
                   </Button>
                 </div>
               </div>
