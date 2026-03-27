@@ -1,9 +1,15 @@
+import { FireTruckIcon, GarageIcon } from "@phosphor-icons/react";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { createRoot } from "react-dom/client";
 
 import { useIncidentsQuery } from "@/components/incidents/query-options";
 import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
+import { cn, formatRelativeTime } from "@/lib/utils";
 import { Route } from "@/routes/_incidents/incidentes";
+
+import type { ListIncidentsResponses } from "@/lib/api/types.gen";
+
+type IncidentCardData = ListIncidentsResponses["200"]["data"][number];
 
 const MAPBOX_SCRIPT_ID = "mapbox-gl-script";
 const MAPBOX_CSS_ID = "mapbox-gl-css";
@@ -32,19 +38,22 @@ type IncidentFeatureCollection = {
       type: "Point";
       coordinates: [number, number];
     };
-    properties: {
-      id: number;
-      slug: string;
-      title: string;
-      responsibleStationName: string | null;
-      isOpen: boolean;
+    properties: IncidentCardData & {
       typeLabel: string;
+      imageUrl: string | undefined;
     };
   }>;
 };
 
+type MapboxPopup = {
+  setDOMContent: (node: Node) => MapboxPopup;
+  setHTML: (html: string) => MapboxPopup;
+  setMaxWidth: (width: string) => MapboxPopup;
+};
+
 type MapboxMarker = {
   setLngLat: (coords: [number, number]) => MapboxMarker;
+  setPopup: (popup: MapboxPopup) => MapboxMarker;
   addTo: (map: MapboxMap) => MapboxMarker;
   remove: () => void;
 };
@@ -61,6 +70,7 @@ type IncidentMapMarker = {
   marker: MapboxMarker;
   elements: IncidentMarkerElements;
   isHovered: boolean;
+  cleanup?: () => void;
 };
 
 type MapboxMap = {
@@ -89,6 +99,7 @@ type MapboxNamespace = {
   Map: new (options: Record<string, unknown>) => MapboxMap;
   NavigationControl: new () => unknown;
   Marker: new (options?: Record<string, unknown>) => MapboxMarker;
+  Popup: new (options?: Record<string, unknown>) => MapboxPopup;
 };
 
 declare global {
@@ -155,18 +166,7 @@ async function loadMapboxScript() {
   return window.mapboxgl;
 }
 
-function toIncidentFeatureCollection(
-  incidents: Array<{
-    id: number;
-    slug: string;
-    title: string;
-    longitude: number;
-    latitude: number;
-    responsibleStationName: string | null;
-    isOpen: boolean;
-    typeLabel: string;
-  }>
-): IncidentFeatureCollection {
+function toIncidentFeatureCollection(incidents: IncidentCardData[]): IncidentFeatureCollection {
   const features = incidents
     .filter(
       (incident) =>
@@ -182,12 +182,16 @@ function toIncidentFeatureCollection(
         coordinates: [incident.longitude, incident.latitude] as [number, number]
       },
       properties: {
-        id: incident.id,
-        slug: incident.slug,
-        title: incident.title,
-        responsibleStationName: incident.responsibleStationName,
-        isOpen: incident.isOpen,
-        typeLabel: incident.typeLabel
+        ...incident,
+        typeLabel: buildIncidentTypeLabel({
+          specificActualTypeName: incident.specificActualType?.name,
+          specificDispatchTypeName: incident.specificDispatchType?.name
+        }),
+        imageUrl:
+          incident.specificActualType?.imageUrl ??
+          incident.specificDispatchType?.imageUrl ??
+          incident.dispatchType?.imageUrl ??
+          undefined
       }
     }));
 
@@ -274,6 +278,7 @@ function createIncidentMarkerElement({ label }: { label: string }): IncidentMark
   bubble.style.overflow = "hidden";
   bubble.style.textOverflow = "ellipsis";
   bubble.style.transition = "background-color 140ms ease";
+  bubble.className = "marker-bubble";
 
   const arrow = document.createElement("div");
   arrow.style.width = "0";
@@ -346,47 +351,172 @@ function renderIncidentMarkers(
   features: IncidentFeatureCollection["features"],
   existingMarkers: IncidentMapMarker[],
   showLabels: boolean,
-  getHighlightedIncidentId: () => number | null
+  getHighlightedIncidentId: () => number | null,
+  onNavigate: (href: string) => void
 ): IncidentMapMarker[] {
-  for (const marker of existingMarkers) {
-    marker.marker.remove();
+  const existingMarkersMap = new Map(existingMarkers.map((m) => [m.id, m]));
+  const newMarkers: IncidentMapMarker[] = [];
+
+  for (const feature of features) {
+    const id = feature.properties.id;
+    const existingMarker = existingMarkersMap.get(id);
+
+    if (existingMarker) {
+      existingMarker.marker.setLngLat(feature.geometry.coordinates);
+      setIncidentMarkerLabelVisibility(existingMarker, showLabels);
+      updateIncidentMarkerAppearance(existingMarker, getHighlightedIncidentId());
+
+      newMarkers.push(existingMarker);
+      existingMarkersMap.delete(id);
+    } else {
+      const markerElements = createIncidentMarkerElement({
+        label: feature.properties.typeLabel
+      });
+
+      const popupContainer = document.createElement("div");
+      const root = createRoot(popupContainer);
+      const incident = feature.properties;
+      const incidentImageUrl = incident.imageUrl;
+
+      root.render(
+        <div className="group relative flex w-64 flex-col overflow-hidden rounded-lg border-0 bg-transparent text-left md:w-80">
+          {incidentImageUrl && (
+            <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-lg">
+              <img
+                src={incidentImageUrl}
+                alt=""
+                aria-hidden="true"
+                className="absolute top-1/2 left-1/2 h-[140%] w-[140%] -translate-x-1/2 -translate-y-1/2 scale-110 object-cover opacity-15 blur-2xl transition-transform duration-500 group-hover:scale-125"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+          )}
+
+          <div className="relative flex flex-1 gap-3 p-3">
+            {incidentImageUrl && (
+              <div className="flex shrink-0 items-center justify-center">
+                <div className="relative size-14 overflow-hidden rounded-lg bg-muted/50 md:size-16">
+                  <img
+                    src={incidentImageUrl}
+                    alt="Ilustración del tipo de incidente"
+                    className="size-full object-contain p-1.5 drop-shadow-md transition-transform duration-300 group-hover:scale-110"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+              </div>
+            )}
+
+            <div className="flex min-w-0 flex-1 flex-col justify-center gap-1">
+              <h3 className="line-clamp-2 text-sm leading-tight font-medium md:line-clamp-1">
+                {incident.title}
+              </h3>
+              <p className="line-clamp-1 text-xs text-muted-foreground">
+                {incident.address || "Sin ubicación"}
+              </p>
+              <span className="text-xs font-medium text-muted-foreground">
+                {incident.responsibleStationName ?? "Sin estación responsable"}
+              </span>
+            </div>
+          </div>
+
+          <div className="relative flex items-center justify-between border-t border-border/50 bg-muted/30 px-3 py-2 text-xs">
+            <div className="flex items-center gap-3 text-muted-foreground">
+              <div
+                className="flex items-center gap-1"
+                title="Estaciones despachadas">
+                <GarageIcon className="size-4" />
+                <span className="font-medium">{incident.dispatchedStationsCount}</span>
+              </div>
+              <div
+                className="flex items-center gap-1"
+                title="Unidades despachadas">
+                <FireTruckIcon className="size-4" />
+                <span className="font-medium">{incident.dispatchedVehiclesCount}</span>
+              </div>
+            </div>
+            <span className="text-muted-foreground first-letter:uppercase">
+              {formatRelativeTime(incident.incidentTimestamp)}
+            </span>
+          </div>
+
+          {incident.isTemporaryCoordinates && (
+            <div className="incident-popup-warning-banner relative border-t border-black/20">
+              <p className="incident-popup-warning-copy">
+                Aún no se tienen las coordenadas de este incidente, esta ubicación es una
+                aproximación.
+              </p>
+            </div>
+          )}
+
+          <a
+            href={`/incidentes/${incident.slug}`}
+            onClick={(e) => {
+              e.preventDefault();
+              onNavigate(`/incidentes/${incident.slug}`);
+            }}
+            className="absolute inset-0 z-10 rounded-lg ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none">
+            <span className="sr-only">Ver detalles del incidente</span>
+          </a>
+        </div>
+      );
+
+      const popup = new mapboxgl.Popup({
+        offset: 25,
+        closeButton: false,
+        closeOnClick: true,
+        className: "incident-popup"
+      })
+        .setDOMContent(popupContainer)
+        .setMaxWidth("none");
+
+      const mapboxMarker = new mapboxgl.Marker({
+        element: markerElements.wrapper,
+        anchor: "bottom"
+      })
+        .setLngLat(feature.geometry.coordinates)
+        .setPopup(popup)
+        .addTo(map);
+
+      const marker: IncidentMapMarker = {
+        id: feature.properties.id,
+        marker: mapboxMarker,
+        elements: markerElements,
+        isHovered: false,
+        cleanup: () => {
+          setTimeout(() => root.unmount(), 0);
+          mapboxMarker.remove();
+        }
+      };
+
+      setIncidentMarkerLabelVisibility(marker, showLabels);
+
+      markerElements.wrapper.addEventListener("mouseenter", () => {
+        marker.isHovered = true;
+        updateIncidentMarkerAppearance(marker, getHighlightedIncidentId());
+      });
+
+      markerElements.wrapper.addEventListener("mouseleave", () => {
+        marker.isHovered = false;
+        updateIncidentMarkerAppearance(marker, getHighlightedIncidentId());
+      });
+
+      updateIncidentMarkerAppearance(marker, getHighlightedIncidentId());
+
+      newMarkers.push(marker);
+    }
   }
 
-  return features.map((feature) => {
-    const markerElements = createIncidentMarkerElement({
-      label: feature.properties.typeLabel
-    });
+  for (const marker of existingMarkersMap.values()) {
+    if (marker.cleanup) {
+      marker.cleanup();
+    } else {
+      marker.marker.remove();
+    }
+  }
 
-    const mapboxMarker = new mapboxgl.Marker({
-      element: markerElements.wrapper,
-      anchor: "bottom"
-    })
-      .setLngLat(feature.geometry.coordinates)
-      .addTo(map);
-
-    const marker: IncidentMapMarker = {
-      id: feature.properties.id,
-      marker: mapboxMarker,
-      elements: markerElements,
-      isHovered: false
-    };
-
-    setIncidentMarkerLabelVisibility(marker, showLabels);
-
-    markerElements.wrapper.addEventListener("mouseenter", () => {
-      marker.isHovered = true;
-      updateIncidentMarkerAppearance(marker, getHighlightedIncidentId());
-    });
-
-    markerElements.wrapper.addEventListener("mouseleave", () => {
-      marker.isHovered = false;
-      updateIncidentMarkerAppearance(marker, getHighlightedIncidentId());
-    });
-
-    updateIncidentMarkerAppearance(marker, getHighlightedIncidentId());
-
-    return marker;
-  });
+  return newMarkers;
 }
 
 export function IncidentsMap({
@@ -427,25 +557,7 @@ export function IncidentsMap({
   const initialZoomRef = useRef(search.zoom ?? DEFAULT_ZOOM);
 
   const incidents = data?.data ?? [];
-  const featureCollection = useMemo(
-    () =>
-      toIncidentFeatureCollection(
-        incidents.map((incident) => ({
-          id: incident.id,
-          slug: incident.slug,
-          title: incident.title,
-          longitude: incident.longitude,
-          latitude: incident.latitude,
-          responsibleStationName: incident.responsibleStationName,
-          isOpen: incident.isOpen,
-          typeLabel: buildIncidentTypeLabel({
-            specificActualTypeName: incident.specificActualType?.name,
-            specificDispatchTypeName: incident.specificDispatchType?.name
-          })
-        }))
-      ),
-    [incidents]
-  );
+  const featureCollection = useMemo(() => toIncidentFeatureCollection(incidents), [incidents]);
   const featureCollectionRef = useRef(featureCollection);
 
   const [mapReady, setMapReady] = useState(false);
@@ -526,7 +638,10 @@ export function IncidentsMap({
             featureCollectionRef.current.features,
             markersRef.current,
             markerLabelsVisibleRef.current,
-            () => highlightedIncidentIdRef.current
+            () => highlightedIncidentIdRef.current,
+            (href) => {
+              void navigate({ to: href as any });
+            }
           );
 
           const syncMarkerLabelVisibility = () => {
@@ -590,7 +705,11 @@ export function IncidentsMap({
       cleanupObserver?.();
 
       for (const marker of markersRef.current) {
-        marker.marker.remove();
+        if (marker.cleanup) {
+          marker.cleanup();
+        } else {
+          marker.marker.remove();
+        }
       }
       markersRef.current = [];
 
@@ -614,7 +733,10 @@ export function IncidentsMap({
       featureCollection.features,
       markersRef.current,
       shouldShowIncidentMarkerLabel(map.getZoom()),
-      () => highlightedIncidentIdRef.current
+      () => highlightedIncidentIdRef.current,
+      (href) => {
+        void navigate({ to: href as any });
+      }
     );
     markerLabelsVisibleRef.current = shouldShowIncidentMarkerLabel(map.getZoom());
 

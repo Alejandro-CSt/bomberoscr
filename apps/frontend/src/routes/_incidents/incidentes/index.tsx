@@ -6,7 +6,7 @@ import z from "zod";
 import { IncidentsList } from "@/components/incidents/list";
 import { IncidentsMap } from "@/components/incidents/map";
 import { IncidentsSearchHeader } from "@/components/incidents/search/header";
-import { BrailleSpinner } from "@/components/ui/braille-spinner";
+import { LogoIcon } from "@/components/layout/logo-icon";
 import { Separator } from "@/components/ui/separator";
 import {
   Sheet,
@@ -101,9 +101,19 @@ export const Route = createFileRoute("/_incidents/incidentes/")({
   component: IncidentesPage,
   pendingComponent: () => (
     <div className="mx-auto flex min-h-dvh max-w-6xl items-center justify-center px-6">
-      <BrailleSpinner>Cargando incidentes</BrailleSpinner>
+      <div className="flex w-full max-w-44 flex-col items-center gap-5">
+        <LogoIcon
+          className="size-16"
+          autoAnimating
+        />
+        <div className="relative block h-1.5 w-full overflow-hidden rounded-full bg-input">
+          <div className="incident-loader-pillow absolute top-1/2 h-1 w-11 -translate-y-1/2 rounded-full bg-primary" />
+        </div>
+        <span className="sr-only">Cargando incidentes</span>
+      </div>
     </div>
-  )
+  ),
+  pendingMinMs: 1500
 });
 
 function IncidentesPage() {
