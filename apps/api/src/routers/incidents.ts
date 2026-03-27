@@ -43,8 +43,8 @@ import { adminAuthedRouteRequestSchema } from "@/schemas/shared";
 const app = new OpenAPIHono();
 
 const EARTH_METERS_PER_DEGREE_LATITUDE = 111_320;
-const TEMP_COORDINATE_RING_SPACING_METERS = 180;
-const TEMP_COORDINATE_RING_COUNT = 4;
+const TEMP_COORDINATE_RING_SPACING_METERS = 35;
+const TEMP_COORDINATE_RING_COUNT = 1;
 const GOLDEN_ANGLE_DEGREES = 137.50776405003785;
 const ONE_MINUTE_SECONDS = 60;
 const THREE_HOURS_SECONDS = 3 * 60 * 60;
@@ -98,35 +98,6 @@ function getFirstValidCoordinatePair(
     }
   }
   return null;
-}
-
-function getCoordinatesCentroid(
-  pairs: Array<{
-    latitude: number | string | null | undefined;
-    longitude: number | string | null | undefined;
-  }>
-): { latitude: number; longitude: number } | null {
-  let latitudeSum = 0;
-  let longitudeSum = 0;
-  let count = 0;
-
-  for (const pair of pairs) {
-    const latitude = toCoordinateNumber(pair.latitude);
-    const longitude = toCoordinateNumber(pair.longitude);
-
-    if (!isValidCoordinates(latitude, longitude)) continue;
-
-    latitudeSum += latitude;
-    longitudeSum += longitude;
-    count += 1;
-  }
-
-  if (count === 0) return null;
-
-  return {
-    latitude: latitudeSum / count,
-    longitude: longitudeSum / count
-  };
 }
 
 function applyTemporaryCoordinateOffset(
@@ -416,10 +387,6 @@ app.openapi(
 
         const fallbackCoordinates = getFirstValidCoordinatePair([
           {
-            latitude: toCoordinateNumber(incident.dispatchedStationsAverageLatitude),
-            longitude: toCoordinateNumber(incident.dispatchedStationsAverageLongitude)
-          },
-          {
             latitude: toCoordinateNumber(incident.responsibleStationLatitude),
             longitude: toCoordinateNumber(incident.responsibleStationLongitude)
           }
@@ -511,15 +478,7 @@ app.openapi(
       }
     );
 
-    const dispatchedStationsCoordinates = getCoordinatesCentroid(
-      incident.dispatchedStations.map((dispatchedStation) => ({
-        latitude: dispatchedStation.station.latitude,
-        longitude: dispatchedStation.station.longitude
-      }))
-    );
-
     const fallbackCoordinates = getFirstValidCoordinatePair([
-      dispatchedStationsCoordinates,
       {
         latitude: toCoordinateNumber(incident.station?.latitude),
         longitude: toCoordinateNumber(incident.station?.longitude)

@@ -17,11 +17,6 @@ const dispatchIncidentTypes = alias(incidentTypes, "dispatch_incident_types");
 const specificDispatchIncidentTypes = alias(incidentTypes, "specific_dispatch_incident_types");
 const actualIncidentTypes = alias(incidentTypes, "actual_incident_types");
 const specificActualIncidentTypes = alias(incidentTypes, "specific_actual_incident_types");
-const dispatchedStationsForCoordinates = alias(
-  stationsTable,
-  "dispatched_stations_for_coordinates"
-);
-
 export type GetIncidentsParams = {
   pageSize: number;
   cursor?: number | null;
@@ -117,31 +112,10 @@ export async function getIncidents(params: GetIncidentsParams) {
     .groupBy(dispatchedStations.incidentId)
     .as("station_counts");
 
-  const dispatchedStationCoordinates = db
-    .select({
-      incidentId: dispatchedStations.incidentId,
-      averageLatitude:
-        sql<number>`avg(${dispatchedStationsForCoordinates.latitude}::double precision)`.as(
-          "average_latitude"
-        ),
-      averageLongitude:
-        sql<number>`avg(${dispatchedStationsForCoordinates.longitude}::double precision)`.as(
-          "average_longitude"
-        )
-    })
-    .from(dispatchedStations)
-    .innerJoin(
-      dispatchedStationsForCoordinates,
-      eq(dispatchedStations.stationId, dispatchedStationsForCoordinates.id)
-    )
-    .groupBy(dispatchedStations.incidentId)
-    .as("dispatched_station_coordinates");
-
   const effectiveLatitude = sql<number>`
     CASE
       WHEN ${incidents.latitude}::double precision = 0 OR ${incidents.longitude}::double precision = 0
         THEN COALESCE(
-          ${dispatchedStationCoordinates.averageLatitude},
           ${stationsTable.latitude}::double precision,
           0
         )
@@ -153,7 +127,6 @@ export async function getIncidents(params: GetIncidentsParams) {
     CASE
       WHEN ${incidents.latitude}::double precision = 0 OR ${incidents.longitude}::double precision = 0
         THEN COALESCE(
-          ${dispatchedStationCoordinates.averageLongitude},
           ${stationsTable.longitude}::double precision,
           0
         )
@@ -184,8 +157,6 @@ export async function getIncidents(params: GetIncidentsParams) {
       responsibleStation: stationsTable.name,
       responsibleStationLatitude: stationsTable.latitude,
       responsibleStationLongitude: stationsTable.longitude,
-      dispatchedStationsAverageLatitude: dispatchedStationCoordinates.averageLatitude,
-      dispatchedStationsAverageLongitude: dispatchedStationCoordinates.averageLongitude,
       dispatchIncidentType: dispatchIncidentTypes.name,
       dispatchIncidentCode: incidents.dispatchIncidentCode,
       specificDispatchIncidentType: specificDispatchIncidentTypes.name,
@@ -225,10 +196,6 @@ export async function getIncidents(params: GetIncidentsParams) {
     )
     .leftJoin(vehicleCounts, eq(incidents.id, vehicleCounts.incidentId))
     .leftJoin(stationCounts, eq(incidents.id, stationCounts.incidentId))
-    .leftJoin(
-      dispatchedStationCoordinates,
-      eq(incidents.id, dispatchedStationCoordinates.incidentId)
-    )
     .leftJoin(districts, eq(incidents.districtId, districts.id))
     .leftJoin(cantons, eq(incidents.cantonId, cantons.id))
     .leftJoin(provinces, eq(incidents.provinceId, provinces.id))
