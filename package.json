@@ -5,11 +5,11 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "mprocs",
+    "dev": "concurrently --names api,frontend --prefix-colors auto \"bun run --cwd apps/api dev\" \"bun run --cwd apps/frontend dev\"",
     "dev:api": "bun run --cwd apps/api dev",
     "dev:frontend": "bun run --cwd apps/frontend dev",
     "dev:sync": "bun run --cwd apps/sync-v2 dev",
-    "dev:all": "mprocs --config mprocs.all.yaml",
+    "dev:all": "concurrently --names api,frontend,sync --prefix-colors auto \"bun run --cwd apps/api dev\" \"bun run --cwd apps/frontend dev\" \"bun run --cwd apps/sync-v2 dev\"",
     "lint:check": "bun run --cwd apps/api lint && bun run --cwd apps/frontend lint",
     "lint:safefix": "bun run --cwd apps/api lint:fix && bun run --cwd apps/frontend lint:fix",
     "lint:next": "next lint",
@@ -20,6 +20,7 @@
   },
   "devDependencies": {
     "@typescript/native-preview": "7.0.0-dev.20260210.1",
+    "concurrently": "^9.2.1",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
     "oxfmt": "0.31.0",

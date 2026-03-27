@@ -15,7 +15,7 @@ Keep feature logic close to its boundary (API route + schema + DB query). In fro
 ## Build, Test, and Development Commands
 
 - `bun install`: install all workspace dependencies.
-- `bun run dev`: run API + frontend via `mprocs`.
+- `bun run dev`: run API + frontend via `concurrently`.
 - `bun run dev:all`: run API + frontend + `sync-v2`.
 - `bun run dev:api` / `bun run dev:frontend` / `bun run dev:sync`: run one app.
 - `bun run lint:check`: run lint checks for API and frontend.

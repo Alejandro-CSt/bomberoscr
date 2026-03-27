@@ -1,5 +1,0 @@
-procs:
-  api:
-    cmd: ["bun", "run", "--cwd", "apps/api", "dev"]
-  frontend:
-    cmd: ["bun", "run", "--cwd", "apps/frontend", "dev"]
